@@ -334,6 +334,16 @@ def to_markdown(rows: list[dict], where: str, when: str) -> str:
     return "\n".join(lines) + "\n"
 
 
+def annotation(rows: list[dict]) -> str:
+    """One GitHub '::notice' line holding the whole result. Annotations can be read through the public API without a token
+    (the run's Summary page and artifacts need a signed-in user)."""
+    mark = {True: "OK", False: "NO", None: "--"}
+    counts = {m: sum(1 for r in rows if mark[r["ok"]] == m) for m in mark.values()}
+    body = "\n".join(f"[{mark[r['ok']]}] {r['source']} | {r['what']} | {r['detail']}" for r in rows)
+    body = body.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+    return f"::notice title=Source probe: {counts['OK']} OK, {counts['NO']} NO, {counts['--']} skipped::{body}"
+
+
 def main() -> int:
     load_env_file(ROOT / ".env")
     where = "github" if os.environ.get("GITHUB_ACTIONS") == "true" else "pc"
@@ -345,6 +355,8 @@ def main() -> int:
     md = to_markdown(probe.rows, where, now)
     (out / f"probe_{where}.md").write_text(md, encoding="utf-8")
     (out / f"probe_{where}.json").write_text(json.dumps(probe.rows, indent=1), encoding="utf-8")
+    if where == "github":
+        print(annotation(probe.rows))
     if os.environ.get("GITHUB_STEP_SUMMARY"):
         with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
             f.write(md)

@@ -109,6 +109,16 @@ def test_bhav_urls_old_and_new_format():
     assert probe_sources.nse_bhav_url(date(2024, 10, 25)).endswith("/content/cm/BhavCopy_NSE_CM_0_0_0_20241025_F_0000.csv.zip")
 
 
+def test_annotation_is_one_line_with_counts():
+    rows = [{"source": "NSE", "what": "a", "ok": True, "detail": "100% fine\nnext"},
+            {"source": "BSE", "what": "b", "ok": False, "detail": "HTTP 403"},
+            {"source": "Angel One", "what": "c", "ok": None, "detail": "skipped"}]
+    line = probe_sources.annotation(rows)
+    assert "\n" not in line
+    assert line.startswith("::notice title=Source probe: 1 OK, 1 NO, 1 skipped::")
+    assert "100%25 fine%0Anext" in line and "%0A[NO] BSE | b | HTTP 403" in line
+
+
 def test_bhav_close_reads_both_formats():
     new = pd.DataFrame({"TckrSymb": ["RELIANCE", "RELIANCE"], "SctySrs": ["BE", "EQ"], "ClsPric": [1.0, 2655.5]})
     old = pd.DataFrame({"SYMBOL": ["RELIANCE"], "SERIES ": ["EQ"], "CLOSE": [2500.0]})

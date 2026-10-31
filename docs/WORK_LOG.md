@@ -28,3 +28,7 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   login moved inside the check (a broken install is now a "NO" row, not a crash). Actions bumped to checkout@v5 / setup-python@v6 /
   upload-artifact@v5 (Node 20 deprecation warning). Job logs need admin rights; annotations + step results are readable without a token.
 - NEXT: Viraj commits + pushes, runs Source probe again.
+- Pushed "Fix probe: Angel SDK libraries" (15b1d1b); Tests green; Source probe run 41193655907 = success. But its Summary page and the
+  artifact are visible only to a signed-in user. -> probe now also prints its whole table as ONE `::notice` annotation, readable via
+  `api.github.com/repos/.../check-runs/<job id>/annotations` without a token. upload-artifact -> v6 (v5 still Node 20). 13 tests green.
+- NEXT: Viraj commits + pushes this, runs Source probe again; I read the annotation and close Phase 2.

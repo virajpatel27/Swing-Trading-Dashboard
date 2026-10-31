@@ -41,4 +41,6 @@ Viraj. **Not a programmer.** Answer in Gujarati-English mix (Latin letters), sho
 Phase 1 plan approved 2026-10-31 (daily 20:15 IST OK). Phase 2: skeleton + PC probe done; repo published (public)
 https://github.com/virajpatel27/Swing-Trading-Dashboard, Tests green. Waiting: 4 Angel Secrets, then GitHub Source probe.
 Repo folder on the PC: `C:\Users\hello\OneDrive\Documents\Swing Trading\Swing Trading` (nested). Manual steps: `docs/MANUAL_CHECKLIST.md`.
-Read GitHub run results without a token via the public API (`api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/runs`).
+Read GitHub run results without a token via the public API (`api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/runs`,
+then `.../actions/runs/<id>/jobs` and `.../check-runs/<job id>/annotations`). Logs, Summary page and artifacts need a signed-in user,
+so scripts print results as `::notice` / `::error` annotations.

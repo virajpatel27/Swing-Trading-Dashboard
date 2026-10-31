@@ -1,0 +1,27 @@
+name: Tests
+
+# Runs all tests and the secret check on every push and pull request. Green tick = safe.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements-dev.txt
+      - name: Secret check
+        run: python scripts/check_secrets.py
+      - name: Tests
+        run: python -m pytest -q

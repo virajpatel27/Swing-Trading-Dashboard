@@ -1,0 +1,128 @@
+[
+ {
+  "source": "NSE",
+  "what": "all indices list (allIndices API)",
+  "ok": true,
+  "detail": "139 indices listed (e.g. NIFTY 50, NIFTY NEXT 50, NIFTY BANK)"
+ },
+ {
+  "source": "NSE",
+  "what": "index closing file, newest",
+  "ok": true,
+  "detail": "2026-10-30: 167 indices, columns Index Name, Index Date, Open Index Value, High Index Value ..."
+ },
+ {
+  "source": "NSE",
+  "what": "index closing file, Jan-2007",
+  "ok": false,
+  "detail": "2007-01-02: HTTP 404"
+ },
+ {
+  "source": "NSE",
+  "what": "index history Jan-2007 (historicalOR API)",
+  "ok": true,
+  "detail": "NIFTY 50 Jan-2007: 20 days (e.g. 02-JAN-2007)"
+ },
+ {
+  "source": "niftyindices",
+  "what": "index history Jan-2007 (old address)",
+  "ok": false,
+  "detail": "JSONDecodeError: Expecting value: line 1 column 2 (char 1)"
+ },
+ {
+  "source": "NSE",
+  "what": "equity bhavcopy, newest",
+  "ok": true,
+  "detail": "2026-10-30: 3641 rows, 3639 symbols, RELIANCE close 1164.9"
+ },
+ {
+  "source": "NSE",
+  "what": "equity bhavcopy, 02-Jan-2007",
+  "ok": true,
+  "detail": "2007-01-02: 1003 rows, 1000 symbols, RELIANCE close 1280.9"
+ },
+ {
+  "source": "NSE",
+  "what": "equity bhavcopy, 2024-10-25",
+  "ok": true,
+  "detail": "2024-10-25: 2902 rows, 2898 symbols, RELIANCE close 2655.7"
+ },
+ {
+  "source": "NSE",
+  "what": "corporate actions 2007",
+  "ok": true,
+  "detail": "Jan-Mar 2007: 263 actions (e.g. 1st Int Div-Rs.2/- P; 1st Int Div-Rs1.20 P; 2nd Int Div-100%    ; 2nd Int Div-30%     )"
+ },
+ {
+  "source": "NSE",
+  "what": "corporate actions RELIANCE Oct-2024",
+  "ok": true,
+  "detail": "RELIANCE Oct-2024: 28-Oct-2024 Bonus 1:1"
+ },
+ {
+  "source": "NSE",
+  "what": "trading holidays",
+  "ok": true,
+  "detail": "20 trading holidays this year (first 15-Jan-2026)"
+ },
+ {
+  "source": "NSE",
+  "what": "Nifty 500 member list",
+  "ok": true,
+  "detail": "501 stocks, columns Company Name, Industry, Symbol, Series, ISIN Code"
+ },
+ {
+  "source": "NSE",
+  "what": "official sector/industry (GetQuoteApi)",
+  "ok": true,
+  "detail": "RELIANCE: fields found macro, sector, basicIndustry"
+ },
+ {
+  "source": "BSE",
+  "what": "corporate actions",
+  "ok": true,
+  "detail": "Jan-2024: 89 actions"
+ },
+ {
+  "source": "BSE",
+  "what": "all indices list (FillddlIndex)",
+  "ok": true,
+  "detail": "151 indices listed (e.g. BSE SENSEX, BSE SENSEX 50, BSE SENSEX 50 TMC)"
+ },
+ {
+  "source": "BSE",
+  "what": "index history Jan-2007",
+  "ok": true,
+  "detail": "SENSEX Jan-2007: 20 days, first 2007-01-02 close 13942.24"
+ },
+ {
+  "source": "BSE",
+  "what": "equity bhavcopy, newest",
+  "ok": true,
+  "detail": "2026-10-30: 835 KB"
+ },
+ {
+  "source": "BSE",
+  "what": "equity bhavcopy, 02-Jan-2007",
+  "ok": true,
+  "detail": "2007-01-02: 86 KB"
+ },
+ {
+  "source": "yfinance",
+  "what": "validation source",
+  "ok": true,
+  "detail": "RELIANCE 2024-10-25: Close 1327.85, Adj Close 1316.48"
+ },
+ {
+  "source": "Angel One",
+  "what": "instrument master (no login)",
+  "ok": true,
+  "detail": "147460 instruments: 2745 NSE -EQ stocks, indices NSE 57 / BSE 40"
+ },
+ {
+  "source": "Angel One",
+  "what": "login + history",
+  "ok": null,
+  "detail": "skipped here (secrets not set) - runs on GitHub after the Secrets are added"
+ }
+]

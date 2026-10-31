@@ -1,0 +1,28 @@
+# Secrets and login sessions - never in git
+.env
+.env.*
+!.env.example
+*.session
+*token*.json
+session/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Local caches (downloaded again when needed)
+cache/
+data/meta/cache/
+
+# Website build output (made inside GitHub Actions)
+_site/
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store

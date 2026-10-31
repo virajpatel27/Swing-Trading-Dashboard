@@ -1,4 +1,16 @@
-# Data sources (probe 2026-10-31 from the PC; GitHub probe pending)
+# Data sources (probe 2026-10-31 from the PC and from GitHub)
+
+## GitHub probe result (run 41194805588, 2026-10-31) - what differs from the PC
+- **BSE API (`api.bseindia.com`) refuses GitHub: HTTP 403** for corporate actions, `FillddlIndex` and `IndexArchDaily`.
+  BSE bhavcopy downloads from `www.bseindia.com/download/...` DO work from GitHub (2007 and today).
+  -> BSE index history (151 indices) must be fetched once from the PC; daily BSE index values from GitHub come from Angel One
+  (40 BSE indices in its instrument master). The other ~110 BSE indices: open question for Phase 3.
+- Everything NSE works from GitHub exactly as from the PC (allIndices, historicalOR, bhavcopy 2007 + today, corporate actions,
+  holidays, Nifty 500 list, GetQuoteApi).
+- **Angel One: login OK; daily history from 2007-01-02 for RELIANCE, NIFTY 50 and SENSEX (249 days in 2007).**
+- **Angel One history IS ADJUSTED:** RELIANCE 25-Oct-2024 Angel close **1327.85** = yfinance Close 1327.85 = NSE raw 2655.70 / 2.
+  -> Angel cannot be the "raw" source. It is a second, independent check of our adjusted series (next to yfinance).
+
 
 Raw results: `reports/probe_pc.md` (PC) and, after the Source probe workflow runs, its Summary page (GitHub).
 Script: `scripts/probe_sources.py`.
@@ -7,14 +19,15 @@ Script: `scripts/probe_sources.py`.
 
 | Data | Primary | Secondary | Validation only |
 |---|---|---|---|
-| Stock OHLCV, raw "as traded", 2007 -> today | NSE equity bhavcopy archive (one file per day, all stocks; old format until 05-Jul-2024, UDiFF from 08-Jul-2024) | Angel One candles (after a check of whether they are adjusted) | yfinance `Close` (split/bonus-adjusted) |
+| Stock OHLCV, raw "as traded", 2007 -> today | NSE equity bhavcopy archive (one file per day, all stocks; old format until 05-Jul-2024, UDiFF from 08-Jul-2024) | keep last good data (Angel One is adjusted, so not a raw source) | Angel One candles + yfinance `Close` (both split/bonus-adjusted) |
 | List of NSE indices | NSE `api/allIndices` (139 listed) + daily `ind_close_all` file (167 rows) | Angel One instrument master (57 NSE indices) | - |
 | NSE index history 2007 -> | NSE `api/historicalOR/indicesHistory` (NIFTY 50 Jan-2007 OK) | `ind_close_all_DDMMYYYY.csv` archive (404 for 2007 and 2010, OK from 2013: starts somewhere 2010-2013) | - |
 | NSE index daily | `ind_close_all_DDMMYYYY.csv` | historicalOR API / Angel One | - |
 | List of BSE indices | BSE `FillddlIndex` (151 listed) | Angel One instrument master (40 BSE indices) | - |
-| BSE index history 2007 -> | BSE `IndexArchDaily` with the index code, e.g. `index=SENSEX` (Jan-2007 OK) | Angel One candles | - |
+| BSE index history 2007 -> | BSE `IndexArchDaily` with the index code, e.g. `index=SENSEX` (Jan-2007 OK, **PC only**: 403 from GitHub) | Angel One candles (40 BSE indices, from 2007) | - |
+| BSE index daily | Angel One candles (40 indices) | BSE `IndexArchDaily` from the PC | - |
 | BSE stocks (later option) | BSE bhavcopy (2007 and today OK) | - | - |
-| Corporate actions | NSE `api/corporates-corporateActions` (2007 OK: 263 in Jan-Mar; RELIANCE 28-Oct-2024 "Bonus 1:1" OK) | BSE `DefaultData` (89 in Jan-2024) | yfinance |
+| Corporate actions | NSE `api/corporates-corporateActions` (2007 OK: 263 in Jan-Mar; RELIANCE 28-Oct-2024 "Bonus 1:1" OK) | BSE `DefaultData` (89 in Jan-2024; **PC only**) | Angel One + yfinance price ratios around ex-dates |
 | Trading holidays | NSE `api/holiday-master?type=trading` (20 in 2026) | "no new file" detection | - |
 | Universe | NSE `ind_nifty500list.csv` (501 stocks, has a broad Industry column) | - | - |
 | Sector / industry | NSE `GetQuoteApi getSymbolData` (macro, sector, basicIndustry fields) | Nifty 500 list "Industry" column | - |
@@ -30,7 +43,6 @@ Script: `scripts/probe_sources.py`.
 - BSE answered from the PC. The old project found BSE refuses GitHub's servers -> checked by the GitHub probe.
 - Angel One instrument master: 147,460 instruments, 2,745 NSE "-EQ" stocks.
 
-## Still to check (GitHub probe, needs the 4 Secrets)
-- Which of the above answer from GitHub's servers.
-- Angel One login, history depth (2007?) for a stock, an NSE index, a BSE index, and whether its RELIANCE 25-Oct-2024 close is
-  ~1327 (adjusted) or ~2655 (as traded).
+## Open questions for Phase 3
+- Daily values for the ~110 BSE indices that Angel One does not list (BSE API refuses GitHub).
+- Exact start date of NSE's `ind_close_all` archive (somewhere 2010-2013); only a secondary source.

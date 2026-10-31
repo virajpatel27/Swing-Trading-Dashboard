@@ -26,8 +26,10 @@ Viraj. **Not a programmer.** Answer in Gujarati-English mix (Latin letters), sho
 ## Facts learned from the old project (2026-10-31)
 - Angel One: login client code + MPIN + TOTP (no browser). Daily candles: max ~2,000 days per call. Safe pace ~3/s and 70/min
   (it blocked a run at ~4,790 calls/hour). Gateway blocks at random mostly 09:15-15:30 IST; smooth at night.
-- Angel One history changes after a split/bonus -> it behaves as already adjusted (to be confirmed in Phase 2).
-- BSE refuses GitHub servers (HTTP 403) for ListofScripData / ComHeadernew; answers a home PC.
+- Angel One history IS adjusted (confirmed 2026-10-31: RELIANCE 25-Oct-2024 = 1327.85, raw 2655.70) -> never use it as raw.
+  It goes back to 2007-01-02 for stocks, NSE and BSE indices.
+- BSE `api.bseindia.com` refuses GitHub servers (HTTP 403: corporate actions, FillddlIndex, IndexArchDaily); answers the home PC.
+  `www.bseindia.com/download/` bhavcopy works from GitHub.
 - NSE archives (`nsearchives.nseindia.com`) answer GitHub without cookies. On a holiday NSE serves the previous day's bhavcopy
   under the holiday's name: the file's own date column decides. Day's bhavcopy appears ~18:30-19:05 IST.
 
@@ -39,7 +41,8 @@ Viraj. **Not a programmer.** Answer in Gujarati-English mix (Latin letters), sho
 
 ## Status
 Phase 1 plan approved 2026-10-31 (daily 20:15 IST OK). Phase 2: skeleton + PC probe done; repo published (public)
-https://github.com/virajpatel27/Swing-Trading-Dashboard, Tests green. Waiting: 4 Angel Secrets, then GitHub Source probe.
+https://github.com/virajpatel27/Swing-Trading-Dashboard, Tests green, Secrets set, GitHub probe done. **Phase 2 done** (2026-10-31);
+waiting for "continue" -> Phase 3. Don't poll api.github.com often (60 calls/hour without a token): read the run page HTML.
 Repo folder on the PC: `C:\Users\hello\OneDrive\Documents\Swing Trading\Swing Trading` (nested). Manual steps: `docs/MANUAL_CHECKLIST.md`.
 Read GitHub run results without a token via the public API (`api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/runs`,
 then `.../actions/runs/<id>/jobs` and `.../check-runs/<job id>/annotations`). Logs, Summary page and artifacts need a signed-in user,

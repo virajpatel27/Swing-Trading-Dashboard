@@ -32,3 +32,9 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   artifact are visible only to a signed-in user. -> probe now also prints its whole table as ONE `::notice` annotation, readable via
   `api.github.com/repos/.../check-runs/<job id>/annotations` without a token. upload-artifact -> v6 (v5 still Node 20). 13 tests green.
 - NEXT: Viraj commits + pushes this, runs Source probe again; I read the annotation and close Phase 2.
+- Pushed "Probe result as annotation" (e1377e2). My polling of the public API used up its 60 calls/hour -> read the run page in the
+  browser instead (annotations are visible there signed-out). Lesson: poll the run page HTML, not api.github.com, and not every 15 s.
+- GitHub Source probe (run 41194805588): NSE all OK from GitHub; BSE API 403 from GitHub (bhavcopy downloads OK); Angel One login OK,
+  history from 2007-01-02 for stock / NSE index / BSE index; Angel history is ADJUSTED (RELIANCE 25-Oct-2024 = 1327.85 = yfinance).
+  `docs/SOURCES.md` updated. **Phase 2 done.** Mark checklist: Secrets added, probe run.
+- NEXT: Viraj commits the docs; "continue" -> Phase 3 (storage + raw backfill + validation).

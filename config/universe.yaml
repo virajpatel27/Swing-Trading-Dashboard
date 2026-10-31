@@ -1,0 +1,12 @@
+# What the dashboard covers. Change this file, not the code.
+history_start: 2007-01-01
+
+stocks:
+  source: nifty500                   # nifty500 (default). Later option: all_nse_eq
+  list_url: https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv
+  series_priority: [EQ, BE, BZ, SM, ST, RR, IV]   # one row per day: the first series found in this order (RR = REIT, IV = InvIT)
+
+indices:
+  nse: all                           # every index in NSE's allIndices list (discovered, not hard-coded)
+  nse_skip_categories: []            # e.g. ["FIXED INCOME INDICES"]
+  bse: all                           # every index in BSE's index list (FillddlIndex)

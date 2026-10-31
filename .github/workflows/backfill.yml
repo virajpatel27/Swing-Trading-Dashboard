@@ -1,0 +1,61 @@
+name: Backfill history
+
+# One-time history download 2007 -> today, in resumable batches (each run continues where the last one stopped).
+# Run by hand: Actions -> Backfill history -> Run workflow. Run it again until the Summary says nothing is left.
+# BSE indices cannot run here (BSE refuses GitHub's servers): they are fetched from the PC with
+#   python scripts/backfill.py --job bse-indices
+# The data is saved ONLY when the data check passes (no empty files, no duplicates, no big row drop ...).
+on:
+  workflow_dispatch:
+    inputs:
+      job:
+        description: "What to download"
+        type: choice
+        options: [stocks, nse-indices]
+        default: stocks
+      max_minutes:
+        description: "Stop cleanly after this many minutes (a job may run at most 6 hours)"
+        default: "300"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-write                  # never two jobs writing data at the same time
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 345
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Remember the data list before the run
+        run: cp data/meta/instruments.csv /tmp/instruments_before.csv 2>/dev/null || true
+      - name: Backfill
+        run: python scripts/backfill.py --job "${{ inputs.job }}" --max-minutes "${{ inputs.max_minutes }}"
+      - name: Data check
+        run: |
+          if [ -f /tmp/instruments_before.csv ]; then
+            python scripts/validate_data.py --baseline /tmp/instruments_before.csv
+          else
+            python scripts/validate_data.py
+          fi
+      - name: Save data
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "Nothing new to save."
+          else
+            git commit -m "data: backfill ${{ inputs.job }} $(date -u +%F)"
+            git pull --rebase
+            git push
+          fi

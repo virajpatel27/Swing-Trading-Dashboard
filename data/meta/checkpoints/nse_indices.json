@@ -1,0 +1,391 @@
+{
+ "files_last_day": "2026-10-30",
+ "unmatched_names": [
+  "CNX 100",
+  "CNX 100 Equal Weight",
+  "CNX 200",
+  "CNX 500",
+  "CNX 500 Shariah",
+  "CNX Alpha Index",
+  "CNX Auto",
+  "CNX Bank",
+  "CNX Commodities",
+  "CNX Consumption",
+  "CNX DEFTY",
+  "CNX Dividend Opportunities",
+  "CNX Energy",
+  "CNX FMCG",
+  "CNX Finance",
+  "CNX High Beta",
+  "CNX IT",
+  "CNX Infrastructure",
+  "CNX Low Volatility",
+  "CNX MNC",
+  "CNX Media",
+  "CNX Metal",
+  "CNX Midcap",
+  "CNX Nifty",
+  "CNX Nifty Dividend",
+  "CNX Nifty Junior",
+  "CNX Nifty Shariah",
+  "CNX PSE",
+  "CNX PSU Bank",
+  "CNX Pharma",
+  "CNX Realty",
+  "CNX Service Sector",
+  "CNX Shariah25",
+  "CNX Smallcap",
+  "CPSE",
+  "GSEC10 NSE Index",
+  "GSECBM NSE Index",
+  "LIX 15",
+  "LIX15 Midcap",
+  "NI15",
+  "NIFTY PR 1X Inverse",
+  "NIFTY PR 2x Leverage",
+  "NIFTY TR 1X Inverse",
+  "NIFTY TR 2X Leverage",
+  "NSE GSECBM Clean Price Index",
+  "NSE Quality 30",
+  "NV 20",
+  "Nifty 1D Rate Index",
+  "Nifty 50 Arbitrage",
+  "Nifty 50 Futures Index",
+  "Nifty 50 Futures TR Index",
+  "Nifty AI Catalysts",
+  "Nifty Aditya Birla Group",
+  "Nifty BHARAT Bond Index - April 2025",
+  "Nifty Capital Goods",
+  "Nifty Commercial & Transport Services",
+  "Nifty Construction",
+  "Nifty Consumer Services",
+  "Nifty Free Float Midcap 100",
+  "Nifty Free Float Smallcap 100",
+  "Nifty Full Midcap 100",
+  "Nifty Full Smallcap 100",
+  "Nifty High Dividend Yield 15",
+  "Nifty Hospitals",
+  "Nifty Housing Finance",
+  "Nifty India Corporate Group Index - Aditya Birla Group",
+  "Nifty India Corporate Group Index - Mahindra Group",
+  "Nifty India Corporate Group Index - Tata Group",
+  "Nifty India Defence Equal Weight",
+  "Nifty India Internet & E-Commerce",
+  "Nifty Insurance",
+  "Nifty Mahindra Group",
+  "Nifty NBFC",
+  "Nifty Next 100",
+  "Nifty Power",
+  "Nifty Quality 30",
+  "Nifty REITs & InvITs",
+  "Nifty REITs & InvITs 90:10",
+  "Nifty Retail",
+  "Nifty Small Finance Banks & Microfinance Institutions",
+  "Nifty Sugar & Ethanol",
+  "Nifty TR 1X Inverse",
+  "Nifty TR 2X Leverage",
+  "Nifty Tata Group",
+  "Nifty Tata Group 25% Cap",
+  "Nifty Telecommunications",
+  "Nifty100 ESG Sector Leaders - Old",
+  "Nifty500 Ahimsa",
+  "Nifty500 Growth 50",
+  "S&P CNX 500",
+  "S&P CNX 500 Shariah",
+  "S&P CNX Nifty",
+  "S&P CNX Nifty Dividend",
+  "S&P CNX Nifty Shariah",
+  "S&P ESG India"
+ ],
+ "walk": {
+  "INDIA VIX": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2009-12-06"
+  },
+  "NIFTY 100": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY 200": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY 50": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY 500": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY ALPHA 50": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY AUTO": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY BANK": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY CEMENT": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2025-08-21"
+  },
+  "NIFTY CHEMICALS": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2024-09-12"
+  },
+  "NIFTY CONSUMER DURABLES": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY DIVIDEND OPPORTUNITIES 50": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2007-03-26"
+  },
+  "NIFTY FINANCIAL SERVICES": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY FINANCIAL SERVICES 25/50": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2016-01-09"
+  },
+  "NIFTY FINANCIAL SERVICES EX-BANK": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2016-01-09"
+  },
+  "NIFTY FMCG": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY GROWTH SECTORS 15": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2008-06-18"
+  },
+  "NIFTY HEALTHCARE INDEX": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY INDIA FPI 150": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2025-02-15"
+  },
+  "NIFTY IT": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY LARGEMIDCAP 250": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY MEDIA": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY METAL": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2010-12-05"
+  },
+  "NIFTY MICROCAP 250": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2016-01-09"
+  },
+  "NIFTY MIDCAP 100": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2015-05-13"
+  },
+  "NIFTY MIDCAP 150": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY MIDCAP 50": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY MIDCAP SELECT": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2016-01-09"
+  },
+  "NIFTY MIDSMALL FINANCIAL SERVICES": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2016-01-09"
+  },
+  "NIFTY MIDSMALL HEALTHCARE": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2016-01-09"
+  },
+  "NIFTY MIDSMALL IT & TELECOM": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2016-01-09"
+  },
+  "NIFTY MIDSMALLCAP 400": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY MIDSMALLCAP400 50:50": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2025-08-09"
+  },
+  "NIFTY NEXT 50": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY OIL & GAS": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY PHARMA": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY PRIVATE BANK": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY PSU BANK": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY REALTY": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY REITS & REALTY": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2025-09-05"
+  },
+  "NIFTY SMALLCAP 100": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2015-05-13"
+  },
+  "NIFTY SMALLCAP 250": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY SMALLCAP 50": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY SMALLCAP 500": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2025-07-05"
+  },
+  "NIFTY TOTAL MARKET": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2016-01-09"
+  },
+  "NIFTY100 EQUAL WEIGHT": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2015-05-13"
+  },
+  "NIFTY100 LOW VOLATILITY 30": {
+   "empties": 0,
+   "oldest_checked": "2009-02-14"
+  },
+  "NIFTY100 QUALITY 30": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2016-01-09"
+  },
+  "NIFTY50 DIVIDEND POINTS": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY50 EQUAL WEIGHT": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  },
+  "NIFTY50 PR 1X INVERSE": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2008-09-16"
+  },
+  "NIFTY50 PR 2X LEVERAGE": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2008-09-16"
+  },
+  "NIFTY50 TR 1X INVERSE": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2008-09-16"
+  },
+  "NIFTY50 TR 2X LEVERAGE": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2008-09-16"
+  },
+  "NIFTY50 VALUE 20": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2008-06-18"
+  },
+  "NIFTY500 HEALTHCARE": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2025-01-03"
+  },
+  "NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED": {
+   "done": true,
+   "empties": 2,
+   "oldest_checked": "2016-01-09"
+  },
+  "NIFTY500 MULTICAP 50:25:25": {
+   "done": true,
+   "empties": 0,
+   "oldest_checked": "2007-01-01"
+  }
+ }
+}

@@ -73,6 +73,8 @@ Trading days 2007-01-01 -> 2026-10-30: ~4,900. Nifty 500 stocks (many listed lat
 | Corporate actions, meta, snapshot | - | ~5 MB |
 | **Repo at start** | | **~160 MB** |
 
+**Measured after the backfill (2026-10-31):** 2,259,299 rows, 1,519 files, ~90 MB (stocks 71 MB, indices 19 MB).
+
 Growth per year: daily lines + snapshot (~30 MB) + year-end Parquet (~10 MB) + adjusted rewrites after splits/bonus (~10 MB) = **~50 MB/year**.
 -> under 1 GB for 15+ years. Option "ALL NSE EQ stocks" (~2,200) ~= x4 -> ~600 MB at start: then older history moves to GitHub Releases assets.
 Website (Pages, not in git): one chart file per instrument ~220 KB (~70 KB gzip when opened), ~170 MB total (Pages limit 1 GB).

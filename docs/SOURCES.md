@@ -21,7 +21,7 @@ Script: `scripts/probe_sources.py`.
 |---|---|---|---|
 | Stock OHLCV, raw "as traded", 2007 -> today | NSE equity bhavcopy archive (one file per day, all stocks; old format until 05-Jul-2024, UDiFF from 08-Jul-2024) | keep last good data (Angel One is adjusted, so not a raw source) | Angel One candles + yfinance `Close` (both split/bonus-adjusted) |
 | List of NSE indices | NSE `api/allIndices` (139 listed) + daily `ind_close_all` file (167 rows) | Angel One instrument master (57 NSE indices) | - |
-| NSE index history 2007 -> | NSE `api/historicalOR/indicesHistory` (NIFTY 50 Jan-2007 OK) | `ind_close_all_DDMMYYYY.csv` archive (404 for 2007 and 2010, OK from 2013: starts somewhere 2010-2013) | - |
+| NSE index history 2007 -> | `ind_close_all_DDMMYYYY.csv` archive from 21-Feb-2012 (all indices per day; names before the Nov-2015 rename are old, e.g. "CNX Bank") + NSE `api/historicalOR/indicesHistory` for the years before each index's first file day (max 365 days and ~70 rows per call, ~5 s per call; it knows old names) | - | - |
 | NSE index daily | `ind_close_all_DDMMYYYY.csv` | historicalOR API / Angel One | - |
 | List of BSE indices | BSE `FillddlIndex` (151 listed) | Angel One instrument master (40 BSE indices) | - |
 | BSE index history 2007 -> | BSE `IndexArchDaily` with the index code, e.g. `index=SENSEX` (Jan-2007 OK, **PC only**: 403 from GitHub) | Angel One candles (40 BSE indices, from 2007) | - |
@@ -45,4 +45,5 @@ Script: `scripts/probe_sources.py`.
 
 ## Open questions for Phase 3
 - Daily values for the ~110 BSE indices that Angel One does not list (BSE API refuses GitHub).
-- Exact start date of NSE's `ind_close_all` archive (somewhere 2010-2013); only a secondary source.
+- (answered) NSE's `ind_close_all` archive starts 21-Feb-2012 (30 indices that day).
+- BSE `ProduceCSVForDate` gives 2007 -> today in one call per index (PC only); 12 BSE bond indices return nothing.

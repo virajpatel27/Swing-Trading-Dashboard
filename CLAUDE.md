@@ -38,11 +38,18 @@ Viraj. **Not a programmer.** Answer in Gujarati-English mix (Latin letters), sho
 - Tests (must be green before every push): `<python> -m pytest -q`. Secret check: `<python> scripts/check_secrets.py`.
 - Source probe (read-only): `<python> scripts/probe_sources.py` -> `reports/probe_pc.md`.
 - Data sources and their fallbacks: `docs/SOURCES.md`.
+- Backfill (resumable, checkpoints in `data/meta/checkpoints/`): `<python> scripts/backfill.py --job stocks|nse-indices|bse-indices|all`
+  (BSE only from the PC). GitHub: Actions -> Backfill history. Then `<python> scripts/validate_data.py` (exit 1 = do not commit).
+- Storage: `swingdash/store.py` - per instrument `hist_<y0>_<y1>.parquet` (closed years) + `current.csv` (this year).
+  Meta: `data/meta/instruments.csv`, `data_issues.csv`, `health.json`, `trading_days.csv`, `universe_stocks.csv`, `indices_nse.csv`, `indices_bse.csv`.
 
 ## Status
 Phase 1 plan approved 2026-10-31 (daily 20:15 IST OK). Phase 2: skeleton + PC probe done; repo published (public)
-https://github.com/virajpatel27/Swing-Trading-Dashboard, Tests green, Secrets set, GitHub probe done. **Phase 2 done** (2026-10-31);
-waiting for "continue" -> Phase 3. Don't poll api.github.com often (60 calls/hour without a token): read the run page HTML.
+https://github.com/virajpatel27/Swing-Trading-Dashboard, Tests green, Secrets set, GitHub probe done. **Phase 2 done** (2026-10-31).
+**Phase 3** (2026-10-31): storage, backfill, validation built (40 tests). Data: 500 stocks 2007 -> 2026-10-30, 139 BSE indices,
+139 NSE indices (2012+ complete for all; pre-2012 for 57; the rest + gap fill to finish from GitHub Actions because NSE's API
+blocked this PC after ~1 h). Don't poll api.github.com often (60 calls/hour without a token): read the run page HTML.
+- NSE politeness: never run two jobs on the same NSE host at once; the NSE API stops answering after ~20-25 min of steady calls.
 Repo folder on the PC: `C:\Users\hello\OneDrive\Documents\Swing Trading\Swing Trading` (nested). Manual steps: `docs/MANUAL_CHECKLIST.md`.
 Read GitHub run results without a token via the public API (`api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/runs`,
 then `.../actions/runs/<id>/jobs` and `.../check-runs/<job id>/annotations`). Logs, Summary page and artifacts need a signed-in user,

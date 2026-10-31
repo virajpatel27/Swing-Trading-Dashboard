@@ -1,0 +1,16 @@
+# Pipeline settings. Change this file, not the code.
+ADJUST_DIVIDENDS: false              # Phase 4: back-adjust for dividends too (default off)
+
+polite:                              # seconds between two calls to the same site
+  nse_archives: 0.6
+  nse_api: 3.0
+  bse_api: 1.5
+
+nse_index_chunk_days: 90             # NSE historicalOR allows <= 365 days but returns at most ~70 rows per call
+nse_index_file_start: 2012-02-21     # first day of NSE's ind_close_all archive (found 2026-10-31)
+flush_every_days: 500                # backfill writes to disk every N trading days (and at the end / time limit)
+
+validation:
+  max_row_drop_pct: 1.0              # a run that makes an instrument lose more rows than this is refused
+  jump_pct: 20.0                     # close-to-close move above this with no corporate action -> data issue
+  recheck_days: 5                    # daily job re-reads the last N trading days

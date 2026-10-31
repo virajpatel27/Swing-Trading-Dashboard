@@ -1,0 +1,779 @@
+kind,exchange,id,name,category,path,first_date,last_date,rows,source
+stock,NSE,360ONE,360ONE,Financial Services,stocks/raw/360ONE,2019-09-19,2026-10-30,1757,NSE bhavcopy
+stock,NSE,AADHARHFC,AADHARHFC,Financial Services,stocks/raw/AADHARHFC,2024-05-15,2026-10-30,609,NSE bhavcopy
+stock,NSE,AARTIIND,AARTIIND,Chemicals,stocks/raw/AARTIIND,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,AAVAS,AAVAS,Financial Services,stocks/raw/AAVAS,2018-10-08,2026-10-30,1990,NSE bhavcopy
+stock,NSE,ABB,ABB,Capital Goods,stocks/raw/ABB,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ABBOTINDIA,ABBOTINDIA,Healthcare,stocks/raw/ABBOTINDIA,2010-01-08,2026-10-30,4152,NSE bhavcopy
+stock,NSE,ABCAPITAL,ABCAPITAL,Financial Services,stocks/raw/ABCAPITAL,2017-09-01,2026-10-30,2262,NSE bhavcopy
+stock,NSE,ABDL,ABDL,Fast Moving Consumer Goods,stocks/raw/ABDL,2024-07-02,2026-10-30,577,NSE bhavcopy
+stock,NSE,ABREL,ABREL,Realty,stocks/raw/ABREL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ABSLAMC,ABSLAMC,Financial Services,stocks/raw/ABSLAMC,2021-10-11,2026-10-30,1248,NSE bhavcopy
+stock,NSE,ACC,ACC,Construction Materials,stocks/raw/ACC,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ACE,ACE,Capital Goods,stocks/raw/ACE,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ACMESOLAR,ACMESOLAR,Power,stocks/raw/ACMESOLAR,2024-11-13,2026-10-30,484,NSE bhavcopy
+stock,NSE,ACUTAAS,ACUTAAS,Healthcare,stocks/raw/ACUTAAS,2021-09-14,2026-10-30,1267,NSE bhavcopy
+stock,NSE,ADANIENSOL,ADANIENSOL,Power,stocks/raw/ADANIENSOL,2015-07-31,2026-10-30,2776,NSE bhavcopy
+stock,NSE,ADANIENT,ADANIENT,Metals & Mining,stocks/raw/ADANIENT,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ADANIGREEN,ADANIGREEN,Power,stocks/raw/ADANIGREEN,2018-06-18,2026-10-30,2065,NSE bhavcopy
+stock,NSE,ADANIPORTS,ADANIPORTS,Services,stocks/raw/ADANIPORTS,2007-11-27,2026-10-30,4667,NSE bhavcopy
+stock,NSE,ADANIPOWER,ADANIPOWER,Power,stocks/raw/ADANIPOWER,2009-08-20,2026-10-30,4244,NSE bhavcopy
+stock,NSE,AEGISLOG,AEGISLOG,Oil Gas & Consumable Fuels,stocks/raw/AEGISLOG,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,AEGISVOPAK,AEGISVOPAK,Oil Gas & Consumable Fuels,stocks/raw/AEGISVOPAK,2025-06-02,2026-10-30,351,NSE bhavcopy
+stock,NSE,AETHER,AETHER,Chemicals,stocks/raw/AETHER,2022-06-03,2026-10-30,1088,NSE bhavcopy
+stock,NSE,AFCONS,AFCONS,Construction,stocks/raw/AFCONS,2024-11-04,2026-10-30,491,NSE bhavcopy
+stock,NSE,AFFLE,AFFLE,Information Technology,stocks/raw/AFFLE,2019-08-08,2026-10-30,1783,NSE bhavcopy
+stock,NSE,AIAENG,AIAENG,Capital Goods,stocks/raw/AIAENG,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,AIIL,AIIL,Financial Services,stocks/raw/AIIL,2024-04-23,2026-10-30,624,NSE bhavcopy
+stock,NSE,AJANTPHARM,AJANTPHARM,Healthcare,stocks/raw/AJANTPHARM,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ALKEM,ALKEM,Healthcare,stocks/raw/ALKEM,2015-12-23,2026-10-30,2679,NSE bhavcopy
+stock,NSE,AMBER,AMBER,Consumer Durables,stocks/raw/AMBER,2018-01-30,2026-10-30,2159,NSE bhavcopy
+stock,NSE,AMBUJACEM,AMBUJACEM,Construction Materials,stocks/raw/AMBUJACEM,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ANANDRATHI,ANANDRATHI,Financial Services,stocks/raw/ANANDRATHI,2021-12-14,2026-10-30,1205,NSE bhavcopy
+stock,NSE,ANANTRAJ,ANANTRAJ,Realty,stocks/raw/ANANTRAJ,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,ANGELONE,ANGELONE,Financial Services,stocks/raw/ANGELONE,2020-10-05,2026-10-30,1500,NSE bhavcopy
+stock,NSE,ANTHEM,ANTHEM,Healthcare,stocks/raw/ANTHEM,2025-07-21,2026-10-30,316,NSE bhavcopy
+stock,NSE,ANURAS,ANURAS,Chemicals,stocks/raw/ANURAS,2021-03-24,2026-10-30,1383,NSE bhavcopy
+stock,NSE,APARINDS,APARINDS,Capital Goods,stocks/raw/APARINDS,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,APLAPOLLO,APLAPOLLO,Capital Goods,stocks/raw/APLAPOLLO,2011-12-14,2026-10-30,3669,NSE bhavcopy
+stock,NSE,APOLLOHOSP,APOLLOHOSP,Healthcare,stocks/raw/APOLLOHOSP,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,APOLLOTYRE,APOLLOTYRE,Automobile and Auto Components,stocks/raw/APOLLOTYRE,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,APTUS,APTUS,Financial Services,stocks/raw/APTUS,2021-08-24,2026-10-30,1281,NSE bhavcopy
+stock,NSE,ARE_M,ARE&M,Automobile and Auto Components,stocks/raw/ARE_M,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ASAHIINDIA,ASAHIINDIA,Automobile and Auto Components,stocks/raw/ASAHIINDIA,2007-01-02,2026-10-30,4891,NSE bhavcopy
+stock,NSE,ASHOKLEY,ASHOKLEY,Capital Goods,stocks/raw/ASHOKLEY,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ASIANPAINT,ASIANPAINT,Consumer Durables,stocks/raw/ASIANPAINT,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ASTERDM,ASTERDM,Healthcare,stocks/raw/ASTERDM,2018-02-26,2026-10-30,2141,NSE bhavcopy
+stock,NSE,ASTRAL,ASTRAL,Capital Goods,stocks/raw/ASTRAL,2007-03-20,2026-10-30,4839,NSE bhavcopy
+stock,NSE,ATGL,ATGL,Oil Gas & Consumable Fuels,stocks/raw/ATGL,2018-11-05,2026-10-30,1971,NSE bhavcopy
+stock,NSE,ATHERENERG,ATHERENERG,Automobile and Auto Components,stocks/raw/ATHERENERG,2025-05-06,2026-10-30,370,NSE bhavcopy
+stock,NSE,ATUL,ATUL,Chemicals,stocks/raw/ATUL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,AUBANK,AUBANK,Financial Services,stocks/raw/AUBANK,2017-07-10,2026-10-30,2299,NSE bhavcopy
+stock,NSE,AUROPHARMA,AUROPHARMA,Healthcare,stocks/raw/AUROPHARMA,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,AVANTIFEED,AVANTIFEED,Fast Moving Consumer Goods,stocks/raw/AVANTIFEED,2015-04-15,2026-10-30,2852,NSE bhavcopy
+stock,NSE,AWL,AWL,Fast Moving Consumer Goods,stocks/raw/AWL,2022-02-08,2026-10-30,1166,NSE bhavcopy
+stock,NSE,AXISBANK,AXISBANK,Financial Services,stocks/raw/AXISBANK,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,AZAD,AZAD,Capital Goods,stocks/raw/AZAD,2023-12-28,2026-10-30,700,NSE bhavcopy
+stock,NSE,BAGMANE,BAGMANE,Realty,stocks/raw/BAGMANE,2026-05-14,2026-10-30,117,NSE bhavcopy
+stock,NSE,BAJAJ-AUTO,BAJAJ-AUTO,Automobile and Auto Components,stocks/raw/BAJAJ-AUTO,2008-05-26,2026-10-30,4547,NSE bhavcopy
+stock,NSE,BAJAJFINSV,BAJAJFINSV,Financial Services,stocks/raw/BAJAJFINSV,2008-05-26,2026-10-30,4546,NSE bhavcopy
+stock,NSE,BAJAJHFL,BAJAJHFL,Financial Services,stocks/raw/BAJAJHFL,2024-09-16,2026-10-30,525,NSE bhavcopy
+stock,NSE,BAJAJHLDNG,BAJAJHLDNG,Financial Services,stocks/raw/BAJAJHLDNG,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,BAJFINANCE,BAJFINANCE,Financial Services,stocks/raw/BAJFINANCE,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,BALKRISIND,BALKRISIND,Automobile and Auto Components,stocks/raw/BALKRISIND,2007-01-02,2026-10-30,4888,NSE bhavcopy
+stock,NSE,BALRAMCHIN,BALRAMCHIN,Fast Moving Consumer Goods,stocks/raw/BALRAMCHIN,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,BANDHANBNK,BANDHANBNK,Financial Services,stocks/raw/BANDHANBNK,2018-03-27,2026-10-30,2121,NSE bhavcopy
+stock,NSE,BANKBARODA,BANKBARODA,Financial Services,stocks/raw/BANKBARODA,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,BANKINDIA,BANKINDIA,Financial Services,stocks/raw/BANKINDIA,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,BATAINDIA,BATAINDIA,Consumer Durables,stocks/raw/BATAINDIA,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,BBOX,BBOX,Information Technology,stocks/raw/BBOX,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,BDL,BDL,Capital Goods,stocks/raw/BDL,2018-03-23,2026-10-30,2123,NSE bhavcopy
+stock,NSE,BEL,BEL,Capital Goods,stocks/raw/BEL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,BELRISE,BELRISE,Automobile and Auto Components,stocks/raw/BELRISE,2025-05-28,2026-10-30,354,NSE bhavcopy
+stock,NSE,BEML,BEML,Capital Goods,stocks/raw/BEML,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,BERGEPAINT,BERGEPAINT,Consumer Durables,stocks/raw/BERGEPAINT,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,BHARATCOAL,BHARATCOAL,Oil Gas & Consumable Fuels,stocks/raw/BHARATCOAL,2026-01-19,2026-10-30,193,NSE bhavcopy
+stock,NSE,BHARATFORG,BHARATFORG,Automobile and Auto Components,stocks/raw/BHARATFORG,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,BHARTIARTL,BHARTIARTL,Telecommunication,stocks/raw/BHARTIARTL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,BHARTIHEXA,BHARTIHEXA,Telecommunication,stocks/raw/BHARTIHEXA,2024-04-12,2026-10-30,630,NSE bhavcopy
+stock,NSE,BHEL,BHEL,Capital Goods,stocks/raw/BHEL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,BIOCON,BIOCON,Healthcare,stocks/raw/BIOCON,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,BIRET,BIRET,Realty,stocks/raw/BIRET,2021-02-16,2026-10-30,1408,NSE bhavcopy
+stock,NSE,BLS,BLS,Consumer Services,stocks/raw/BLS,2016-06-15,2026-10-30,2562,NSE bhavcopy
+stock,NSE,BLUESTARCO,BLUESTARCO,Consumer Durables,stocks/raw/BLUESTARCO,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,BOSCHLTD,BOSCHLTD,Automobile and Auto Components,stocks/raw/BOSCHLTD,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,BPCL,BPCL,Oil Gas & Consumable Fuels,stocks/raw/BPCL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,BRIGADE,BRIGADE,Realty,stocks/raw/BRIGADE,2007-12-31,2026-10-30,4645,NSE bhavcopy
+stock,NSE,BRITANNIA,BRITANNIA,Fast Moving Consumer Goods,stocks/raw/BRITANNIA,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,BSE,BSE,Financial Services,stocks/raw/BSE,2017-02-03,2026-10-30,2404,NSE bhavcopy
+stock,NSE,BSOFT,BSOFT,Information Technology,stocks/raw/BSOFT,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,CAMS,CAMS,Financial Services,stocks/raw/CAMS,2020-10-05,2026-10-30,1500,NSE bhavcopy
+stock,NSE,CANBK,CANBK,Financial Services,stocks/raw/CANBK,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,CANFINHOME,CANFINHOME,Financial Services,stocks/raw/CANFINHOME,2007-01-02,2026-10-30,4891,NSE bhavcopy
+stock,NSE,CANHLIFE,CANHLIFE,Financial Services,stocks/raw/CANHLIFE,2025-10-17,2026-10-30,255,NSE bhavcopy
+stock,NSE,CAPLIPOINT,CAPLIPOINT,Healthcare,stocks/raw/CAPLIPOINT,2014-06-23,2026-10-30,3047,NSE bhavcopy
+stock,NSE,CARBORUNIV,CARBORUNIV,Capital Goods,stocks/raw/CARBORUNIV,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,CARTRADE,CARTRADE,Consumer Services,stocks/raw/CARTRADE,2021-08-20,2026-10-30,1283,NSE bhavcopy
+stock,NSE,CASTROLIND,CASTROLIND,Oil Gas & Consumable Fuels,stocks/raw/CASTROLIND,2014-03-14,2026-10-30,3112,NSE bhavcopy
+stock,NSE,CCL,CCL,Fast Moving Consumer Goods,stocks/raw/CCL,2007-01-02,2026-10-30,4891,NSE bhavcopy
+stock,NSE,CDSL,CDSL,Financial Services,stocks/raw/CDSL,2017-06-30,2026-10-30,2305,NSE bhavcopy
+stock,NSE,CEATLTD,CEATLTD,Automobile and Auto Components,stocks/raw/CEATLTD,2008-02-01,2026-10-30,4621,NSE bhavcopy
+stock,NSE,CEMPRO,CEMPRO,Construction,stocks/raw/CEMPRO,2007-01-02,2026-10-30,4866,NSE bhavcopy
+stock,NSE,CENTRALBK,CENTRALBK,Financial Services,stocks/raw/CENTRALBK,2007-08-21,2026-10-30,4736,NSE bhavcopy
+stock,NSE,CESC,CESC,Power,stocks/raw/CESC,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,CGCL,CGCL,Financial Services,stocks/raw/CGCL,2010-10-29,2026-10-30,3892,NSE bhavcopy
+stock,NSE,CGPOWER,CGPOWER,Capital Goods,stocks/raw/CGPOWER,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,CHAMBLFERT,CHAMBLFERT,Chemicals,stocks/raw/CHAMBLFERT,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,CHENNPETRO,CHENNPETRO,Oil Gas & Consumable Fuels,stocks/raw/CHENNPETRO,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,CHOICEIN,CHOICEIN,Financial Services,stocks/raw/CHOICEIN,2022-04-08,2026-10-30,1125,NSE bhavcopy
+stock,NSE,CHOLAFIN,CHOLAFIN,Financial Services,stocks/raw/CHOLAFIN,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,CHOLAHLDNG,CHOLAHLDNG,Financial Services,stocks/raw/CHOLAHLDNG,2017-09-25,2026-10-30,2246,NSE bhavcopy
+stock,NSE,CIEINDIA,CIEINDIA,Automobile and Auto Components,stocks/raw/CIEINDIA,2007-08-30,2026-10-30,4725,NSE bhavcopy
+stock,NSE,CIPLA,CIPLA,Healthcare,stocks/raw/CIPLA,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,CLEAN,CLEAN,Chemicals,stocks/raw/CLEAN,2021-07-19,2026-10-30,1305,NSE bhavcopy
+stock,NSE,CLEANMAX,CLEANMAX,Power,stocks/raw/CLEANMAX,2026-03-02,2026-10-30,164,NSE bhavcopy
+stock,NSE,CMPDI,CMPDI,Services,stocks/raw/CMPDI,2026-03-30,2026-10-30,146,NSE bhavcopy
+stock,NSE,COALINDIA,COALINDIA,Oil Gas & Consumable Fuels,stocks/raw/COALINDIA,2010-11-04,2026-10-30,3945,NSE bhavcopy
+stock,NSE,COCHINSHIP,COCHINSHIP,Capital Goods,stocks/raw/COCHINSHIP,2017-08-11,2026-10-30,2275,NSE bhavcopy
+stock,NSE,COFORGE,COFORGE,Information Technology,stocks/raw/COFORGE,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,COHANCE,COHANCE,Healthcare,stocks/raw/COHANCE,2020-03-09,2026-10-30,1642,NSE bhavcopy
+stock,NSE,COLPAL,COLPAL,Fast Moving Consumer Goods,stocks/raw/COLPAL,2007-12-17,2026-10-30,4653,NSE bhavcopy
+stock,NSE,CONCOR,CONCOR,Services,stocks/raw/CONCOR,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,CONCORDBIO,CONCORDBIO,Healthcare,stocks/raw/CONCORDBIO,2023-08-18,2026-10-30,788,NSE bhavcopy
+stock,NSE,COROMANDEL,COROMANDEL,Chemicals,stocks/raw/COROMANDEL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,CPPLUS,CPPLUS,Capital Goods,stocks/raw/CPPLUS,2025-08-05,2026-10-30,305,NSE bhavcopy
+stock,NSE,CRAFTSMAN,CRAFTSMAN,Automobile and Auto Components,stocks/raw/CRAFTSMAN,2021-03-25,2026-10-30,1382,NSE bhavcopy
+stock,NSE,CREDITACC,CREDITACC,Financial Services,stocks/raw/CREDITACC,2018-08-23,2026-10-30,2019,NSE bhavcopy
+stock,NSE,CRISIL,CRISIL,Financial Services,stocks/raw/CRISIL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,CROMPTON,CROMPTON,Consumer Durables,stocks/raw/CROMPTON,2016-05-13,2026-10-30,2585,NSE bhavcopy
+stock,NSE,CUB,CUB,Financial Services,stocks/raw/CUB,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,CUMMINSIND,CUMMINSIND,Capital Goods,stocks/raw/CUMMINSIND,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,CUPID,CUPID,Fast Moving Consumer Goods,stocks/raw/CUPID,2016-09-16,2026-10-30,2499,NSE bhavcopy
+stock,NSE,CYIENT,CYIENT,Information Technology,stocks/raw/CYIENT,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,DABUR,DABUR,Fast Moving Consumer Goods,stocks/raw/DABUR,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,DALBHARAT,DALBHARAT,Construction Materials,stocks/raw/DALBHARAT,2019-01-22,2026-10-30,1918,NSE bhavcopy
+stock,NSE,DATAPATTNS,DATAPATTNS,Capital Goods,stocks/raw/DATAPATTNS,2021-12-24,2026-10-30,1197,NSE bhavcopy
+stock,NSE,DEEPAKFERT,DEEPAKFERT,Chemicals,stocks/raw/DEEPAKFERT,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,DEEPAKNTR,DEEPAKNTR,Chemicals,stocks/raw/DEEPAKNTR,2010-09-29,2026-10-30,3879,NSE bhavcopy
+stock,NSE,DELHIVERY,DELHIVERY,Services,stocks/raw/DELHIVERY,2022-05-24,2026-10-30,1096,NSE bhavcopy
+stock,NSE,DEVYANI,DEVYANI,Consumer Services,stocks/raw/DEVYANI,2021-08-16,2026-10-30,1286,NSE bhavcopy
+stock,NSE,DIVISLAB,DIVISLAB,Healthcare,stocks/raw/DIVISLAB,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,DIXON,DIXON,Consumer Durables,stocks/raw/DIXON,2017-09-18,2026-10-30,2251,NSE bhavcopy
+stock,NSE,DLF,DLF,Realty,stocks/raw/DLF,2007-07-05,2026-10-30,4768,NSE bhavcopy
+stock,NSE,DMART,DMART,Consumer Services,stocks/raw/DMART,2017-03-21,2026-10-30,2374,NSE bhavcopy
+stock,NSE,DOMS,DOMS,Fast Moving Consumer Goods,stocks/raw/DOMS,2023-12-20,2026-10-30,705,NSE bhavcopy
+stock,NSE,DRREDDY,DRREDDY,Healthcare,stocks/raw/DRREDDY,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ECLERX,ECLERX,Services,stocks/raw/ECLERX,2007-12-31,2026-10-30,4644,NSE bhavcopy
+stock,NSE,EICHERMOT,EICHERMOT,Automobile and Auto Components,stocks/raw/EICHERMOT,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,EIDPARRY,EIDPARRY,Fast Moving Consumer Goods,stocks/raw/EIDPARRY,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,EIHOTEL,EIHOTEL,Consumer Services,stocks/raw/EIHOTEL,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,ELECON,ELECON,Capital Goods,stocks/raw/ELECON,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ELGIEQUIP,ELGIEQUIP,Capital Goods,stocks/raw/ELGIEQUIP,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,EMAMILTD,EMAMILTD,Fast Moving Consumer Goods,stocks/raw/EMAMILTD,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,EMBASSY,EMBASSY,Realty,stocks/raw/EMBASSY,2019-04-01,2026-10-30,1871,NSE bhavcopy
+stock,NSE,EMCURE,EMCURE,Healthcare,stocks/raw/EMCURE,2024-07-10,2026-10-30,571,NSE bhavcopy
+stock,NSE,EMMVEE,EMMVEE,Capital Goods,stocks/raw/EMMVEE,2025-11-18,2026-10-30,235,NSE bhavcopy
+stock,NSE,ENDURANCE,ENDURANCE,Automobile and Auto Components,stocks/raw/ENDURANCE,2016-10-19,2026-10-30,2478,NSE bhavcopy
+stock,NSE,ENGINERSIN,ENGINERSIN,Construction,stocks/raw/ENGINERSIN,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ENRIN,ENRIN,Capital Goods,stocks/raw/ENRIN,2025-06-19,2026-10-30,338,NSE bhavcopy
+stock,NSE,ESCORTS,ESCORTS,Capital Goods,stocks/raw/ESCORTS,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ETERNAL,ETERNAL,Consumer Services,stocks/raw/ETERNAL,2021-07-23,2026-10-30,1302,NSE bhavcopy
+stock,NSE,EXIDEIND,EXIDEIND,Automobile and Auto Components,stocks/raw/EXIDEIND,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,FACT,FACT,Chemicals,stocks/raw/FACT,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,FEDERALBNK,FEDERALBNK,Financial Services,stocks/raw/FEDERALBNK,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,FINCABLES,FINCABLES,Capital Goods,stocks/raw/FINCABLES,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,FIRSTCRY,FIRSTCRY,Consumer Services,stocks/raw/FIRSTCRY,2024-08-13,2026-10-30,548,NSE bhavcopy
+stock,NSE,FIVESTAR,FIVESTAR,Financial Services,stocks/raw/FIVESTAR,2022-11-21,2026-10-30,973,NSE bhavcopy
+stock,NSE,FLUOROCHEM,FLUOROCHEM,Chemicals,stocks/raw/FLUOROCHEM,2019-10-16,2026-10-30,1740,NSE bhavcopy
+stock,NSE,FORCEMOT,FORCEMOT,Automobile and Auto Components,stocks/raw/FORCEMOT,2019-08-19,2026-10-30,1704,NSE bhavcopy
+stock,NSE,FORTIS,FORTIS,Healthcare,stocks/raw/FORTIS,2007-05-09,2026-10-30,4809,NSE bhavcopy
+stock,NSE,FRACTAL,FRACTAL,Information Technology,stocks/raw/FRACTAL,2026-02-16,2026-10-30,174,NSE bhavcopy
+stock,NSE,FSL,FSL,Services,stocks/raw/FSL,2007-02-22,2026-10-30,4859,NSE bhavcopy
+stock,NSE,GABRIEL,GABRIEL,Automobile and Auto Components,stocks/raw/GABRIEL,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,GAIL,GAIL,Oil Gas & Consumable Fuels,stocks/raw/GAIL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,GALLANTT,GALLANTT,Capital Goods,stocks/raw/GALLANTT,2007-01-02,2026-10-30,4796,NSE bhavcopy
+stock,NSE,GESHIP,GESHIP,Services,stocks/raw/GESHIP,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,GICRE,GICRE,Financial Services,stocks/raw/GICRE,2017-10-25,2026-10-30,2226,NSE bhavcopy
+stock,NSE,GILLETTE,GILLETTE,Fast Moving Consumer Goods,stocks/raw/GILLETTE,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,GLAND,GLAND,Healthcare,stocks/raw/GLAND,2020-11-20,2026-10-30,1467,NSE bhavcopy
+stock,NSE,GLAXO,GLAXO,Healthcare,stocks/raw/GLAXO,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,GLENMARK,GLENMARK,Healthcare,stocks/raw/GLENMARK,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,GMDCLTD,GMDCLTD,Metals & Mining,stocks/raw/GMDCLTD,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,GMRAIRPORT,GMRAIRPORT,Services,stocks/raw/GMRAIRPORT,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,GODFRYPHLP,GODFRYPHLP,Fast Moving Consumer Goods,stocks/raw/GODFRYPHLP,2007-01-02,2026-10-30,4890,NSE bhavcopy
+stock,NSE,GODREJCP,GODREJCP,Fast Moving Consumer Goods,stocks/raw/GODREJCP,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,GODREJIND,GODREJIND,Diversified,stocks/raw/GODREJIND,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,GODREJPROP,GODREJPROP,Realty,stocks/raw/GODREJPROP,2010-01-05,2026-10-30,4155,NSE bhavcopy
+stock,NSE,GPIL,GPIL,Capital Goods,stocks/raw/GPIL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,GRANULES,GRANULES,Healthcare,stocks/raw/GRANULES,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,GRAPHITE,GRAPHITE,Capital Goods,stocks/raw/GRAPHITE,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,GRASIM,GRASIM,Construction Materials,stocks/raw/GRASIM,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,GRAVITA,GRAVITA,Metals & Mining,stocks/raw/GRAVITA,2010-11-16,2026-10-30,3937,NSE bhavcopy
+stock,NSE,GROWW,GROWW,Financial Services,stocks/raw/GROWW,2025-11-12,2026-10-30,239,NSE bhavcopy
+stock,NSE,GRSE,GRSE,Capital Goods,stocks/raw/GRSE,2018-10-10,2026-10-30,1988,NSE bhavcopy
+stock,NSE,GVT_D,GVT&D,Capital Goods,stocks/raw/GVT_D,2008-06-30,2026-10-30,4522,NSE bhavcopy
+stock,NSE,HAL,HAL,Capital Goods,stocks/raw/HAL,2018-03-28,2026-10-30,2120,NSE bhavcopy
+stock,NSE,HAVELLS,HAVELLS,Consumer Durables,stocks/raw/HAVELLS,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,HBLENGINE,HBLENGINE,Capital Goods,stocks/raw/HBLENGINE,2007-01-04,2026-10-30,4889,NSE bhavcopy
+stock,NSE,HCLTECH,HCLTECH,Information Technology,stocks/raw/HCLTECH,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,HDBFS,HDBFS,Financial Services,stocks/raw/HDBFS,2025-07-02,2026-10-30,329,NSE bhavcopy
+stock,NSE,HDFCAMC,HDFCAMC,Financial Services,stocks/raw/HDFCAMC,2018-08-06,2026-10-30,2030,NSE bhavcopy
+stock,NSE,HDFCBANK,HDFCBANK,Financial Services,stocks/raw/HDFCBANK,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,HDFCLIFE,HDFCLIFE,Financial Services,stocks/raw/HDFCLIFE,2017-11-17,2026-10-30,2209,NSE bhavcopy
+stock,NSE,HEGAM,HEGAM,Capital Goods,stocks/raw/HEGAM,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,HEROMOTOCO,HEROMOTOCO,Automobile and Auto Components,stocks/raw/HEROMOTOCO,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,HEXT,HEXT,Information Technology,stocks/raw/HEXT,2025-02-19,2026-10-30,417,NSE bhavcopy
+stock,NSE,HFCL,HFCL,Telecommunication,stocks/raw/HFCL,2011-03-09,2026-10-30,3860,NSE bhavcopy
+stock,NSE,HINDALCO,HINDALCO,Metals & Mining,stocks/raw/HINDALCO,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,HINDCOPPER,HINDCOPPER,Metals & Mining,stocks/raw/HINDCOPPER,2010-01-08,2026-10-30,4152,NSE bhavcopy
+stock,NSE,HINDPETRO,HINDPETRO,Oil Gas & Consumable Fuels,stocks/raw/HINDPETRO,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,HINDUNILVR,HINDUNILVR,Fast Moving Consumer Goods,stocks/raw/HINDUNILVR,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,HINDZINC,HINDZINC,Metals & Mining,stocks/raw/HINDZINC,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,HOMEFIRST,HOMEFIRST,Financial Services,stocks/raw/HOMEFIRST,2021-02-03,2026-10-30,1417,NSE bhavcopy
+stock,NSE,HONASA,HONASA,Fast Moving Consumer Goods,stocks/raw/HONASA,2023-11-07,2026-10-30,734,NSE bhavcopy
+stock,NSE,HONAUT,HONAUT,Capital Goods,stocks/raw/HONAUT,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,HSCL,HSCL,Chemicals,stocks/raw/HSCL,2007-03-02,2026-10-30,4852,NSE bhavcopy
+stock,NSE,HUDCO,HUDCO,Financial Services,stocks/raw/HUDCO,2017-05-19,2026-10-30,2334,NSE bhavcopy
+stock,NSE,HYUNDAI,HYUNDAI,Automobile and Auto Components,stocks/raw/HYUNDAI,2024-10-22,2026-10-30,500,NSE bhavcopy
+stock,NSE,ICICIAMC,ICICIAMC,Financial Services,stocks/raw/ICICIAMC,2025-12-19,2026-10-30,212,NSE bhavcopy
+stock,NSE,ICICIBANK,ICICIBANK,Financial Services,stocks/raw/ICICIBANK,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ICICIGI,ICICIGI,Financial Services,stocks/raw/ICICIGI,2017-09-27,2026-10-30,2244,NSE bhavcopy
+stock,NSE,ICICILIFE,ICICILIFE,Financial Services,stocks/raw/ICICILIFE,2016-09-29,2026-10-30,2490,NSE bhavcopy
+stock,NSE,IDBI,IDBI,Financial Services,stocks/raw/IDBI,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,IDEA,IDEA,Telecommunication,stocks/raw/IDEA,2007-03-09,2026-10-30,4848,NSE bhavcopy
+stock,NSE,IDFCFIRSTB,IDFCFIRSTB,Financial Services,stocks/raw/IDFCFIRSTB,2015-11-06,2026-10-30,2710,NSE bhavcopy
+stock,NSE,IEX,IEX,Financial Services,stocks/raw/IEX,2017-10-23,2026-10-30,2228,NSE bhavcopy
+stock,NSE,IFCI,IFCI,Financial Services,stocks/raw/IFCI,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,IGIL,IGIL,Services,stocks/raw/IGIL,2024-12-20,2026-10-30,459,NSE bhavcopy
+stock,NSE,IGL,IGL,Oil Gas & Consumable Fuels,stocks/raw/IGL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,IIFL,IIFL,Financial Services,stocks/raw/IIFL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,IKS,IKS,Information Technology,stocks/raw/IKS,2024-12-19,2026-10-30,460,NSE bhavcopy
+stock,NSE,INDHOTEL,INDHOTEL,Consumer Services,stocks/raw/INDHOTEL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,INDIACEM,INDIACEM,Construction Materials,stocks/raw/INDIACEM,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,INDIAMART,INDIAMART,Consumer Services,stocks/raw/INDIAMART,2019-07-04,2026-10-30,1808,NSE bhavcopy
+stock,NSE,INDIANB,INDIANB,Financial Services,stocks/raw/INDIANB,2007-03-01,2026-10-30,4854,NSE bhavcopy
+stock,NSE,INDIGO,INDIGO,Services,stocks/raw/INDIGO,2015-11-10,2026-10-30,2708,NSE bhavcopy
+stock,NSE,INDUSINDBK,INDUSINDBK,Financial Services,stocks/raw/INDUSINDBK,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,INDUSTOWER,INDUSTOWER,Telecommunication,stocks/raw/INDUSTOWER,2012-12-28,2026-10-30,3413,NSE bhavcopy
+stock,NSE,INFY,INFY,Information Technology,stocks/raw/INFY,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,INOXINDIA,INOXINDIA,Capital Goods,stocks/raw/INOXINDIA,2023-12-21,2026-10-30,704,NSE bhavcopy
+stock,NSE,INOXWIND,INOXWIND,Capital Goods,stocks/raw/INOXWIND,2015-04-09,2026-10-30,2855,NSE bhavcopy
+stock,NSE,INTELLECT,INTELLECT,Information Technology,stocks/raw/INTELLECT,2014-12-18,2026-10-30,2929,NSE bhavcopy
+stock,NSE,IOB,IOB,Financial Services,stocks/raw/IOB,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,IOC,IOC,Oil Gas & Consumable Fuels,stocks/raw/IOC,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,IPCALAB,IPCALAB,Healthcare,stocks/raw/IPCALAB,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,IRB,IRB,Construction,stocks/raw/IRB,2008-02-25,2026-10-30,4605,NSE bhavcopy
+stock,NSE,IRCON,IRCON,Construction,stocks/raw/IRCON,2018-09-28,2026-10-30,1995,NSE bhavcopy
+stock,NSE,IRCTC,IRCTC,Consumer Services,stocks/raw/IRCTC,2019-10-14,2026-10-30,1742,NSE bhavcopy
+stock,NSE,IREDA,IREDA,Financial Services,stocks/raw/IREDA,2023-11-29,2026-10-30,720,NSE bhavcopy
+stock,NSE,IRFC,IRFC,Financial Services,stocks/raw/IRFC,2021-01-29,2026-10-30,1420,NSE bhavcopy
+stock,NSE,ITC,ITC,Fast Moving Consumer Goods,stocks/raw/ITC,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ITCHOTELS,ITCHOTELS,Consumer Services,stocks/raw/ITCHOTELS,2025-01-29,2026-10-30,432,NSE bhavcopy
+stock,NSE,ITI,ITI,Telecommunication,stocks/raw/ITI,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,J_KBANK,J&KBANK,Financial Services,stocks/raw/J_KBANK,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,JAINREC,JAINREC,Metals & Mining,stocks/raw/JAINREC,2025-10-01,2026-10-30,266,NSE bhavcopy
+stock,NSE,JBMA,JBMA,Automobile and Auto Components,stocks/raw/JBMA,2007-01-02,2026-10-30,4715,NSE bhavcopy
+stock,NSE,JINDALSAW,JINDALSAW,Capital Goods,stocks/raw/JINDALSAW,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,JINDALSTEL,JINDALSTEL,Metals & Mining,stocks/raw/JINDALSTEL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,JIOFIN,JIOFIN,Financial Services,stocks/raw/JIOFIN,2023-08-21,2026-10-30,787,NSE bhavcopy
+stock,NSE,JKCEMENT,JKCEMENT,Construction Materials,stocks/raw/JKCEMENT,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,JKTYRE,JKTYRE,Automobile and Auto Components,stocks/raw/JKTYRE,2007-03-19,2026-10-30,4842,NSE bhavcopy
+stock,NSE,JMFINANCIL,JMFINANCIL,Financial Services,stocks/raw/JMFINANCIL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,JPPOWER,JPPOWER,Power,stocks/raw/JPPOWER,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,JSL,JSL,Metals & Mining,stocks/raw/JSL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,JSWCEMENT,JSWCEMENT,Construction Materials,stocks/raw/JSWCEMENT,2025-08-14,2026-10-30,298,NSE bhavcopy
+stock,NSE,JSWENERGY,JSWENERGY,Power,stocks/raw/JSWENERGY,2010-01-04,2026-10-30,4156,NSE bhavcopy
+stock,NSE,JSWINFRA,JSWINFRA,Services,stocks/raw/JSWINFRA,2023-10-03,2026-10-30,758,NSE bhavcopy
+stock,NSE,JSWSTEEL,JSWSTEEL,Metals & Mining,stocks/raw/JSWSTEEL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,JUBLFOOD,JUBLFOOD,Consumer Services,stocks/raw/JUBLFOOD,2010-02-08,2026-10-30,4132,NSE bhavcopy
+stock,NSE,JUBLINGREA,JUBLINGREA,Chemicals,stocks/raw/JUBLINGREA,2021-03-19,2026-10-30,1386,NSE bhavcopy
+stock,NSE,JWL,JWL,Capital Goods,stocks/raw/JWL,2010-10-18,2026-10-30,3958,NSE bhavcopy
+stock,NSE,JYOTICNC,JYOTICNC,Capital Goods,stocks/raw/JYOTICNC,2024-01-16,2026-10-30,687,NSE bhavcopy
+stock,NSE,KAJARIACER,KAJARIACER,Consumer Durables,stocks/raw/KAJARIACER,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,KALYANKJIL,KALYANKJIL,Consumer Durables,stocks/raw/KALYANKJIL,2021-03-26,2026-10-30,1381,NSE bhavcopy
+stock,NSE,KARURVYSYA,KARURVYSYA,Financial Services,stocks/raw/KARURVYSYA,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,KAYNES,KAYNES,Capital Goods,stocks/raw/KAYNES,2022-11-22,2026-10-30,972,NSE bhavcopy
+stock,NSE,KEC,KEC,Construction,stocks/raw/KEC,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,KEI,KEI,Capital Goods,stocks/raw/KEI,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,KFINTECH,KFINTECH,Financial Services,stocks/raw/KFINTECH,2022-12-29,2026-10-30,945,NSE bhavcopy
+stock,NSE,KIMS,KIMS,Healthcare,stocks/raw/KIMS,2021-06-28,2026-10-30,1320,NSE bhavcopy
+stock,NSE,KIRLOSBROS,KIRLOSBROS,Capital Goods,stocks/raw/KIRLOSBROS,2010-04-20,2026-10-30,4086,NSE bhavcopy
+stock,NSE,KIRLOSENG,KIRLOSENG,Capital Goods,stocks/raw/KIRLOSENG,2010-12-24,2026-10-30,3911,NSE bhavcopy
+stock,NSE,KOTAKBANK,KOTAKBANK,Financial Services,stocks/raw/KOTAKBANK,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,KPIL,KPIL,Construction,stocks/raw/KPIL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,KPITTECH,KPITTECH,Information Technology,stocks/raw/KPITTECH,2019-04-22,2026-10-30,1858,NSE bhavcopy
+stock,NSE,KPRMILL,KPRMILL,Textiles,stocks/raw/KPRMILL,2007-08-28,2026-10-30,4730,NSE bhavcopy
+stock,NSE,KSB,KSB,Capital Goods,stocks/raw/KSB,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,LALPATHLAB,LALPATHLAB,Healthcare,stocks/raw/LALPATHLAB,2015-12-23,2026-10-30,2679,NSE bhavcopy
+stock,NSE,LAURUSLABS,LAURUSLABS,Healthcare,stocks/raw/LAURUSLABS,2016-12-19,2026-10-30,2437,NSE bhavcopy
+stock,NSE,LEMONTREE,LEMONTREE,Consumer Services,stocks/raw/LEMONTREE,2018-04-09,2026-10-30,2114,NSE bhavcopy
+stock,NSE,LENSKART,LENSKART,Consumer Services,stocks/raw/LENSKART,2025-11-10,2026-10-30,241,NSE bhavcopy
+stock,NSE,LGEINDIA,LGEINDIA,Consumer Durables,stocks/raw/LGEINDIA,2025-10-14,2026-10-30,258,NSE bhavcopy
+stock,NSE,LICHSGFIN,LICHSGFIN,Financial Services,stocks/raw/LICHSGFIN,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,LICI,LICI,Financial Services,stocks/raw/LICI,2022-05-17,2026-10-30,1101,NSE bhavcopy
+stock,NSE,LINDEINDIA,LINDEINDIA,Chemicals,stocks/raw/LINDEINDIA,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,LLOYDSME,LLOYDSME,Metals & Mining,stocks/raw/LLOYDSME,2023-07-17,2026-10-30,811,NSE bhavcopy
+stock,NSE,LODHA,LODHA,Realty,stocks/raw/LODHA,2021-04-19,2026-10-30,1368,NSE bhavcopy
+stock,NSE,LT,LT,Construction,stocks/raw/LT,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,LTF,LTF,Financial Services,stocks/raw/LTF,2011-08-12,2026-10-30,3751,NSE bhavcopy
+stock,NSE,LTFOODS,LTFOODS,Fast Moving Consumer Goods,stocks/raw/LTFOODS,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,LTM,LTM,Information Technology,stocks/raw/LTM,2016-07-21,2026-10-30,2537,NSE bhavcopy
+stock,NSE,LTTS,LTTS,Information Technology,stocks/raw/LTTS,2016-09-23,2026-10-30,2494,NSE bhavcopy
+stock,NSE,LUPIN,LUPIN,Healthcare,stocks/raw/LUPIN,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,M_M,M&M,Automobile and Auto Components,stocks/raw/M_M,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,M_MFIN,M&MFIN,Financial Services,stocks/raw/M_MFIN,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,MAHABANK,MAHABANK,Financial Services,stocks/raw/MAHABANK,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,MANAPPURAM,MANAPPURAM,Financial Services,stocks/raw/MANAPPURAM,2010-06-30,2026-10-30,4035,NSE bhavcopy
+stock,NSE,MANKIND,MANKIND,Healthcare,stocks/raw/MANKIND,2023-05-09,2026-10-30,859,NSE bhavcopy
+stock,NSE,MARICO,MARICO,Fast Moving Consumer Goods,stocks/raw/MARICO,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,MARUTI,MARUTI,Automobile and Auto Components,stocks/raw/MARUTI,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,MAXHEALTH,MAXHEALTH,Healthcare,stocks/raw/MAXHEALTH,2020-08-21,2026-10-30,1530,NSE bhavcopy
+stock,NSE,MAZDOCK,MAZDOCK,Capital Goods,stocks/raw/MAZDOCK,2020-10-12,2026-10-30,1495,NSE bhavcopy
+stock,NSE,MCX,MCX,Financial Services,stocks/raw/MCX,2012-03-09,2026-10-30,3612,NSE bhavcopy
+stock,NSE,MEDANTA,MEDANTA,Healthcare,stocks/raw/MEDANTA,2022-11-16,2026-10-30,976,NSE bhavcopy
+stock,NSE,MEESHO,MEESHO,Consumer Services,stocks/raw/MEESHO,2025-12-10,2026-10-30,219,NSE bhavcopy
+stock,NSE,MFSL,MFSL,Financial Services,stocks/raw/MFSL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,MGL,MGL,Oil Gas & Consumable Fuels,stocks/raw/MGL,2016-07-01,2026-10-30,2550,NSE bhavcopy
+stock,NSE,MINDACORP,MINDACORP,Automobile and Auto Components,stocks/raw/MINDACORP,2012-03-19,2026-10-30,3198,NSE bhavcopy
+stock,NSE,MMTC,MMTC,Services,stocks/raw/MMTC,2010-01-08,2026-10-30,4152,NSE bhavcopy
+stock,NSE,MOTHERSON,MOTHERSON,Automobile and Auto Components,stocks/raw/MOTHERSON,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,MOTILALOFS,MOTILALOFS,Financial Services,stocks/raw/MOTILALOFS,2007-09-11,2026-10-30,4721,NSE bhavcopy
+stock,NSE,MPHASIS,MPHASIS,Information Technology,stocks/raw/MPHASIS,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,MRF,MRF,Automobile and Auto Components,stocks/raw/MRF,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,MRPL,MRPL,Oil Gas & Consumable Fuels,stocks/raw/MRPL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,MSUMI,MSUMI,Automobile and Auto Components,stocks/raw/MSUMI,2022-03-28,2026-10-30,1134,NSE bhavcopy
+stock,NSE,MTARTECH,MTARTECH,Capital Goods,stocks/raw/MTARTECH,2021-03-15,2026-10-30,1390,NSE bhavcopy
+stock,NSE,MUTHOOTFIN,MUTHOOTFIN,Financial Services,stocks/raw/MUTHOOTFIN,2011-05-06,2026-10-30,3821,NSE bhavcopy
+stock,NSE,NAM-INDIA,NAM-INDIA,Financial Services,stocks/raw/NAM-INDIA,2017-11-06,2026-10-30,2218,NSE bhavcopy
+stock,NSE,NATCOPHARM,NATCOPHARM,Healthcare,stocks/raw/NATCOPHARM,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,NATIONALUM,NATIONALUM,Metals & Mining,stocks/raw/NATIONALUM,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,NAUKRI,NAUKRI,Consumer Services,stocks/raw/NAUKRI,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,NAVA,NAVA,Power,stocks/raw/NAVA,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,NAVINFLUOR,NAVINFLUOR,Chemicals,stocks/raw/NAVINFLUOR,2007-06-01,2026-10-30,4791,NSE bhavcopy
+stock,NSE,NBCC,NBCC,Construction,stocks/raw/NBCC,2012-04-12,2026-10-30,3590,NSE bhavcopy
+stock,NSE,NCC,NCC,Construction,stocks/raw/NCC,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,NESTLEIND,NESTLEIND,Fast Moving Consumer Goods,stocks/raw/NESTLEIND,2010-01-08,2026-10-30,4152,NSE bhavcopy
+stock,NSE,NETWEB,NETWEB,Information Technology,stocks/raw/NETWEB,2023-07-27,2026-10-30,803,NSE bhavcopy
+stock,NSE,NEULANDLAB,NEULANDLAB,Healthcare,stocks/raw/NEULANDLAB,2008-10-13,2026-10-30,4409,NSE bhavcopy
+stock,NSE,NH,NH,Healthcare,stocks/raw/NH,2016-01-06,2026-10-30,2670,NSE bhavcopy
+stock,NSE,NHPC,NHPC,Power,stocks/raw/NHPC,2009-09-01,2026-10-30,4236,NSE bhavcopy
+stock,NSE,NIACL,NIACL,Financial Services,stocks/raw/NIACL,2017-11-13,2026-10-30,2213,NSE bhavcopy
+stock,NSE,NLCINDIA,NLCINDIA,Power,stocks/raw/NLCINDIA,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,NMDC,NMDC,Metals & Mining,stocks/raw/NMDC,2008-03-03,2026-10-30,4600,NSE bhavcopy
+stock,NSE,NSLNISP,NSLNISP,Metals & Mining,stocks/raw/NSLNISP,2023-02-20,2026-10-30,909,NSE bhavcopy
+stock,NSE,NTPC,NTPC,Power,stocks/raw/NTPC,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,NTPCGREEN,NTPCGREEN,Power,stocks/raw/NTPCGREEN,2024-11-27,2026-10-30,476,NSE bhavcopy
+stock,NSE,NUVAMA,NUVAMA,Financial Services,stocks/raw/NUVAMA,2023-09-26,2026-10-30,762,NSE bhavcopy
+stock,NSE,NUVOCO,NUVOCO,Construction Materials,stocks/raw/NUVOCO,2021-08-23,2026-10-30,1282,NSE bhavcopy
+stock,NSE,NYKAA,NYKAA,Consumer Services,stocks/raw/NYKAA,2021-11-10,2026-10-30,1228,NSE bhavcopy
+stock,NSE,OBEROIRLTY,OBEROIRLTY,Realty,stocks/raw/OBEROIRLTY,2010-10-20,2026-10-30,3956,NSE bhavcopy
+stock,NSE,OFSS,OFSS,Information Technology,stocks/raw/OFSS,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,OIL,OIL,Oil Gas & Consumable Fuels,stocks/raw/OIL,2009-09-30,2026-10-30,4217,NSE bhavcopy
+stock,NSE,OLAELEC,OLAELEC,Automobile and Auto Components,stocks/raw/OLAELEC,2024-08-09,2026-10-30,550,NSE bhavcopy
+stock,NSE,OLECTRA,OLECTRA,Automobile and Auto Components,stocks/raw/OLECTRA,2007-01-02,2026-10-30,4887,NSE bhavcopy
+stock,NSE,ONESOURCE,ONESOURCE,Healthcare,stocks/raw/ONESOURCE,2025-01-24,2026-10-30,435,NSE bhavcopy
+stock,NSE,ONGC,ONGC,Oil Gas & Consumable Fuels,stocks/raw/ONGC,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,PAGEIND,PAGEIND,Textiles,stocks/raw/PAGEIND,2007-03-16,2026-10-30,4831,NSE bhavcopy
+stock,NSE,PARADEEP,PARADEEP,Chemicals,stocks/raw/PARADEEP,2022-05-27,2026-10-30,1093,NSE bhavcopy
+stock,NSE,PATANJALI,PATANJALI,Fast Moving Consumer Goods,stocks/raw/PATANJALI,2022-07-13,2026-10-30,1060,NSE bhavcopy
+stock,NSE,PAYTM,PAYTM,Financial Services,stocks/raw/PAYTM,2021-11-18,2026-10-30,1222,NSE bhavcopy
+stock,NSE,PCBL,PCBL,Chemicals,stocks/raw/PCBL,2022-01-13,2026-10-30,1183,NSE bhavcopy
+stock,NSE,PERSISTENT,PERSISTENT,Information Technology,stocks/raw/PERSISTENT,2010-04-06,2026-10-30,4095,NSE bhavcopy
+stock,NSE,PETRONET,PETRONET,Oil Gas & Consumable Fuels,stocks/raw/PETRONET,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,PFC,PFC,Financial Services,stocks/raw/PFC,2007-02-23,2026-10-30,4858,NSE bhavcopy
+stock,NSE,PFOCUS,PFOCUS,Media Entertainment & Publication,stocks/raw/PFOCUS,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,PGEL,PGEL,Consumer Durables,stocks/raw/PGEL,2011-09-26,2026-10-30,3721,NSE bhavcopy
+stock,NSE,PHOENIXLTD,PHOENIXLTD,Realty,stocks/raw/PHOENIXLTD,2007-04-23,2026-10-30,4818,NSE bhavcopy
+stock,NSE,PIDILITIND,PIDILITIND,Chemicals,stocks/raw/PIDILITIND,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,PIIND,PIIND,Chemicals,stocks/raw/PIIND,2011-06-15,2026-10-30,3791,NSE bhavcopy
+stock,NSE,PINELABS,PINELABS,Financial Services,stocks/raw/PINELABS,2025-11-14,2026-10-30,237,NSE bhavcopy
+stock,NSE,PIRAMALFIN,PIRAMALFIN,Financial Services,stocks/raw/PIRAMALFIN,2025-11-07,2026-10-30,242,NSE bhavcopy
+stock,NSE,PNB,PNB,Financial Services,stocks/raw/PNB,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,PNBHOUSING,PNBHOUSING,Financial Services,stocks/raw/PNBHOUSING,2016-11-07,2026-10-30,2466,NSE bhavcopy
+stock,NSE,POLICYBZR,POLICYBZR,Financial Services,stocks/raw/POLICYBZR,2021-11-15,2026-10-30,1225,NSE bhavcopy
+stock,NSE,POLYCAB,POLYCAB,Capital Goods,stocks/raw/POLYCAB,2019-04-16,2026-10-30,1860,NSE bhavcopy
+stock,NSE,POLYMED,POLYMED,Healthcare,stocks/raw/POLYMED,2011-12-07,2026-10-30,3674,NSE bhavcopy
+stock,NSE,POONAWALLA,POONAWALLA,Financial Services,stocks/raw/POONAWALLA,2007-01-02,2026-10-30,4874,NSE bhavcopy
+stock,NSE,POWERGRID,POWERGRID,Power,stocks/raw/POWERGRID,2007-10-05,2026-10-30,4704,NSE bhavcopy
+stock,NSE,POWERINDIA,POWERINDIA,Capital Goods,stocks/raw/POWERINDIA,2020-03-30,2026-10-30,1628,NSE bhavcopy
+stock,NSE,PPLPHARMA,PPLPHARMA,Healthcare,stocks/raw/PPLPHARMA,2022-10-19,2026-10-30,994,NSE bhavcopy
+stock,NSE,PREMIERENE,PREMIERENE,Capital Goods,stocks/raw/PREMIERENE,2024-09-03,2026-10-30,534,NSE bhavcopy
+stock,NSE,PRESTIGE,PRESTIGE,Realty,stocks/raw/PRESTIGE,2010-10-27,2026-10-30,3951,NSE bhavcopy
+stock,NSE,PRIVISCL,PRIVISCL,Chemicals,stocks/raw/PRIVISCL,2015-05-08,2026-10-30,2836,NSE bhavcopy
+stock,NSE,PTCIL,PTCIL,Capital Goods,stocks/raw/PTCIL,2023-06-09,2026-10-30,836,NSE bhavcopy
+stock,NSE,PVRINOX,PVRINOX,Media Entertainment & Publication,stocks/raw/PVRINOX,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,PWL,PWL,Consumer Services,stocks/raw/PWL,2025-11-18,2026-10-30,235,NSE bhavcopy
+stock,NSE,RADICO,RADICO,Fast Moving Consumer Goods,stocks/raw/RADICO,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,RAILTEL,RAILTEL,Telecommunication,stocks/raw/RAILTEL,2021-02-26,2026-10-30,1400,NSE bhavcopy
+stock,NSE,RAINBOW,RAINBOW,Healthcare,stocks/raw/RAINBOW,2022-05-10,2026-10-30,1106,NSE bhavcopy
+stock,NSE,RAMCOCEM,RAMCOCEM,Construction Materials,stocks/raw/RAMCOCEM,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,RBLBANK,RBLBANK,Financial Services,stocks/raw/RBLBANK,2016-08-31,2026-10-30,2509,NSE bhavcopy
+stock,NSE,RECLTD,RECLTD,Financial Services,stocks/raw/RECLTD,2008-03-12,2026-10-30,4594,NSE bhavcopy
+stock,NSE,REDINGTON,REDINGTON,Services,stocks/raw/REDINGTON,2007-02-15,2026-10-30,4862,NSE bhavcopy
+stock,NSE,RELIANCE,RELIANCE,Oil Gas & Consumable Fuels,stocks/raw/RELIANCE,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,RHIM,RHIM,Capital Goods,stocks/raw/RHIM,2012-03-12,2026-10-30,3609,NSE bhavcopy
+stock,NSE,RITES,RITES,Construction,stocks/raw/RITES,2018-07-02,2026-10-30,2055,NSE bhavcopy
+stock,NSE,RKFORGE,RKFORGE,Automobile and Auto Components,stocks/raw/RKFORGE,2007-01-02,2026-10-30,4825,NSE bhavcopy
+stock,NSE,RPOWER,RPOWER,Power,stocks/raw/RPOWER,2008-02-11,2026-10-30,4615,NSE bhavcopy
+stock,NSE,RRKABEL,RRKABEL,Capital Goods,stocks/raw/RRKABEL,2023-09-20,2026-10-30,766,NSE bhavcopy
+stock,NSE,RUBICON,RUBICON,Healthcare,stocks/raw/RUBICON,2025-10-16,2026-10-30,256,NSE bhavcopy
+stock,NSE,RVNL,RVNL,Construction,stocks/raw/RVNL,2019-04-11,2026-10-30,1863,NSE bhavcopy
+stock,NSE,SAGILITY,SAGILITY,Information Technology,stocks/raw/SAGILITY,2024-11-12,2026-10-30,485,NSE bhavcopy
+stock,NSE,SAIL,SAIL,Metals & Mining,stocks/raw/SAIL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,SAILIFE,SAILIFE,Healthcare,stocks/raw/SAILIFE,2024-12-18,2026-10-30,461,NSE bhavcopy
+stock,NSE,SAMMAANCAP,SAMMAANCAP,Financial Services,stocks/raw/SAMMAANCAP,2013-07-23,2026-10-30,3271,NSE bhavcopy
+stock,NSE,SANSERA,SANSERA,Automobile and Auto Components,stocks/raw/SANSERA,2021-09-24,2026-10-30,1259,NSE bhavcopy
+stock,NSE,SARDAEN,SARDAEN,Metals & Mining,stocks/raw/SARDAEN,2009-12-03,2026-10-30,4175,NSE bhavcopy
+stock,NSE,SBICARD,SBICARD,Financial Services,stocks/raw/SBICARD,2020-03-16,2026-10-30,1638,NSE bhavcopy
+stock,NSE,SBILIFE,SBILIFE,Financial Services,stocks/raw/SBILIFE,2017-10-03,2026-10-30,2241,NSE bhavcopy
+stock,NSE,SBIN,SBIN,Financial Services,stocks/raw/SBIN,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,SCHAEFFLER,SCHAEFFLER,Automobile and Auto Components,stocks/raw/SCHAEFFLER,2007-01-02,2026-10-30,4890,NSE bhavcopy
+stock,NSE,SCHNEIDER,SCHNEIDER,Capital Goods,stocks/raw/SCHNEIDER,2012-03-20,2026-10-30,3605,NSE bhavcopy
+stock,NSE,SCI,SCI,Services,stocks/raw/SCI,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,SHREECEM,SHREECEM,Construction Materials,stocks/raw/SHREECEM,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,SHRIPISTON,SHRIPISTON,Automobile and Auto Components,stocks/raw/SHRIPISTON,2016-06-09,2026-10-30,2550,NSE bhavcopy
+stock,NSE,SHRIRAMFIN,SHRIRAMFIN,Financial Services,stocks/raw/SHRIRAMFIN,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,SHYAMMETL,SHYAMMETL,Capital Goods,stocks/raw/SHYAMMETL,2021-06-24,2026-10-30,1322,NSE bhavcopy
+stock,NSE,SIEMENS,SIEMENS,Capital Goods,stocks/raw/SIEMENS,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,SIGNATURE,SIGNATURE,Realty,stocks/raw/SIGNATURE,2023-09-27,2026-10-30,761,NSE bhavcopy
+stock,NSE,SJVN,SJVN,Power,stocks/raw/SJVN,2010-05-20,2026-10-30,4064,NSE bhavcopy
+stock,NSE,SOBHA,SOBHA,Realty,stocks/raw/SOBHA,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,SOLARINDS,SOLARINDS,Chemicals,stocks/raw/SOLARINDS,2007-01-02,2026-10-30,4890,NSE bhavcopy
+stock,NSE,SONACOMS,SONACOMS,Automobile and Auto Components,stocks/raw/SONACOMS,2021-06-24,2026-10-30,1322,NSE bhavcopy
+stock,NSE,SRF,SRF,Chemicals,stocks/raw/SRF,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,STARHEALTH,STARHEALTH,Financial Services,stocks/raw/STARHEALTH,2021-12-10,2026-10-30,1207,NSE bhavcopy
+stock,NSE,STLTECH,STLTECH,Telecommunication,stocks/raw/STLTECH,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,SUMICHEM,SUMICHEM,Chemicals,stocks/raw/SUMICHEM,2020-01-27,2026-10-30,1671,NSE bhavcopy
+stock,NSE,SUNDARMFIN,SUNDARMFIN,Financial Services,stocks/raw/SUNDARMFIN,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,SUNPHARMA,SUNPHARMA,Healthcare,stocks/raw/SUNPHARMA,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,SUNTV,SUNTV,Media Entertainment & Publication,stocks/raw/SUNTV,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,SUPREMEIND,SUPREMEIND,Capital Goods,stocks/raw/SUPREMEIND,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,SUZLON,SUZLON,Capital Goods,stocks/raw/SUZLON,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,SWANCORP,SWANCORP,Chemicals,stocks/raw/SWANCORP,2012-05-29,2026-10-30,3558,NSE bhavcopy
+stock,NSE,SWIGGY,SWIGGY,Consumer Services,stocks/raw/SWIGGY,2024-11-13,2026-10-30,484,NSE bhavcopy
+stock,NSE,SYNGENE,SYNGENE,Healthcare,stocks/raw/SYNGENE,2015-08-11,2026-10-30,2769,NSE bhavcopy
+stock,NSE,SYRMA,SYRMA,Capital Goods,stocks/raw/SYRMA,2022-08-26,2026-10-30,1030,NSE bhavcopy
+stock,NSE,TARIL,TARIL,Capital Goods,stocks/raw/TARIL,2007-12-28,2026-10-30,4646,NSE bhavcopy
+stock,NSE,TATACAP,TATACAP,Financial Services,stocks/raw/TATACAP,2025-10-13,2026-10-30,259,NSE bhavcopy
+stock,NSE,TATACHEM,TATACHEM,Chemicals,stocks/raw/TATACHEM,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,TATACOMM,TATACOMM,Telecommunication,stocks/raw/TATACOMM,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,TATACONSUM,TATACONSUM,Fast Moving Consumer Goods,stocks/raw/TATACONSUM,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,TATAELXSI,TATAELXSI,Information Technology,stocks/raw/TATAELXSI,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,TATAINVEST,TATAINVEST,Financial Services,stocks/raw/TATAINVEST,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,TATAPOWER,TATAPOWER,Power,stocks/raw/TATAPOWER,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,TATASTEEL,TATASTEEL,Metals & Mining,stocks/raw/TATASTEEL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,TATATECH,TATATECH,Information Technology,stocks/raw/TATATECH,2023-11-30,2026-10-30,719,NSE bhavcopy
+stock,NSE,TBOTEK,TBOTEK,Consumer Services,stocks/raw/TBOTEK,2024-05-15,2026-10-30,609,NSE bhavcopy
+stock,NSE,TCS,TCS,Information Technology,stocks/raw/TCS,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,TDPOWERSYS,TDPOWERSYS,Capital Goods,stocks/raw/TDPOWERSYS,2011-09-08,2026-10-30,3730,NSE bhavcopy
+stock,NSE,TECHM,TECHM,Information Technology,stocks/raw/TECHM,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,TECHNOE,TECHNOE,Construction,stocks/raw/TECHNOE,2018-12-04,2026-10-30,1952,NSE bhavcopy
+stock,NSE,TEGA,TEGA,Capital Goods,stocks/raw/TEGA,2021-12-13,2026-10-30,1206,NSE bhavcopy
+stock,NSE,TEJASNET,TEJASNET,Telecommunication,stocks/raw/TEJASNET,2017-06-27,2026-10-30,2308,NSE bhavcopy
+stock,NSE,TENNIND,TENNIND,Automobile and Auto Components,stocks/raw/TENNIND,2025-11-19,2026-10-30,234,NSE bhavcopy
+stock,NSE,THANGAMAYL,THANGAMAYL,Consumer Durables,stocks/raw/THANGAMAYL,2010-02-19,2026-10-30,4119,NSE bhavcopy
+stock,NSE,THERMAX,THERMAX,Capital Goods,stocks/raw/THERMAX,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,TIINDIA,TIINDIA,Automobile and Auto Components,stocks/raw/TIINDIA,2017-11-02,2026-10-30,2220,NSE bhavcopy
+stock,NSE,TIMKEN,TIMKEN,Capital Goods,stocks/raw/TIMKEN,2007-02-06,2026-10-30,4869,NSE bhavcopy
+stock,NSE,TITAGARH,TITAGARH,Capital Goods,stocks/raw/TITAGARH,2008-04-21,2026-10-30,4570,NSE bhavcopy
+stock,NSE,TITAN,TITAN,Consumer Durables,stocks/raw/TITAN,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,TMCV,TMCV,Capital Goods,stocks/raw/TMCV,2025-11-12,2026-10-30,239,NSE bhavcopy
+stock,NSE,TMPV,TMPV,Automobile and Auto Components,stocks/raw/TMPV,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,TORNTPHARM,TORNTPHARM,Healthcare,stocks/raw/TORNTPHARM,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,TORNTPOWER,TORNTPOWER,Power,stocks/raw/TORNTPOWER,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,TRENT,TRENT,Consumer Services,stocks/raw/TRENT,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,TRIDENT,TRIDENT,Textiles,stocks/raw/TRIDENT,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,TRITURBINE,TRITURBINE,Capital Goods,stocks/raw/TRITURBINE,2011-10-28,2026-10-30,3701,NSE bhavcopy
+stock,NSE,TTML,TTML,Telecommunication,stocks/raw/TTML,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,TVSMOTOR,TVSMOTOR,Automobile and Auto Components,stocks/raw/TVSMOTOR,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,UBL,UBL,Fast Moving Consumer Goods,stocks/raw/UBL,2008-07-28,2026-10-30,4502,NSE bhavcopy
+stock,NSE,UCOBANK,UCOBANK,Financial Services,stocks/raw/UCOBANK,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ULTRACEMCO,ULTRACEMCO,Construction Materials,stocks/raw/ULTRACEMCO,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,UNIONBANK,UNIONBANK,Financial Services,stocks/raw/UNIONBANK,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,UNITDSPR,UNITDSPR,Fast Moving Consumer Goods,stocks/raw/UNITDSPR,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,UNOMINDA,UNOMINDA,Automobile and Auto Components,stocks/raw/UNOMINDA,2007-02-02,2026-10-30,4833,NSE bhavcopy
+stock,NSE,UPL,UPL,Chemicals,stocks/raw/UPL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,URBANCO,URBANCO,Consumer Services,stocks/raw/URBANCO,2025-09-17,2026-10-30,276,NSE bhavcopy
+stock,NSE,USHAMART,USHAMART,Capital Goods,stocks/raw/USHAMART,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,UTIAMC,UTIAMC,Financial Services,stocks/raw/UTIAMC,2020-10-12,2026-10-30,1495,NSE bhavcopy
+stock,NSE,VAML,VAML,Metals & Mining,stocks/raw/VAML,2026-06-15,2026-10-30,96,NSE bhavcopy
+stock,NSE,VBL,VBL,Fast Moving Consumer Goods,stocks/raw/VBL,2016-11-08,2026-10-30,2465,NSE bhavcopy
+stock,NSE,VEDL,VEDL,Metals & Mining,stocks/raw/VEDL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,VEDPOWER,VEDPOWER,Power,stocks/raw/VEDPOWER,2026-06-15,2026-10-30,96,NSE bhavcopy
+stock,NSE,VIJAYA,VIJAYA,Healthcare,stocks/raw/VIJAYA,2021-09-14,2026-10-30,1267,NSE bhavcopy
+stock,NSE,VISL,VISL,Metals & Mining,stocks/raw/VISL,2026-06-15,2026-10-30,96,NSE bhavcopy
+stock,NSE,VMM,VMM,Consumer Services,stocks/raw/VMM,2024-12-18,2026-10-30,461,NSE bhavcopy
+stock,NSE,VOGL,VOGL,Oil Gas & Consumable Fuels,stocks/raw/VOGL,2026-06-15,2026-10-30,96,NSE bhavcopy
+stock,NSE,VOLTAS,VOLTAS,Consumer Durables,stocks/raw/VOLTAS,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,VTL,VTL,Textiles,stocks/raw/VTL,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,WAAREEENER,WAAREEENER,Capital Goods,stocks/raw/WAAREEENER,2024-10-28,2026-10-30,496,NSE bhavcopy
+stock,NSE,WELCORP,WELCORP,Capital Goods,stocks/raw/WELCORP,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,WELSPUNLIV,WELSPUNLIV,Textiles,stocks/raw/WELSPUNLIV,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,WHIRLPOOL,WHIRLPOOL,Consumer Durables,stocks/raw/WHIRLPOOL,2010-01-08,2026-10-30,4152,NSE bhavcopy
+stock,NSE,WIPRO,WIPRO,Information Technology,stocks/raw/WIPRO,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,WOCKPHARMA,WOCKPHARMA,Healthcare,stocks/raw/WOCKPHARMA,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,YESBANK,YESBANK,Financial Services,stocks/raw/YESBANK,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ZEEL,ZEEL,Media Entertainment & Publication,stocks/raw/ZEEL,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ZENSARTECH,ZENSARTECH,Information Technology,stocks/raw/ZENSARTECH,2007-01-02,2026-10-30,4893,NSE bhavcopy
+stock,NSE,ZENTEC,ZENTEC,Capital Goods,stocks/raw/ZENTEC,2015-03-30,2026-10-30,2861,NSE bhavcopy
+stock,NSE,ZFCVINDIA,ZFCVINDIA,Automobile and Auto Components,stocks/raw/ZFCVINDIA,2022-04-01,2026-10-30,1130,NSE bhavcopy
+stock,NSE,ZYDUSLIFE,ZYDUSLIFE,Healthcare,stocks/raw/ZYDUSLIFE,2007-01-02,2026-10-30,4892,NSE bhavcopy
+stock,NSE,ZYDUSWELL,ZYDUSWELL,Fast Moving Consumer Goods,stocks/raw/ZYDUSWELL,2009-11-13,2026-10-30,4189,NSE bhavcopy
+index,NSE,INDIA_VIX,INDIA VIX,BROAD MARKET INDICES,indices/nse/INDIA_VIX,2010-07-19,2026-10-30,4016,NSE historicalOR
+index,NSE,NIFTY100_ALPHA_30,NIFTY100 ALPHA 30,STRATEGY INDICES,indices/nse/NIFTY100_ALPHA_30,2016-07-07,2026-10-30,1808,NSE historicalOR
+index,NSE,NIFTY100_ENHANCED_ESG,NIFTY100 ENHANCED ESG,THEMATIC INDICES,indices/nse/NIFTY100_ENHANCED_ESG,2016-07-07,2026-10-30,2118,NSE historicalOR
+index,NSE,NIFTY100_EQUAL_WEIGHT,NIFTY100 EQUAL WEIGHT,STRATEGY INDICES,indices/nse/NIFTY100_EQUAL_WEIGHT,2015-11-09,2026-10-30,2704,NSE historicalOR
+index,NSE,NIFTY100_ESG,NIFTY100 ESG,THEMATIC INDICES,indices/nse/NIFTY100_ESG,2016-07-07,2026-10-30,2118,NSE historicalOR
+index,NSE,NIFTY100_ESG_SECTOR_LEADERS,NIFTY100 ESG SECTOR LEADERS,THEMATIC INDICES,indices/nse/NIFTY100_ESG_SECTOR_LEADERS,2016-07-07,2026-10-30,1569,NSE historicalOR
+index,NSE,NIFTY100_LIQUID_15,NIFTY100 LIQUID 15,THEMATIC INDICES,indices/nse/NIFTY100_LIQUID_15,2015-11-09,2026-10-30,2704,NSE historicalOR
+index,NSE,NIFTY100_LOW_VOLATILITY_30,NIFTY100 LOW VOLATILITY 30,STRATEGY INDICES,indices/nse/NIFTY100_LOW_VOLATILITY_30,2009-02-16,2026-10-30,4374,NSE historicalOR
+index,NSE,NIFTY100_QUALITY_30,NIFTY100 QUALITY 30,STRATEGY INDICES,indices/nse/NIFTY100_QUALITY_30,2016-07-07,2026-10-30,2043,NSE historicalOR
+index,NSE,NIFTY200_ALPHA_30,NIFTY200 ALPHA 30,STRATEGY INDICES,indices/nse/NIFTY200_ALPHA_30,2016-07-07,2026-10-30,1052,NSE historicalOR
+index,NSE,NIFTY200_MOMENTUM_30,NIFTY200 MOMENTUM 30,STRATEGY INDICES,indices/nse/NIFTY200_MOMENTUM_30,2016-07-07,2026-10-30,1526,NSE historicalOR
+index,NSE,NIFTY200_QUALITY_30,NIFTY200 QUALITY 30,STRATEGY INDICES,indices/nse/NIFTY200_QUALITY_30,2016-07-07,2026-10-30,2105,NSE historicalOR
+index,NSE,NIFTY200_VALUE_30,NIFTY200 VALUE 30,STRATEGY INDICES,indices/nse/NIFTY200_VALUE_30,2016-07-07,2026-10-30,591,NSE historicalOR
+index,NSE,NIFTY500_EQUAL_WEIGHT,NIFTY500 EQUAL WEIGHT,STRATEGY INDICES,indices/nse/NIFTY500_EQUAL_WEIGHT,2016-07-07,2026-10-30,599,NSE historicalOR
+index,NSE,NIFTY500_FLEXICAP_QUALITY_30,NIFTY500 FLEXICAP QUALITY 30,STRATEGY INDICES,indices/nse/NIFTY500_FLEXICAP_QUALITY_30,2025-04-08,2026-10-30,386,NSE historicalOR
+index,NSE,NIFTY500_HEALTHCARE,NIFTY500 HEALTHCARE,SECTORAL INDICES,indices/nse/NIFTY500_HEALTHCARE,2025-07-02,2026-10-30,329,NSE historicalOR
+index,NSE,NIFTY500_LARGEMIDSMALL_EQUAL-CAP_WEIGHTED,NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED,BROAD MARKET INDICES,indices/nse/NIFTY500_LARGEMIDSMALL_EQUAL-CAP_WEIGHTED,2016-07-07,2026-10-30,594,NSE historicalOR
+index,NSE,NIFTY500_LOW_VOLATILITY_50,NIFTY500 LOW VOLATILITY 50,STRATEGY INDICES,indices/nse/NIFTY500_LOW_VOLATILITY_50,2016-07-07,2026-10-30,461,NSE historicalOR
+index,NSE,NIFTY500_MOMENTUM_50,NIFTY500 MOMENTUM 50,STRATEGY INDICES,indices/nse/NIFTY500_MOMENTUM_50,2016-07-07,2026-10-30,597,NSE historicalOR
+index,NSE,NIFTY500_MULTICAP_50_25_25,NIFTY500 MULTICAP 50:25:25,BROAD MARKET INDICES,indices/nse/NIFTY500_MULTICAP_50_25_25,2007-01-02,2026-10-30,3810,NSE historicalOR
+index,NSE,NIFTY500_MULTICAP_INDIA_MANUFACTURING_50_30_20,NIFTY500 MULTICAP INDIA MANUFACTURING 50:30:20,THEMATIC INDICES,indices/nse/NIFTY500_MULTICAP_INDIA_MANUFACTURING_50_30_20,2016-07-07,2026-10-30,654,NSE historicalOR
+index,NSE,NIFTY500_MULTICAP_INFRASTRUCTURE_50_30_20,NIFTY500 MULTICAP INFRASTRUCTURE 50:30:20,THEMATIC INDICES,indices/nse/NIFTY500_MULTICAP_INFRASTRUCTURE_50_30_20,2016-07-07,2026-10-30,654,NSE historicalOR
+index,NSE,NIFTY500_MULTICAP_MOMENTUM_QUALITY_50,NIFTY500 MULTICAP MOMENTUM QUALITY 50,STRATEGY INDICES,indices/nse/NIFTY500_MULTICAP_MOMENTUM_QUALITY_50,2016-07-07,2026-10-30,534,NSE historicalOR
+index,NSE,NIFTY500_MULTIFACTOR_MQVLV_50,NIFTY500 MULTIFACTOR MQVLV 50,STRATEGY INDICES,indices/nse/NIFTY500_MULTIFACTOR_MQVLV_50,2025-02-07,2026-10-30,425,NSE historicalOR
+index,NSE,NIFTY500_QUALITY_50,NIFTY500 QUALITY 50,STRATEGY INDICES,indices/nse/NIFTY500_QUALITY_50,2016-07-07,2026-10-30,461,NSE historicalOR
+index,NSE,NIFTY500_SHARIAH,NIFTY500 SHARIAH,THEMATIC INDICES,indices/nse/NIFTY500_SHARIAH,2015-11-09,2026-10-30,2704,NSE historicalOR
+index,NSE,NIFTY500_VALUE_50,NIFTY500 VALUE 50,STRATEGY INDICES,indices/nse/NIFTY500_VALUE_50,2016-07-07,2026-10-30,1977,NSE historicalOR
+index,NSE,NIFTY50_DIVIDEND_POINTS,NIFTY50 DIVIDEND POINTS,STRATEGY INDICES,indices/nse/NIFTY50_DIVIDEND_POINTS,2007-01-02,2026-10-30,4893,NSE historicalOR
+index,NSE,NIFTY50_EQUAL_WEIGHT,NIFTY50 EQUAL WEIGHT,STRATEGY INDICES,indices/nse/NIFTY50_EQUAL_WEIGHT,2007-01-02,2026-10-30,4710,NSE historicalOR
+index,NSE,NIFTY50_PR_1X_INVERSE,NIFTY50 PR 1X INVERSE,STRATEGY INDICES,indices/nse/NIFTY50_PR_1X_INVERSE,2009-04-02,2026-10-30,4343,NSE historicalOR
+index,NSE,NIFTY50_PR_2X_LEVERAGE,NIFTY50 PR 2X LEVERAGE,STRATEGY INDICES,indices/nse/NIFTY50_PR_2X_LEVERAGE,2009-04-02,2026-10-30,4343,NSE historicalOR
+index,NSE,NIFTY50_SHARIAH,NIFTY50 SHARIAH,THEMATIC INDICES,indices/nse/NIFTY50_SHARIAH,2015-11-09,2026-10-30,2704,NSE historicalOR
+index,NSE,NIFTY50_TR_1X_INVERSE,NIFTY50 TR 1X INVERSE,STRATEGY INDICES,indices/nse/NIFTY50_TR_1X_INVERSE,2009-04-02,2026-10-30,4343,NSE historicalOR
+index,NSE,NIFTY50_TR_2X_LEVERAGE,NIFTY50 TR 2X LEVERAGE,STRATEGY INDICES,indices/nse/NIFTY50_TR_2X_LEVERAGE,2009-04-02,2026-10-30,4343,NSE historicalOR
+index,NSE,NIFTY50_USD,NIFTY50 USD,STRATEGY INDICES,indices/nse/NIFTY50_USD,2015-11-09,2026-10-30,2694,NSE historicalOR
+index,NSE,NIFTY50_VALUE_20,NIFTY50 VALUE 20,STRATEGY INDICES,indices/nse/NIFTY50_VALUE_20,2009-01-01,2026-10-30,4403,NSE historicalOR
+index,NSE,NIFTY_100,NIFTY 100,BROAD MARKET INDICES,indices/nse/NIFTY_100,2007-01-02,2026-10-30,4898,NSE historicalOR
+index,NSE,NIFTY_10_YR_BENCHMARK_G-SEC,NIFTY 10 YR BENCHMARK G-SEC,FIXED INCOME INDICES,indices/nse/NIFTY_10_YR_BENCHMARK_G-SEC,2015-11-09,2026-10-30,2702,NSE historicalOR
+index,NSE,NIFTY_10_YR_BENCHMARK_G-SEC__CLEAN_PRICE_,NIFTY 10 YR BENCHMARK G-SEC (CLEAN PRICE),FIXED INCOME INDICES,indices/nse/NIFTY_10_YR_BENCHMARK_G-SEC__CLEAN_PRICE_,2015-11-09,2026-10-30,2702,NSE historicalOR
+index,NSE,NIFTY_11-15_YR_G-SEC_INDEX,NIFTY 11-15 YR G-SEC INDEX,FIXED INCOME INDICES,indices/nse/NIFTY_11-15_YR_G-SEC_INDEX,2015-10-13,2026-10-30,2719,NSE historicalOR
+index,NSE,NIFTY_15_YR_AND_ABOVE_G-SEC_INDEX,NIFTY 15 YR AND ABOVE G-SEC INDEX,FIXED INCOME INDICES,indices/nse/NIFTY_15_YR_AND_ABOVE_G-SEC_INDEX,2015-10-13,2026-10-30,2719,NSE historicalOR
+index,NSE,NIFTY_200,NIFTY 200,BROAD MARKET INDICES,indices/nse/NIFTY_200,2007-01-02,2026-10-30,4898,NSE historicalOR
+index,NSE,NIFTY_4-8_YR_G-SEC_INDEX,NIFTY 4-8 YR G-SEC INDEX,FIXED INCOME INDICES,indices/nse/NIFTY_4-8_YR_G-SEC_INDEX,2015-10-13,2026-10-30,2719,NSE historicalOR
+index,NSE,NIFTY_50,NIFTY 50,INDICES ELIGIBLE IN DERIVATIVES,indices/nse/NIFTY_50,2007-01-02,2026-10-30,4912,NSE historicalOR
+index,NSE,NIFTY_500,NIFTY 500,BROAD MARKET INDICES,indices/nse/NIFTY_500,2007-01-02,2026-10-30,4898,NSE historicalOR
+index,NSE,NIFTY_8-13_YR_G-SEC,NIFTY 8-13 YR G-SEC,FIXED INCOME INDICES,indices/nse/NIFTY_8-13_YR_G-SEC,2015-11-09,2026-10-30,2702,NSE historicalOR
+index,NSE,NIFTY_ALPHA_50,NIFTY ALPHA 50,STRATEGY INDICES,indices/nse/NIFTY_ALPHA_50,2007-01-02,2026-10-30,4898,NSE historicalOR
+index,NSE,NIFTY_ALPHA_LOW-VOLATILITY_30,NIFTY ALPHA LOW-VOLATILITY 30,STRATEGY INDICES,indices/nse/NIFTY_ALPHA_LOW-VOLATILITY_30,2016-07-07,2026-10-30,2294,NSE historicalOR
+index,NSE,NIFTY_ALPHA_QUALITY_LOW-VOLATILITY_30,NIFTY ALPHA QUALITY LOW-VOLATILITY 30,STRATEGY INDICES,indices/nse/NIFTY_ALPHA_QUALITY_LOW-VOLATILITY_30,2016-07-07,2026-10-30,2294,NSE historicalOR
+index,NSE,NIFTY_ALPHA_QUALITY_VALUE_LOW-VOLATILITY_30,NIFTY ALPHA QUALITY VALUE LOW-VOLATILITY 30,STRATEGY INDICES,indices/nse/NIFTY_ALPHA_QUALITY_VALUE_LOW-VOLATILITY_30,2016-07-07,2026-10-30,2294,NSE historicalOR
+index,NSE,NIFTY_AUTO,NIFTY AUTO,SECTORAL INDICES,indices/nse/NIFTY_AUTO,2007-01-02,2026-10-30,4898,NSE historicalOR
+index,NSE,NIFTY_BANK,NIFTY BANK,INDICES ELIGIBLE IN DERIVATIVES,indices/nse/NIFTY_BANK,2007-01-02,2026-10-30,4898,NSE historicalOR
+index,NSE,NIFTY_BHARAT_BOND_INDEX_-_APRIL_2030,NIFTY BHARAT BOND INDEX - APRIL 2030,FIXED INCOME INDICES,indices/nse/NIFTY_BHARAT_BOND_INDEX_-_APRIL_2030,2025-01-16,2026-10-30,440,NSE historicalOR
+index,NSE,NIFTY_BHARAT_BOND_INDEX_-_APRIL_2031,NIFTY BHARAT BOND INDEX - APRIL 2031,FIXED INCOME INDICES,indices/nse/NIFTY_BHARAT_BOND_INDEX_-_APRIL_2031,2025-01-16,2026-10-30,440,NSE historicalOR
+index,NSE,NIFTY_BHARAT_BOND_INDEX_-_APRIL_2032,NIFTY BHARAT BOND INDEX - APRIL 2032,FIXED INCOME INDICES,indices/nse/NIFTY_BHARAT_BOND_INDEX_-_APRIL_2032,2025-01-16,2026-10-30,439,NSE historicalOR
+index,NSE,NIFTY_BHARAT_BOND_INDEX_-_APRIL_2033,NIFTY BHARAT BOND INDEX - APRIL 2033,FIXED INCOME INDICES,indices/nse/NIFTY_BHARAT_BOND_INDEX_-_APRIL_2033,2025-01-16,2026-10-30,439,NSE historicalOR
+index,NSE,NIFTY_CAPITAL_MARKETS,NIFTY CAPITAL MARKETS,THEMATIC INDICES,indices/nse/NIFTY_CAPITAL_MARKETS,2023-04-12,2026-10-30,527,NSE historicalOR
+index,NSE,NIFTY_CEMENT,NIFTY CEMENT,SECTORAL INDICES,indices/nse/NIFTY_CEMENT,2026-02-17,2026-10-30,173,NSE historicalOR
+index,NSE,NIFTY_CHEMICALS,NIFTY CHEMICALS,SECTORAL INDICES,indices/nse/NIFTY_CHEMICALS,2025-03-11,2026-10-30,404,NSE historicalOR
+index,NSE,NIFTY_COMMODITIES,NIFTY COMMODITIES,THEMATIC INDICES,indices/nse/NIFTY_COMMODITIES,2015-11-09,2026-10-30,2704,NSE historicalOR
+index,NSE,NIFTY_COMPOSITE_G-SEC_INDEX,NIFTY COMPOSITE G-SEC INDEX,FIXED INCOME INDICES,indices/nse/NIFTY_COMPOSITE_G-SEC_INDEX,2015-10-13,2026-10-30,2719,NSE historicalOR
+index,NSE,NIFTY_CONGLOMERATE_50,NIFTY CONGLOMERATE 50,THEMATIC INDICES,indices/nse/NIFTY_CONGLOMERATE_50,2025-09-02,2026-10-30,287,NSE historicalOR
+index,NSE,NIFTY_CONSUMER_DURABLES,NIFTY CONSUMER DURABLES,SECTORAL INDICES,indices/nse/NIFTY_CONSUMER_DURABLES,2007-01-02,2026-10-30,4025,NSE historicalOR
+index,NSE,NIFTY_CORE_HOUSING,NIFTY CORE HOUSING,THEMATIC INDICES,indices/nse/NIFTY_CORE_HOUSING,2016-07-07,2026-10-30,857,NSE historicalOR
+index,NSE,NIFTY_CPSE,NIFTY CPSE,THEMATIC INDICES,indices/nse/NIFTY_CPSE,2015-11-09,2026-10-30,2704,NSE historicalOR
+index,NSE,NIFTY_DIVIDEND_OPPORTUNITIES_50,NIFTY DIVIDEND OPPORTUNITIES 50,STRATEGY INDICES,indices/nse/NIFTY_DIVIDEND_OPPORTUNITIES_50,2007-10-01,2026-10-30,4712,NSE historicalOR
+index,NSE,NIFTY_ENERGY,NIFTY ENERGY,THEMATIC INDICES,indices/nse/NIFTY_ENERGY,2015-11-09,2026-10-30,2704,NSE historicalOR
+index,NSE,NIFTY_EV___NEW_AGE_AUTOMOTIVE,NIFTY EV & NEW AGE AUTOMOTIVE,THEMATIC INDICES,indices/nse/NIFTY_EV___NEW_AGE_AUTOMOTIVE,2023-04-12,2026-10-30,600,NSE historicalOR
+index,NSE,NIFTY_FINANCIAL_SERVICES,NIFTY FINANCIAL SERVICES,INDICES ELIGIBLE IN DERIVATIVES,indices/nse/NIFTY_FINANCIAL_SERVICES,2007-01-02,2026-10-30,4898,NSE historicalOR
+index,NSE,NIFTY_FINANCIAL_SERVICES_25_50,NIFTY FINANCIAL SERVICES 25/50,SECTORAL INDICES,indices/nse/NIFTY_FINANCIAL_SERVICES_25_50,2016-07-07,2026-10-30,1537,NSE historicalOR
+index,NSE,NIFTY_FINANCIAL_SERVICES_EX-BANK,NIFTY FINANCIAL SERVICES EX-BANK,SECTORAL INDICES,indices/nse/NIFTY_FINANCIAL_SERVICES_EX-BANK,2016-07-07,2026-10-30,1167,NSE historicalOR
+index,NSE,NIFTY_FMCG,NIFTY FMCG,SECTORAL INDICES,indices/nse/NIFTY_FMCG,2007-01-02,2026-10-30,4898,NSE historicalOR
+index,NSE,NIFTY_GROWTH_SECTORS_15,NIFTY GROWTH SECTORS 15,STRATEGY INDICES,indices/nse/NIFTY_GROWTH_SECTORS_15,2009-01-01,2026-10-30,4403,NSE historicalOR
+index,NSE,NIFTY_HEALTHCARE_INDEX,NIFTY HEALTHCARE INDEX,SECTORAL INDICES,indices/nse/NIFTY_HEALTHCARE_INDEX,2007-01-02,2026-10-30,3818,NSE historicalOR
+index,NSE,NIFTY_HIGH_BETA_50,NIFTY HIGH BETA 50,STRATEGY INDICES,indices/nse/NIFTY_HIGH_BETA_50,2015-11-09,2026-10-30,2704,NSE historicalOR
+index,NSE,NIFTY_HOUSING,NIFTY HOUSING,THEMATIC INDICES,indices/nse/NIFTY_HOUSING,2016-07-07,2026-10-30,1144,NSE historicalOR
+index,NSE,NIFTY_INDIA_CONSUMPTION,NIFTY INDIA CONSUMPTION,THEMATIC INDICES,indices/nse/NIFTY_INDIA_CONSUMPTION,2015-11-09,2026-10-30,2704,NSE historicalOR
+index,NSE,NIFTY_INDIA_CORPORATE_GROUP_INDEX_-_TATA_GROUP_25__CAP,NIFTY INDIA CORPORATE GROUP INDEX - TATA GROUP 25% CAP,THEMATIC INDICES,indices/nse/NIFTY_INDIA_CORPORATE_GROUP_INDEX_-_TATA_GROUP_25__CAP,2016-07-07,2026-10-30,622,NSE historicalOR
+index,NSE,NIFTY_INDIA_DEFENCE,NIFTY INDIA DEFENCE,THEMATIC INDICES,indices/nse/NIFTY_INDIA_DEFENCE,2022-01-19,2026-10-30,1176,NSE historicalOR
+index,NSE,NIFTY_INDIA_DIGITAL,NIFTY INDIA DIGITAL,THEMATIC INDICES,indices/nse/NIFTY_INDIA_DIGITAL,2016-07-07,2026-10-30,1203,NSE historicalOR
+index,NSE,NIFTY_INDIA_FPI_150,NIFTY INDIA FPI 150,INDICES ELIGIBLE IN DERIVATIVES,indices/nse/NIFTY_INDIA_FPI_150,2025-08-14,2026-10-30,298,NSE historicalOR
+index,NSE,NIFTY_INDIA_INFRASTRUCTURE___LOGISTICS,NIFTY INDIA INFRASTRUCTURE & LOGISTICS,THEMATIC INDICES,indices/nse/NIFTY_INDIA_INFRASTRUCTURE___LOGISTICS,2025-06-05,2026-10-30,348,NSE historicalOR
+index,NSE,NIFTY_INDIA_INTERNET,NIFTY INDIA INTERNET,THEMATIC INDICES,indices/nse/NIFTY_INDIA_INTERNET,2025-05-05,2026-10-30,371,NSE historicalOR
+index,NSE,NIFTY_INDIA_MANUFACTURING,NIFTY INDIA MANUFACTURING,THEMATIC INDICES,indices/nse/NIFTY_INDIA_MANUFACTURING,2016-07-07,2026-10-30,1283,NSE historicalOR
+index,NSE,NIFTY_INDIA_NEW_AGE_CONSUMPTION,NIFTY INDIA NEW AGE CONSUMPTION,THEMATIC INDICES,indices/nse/NIFTY_INDIA_NEW_AGE_CONSUMPTION,2016-07-07,2026-10-30,501,NSE historicalOR
+index,NSE,NIFTY_INDIA_RAILWAYS_PSU,NIFTY INDIA RAILWAYS PSU,THEMATIC INDICES,indices/nse/NIFTY_INDIA_RAILWAYS_PSU,2023-04-12,2026-10-30,477,NSE historicalOR
+index,NSE,NIFTY_INDIA_SELECT_5_CORPORATE_GROUPS__MAATR_,NIFTY INDIA SELECT 5 CORPORATE GROUPS (MAATR),THEMATIC INDICES,indices/nse/NIFTY_INDIA_SELECT_5_CORPORATE_GROUPS__MAATR_,2016-07-07,2026-10-30,486,NSE historicalOR
+index,NSE,NIFTY_INDIA_TOURISM,NIFTY INDIA TOURISM,THEMATIC INDICES,indices/nse/NIFTY_INDIA_TOURISM,2016-07-07,2026-10-30,588,NSE historicalOR
+index,NSE,NIFTY_INFRASTRUCTURE,NIFTY INFRASTRUCTURE,THEMATIC INDICES,indices/nse/NIFTY_INFRASTRUCTURE,2015-11-09,2026-10-30,2704,NSE historicalOR
+index,NSE,NIFTY_IPO,NIFTY IPO,THEMATIC INDICES,indices/nse/NIFTY_IPO,2023-04-12,2026-10-30,567,NSE historicalOR
+index,NSE,NIFTY_IT,NIFTY IT,SECTORAL INDICES,indices/nse/NIFTY_IT,2007-01-02,2026-10-30,4898,NSE historicalOR
+index,NSE,NIFTY_LARGEMIDCAP_250,NIFTY LARGEMIDCAP 250,BROAD MARKET INDICES,indices/nse/NIFTY_LARGEMIDCAP_250,2007-01-02,2026-10-30,4554,NSE historicalOR
+index,NSE,NIFTY_LOW_VOLATILITY_50,NIFTY LOW VOLATILITY 50,STRATEGY INDICES,indices/nse/NIFTY_LOW_VOLATILITY_50,2015-11-09,2026-10-30,2704,NSE historicalOR
+index,NSE,NIFTY_MEDIA,NIFTY MEDIA,SECTORAL INDICES,indices/nse/NIFTY_MEDIA,2007-01-02,2026-10-30,4898,NSE historicalOR
+index,NSE,NIFTY_METAL,NIFTY METAL,SECTORAL INDICES,indices/nse/NIFTY_METAL,2011-07-12,2026-10-30,3777,NSE historicalOR
+index,NSE,NIFTY_MICROCAP_250,NIFTY MICROCAP 250,BROAD MARKET INDICES,indices/nse/NIFTY_MICROCAP_250,2016-07-07,2026-10-30,1349,NSE historicalOR
+index,NSE,NIFTY_MIDCAP150_MOMENTUM_50,NIFTY MIDCAP150 MOMENTUM 50,STRATEGY INDICES,indices/nse/NIFTY_MIDCAP150_MOMENTUM_50,2016-07-07,2026-10-30,1035,NSE historicalOR
+index,NSE,NIFTY_MIDCAP150_QUALITY_50,NIFTY MIDCAP150 QUALITY 50,STRATEGY INDICES,indices/nse/NIFTY_MIDCAP150_QUALITY_50,2016-07-07,2026-10-30,1537,NSE historicalOR
+index,NSE,NIFTY_MIDCAP_100,NIFTY MIDCAP 100,BROAD MARKET INDICES,indices/nse/NIFTY_MIDCAP_100,2015-11-09,2026-10-30,2213,NSE historicalOR
+index,NSE,NIFTY_MIDCAP_150,NIFTY MIDCAP 150,BROAD MARKET INDICES,indices/nse/NIFTY_MIDCAP_150,2007-01-02,2026-10-30,4899,NSE historicalOR
+index,NSE,NIFTY_MIDCAP_50,NIFTY MIDCAP 50,BROAD MARKET INDICES,indices/nse/NIFTY_MIDCAP_50,2007-01-02,2026-10-30,4881,NSE historicalOR
+index,NSE,NIFTY_MIDCAP_LIQUID_15,NIFTY MIDCAP LIQUID 15,THEMATIC INDICES,indices/nse/NIFTY_MIDCAP_LIQUID_15,2015-11-09,2026-10-30,2704,NSE historicalOR
+index,NSE,NIFTY_MIDCAP_SELECT,NIFTY MIDCAP SELECT,INDICES ELIGIBLE IN DERIVATIVES,indices/nse/NIFTY_MIDCAP_SELECT,2016-07-07,2026-10-30,1264,NSE historicalOR
+index,NSE,NIFTY_MIDSMALL_FINANCIAL_SERVICES,NIFTY MIDSMALL FINANCIAL SERVICES,SECTORAL INDICES,indices/nse/NIFTY_MIDSMALL_FINANCIAL_SERVICES,2016-07-07,2026-10-30,1042,NSE historicalOR
+index,NSE,NIFTY_MIDSMALL_HEALTHCARE,NIFTY MIDSMALL HEALTHCARE,SECTORAL INDICES,indices/nse/NIFTY_MIDSMALL_HEALTHCARE,2016-07-07,2026-10-30,1042,NSE historicalOR
+index,NSE,NIFTY_MIDSMALL_INDIA_CONSUMPTION,NIFTY MIDSMALL INDIA CONSUMPTION,THEMATIC INDICES,indices/nse/NIFTY_MIDSMALL_INDIA_CONSUMPTION,2016-07-07,2026-10-30,999,NSE historicalOR
+index,NSE,NIFTY_MIDSMALL_IT___TELECOM,NIFTY MIDSMALL IT & TELECOM,SECTORAL INDICES,indices/nse/NIFTY_MIDSMALL_IT___TELECOM,2016-07-07,2026-10-30,1042,NSE historicalOR
+index,NSE,NIFTY_MIDSMALLCAP400_50_50,NIFTY MIDSMALLCAP400 50:50,BROAD MARKET INDICES,indices/nse/NIFTY_MIDSMALLCAP400_50_50,2026-02-05,2026-10-30,181,NSE historicalOR
+index,NSE,NIFTY_MIDSMALLCAP400_MOMENTUM_QUALITY_100,NIFTY MIDSMALLCAP400 MOMENTUM QUALITY 100,STRATEGY INDICES,indices/nse/NIFTY_MIDSMALLCAP400_MOMENTUM_QUALITY_100,2016-07-07,2026-10-30,672,NSE historicalOR
+index,NSE,NIFTY_MIDSMALLCAP_400,NIFTY MIDSMALLCAP 400,BROAD MARKET INDICES,indices/nse/NIFTY_MIDSMALLCAP_400,2007-01-02,2026-10-30,4899,NSE historicalOR
+index,NSE,NIFTY_MNC,NIFTY MNC,THEMATIC INDICES,indices/nse/NIFTY_MNC,2015-11-09,2026-10-30,2704,NSE historicalOR
+index,NSE,NIFTY_MOBILITY,NIFTY MOBILITY,THEMATIC INDICES,indices/nse/NIFTY_MOBILITY,2016-07-07,2026-10-30,1207,NSE historicalOR
+index,NSE,NIFTY_NEXT_50,NIFTY NEXT 50,INDICES ELIGIBLE IN DERIVATIVES,indices/nse/NIFTY_NEXT_50,2007-01-02,2026-10-30,4898,NSE historicalOR
+index,NSE,NIFTY_NON-CYCLICAL_CONSUMER,NIFTY NON-CYCLICAL CONSUMER,THEMATIC INDICES,indices/nse/NIFTY_NON-CYCLICAL_CONSUMER,2016-07-07,2026-10-30,1221,NSE historicalOR
+index,NSE,NIFTY_OIL___GAS,NIFTY OIL & GAS,SECTORAL INDICES,indices/nse/NIFTY_OIL___GAS,2007-01-02,2026-10-30,4025,NSE historicalOR
+index,NSE,NIFTY_PHARMA,NIFTY PHARMA,SECTORAL INDICES,indices/nse/NIFTY_PHARMA,2007-01-02,2026-10-30,4898,NSE historicalOR
+index,NSE,NIFTY_PRIVATE_BANK,NIFTY PRIVATE BANK,SECTORAL INDICES,indices/nse/NIFTY_PRIVATE_BANK,2007-01-02,2026-10-30,4899,NSE historicalOR
+index,NSE,NIFTY_PSE,NIFTY PSE,THEMATIC INDICES,indices/nse/NIFTY_PSE,2015-11-09,2026-10-30,2704,NSE historicalOR
+index,NSE,NIFTY_PSU_BANK,NIFTY PSU BANK,SECTORAL INDICES,indices/nse/NIFTY_PSU_BANK,2007-01-02,2026-10-30,4887,NSE historicalOR
+index,NSE,NIFTY_QUALITY_LOW-VOLATILITY_30,NIFTY QUALITY LOW-VOLATILITY 30,STRATEGY INDICES,indices/nse/NIFTY_QUALITY_LOW-VOLATILITY_30,2016-07-07,2026-10-30,2294,NSE historicalOR
+index,NSE,NIFTY_REALTY,NIFTY REALTY,SECTORAL INDICES,indices/nse/NIFTY_REALTY,2007-01-02,2026-10-30,4898,NSE historicalOR
+index,NSE,NIFTY_REITS___REALTY,NIFTY REITS & REALTY,SECTORAL INDICES,indices/nse/NIFTY_REITS___REALTY,2026-03-04,2026-10-30,163,NSE historicalOR
+index,NSE,NIFTY_RURAL,NIFTY RURAL,THEMATIC INDICES,indices/nse/NIFTY_RURAL,2016-07-07,2026-10-30,562,NSE historicalOR
+index,NSE,NIFTY_SERVICES_SECTOR,NIFTY SERVICES SECTOR,THEMATIC INDICES,indices/nse/NIFTY_SERVICES_SECTOR,2015-11-09,2026-10-30,2704,NSE historicalOR
+index,NSE,NIFTY_SHARIAH_25,NIFTY SHARIAH 25,THEMATIC INDICES,indices/nse/NIFTY_SHARIAH_25,2015-11-09,2026-10-30,2704,NSE historicalOR
+index,NSE,NIFTY_SMALLCAP250_MOMENTUM_QUALITY_100,NIFTY SMALLCAP250 MOMENTUM QUALITY 100,STRATEGY INDICES,indices/nse/NIFTY_SMALLCAP250_MOMENTUM_QUALITY_100,2016-07-07,2026-10-30,706,NSE historicalOR
+index,NSE,NIFTY_SMALLCAP250_QUALITY_50,NIFTY SMALLCAP250 QUALITY 50,STRATEGY INDICES,indices/nse/NIFTY_SMALLCAP250_QUALITY_50,2016-07-07,2026-10-30,890,NSE historicalOR
+index,NSE,NIFTY_SMALLCAP_100,NIFTY SMALLCAP 100,BROAD MARKET INDICES,indices/nse/NIFTY_SMALLCAP_100,2015-11-09,2026-10-30,2213,NSE historicalOR
+index,NSE,NIFTY_SMALLCAP_250,NIFTY SMALLCAP 250,BROAD MARKET INDICES,indices/nse/NIFTY_SMALLCAP_250,2007-01-02,2026-10-30,4899,NSE historicalOR
+index,NSE,NIFTY_SMALLCAP_50,NIFTY SMALLCAP 50,BROAD MARKET INDICES,indices/nse/NIFTY_SMALLCAP_50,2007-01-02,2026-10-30,4899,NSE historicalOR
+index,NSE,NIFTY_SMALLCAP_500,NIFTY SMALLCAP 500,BROAD MARKET INDICES,indices/nse/NIFTY_SMALLCAP_500,2026-01-01,2026-10-30,188,NSE historicalOR
+index,NSE,NIFTY_SME_EMERGE,NIFTY SME EMERGE,THEMATIC INDICES,indices/nse/NIFTY_SME_EMERGE,2017-11-17,2026-10-30,2206,NSE historicalOR
+index,NSE,NIFTY_TOP_10_EQUAL_WEIGHT,NIFTY TOP 10 EQUAL WEIGHT,STRATEGY INDICES,indices/nse/NIFTY_TOP_10_EQUAL_WEIGHT,2016-07-07,2026-10-30,583,NSE historicalOR
+index,NSE,NIFTY_TOP_15_EQUAL_WEIGHT,NIFTY TOP 15 EQUAL WEIGHT,STRATEGY INDICES,indices/nse/NIFTY_TOP_15_EQUAL_WEIGHT,2016-07-07,2026-10-30,506,NSE historicalOR
+index,NSE,NIFTY_TOP_20_EQUAL_WEIGHT,NIFTY TOP 20 EQUAL WEIGHT,STRATEGY INDICES,indices/nse/NIFTY_TOP_20_EQUAL_WEIGHT,2016-07-07,2026-10-30,501,NSE historicalOR
+index,NSE,NIFTY_TOTAL_MARKET,NIFTY TOTAL MARKET,BROAD MARKET INDICES,indices/nse/NIFTY_TOTAL_MARKET,2016-07-07,2026-10-30,1243,NSE historicalOR
+index,NSE,NIFTY_TOTAL_MARKET_MOMENTUM_QUALITY_50,NIFTY TOTAL MARKET MOMENTUM QUALITY 50,STRATEGY INDICES,indices/nse/NIFTY_TOTAL_MARKET_MOMENTUM_QUALITY_50,2025-08-06,2026-10-30,304,NSE historicalOR
+index,NSE,NIFTY_TRANSPORTATION___LOGISTICS,NIFTY TRANSPORTATION & LOGISTICS,THEMATIC INDICES,indices/nse/NIFTY_TRANSPORTATION___LOGISTICS,2016-07-07,2026-10-30,1154,NSE historicalOR
+index,NSE,NIFTY_WAVES,NIFTY WAVES,THEMATIC INDICES,indices/nse/NIFTY_WAVES,2025-05-02,2026-10-30,372,NSE historicalOR
+index,BSE,1000EQ,BSE 1000 MULTICAP EQUAL SIZE WEIGHTED (25%),,indices/bse/1000EQ,2025-02-10,2026-10-30,425,BSE ProduceCSVForDate
+index,BSE,150M1I,BSE 150 MidCap 1X Inverse Daily,,indices/bse/150M1I,2026-03-18,2026-10-30,153,BSE ProduceCSVForDate
+index,BSE,200EQW,BSE 200 EQUAL WEIGHT INDEX,,indices/bse/200EQW,2024-09-30,2026-10-30,517,BSE ProduceCSVForDate
+index,BSE,500EQW,BSE 500 EQUAL WEIGHT,,indices/bse/500EQW,2026-01-22,2026-10-30,191,BSE ProduceCSVForDate
+index,BSE,500IND,BSE 500 Industrials,,indices/bse/500IND,2026-10-29,2026-10-30,2,BSE ProduceCSVForDate
+index,BSE,500L1I,BSE 500 Long + 150 MidCap 1X Inverse 80:20,,indices/bse/500L1I,2026-03-18,2026-10-30,153,BSE ProduceCSVForDate
+index,BSE,B2001I,BSE 200 1X Inverse Daily,,indices/bse/B2001I,2026-03-18,2026-10-30,153,BSE ProduceCSVForDate
+index,BSE,B52L1I,BSE 500 Long + 200 1X Inverse 80:20,,indices/bse/B52L1I,2026-03-18,2026-10-30,153,BSE ProduceCSVForDate
+index,BSE,BALLDS,BSE All Derivative Stocks Index,,indices/bse/BALLDS,2026-01-09,2026-10-30,199,BSE ProduceCSVForDate
+index,BSE,BBGEFS,BSE SELECT BUSINESS GROUPS,,indices/bse/BBGEFS,2024-10-08,2026-10-30,512,BSE ProduceCSVForDate
+index,BSE,BLMD50,BSE LargeMid (60:40) Stable Dividend 50,,indices/bse/BLMD50,2026-06-19,2026-10-30,92,BSE ProduceCSVForDate
+index,BSE,BRACRE,BSE REITS and Commercial Real Estate,,indices/bse/BRACRE,2026-07-01,2026-10-30,85,BSE ProduceCSVForDate
+index,BSE,BREITS,BSE REITS,,indices/bse/BREITS,2026-08-07,2026-10-30,58,BSE ProduceCSVForDate
+index,BSE,BS1000,BSE 1000,,indices/bse/BS1000,2025-02-10,2026-10-30,425,BSE ProduceCSVForDate
+index,BSE,BSE100,BSE 100,,indices/bse/BSE100,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,BSE200,BSE 200,,indices/bse/BSE200,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,BSE500,BSE 500,,indices/bse/BSE500,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,BSEG50,BSE 500 Growth 50,,indices/bse/BSEG50,2026-08-19,2026-10-30,50,BSE ProduceCSVForDate
+index,BSE,BSEMID,BSE MidCap,,indices/bse/BSEMID,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,BSEMSP,BSE MidSmall Private Banks,,indices/bse/BSEMSP,2026-07-02,2026-10-30,84,BSE ProduceCSVForDate
+index,BSE,BSESML,BSE SmallCap,,indices/bse/BSESML,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,BSETMI,BSE Total Market,,indices/bse/BSETMI,2026-07-23,2026-10-30,69,BSE ProduceCSVForDate
+index,BSE,BSHFIN,BSE Housing Finance,,indices/bse/BSHFIN,2026-04-20,2026-10-30,134,BSE ProduceCSVForDate
+index,BSE,BSHOSP,BSE Hospitals,,indices/bse/BSHOSP,2025-10-03,2026-10-30,266,BSE ProduceCSVForDate
+index,BSE,BSLG30,BSE LargeCap 100 Growth 30,,indices/bse/BSLG30,2026-08-19,2026-10-30,50,BSE ProduceCSVForDate
+index,BSE,BSM250,BSE 250 MICROCAP,,indices/bse/BSM250,2025-02-10,2026-10-30,425,BSE ProduceCSVForDate
+index,BSE,BSMG30,BSE MidCap 150 Growth 30,,indices/bse/BSMG30,2026-08-19,2026-10-30,50,BSE ProduceCSVForDate
+index,BSE,BSMQ50,BSE 500 Momentum Quality 50,,indices/bse/BSMQ50,2026-08-06,2026-10-30,59,BSE ProduceCSVForDate
+index,BSE,BSMSIT,BSE MidSmall IT,,indices/bse/BSMSIT,2026-07-24,2026-10-30,68,BSE ProduceCSVForDate
+index,BSE,BSMSPB,BSE MidSmall Private Banks Quality Tilt,,indices/bse/BSMSPB,2026-02-23,2026-10-30,169,BSE ProduceCSVForDate
+index,BSE,BSMV50,BSE 500 Momentum Value 50,,indices/bse/BSMV50,2026-08-06,2026-10-30,59,BSE ProduceCSVForDate
+index,BSE,BSSE50,BSE Smallcap 500 Enhanced Value 50,,indices/bse/BSSE50,2026-03-09,2026-10-30,160,BSE ProduceCSVForDate
+index,BSE,BSSL50,BSE Smallcap 500 Low Volatility 50,,indices/bse/BSSL50,2026-03-09,2026-10-30,160,BSE ProduceCSVForDate
+index,BSE,BSSM50,BSE Smallcap 500 Momentum 50,,indices/bse/BSSM50,2026-03-09,2026-10-30,160,BSE ProduceCSVForDate
+index,BSE,BSSQ50,BSE Smallcap 500 Quality 50,,indices/bse/BSSQ50,2026-03-09,2026-10-30,160,BSE ProduceCSVForDate
+index,BSE,CAPINS,BSE CAPITAL MARKETS & INSURANCE,,indices/bse/CAPINS,2024-10-09,2026-10-30,511,BSE ProduceCSVForDate
+index,BSE,CAPMKT,BSE CAPITAL MARKETS,,indices/bse/CAPMKT,2025-08-29,2026-10-30,290,BSE ProduceCSVForDate
+index,BSE,CARBON,BSE CARBONEX,,indices/bse/CARBON,2010-09-30,2024-08-30,3450,BSE ProduceCSVForDate
+index,BSE,CLEENV,BSE Clean Environment,,indices/bse/CLEENV,2026-01-20,2026-10-30,193,BSE ProduceCSVForDate
+index,BSE,CPSE,BSE CPSE,,indices/bse/CPSE,2008-07-08,2026-10-30,4269,BSE ProduceCSVForDate
+index,BSE,DIVY50,BSE 500 Dividend Leaders 50,,indices/bse/DIVY50,2025-05-09,2026-10-30,368,BSE ProduceCSVForDate
+index,BSE,DOL100,BSE DOLLEX 100,,indices/bse/DOL100,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,DOLL30,BSE DOLLEX 30,,indices/bse/DOLL30,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,DOLLEX,BSE DOLLEX 200,,indices/bse/DOLLEX,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,ENHV50,BSE 500 Enhanced Value 50,,indices/bse/ENHV50,2025-05-19,2026-10-30,362,BSE ProduceCSVForDate
+index,BSE,FOCIT,BSE Focused IT,,indices/bse/FOCIT,2024-10-07,2026-10-30,513,BSE ProduceCSVForDate
+index,BSE,FOCMID,BSE FOCUSED MIDCAP,,indices/bse/FOCMID,2024-10-08,2026-10-30,512,BSE ProduceCSVForDate
+index,BSE,GOI10,BSE 8-13 Year G-Sec Index,,indices/bse/GOI10,2026-02-11,2026-10-30,177,BSE ProduceCSVForDate
+index,BSE,GOI48,BSE 4-8 Year G-Sec Index,,indices/bse/GOI48,2026-02-11,2026-10-30,176,BSE ProduceCSVForDate
+index,BSE,GOI5Y,BSE India 5 Year Sovereign Bond Index,,indices/bse/GOI5Y,2026-06-04,2026-10-30,103,BSE ProduceCSVForDate
+index,BSE,GREENX,BSE GREENEX,,indices/bse/GREENX,2008-10-01,2024-08-30,3939,BSE ProduceCSVForDate
+index,BSE,IND150,BSE India 150,,indices/bse/IND150,2025-04-16,2026-10-30,383,BSE ProduceCSVForDate
+index,BSE,INDDEF,BSE India Defence,,indices/bse/INDDEF,2025-08-13,2026-10-30,300,BSE ProduceCSVForDate
+index,BSE,INFRA,BSE India Infrastructure Index,,indices/bse/INFRA,2014-05-28,2026-10-30,3076,BSE ProduceCSVForDate
+index,BSE,INSLDR,BSE INDIA SECTOR LEADERS,,indices/bse/INSLDR,2025-01-10,2026-10-30,447,BSE ProduceCSVForDate
+index,BSE,INSURE,BSE Insurance,,indices/bse/INSURE,2025-07-09,2026-10-30,325,BSE ProduceCSVForDate
+index,BSE,INTECO,BSE INTERNET ECONOMY,,indices/bse/INTECO,2024-10-10,2026-10-30,510,BSE ProduceCSVForDate
+index,BSE,IPO,BSE IPO,,indices/bse/IPO,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,LENH30,BSE LARGECAP 100 ENHANCED VALUE 30,,indices/bse/LENH30,2025-12-09,2026-10-30,221,BSE ProduceCSVForDate
+index,BSE,LMOM30,BSE LARGECAP 100 MOMENTUM 30,,indices/bse/LMOM30,2025-12-09,2026-10-30,221,BSE ProduceCSVForDate
+index,BSE,LQUA30,BSE LARGECAP 100 QUALITY 30,,indices/bse/LQUA30,2025-12-09,2026-10-30,221,BSE ProduceCSVForDate
+index,BSE,LVOL30,BSE LARGECAP 100 LOW VOLATILITY 30,,indices/bse/LVOL30,2025-12-09,2026-10-30,221,BSE ProduceCSVForDate
+index,BSE,LVOL50,BSE 500 Low Volatility 50,,indices/bse/LVOL50,2025-05-19,2026-10-30,362,BSE ProduceCSVForDate
+index,BSE,MENV30,BSE Midcap 150 Enhanced Value 30,,indices/bse/MENV30,2026-01-12,2026-10-30,198,BSE ProduceCSVForDate
+index,BSE,MLWV30,BSE Midcap 150 Low Volatility 30,,indices/bse/MLWV30,2026-01-12,2026-10-30,198,BSE ProduceCSVForDate
+index,BSE,MMOM30,BSE Midcap 150 Momentum 30,,indices/bse/MMOM30,2026-01-12,2026-10-30,198,BSE ProduceCSVForDate
+index,BSE,MOME50,BSE 500 Momentum 50,,indices/bse/MOME50,2025-05-19,2026-10-30,362,BSE ProduceCSVForDate
+index,BSE,MQUA30,BSE Midcap 150 Quality 30,,indices/bse/MQUA30,2026-01-12,2026-10-30,198,BSE ProduceCSVForDate
+index,BSE,MULCON,BSE Multicap Consumption (50:30:20),,indices/bse/MULCON,2025-10-20,2026-10-30,255,BSE ProduceCSVForDate
+index,BSE,NXT250,BSE Next 250 MICROCAP,,indices/bse/NXT250,2025-02-10,2026-10-30,425,BSE ProduceCSVForDate
+index,BSE,NXT500,BSE NEXT 500,,indices/bse/NXT500,2025-02-10,2026-10-30,425,BSE ProduceCSVForDate
+index,BSE,POWENE,BSE POWER & ENERGY,,indices/bse/POWENE,2024-10-04,2026-10-30,514,BSE ProduceCSVForDate
+index,BSE,PRECON,BSE PREMIUM CONSUMPTION,,indices/bse/PRECON,2024-10-17,2026-10-30,505,BSE ProduceCSVForDate
+index,BSE,PSUBNK,BSE PSU BANK,,indices/bse/PSUBNK,2007-01-02,2026-10-30,2115,BSE ProduceCSVForDate
+index,BSE,QUAL50,BSE 500 Quality 50,,indices/bse/QUAL50,2025-05-19,2026-10-30,362,BSE ProduceCSVForDate
+index,BSE,SAT100,BSE Saatvik 100,,indices/bse/SAT100,2026-06-17,2026-10-30,94,BSE ProduceCSVForDate
+index,BSE,SELIPO,BSE SELECT IPO,,indices/bse/SELIPO,2024-11-18,2026-10-30,484,BSE ProduceCSVForDate
+index,BSE,SENEQW,BSE SENSEX EQUAL WEIGHT,,indices/bse/SENEQW,2024-11-04,2026-10-30,493,BSE ProduceCSVForDate
+index,BSE,SENSEX,BSE SENSEX,,indices/bse/SENSEX,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,SI0200,BSE CAPITAL GOODS,,indices/bse/SI0200,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,SI0400,BSE CONSUMER DURABLES,,indices/bse/SI0400,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,SI0600,BSE Fast Moving Consumer Goods,,indices/bse/SI0600,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,SI0800,BSE Healthcare,,indices/bse/SI0800,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,SI1000,BSE Information Technology,,indices/bse/SI1000,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,SI1200,BSE METAL,,indices/bse/SI1200,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,SI1400,BSE OIL & GAS,,indices/bse/SI1400,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,SI1900,BSE AUTO,,indices/bse/SI1900,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,SIBANK,BSE BANKEX,,indices/bse/SIBANK,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,SIBPSU,BSE PSU,,indices/bse/SIBPSU,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,SIBTEC,BSE TECK,,indices/bse/SIBTEC,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,SIPOWE,BSE POWER,,indices/bse/SIPOWE,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,SIREAL,BSE REALTY,,indices/bse/SIREAL,2007-01-02,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,SMEIPO,BSE SME IPO,,indices/bse/SMEIPO,2012-08-16,2026-10-30,3517,BSE ProduceCSVForDate
+index,BSE,SML500,BSE Smallcap 500,,indices/bse/SML500,2026-03-09,2026-10-30,160,BSE ProduceCSVForDate
+index,BSE,SNSX60,BSE SENSEX SIXTY,,indices/bse/SNSX60,2024-10-04,2026-10-30,514,BSE ProduceCSVForDate
+index,BSE,SNXN30,BSE SENSEX NEXT 30,,indices/bse/SNXN30,2024-08-05,2026-10-30,556,BSE ProduceCSVForDate
+index,BSE,SPB15MIP,BSE 150 MidCap Index,,indices/bse/SPB15MIP,2017-12-01,2026-10-30,2208,BSE ProduceCSVForDate
+index,BSE,SPB1LTIP,BSE 100 LargeCap TMC Index,,indices/bse/SPB1LTIP,2018-07-13,2026-10-30,2055,BSE ProduceCSVForDate
+index,BSE,SPB25SIP,BSE 250 SmallCap Index,,indices/bse/SPB25SIP,2017-12-01,2026-10-30,2208,BSE ProduceCSVForDate
+index,BSE,SPB25XIP,BSE 250 LargeMidCap Index,,indices/bse/SPB25XIP,2017-12-01,2026-10-30,2208,BSE ProduceCSVForDate
+index,BSE,SPB2MXIP,BSE 250 LargeMidCap 65:35 Index,,indices/bse/SPB2MXIP,2017-11-30,2026-10-30,2205,BSE ProduceCSVForDate
+index,BSE,SPB40YIP,BSE 400 MidSmallCap Index,,indices/bse/SPB40YIP,2017-12-01,2026-10-30,2208,BSE ProduceCSVForDate
+index,BSE,SPBIMIP,BSE India Manufacturing Index,,indices/bse/SPBIMIP,2015-06-23,2026-10-30,2814,BSE ProduceCSVForDate
+index,BSE,SPBMDSIP,BSE MidCap Select Index,,indices/bse/SPBMDSIP,2015-07-08,2026-10-30,2803,BSE ProduceCSVForDate
+index,BSE,SPBN5TIP,BSE SENSEX Next 50 TMC,,indices/bse/SPBN5TIP,2018-04-23,2026-10-30,2113,BSE ProduceCSVForDate
+index,BSE,SPBRIIP,BSE REITs and InvITs Index,,indices/bse/SPBRIIP,2023-10-09,2026-10-30,760,BSE ProduceCSVForDate
+index,BSE,SPBS1E,BSE 100 ESG Index,,indices/bse/SPBS1E,2017-10-26,2026-10-30,2234,BSE ProduceCSVForDate
+index,BSE,SPBS5TIP,BSE SENSEX 50 TMC,,indices/bse/SPBS5TIP,2018-07-25,2026-10-30,2047,BSE ProduceCSVForDate
+index,BSE,SPBSAIP,BSE AllCap,,indices/bse/SPBSAIP,2007-01-01,2026-10-30,4915,BSE ProduceCSVForDate
+index,BSE,SPBSARB,BSE Arbitrage Rate Index,,indices/bse/SPBSARB,2018-03-27,2026-10-30,2101,BSE ProduceCSVForDate
+index,BSE,SPBSB2IP,BSE Bharat 22 Index,,indices/bse/SPBSB2IP,2017-08-10,2026-10-30,2285,BSE ProduceCSVForDate
+index,BSE,SPBSCDIP,BSE Consumer Discretionary,,indices/bse/SPBSCDIP,2007-01-01,2026-10-30,4915,BSE ProduceCSVForDate
+index,BSE,SPBSCOIP,BSE Commodities,,indices/bse/SPBSCOIP,2007-01-01,2026-10-30,4915,BSE ProduceCSVForDate
+index,BSE,SPBSDFIP,BSE Diversified Financials Revenue Growth Index,,indices/bse/SPBSDFIP,2018-06-26,2026-10-30,2068,BSE ProduceCSVForDate
+index,BSE,SPBSDSIP,BSE Dividend Stability Index,,indices/bse/SPBSDSIP,2015-08-11,2026-10-30,2768,BSE ProduceCSVForDate
+index,BSE,SPBSE5S,BSE 500 Shariah,,indices/bse/SPBSE5S,2013-04-30,2026-10-30,2965,BSE ProduceCSVForDate
+index,BSE,SPBSEBIP,BSE Financials Ex-Banks 30 Index,,indices/bse/SPBSEBIP,2021-11-16,2026-10-30,1230,BSE ProduceCSVForDate
+index,BSE,SPBSENIP,BSE Energy,,indices/bse/SPBSENIP,2007-01-01,2026-10-30,4915,BSE ProduceCSVForDate
+index,BSE,SPBSEVIP,BSE Enhanced Value Index,,indices/bse/SPBSEVIP,2015-12-14,2026-10-30,2696,BSE ProduceCSVForDate
+index,BSE,SPBSFIIP,BSE Financial Services,,indices/bse/SPBSFIIP,2007-01-01,2026-10-30,4915,BSE ProduceCSVForDate
+index,BSE,SPBSHOIP,BSE Housing Index,,indices/bse/SPBSHOIP,2022-06-28,2026-10-30,1077,BSE ProduceCSVForDate
+index,BSE,SPBSIDIP,BSE Industrials,,indices/bse/SPBSIDIP,2007-01-01,2026-10-30,4915,BSE ProduceCSVForDate
+index,BSE,SPBSLIP,BSE LargeCap,,indices/bse/SPBSLIP,2007-01-01,2026-10-30,4915,BSE ProduceCSVForDate
+index,BSE,SPBSLMIP,BSE LargeMidCap,,indices/bse/SPBSLMIP,2007-01-01,2026-10-30,4915,BSE ProduceCSVForDate
+index,BSE,SPBSLVIP,BSE Low Volatility Index,,indices/bse/SPBSLVIP,2015-12-14,2026-10-30,2696,BSE ProduceCSVForDate
+index,BSE,SPBSMOIP,BSE Momentum Index,,indices/bse/SPBSMOIP,2015-12-14,2026-10-30,2696,BSE ProduceCSVForDate
+index,BSE,SPBSMSIP,BSE MidSmallCap,,indices/bse/SPBSMSIP,2007-01-01,2026-10-30,4915,BSE ProduceCSVForDate
+index,BSE,SPBSN5IP,BSE SENSEX Next 50,,indices/bse/SPBSN5IP,2007-01-01,2026-10-30,4913,BSE ProduceCSVForDate
+index,BSE,SPBSPBIP,BSE Private Banks Index,,indices/bse/SPBSPBIP,2018-08-27,2026-10-30,2026,BSE ProduceCSVForDate
+index,BSE,SPBSQIP,BSE Quality Index,,indices/bse/SPBSQIP,2015-12-14,2026-10-30,2696,BSE ProduceCSVForDate
+index,BSE,SPBSS5IP,BSE SENSEX 50,,indices/bse/SPBSS5IP,2016-12-06,2026-10-30,2455,BSE ProduceCSVForDate
+index,BSE,SPBSSEIP,BSE Services,,indices/bse/SPBSSEIP,2022-09-20,2026-10-30,1020,BSE ProduceCSVForDate
+index,BSE,SPBSSSIP,BSE SmallCap Select Index,,indices/bse/SPBSSSIP,2015-07-08,2026-10-30,2803,BSE ProduceCSVForDate
+index,BSE,SPBSTLIP,BSE Telecommunication,,indices/bse/SPBSTLIP,2007-01-01,2026-10-30,4915,BSE ProduceCSVForDate
+index,BSE,SPBSUTIP,BSE Utilities,,indices/bse/SPBSUTIP,2007-01-01,2026-10-30,4915,BSE ProduceCSVForDate
+index,BSE,SPICBLOT,BSE Liquid Rate Index,,indices/bse/SPICBLOT,2016-08-12,2016-09-22,26,BSE ProduceCSVForDate
+index,BSE,SS6535,BSE SENSEX SIXTY 65:35,,indices/bse/SS6535,2024-10-04,2026-10-30,514,BSE ProduceCSVForDate
+index,BSE,T10BNK,BSE Top 10 Banks,,indices/bse/T10BNK,2025-11-14,2026-10-30,238,BSE ProduceCSVForDate
+index,BSE,TE1000,BSE 1000 TELECOMMUNICATION,,indices/bse/TE1000,2026-10-29,2026-10-30,2,BSE ProduceCSVForDate

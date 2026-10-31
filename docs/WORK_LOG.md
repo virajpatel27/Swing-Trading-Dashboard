@@ -38,3 +38,47 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   history from 2007-01-02 for stock / NSE index / BSE index; Angel history is ADJUSTED (RELIANCE 25-Oct-2024 = 1327.85 = yfinance).
   `docs/SOURCES.md` updated. **Phase 2 done.** Mark checklist: Secrets added, probe run.
 - NEXT: Viraj commits the docs; "continue" -> Phase 3 (storage + raw backfill + validation).
+- Viraj: "Ha, continue" -> **Phase 3** started.
+- Source details found: old bhavcopy format until 05-Jul-2024 (SYMBOL..TIMESTAMP, ISIN only from ~2011+), UDiFF from 08-Jul-2024;
+  symbol changes in `nsearchives .../content/equities/symbolchange.csv`. NSE historicalOR: max 365 days AND only ~70 rows per call
+  -> 90-day windows. NSE `ind_close_all` archive starts 21-Feb-2012 with old names ("S&P CNX Nifty", "CNX Bank" ...) -> used only for
+  daily updates. BSE `ProduceCSVForDate` returns 2007 -> today in ONE call (IndexArchDaily caps at 26 rows); some BSE rows have
+  only a close (open/high/low filled with the close). NSE allIndices: 139 = 18 broad, 21 sectoral, 41 thematic, 42 strategy,
+  11 fixed income, 6 derivative-eligible.
+- Built: `config/universe.yaml`, `config/settings.yaml`, `swingdash/store.py`, `validate.py`, `meta.py`, `backfill.py`,
+  `sources/nse.py`, `sources/bse.py`, `scripts/backfill.py`, `scripts/validate_data.py`, workflow `backfill.yml` (manual, saves data
+  only after the data check passes). 33 tests green; 3 mutations caught (holiday-date check, unchanged-file skip, 2-empty-window stop).
+- Backfill started locally 2026-10-31 ~16:40 IST: stocks, NSE indices, BSE indices in parallel (logs in the session scratchpad).
+- BSE indices done in ~5 min: 139 of 151 with data (12 bond indices have none), 8.6 MB.
+- NSE historicalOR answers in ~5 s per call -> walking every index back to 2007 would take 6-8 h. Stopped after NIFTY 50 (complete)
+  and changed the NSE index job: step A = daily all-indices files from 21-Feb-2012 (all indices per file, matched by current
+  name, case/space-insensitive; old names skipped and listed in the checkpoint), step B = walk back from each index's oldest stored
+  day with historicalOR. Checkpoint layout now {"files_last_day", "unmatched_names", "walk": {name: state}}. 34 tests green.
+- ~17:50 both NSE jobs stopped with ConnectionError on nsearchives at the same moment (two parallel jobs on the same host ->
+  NSE dropped us for a few minutes). Added `--attempts/--pause` (restart from checkpoint after a pause). Rule: never run two jobs
+  on nsearchives at once.
+- Stocks DONE 18:3x: 2007-01-02 -> 2026-10-30, 4,893 trading days, 497 of 501 stocks. Missing: 3 REITs (series RR was not in
+  series_priority) + DUMMYHEG (an NSE placeholder). Added RR/IV to series_priority and `--symbols ... --from` for a small extra run
+  (own checkpoint `nse_stocks_extra.json`); REIT run started (2019 ->). Index files DONE up to 2026-10-30.
+- NSE walk-back hit ReadTimeouts on www.nseindia.com (and the app killed the background task); a single test call then worked in
+  ~2 s -> restarted with `--attempts 10 --pause 180`.
+- Many hist_*.parquet per instrument after a backfill (one per flush): added `store.compact` + `--job compact`. 36 tests green.
+- Sizes before compaction: stocks raw 91 MB, NSE indices 9.4 MB, BSE indices 8.6 MB, 5,240 files.
+- REITs done (EMBASSY 2019-04, BIRET 2021-02, BAGMANE 2026-05): 500 stocks. Walk-back crashed once: a ReadTimeout while
+  downloading the index LIST was not caught -> list now falls back to the last saved `indices_nse.csv`, and the CLI treats any
+  exception as a stop (retry from checkpoint). NSE API pace 2 s -> 3 s (it stops answering after ~20-25 min of steady calls).
+- First full data check (19:0x): 0 errors, 1,175 warnings = 953 "unexplained" jumps (splits/bonus, Phase 4), 199 missing-date
+  notes (e.g. 18-May-2009 circuit-halt day), 18 bad candles (INDIA VIX, DOLLEX, a few index days), 5 zero closes
+  (NIFTY50 DIVIDEND POINTS restarts at 0 each April: real).
+- Found: many NSE index rows close-only (old daily files) and holes inside some index histories (e.g. NIFTY500 EQUAL WEIGHT:
+  2 rows in 2016 then 2024 ->, giving a fake +70.9% "jump"). Added `store.fill_ohl` (parsers + stored data) and step C
+  `nse_index_gaps` (missing trading days inside a history asked from historicalOR in <=90-day windows; empty windows remembered
+  in the checkpoint). 40 tests green.
+- 20:15-21:24 the NSE API (www.nseindia.com) kept refusing this PC (ConnectionError on almost every try): walk-back went only
+  53 -> 57 of 139 in an hour. Stopped the local job (checkpoint kept). Plan: finish the NSE walk-back + step C from GitHub
+  Actions (other IP; the probe showed NSE answers GitHub): Actions -> Backfill history -> nse-indices.
+- Compacted (5,240 -> 1,519 files), filled close-only rows in 117 NSE indices. Data check: 778 instruments (500 stocks,
+  139 NSE + 139 BSE indices), 2,259,299 rows, newest 2026-10-30, **0 errors**, 1,181 warnings. Size: stocks 71 MB,
+  indices 19 MB, meta 0.3 MB = ~90 MB (plan estimate was ~160 MB).
+- NEXT: Viraj commits code + data (GitHub Desktop), runs Backfill history (nse-indices) on GitHub until it says nothing is left,
+  then pulls the bot's commits. Open question for Phase 7: daily values for the ~100 BSE indices Angel One does not list.

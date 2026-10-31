@@ -1,0 +1,606 @@
+{
+ "1000EQ": {
+  "done": true,
+  "rows": 425
+ },
+ "150M1I": {
+  "done": true,
+  "rows": 153
+ },
+ "200EQW": {
+  "done": true,
+  "rows": 517
+ },
+ "500EQW": {
+  "done": true,
+  "rows": 191
+ },
+ "500IND": {
+  "done": true,
+  "rows": 2
+ },
+ "500L1I": {
+  "done": true,
+  "rows": 153
+ },
+ "B2001I": {
+  "done": true,
+  "rows": 153
+ },
+ "B52L1I": {
+  "done": true,
+  "rows": 153
+ },
+ "BALLDS": {
+  "done": true,
+  "rows": 199
+ },
+ "BBGEFS": {
+  "done": true,
+  "rows": 512
+ },
+ "BLMD50": {
+  "done": true,
+  "rows": 92
+ },
+ "BRACRE": {
+  "done": true,
+  "rows": 85
+ },
+ "BREITS": {
+  "done": true,
+  "rows": 58
+ },
+ "BS1000": {
+  "done": true,
+  "rows": 425
+ },
+ "BSE100": {
+  "done": true,
+  "rows": 4913
+ },
+ "BSE200": {
+  "done": true,
+  "rows": 4913
+ },
+ "BSE500": {
+  "done": true,
+  "rows": 4913
+ },
+ "BSEG50": {
+  "done": true,
+  "rows": 50
+ },
+ "BSEMID": {
+  "done": true,
+  "rows": 4913
+ },
+ "BSEMSP": {
+  "done": true,
+  "rows": 84
+ },
+ "BSESML": {
+  "done": true,
+  "rows": 4913
+ },
+ "BSETMI": {
+  "done": true,
+  "rows": 69
+ },
+ "BSHFIN": {
+  "done": true,
+  "rows": 134
+ },
+ "BSHOSP": {
+  "done": true,
+  "rows": 266
+ },
+ "BSLG30": {
+  "done": true,
+  "rows": 50
+ },
+ "BSM250": {
+  "done": true,
+  "rows": 425
+ },
+ "BSMG30": {
+  "done": true,
+  "rows": 50
+ },
+ "BSMQ50": {
+  "done": true,
+  "rows": 59
+ },
+ "BSMSIT": {
+  "done": true,
+  "rows": 68
+ },
+ "BSMSPB": {
+  "done": true,
+  "rows": 169
+ },
+ "BSMV50": {
+  "done": true,
+  "rows": 59
+ },
+ "BSSE50": {
+  "done": true,
+  "rows": 160
+ },
+ "BSSL50": {
+  "done": true,
+  "rows": 160
+ },
+ "BSSM50": {
+  "done": true,
+  "rows": 160
+ },
+ "BSSQ50": {
+  "done": true,
+  "rows": 160
+ },
+ "CAPINS": {
+  "done": true,
+  "rows": 511
+ },
+ "CAPMKT": {
+  "done": true,
+  "rows": 290
+ },
+ "CARBON": {
+  "done": true,
+  "rows": 3450
+ },
+ "CLEENV": {
+  "done": true,
+  "rows": 193
+ },
+ "CPSE": {
+  "done": true,
+  "rows": 4269
+ },
+ "DIVY50": {
+  "done": true,
+  "rows": 368
+ },
+ "DOL100": {
+  "done": true,
+  "rows": 4913
+ },
+ "DOLL30": {
+  "done": true,
+  "rows": 4913
+ },
+ "DOLLEX": {
+  "done": true,
+  "rows": 4913
+ },
+ "ENHV50": {
+  "done": true,
+  "rows": 362
+ },
+ "FOCIT": {
+  "done": true,
+  "rows": 513
+ },
+ "FOCMID": {
+  "done": true,
+  "rows": 512
+ },
+ "GOI10": {
+  "done": true,
+  "rows": 177
+ },
+ "GOI48": {
+  "done": true,
+  "rows": 176
+ },
+ "GOI5Y": {
+  "done": true,
+  "rows": 103
+ },
+ "GREENX": {
+  "done": true,
+  "rows": 3939
+ },
+ "IND150": {
+  "done": true,
+  "rows": 383
+ },
+ "INDDEF": {
+  "done": true,
+  "rows": 300
+ },
+ "INFRA": {
+  "done": true,
+  "rows": 3076
+ },
+ "INSLDR": {
+  "done": true,
+  "rows": 447
+ },
+ "INSURE": {
+  "done": true,
+  "rows": 325
+ },
+ "INTECO": {
+  "done": true,
+  "rows": 510
+ },
+ "IPO": {
+  "done": true,
+  "rows": 4913
+ },
+ "LENH30": {
+  "done": true,
+  "rows": 221
+ },
+ "LMOM30": {
+  "done": true,
+  "rows": 221
+ },
+ "LQUA30": {
+  "done": true,
+  "rows": 221
+ },
+ "LVOL30": {
+  "done": true,
+  "rows": 221
+ },
+ "LVOL50": {
+  "done": true,
+  "rows": 362
+ },
+ "MENV30": {
+  "done": true,
+  "rows": 198
+ },
+ "MLWV30": {
+  "done": true,
+  "rows": 198
+ },
+ "MMOM30": {
+  "done": true,
+  "rows": 198
+ },
+ "MOME50": {
+  "done": true,
+  "rows": 362
+ },
+ "MQUA30": {
+  "done": true,
+  "rows": 198
+ },
+ "MULCON": {
+  "done": true,
+  "rows": 255
+ },
+ "NXT250": {
+  "done": true,
+  "rows": 425
+ },
+ "NXT500": {
+  "done": true,
+  "rows": 425
+ },
+ "POWENE": {
+  "done": true,
+  "rows": 514
+ },
+ "PRECON": {
+  "done": true,
+  "rows": 505
+ },
+ "PSUBNK": {
+  "done": true,
+  "rows": 2115
+ },
+ "QUAL50": {
+  "done": true,
+  "rows": 362
+ },
+ "SAT100": {
+  "done": true,
+  "rows": 94
+ },
+ "SELIPO": {
+  "done": true,
+  "rows": 484
+ },
+ "SENEQW": {
+  "done": true,
+  "rows": 493
+ },
+ "SENSEX": {
+  "done": true,
+  "rows": 4913
+ },
+ "SI0200": {
+  "done": true,
+  "rows": 4913
+ },
+ "SI0400": {
+  "done": true,
+  "rows": 4913
+ },
+ "SI0600": {
+  "done": true,
+  "rows": 4913
+ },
+ "SI0800": {
+  "done": true,
+  "rows": 4913
+ },
+ "SI1000": {
+  "done": true,
+  "rows": 4913
+ },
+ "SI1200": {
+  "done": true,
+  "rows": 4913
+ },
+ "SI1400": {
+  "done": true,
+  "rows": 4913
+ },
+ "SI1900": {
+  "done": true,
+  "rows": 4913
+ },
+ "SIBANK": {
+  "done": true,
+  "rows": 4913
+ },
+ "SIBPSU": {
+  "done": true,
+  "rows": 4913
+ },
+ "SIBTEC": {
+  "done": true,
+  "rows": 4913
+ },
+ "SIPOWE": {
+  "done": true,
+  "rows": 4913
+ },
+ "SIREAL": {
+  "done": true,
+  "rows": 4913
+ },
+ "SMEIPO": {
+  "done": true,
+  "rows": 3517
+ },
+ "SML500": {
+  "done": true,
+  "rows": 160
+ },
+ "SNSX60": {
+  "done": true,
+  "rows": 514
+ },
+ "SNXN30": {
+  "done": true,
+  "rows": 556
+ },
+ "SPB15MIP": {
+  "done": true,
+  "rows": 2208
+ },
+ "SPB1LTIP": {
+  "done": true,
+  "rows": 2055
+ },
+ "SPB25SIP": {
+  "done": true,
+  "rows": 2208
+ },
+ "SPB25XIP": {
+  "done": true,
+  "rows": 2208
+ },
+ "SPB2MXIP": {
+  "done": true,
+  "rows": 2205
+ },
+ "SPB40YIP": {
+  "done": true,
+  "rows": 2208
+ },
+ "SPBDISBT": {
+  "done": true,
+  "rows": 0
+ },
+ "SPBIMIP": {
+  "done": true,
+  "rows": 2814
+ },
+ "SPBINAGT": {
+  "done": true,
+  "rows": 0
+ },
+ "SPBINCFT": {
+  "done": true,
+  "rows": 0
+ },
+ "SPBINCIT": {
+  "done": true,
+  "rows": 0
+ },
+ "SPBINCOT": {
+  "done": true,
+  "rows": 0
+ },
+ "SPBINCPT": {
+  "done": true,
+  "rows": 0
+ },
+ "SPBINCST": {
+  "done": true,
+  "rows": 0
+ },
+ "SPBINCUT": {
+  "done": true,
+  "rows": 0
+ },
+ "SPBINGBT": {
+  "done": true,
+  "rows": 0
+ },
+ "SPBINGOT": {
+  "done": true,
+  "rows": 0
+ },
+ "SPBINGPT": {
+  "done": true,
+  "rows": 0
+ },
+ "SPBINSOT": {
+  "done": true,
+  "rows": 0
+ },
+ "SPBMDSIP": {
+  "done": true,
+  "rows": 2803
+ },
+ "SPBN5TIP": {
+  "done": true,
+  "rows": 2113
+ },
+ "SPBRIIP": {
+  "done": true,
+  "rows": 760
+ },
+ "SPBS1E": {
+  "done": true,
+  "rows": 2234
+ },
+ "SPBS5TIP": {
+  "done": true,
+  "rows": 2047
+ },
+ "SPBSAIP": {
+  "done": true,
+  "rows": 4915
+ },
+ "SPBSARB": {
+  "done": true,
+  "rows": 2101
+ },
+ "SPBSB2IP": {
+  "done": true,
+  "rows": 2285
+ },
+ "SPBSCDIP": {
+  "done": true,
+  "rows": 4915
+ },
+ "SPBSCOIP": {
+  "done": true,
+  "rows": 4915
+ },
+ "SPBSDFIP": {
+  "done": true,
+  "rows": 2068
+ },
+ "SPBSDSIP": {
+  "done": true,
+  "rows": 2768
+ },
+ "SPBSE5S": {
+  "done": true,
+  "rows": 2965
+ },
+ "SPBSEBIP": {
+  "done": true,
+  "rows": 1230
+ },
+ "SPBSENIP": {
+  "done": true,
+  "rows": 4915
+ },
+ "SPBSEVIP": {
+  "done": true,
+  "rows": 2696
+ },
+ "SPBSFIIP": {
+  "done": true,
+  "rows": 4915
+ },
+ "SPBSHOIP": {
+  "done": true,
+  "rows": 1077
+ },
+ "SPBSIDIP": {
+  "done": true,
+  "rows": 4915
+ },
+ "SPBSLIP": {
+  "done": true,
+  "rows": 4915
+ },
+ "SPBSLMIP": {
+  "done": true,
+  "rows": 4915
+ },
+ "SPBSLVIP": {
+  "done": true,
+  "rows": 2696
+ },
+ "SPBSMOIP": {
+  "done": true,
+  "rows": 2696
+ },
+ "SPBSMSIP": {
+  "done": true,
+  "rows": 4915
+ },
+ "SPBSN5IP": {
+  "done": true,
+  "rows": 4913
+ },
+ "SPBSPBIP": {
+  "done": true,
+  "rows": 2026
+ },
+ "SPBSQIP": {
+  "done": true,
+  "rows": 2696
+ },
+ "SPBSS5IP": {
+  "done": true,
+  "rows": 2455
+ },
+ "SPBSSEIP": {
+  "done": true,
+  "rows": 1020
+ },
+ "SPBSSSIP": {
+  "done": true,
+  "rows": 2803
+ },
+ "SPBSTLIP": {
+  "done": true,
+  "rows": 4915
+ },
+ "SPBSUTIP": {
+  "done": true,
+  "rows": 4915
+ },
+ "SPICBLOT": {
+  "done": true,
+  "rows": 26
+ },
+ "SS6535": {
+  "done": true,
+  "rows": 514
+ },
+ "T10BNK": {
+  "done": true,
+  "rows": 238
+ },
+ "TE1000": {
+  "done": true,
+  "rows": 2
+ }
+}

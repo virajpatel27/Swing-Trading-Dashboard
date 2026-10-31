@@ -16,10 +16,12 @@ RETRY_STATUS = {429, 500, 502, 503, 504}
 
 class PoliteSession:
     def __init__(self, min_gap: float = 0.5, retries: int = 4, backoff: float = 2.0, timeout: int = 30,
-                 session=None, sleep=time.sleep, clock=time.monotonic):
+                 session=None, sleep=time.sleep, clock=time.monotonic, gaps: dict[str, float] | None = None):
+        """gaps = {host: seconds} for sites that need a different pause than min_gap."""
         self.s = session or requests.Session()
         self.s.headers.update({"User-Agent": BROWSER_UA, "Accept": "*/*", "Accept-Language": "en-US,en;q=0.9"})
         self.min_gap, self.retries, self.backoff, self.timeout = min_gap, retries, backoff, timeout
+        self.gaps = gaps or {}
         self.sleep, self.clock = sleep, clock
         self._last: dict[str, float] = {}
         self._warmed: set[str] = set()
@@ -27,7 +29,7 @@ class PoliteSession:
     def _pace(self, host: str) -> None:
         last = self._last.get(host)
         if last is not None:
-            wait = self.min_gap - (self.clock() - last)
+            wait = self.gaps.get(host, self.min_gap) - (self.clock() - last)
             if wait > 0:
                 self.sleep(wait)
         self._last[host] = self.clock()

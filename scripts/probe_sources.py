@@ -261,12 +261,13 @@ class Probe:
                               "detail": "skipped here (secrets not set) - runs on GitHub after the Secrets are added"})
             print("[-- ] Angel One login skipped: secrets not set")
             return
-        import pyotp
-        from SmartApi import SmartConnect
-
-        api = SmartConnect(api_key=os.environ["ANGEL_API_KEY"])
+        api = None
 
         def login():
+            nonlocal api
+            import pyotp
+            from SmartApi import SmartConnect           # inside the check: a broken install becomes a "NO" row, not a crash
+            api = SmartConnect(api_key=os.environ["ANGEL_API_KEY"])
             totp = pyotp.TOTP(os.environ["ANGEL_TOTP_SECRET"].replace(" ", "").upper()).now()
             res = api.generateSession(os.environ["ANGEL_CLIENT_ID"], os.environ["ANGEL_PIN"], totp)
             ok = bool(res and res.get("status"))

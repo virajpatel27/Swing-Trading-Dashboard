@@ -5,6 +5,8 @@
 *.session
 *token*.json
 session/
+# smartapi-python writes its own log files here (may hold request details)
+logs/
 
 # Python
 __pycache__/

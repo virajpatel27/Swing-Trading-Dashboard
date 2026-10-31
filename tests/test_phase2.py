@@ -94,6 +94,11 @@ def test_repo_itself_has_no_secrets():
     assert check_secrets.main([]) == 0
 
 
+def test_angel_sdk_imports():
+    """smartapi-python does not install everything it imports; requirements.txt must add the rest."""
+    from SmartApi import SmartConnect  # noqa: F401
+
+
 # ---------------------------------------------------------------- probe helpers
 def test_recent_weekdays_skip_weekend():
     assert probe_sources.recent_weekdays(date(2026, 11, 2), 2) == [date(2026, 10, 30), date(2026, 10, 29)]

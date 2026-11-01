@@ -937,9 +937,10 @@ NSE NIFTY100 ENHANCED ESG,warn,unexplained jump,2018-03-28,close moved 22.9% (to
 NSE NIFTY100 ENHANCED ESG,warn,missing dates,2016-07-08,"429 trading days without a row (first 2016-07-08, last 2023-04-11)"
 NSE NIFTY100 EQUAL WEIGHT,warn,missing dates,2015-12-01,"5 trading days without a row (first 2015-12-01, last 2023-04-11)"
 NSE NIFTY100 ESG,warn,unexplained jump,2018-03-28,close moved 21.9% (to 1882.53)
-NSE NIFTY100 ESG,warn,missing dates,2016-07-08,"429 trading days without a row (first 2016-07-08, last 2023-04-11)"
+NSE NIFTY100 ESG,warn,missing dates,2013-04-25,"550 trading days without a row (first 2013-04-25, last 2023-04-11)"
 NSE NIFTY100 ESG SECTOR LEADERS,warn,unexplained jump,2020-06-16,close moved 25.0% (to 1737.67)
 NSE NIFTY100 ESG SECTOR LEADERS,warn,missing dates,2016-07-08,"978 trading days without a row (first 2016-07-08, last 2023-04-11)"
+NSE NIFTY100 LIQUID 15,warn,unexplained jump,2009-05-18,close moved 20.3% (to 2240.05)
 NSE NIFTY100 LIQUID 15,warn,missing dates,2015-12-01,"5 trading days without a row (first 2015-12-01, last 2023-04-11)"
 NSE NIFTY100 LOW VOLATILITY 30,warn,missing dates,2016-07-08,"4 trading days without a row (first 2016-07-08, last 2023-04-11)"
 NSE NIFTY100 QUALITY 30,warn,unexplained jump,2018-07-16,close moved 24.9% (to 2688.4)

@@ -128,6 +128,27 @@
    "empties": 0,
    "oldest_checked": "2007-01-01"
   },
+  "NIFTY ALPHA LOW-VOLATILITY 30": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY ALPHA QUALITY LOW-VOLATILITY 30": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY ALPHA QUALITY VALUE LOW-VOLATILITY 30": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
   "NIFTY AUTO": {
    "done": true,
    "empties": 0,
@@ -137,6 +158,13 @@
    "done": true,
    "empties": 0,
    "oldest_checked": "2007-01-01"
+  },
+  "NIFTY CAPITAL MARKETS": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2022-10-14",
+   "skipped": []
   },
   "NIFTY CEMENT": {
    "done": true,
@@ -148,15 +176,50 @@
    "empties": 2,
    "oldest_checked": "2024-09-12"
   },
+  "NIFTY COMMODITIES": {
+   "done": true,
+   "empties": 0,
+   "fails": {},
+   "oldest_checked": "2007-01-01",
+   "skipped": []
+  },
   "NIFTY CONSUMER DURABLES": {
    "done": true,
    "empties": 0,
    "oldest_checked": "2007-01-01"
   },
+  "NIFTY CORE HOUSING": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY CPSE": {
+   "done": true,
+   "empties": 0,
+   "fails": {},
+   "oldest_checked": "2007-01-01",
+   "skipped": []
+  },
   "NIFTY DIVIDEND OPPORTUNITIES 50": {
    "done": true,
    "empties": 2,
    "oldest_checked": "2007-03-26"
+  },
+  "NIFTY ENERGY": {
+   "done": true,
+   "empties": 0,
+   "fails": {},
+   "oldest_checked": "2007-01-01",
+   "skipped": []
+  },
+  "NIFTY EV & NEW AGE AUTOMOTIVE": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2022-10-14",
+   "skipped": []
   },
   "NIFTY FINANCIAL SERVICES": {
    "done": true,
@@ -188,10 +251,94 @@
    "empties": 0,
    "oldest_checked": "2007-01-01"
   },
+  "NIFTY HIGH BETA 50": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2015-05-13",
+   "skipped": []
+  },
+  "NIFTY HOUSING": {
+   "done": true,
+   "empties": 0,
+   "fails": {},
+   "oldest_checked": "2007-01-01",
+   "skipped": []
+  },
+  "NIFTY INDIA CONSUMPTION": {
+   "done": true,
+   "empties": 0,
+   "fails": {},
+   "oldest_checked": "2007-01-01",
+   "skipped": []
+  },
+  "NIFTY INDIA CORPORATE GROUP INDEX - TATA GROUP 25% CAP": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY INDIA DEFENCE": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2021-07-23",
+   "skipped": []
+  },
+  "NIFTY INDIA DIGITAL": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
   "NIFTY INDIA FPI 150": {
    "done": true,
    "empties": 2,
    "oldest_checked": "2025-02-15"
+  },
+  "NIFTY INDIA MANUFACTURING": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY INDIA NEW AGE CONSUMPTION": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY INDIA SELECT 5 CORPORATE GROUPS (MAATR)": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY INDIA TOURISM": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY INFRASTRUCTURE": {
+   "done": true,
+   "empties": 0,
+   "fails": {},
+   "oldest_checked": "2007-01-01",
+   "skipped": []
+  },
+  "NIFTY IPO": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2022-10-14",
+   "skipped": []
   },
   "NIFTY IT": {
    "done": true,
@@ -202,6 +349,13 @@
    "done": true,
    "empties": 0,
    "oldest_checked": "2007-01-01"
+  },
+  "NIFTY LOW VOLATILITY 50": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2015-05-13",
+   "skipped": []
   },
   "NIFTY MEDIA": {
    "done": true,
@@ -233,10 +387,31 @@
    "empties": 0,
    "oldest_checked": "2007-01-01"
   },
+  "NIFTY MIDCAP LIQUID 15": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2008-06-18",
+   "skipped": []
+  },
   "NIFTY MIDCAP SELECT": {
    "done": true,
    "empties": 2,
    "oldest_checked": "2016-01-09"
+  },
+  "NIFTY MIDCAP150 MOMENTUM 50": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY MIDCAP150 QUALITY 50": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
   },
   "NIFTY MIDSMALL FINANCIAL SERVICES": {
    "done": true,
@@ -247,6 +422,13 @@
    "done": true,
    "empties": 2,
    "oldest_checked": "2016-01-09"
+  },
+  "NIFTY MIDSMALL INDIA CONSUMPTION": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
   },
   "NIFTY MIDSMALL IT & TELECOM": {
    "done": true,
@@ -263,10 +445,38 @@
    "empties": 2,
    "oldest_checked": "2025-08-09"
   },
+  "NIFTY MIDSMALLCAP400 MOMENTUM QUALITY 100": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY MNC": {
+   "done": true,
+   "empties": 0,
+   "fails": {},
+   "oldest_checked": "2007-01-01",
+   "skipped": []
+  },
+  "NIFTY MOBILITY": {
+   "done": true,
+   "empties": 0,
+   "fails": {},
+   "oldest_checked": "2007-01-01",
+   "skipped": []
+  },
   "NIFTY NEXT 50": {
    "done": true,
    "empties": 0,
    "oldest_checked": "2007-01-01"
+  },
+  "NIFTY NON-CYCLICAL CONSUMER": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
   },
   "NIFTY OIL & GAS": {
    "done": true,
@@ -283,10 +493,24 @@
    "empties": 0,
    "oldest_checked": "2007-01-01"
   },
+  "NIFTY PSE": {
+   "done": true,
+   "empties": 0,
+   "fails": {},
+   "oldest_checked": "2007-01-01",
+   "skipped": []
+  },
   "NIFTY PSU BANK": {
    "done": true,
    "empties": 0,
    "oldest_checked": "2007-01-01"
+  },
+  "NIFTY QUALITY LOW-VOLATILITY 30": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
   },
   "NIFTY REALTY": {
    "done": true,
@@ -297,6 +521,32 @@
    "done": true,
    "empties": 2,
    "oldest_checked": "2025-09-05"
+  },
+  "NIFTY RURAL": {
+   "empties": 1,
+   "fails": {
+    "2015-07-13": 1,
+    "2015-10-11": 2,
+    "2016-01-09": 2
+   },
+   "oldest_checked": "2015-10-11",
+   "skipped": [
+    [
+     "2016-01-09",
+     "2016-04-07"
+    ],
+    [
+     "2015-10-11",
+     "2016-01-08"
+    ]
+   ]
+  },
+  "NIFTY SERVICES SECTOR": {
+   "done": true,
+   "empties": 0,
+   "fails": {},
+   "oldest_checked": "2007-01-01",
+   "skipped": []
   },
   "NIFTY SMALLCAP 100": {
    "done": true,
@@ -318,24 +568,144 @@
    "empties": 2,
    "oldest_checked": "2025-07-05"
   },
+  "NIFTY SMALLCAP250 MOMENTUM QUALITY 100": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY SMALLCAP250 QUALITY 50": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY TOP 10 EQUAL WEIGHT": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY TOP 15 EQUAL WEIGHT": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY TOP 20 EQUAL WEIGHT": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
   "NIFTY TOTAL MARKET": {
    "done": true,
    "empties": 2,
    "oldest_checked": "2016-01-09"
+  },
+  "NIFTY TOTAL MARKET MOMENTUM QUALITY 50": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2025-02-07",
+   "skipped": []
+  },
+  "NIFTY100 ALPHA 30": {
+   "done": true,
+   "empties": 0,
+   "fails": {},
+   "oldest_checked": "2007-01-01",
+   "skipped": []
+  },
+  "NIFTY100 ENHANCED ESG": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
   },
   "NIFTY100 EQUAL WEIGHT": {
    "done": true,
    "empties": 2,
    "oldest_checked": "2015-05-13"
   },
+  "NIFTY100 ESG": {
+   "done": true,
+   "empties": 2,
+   "fails": {
+    "2013-04-24": 2,
+    "2013-07-23": 2
+   },
+   "oldest_checked": "2010-08-08",
+   "skipped": [
+    [
+     "2013-07-23",
+     "2013-10-20"
+    ],
+    [
+     "2013-04-24",
+     "2013-07-22"
+    ]
+   ]
+  },
+  "NIFTY100 ESG SECTOR LEADERS": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2013-04-24",
+   "skipped": []
+  },
+  "NIFTY100 LIQUID 15": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2008-06-18",
+   "skipped": []
+  },
   "NIFTY100 LOW VOLATILITY 30": {
+   "done": true,
    "empties": 0,
-   "oldest_checked": "2009-02-14"
+   "fails": {},
+   "oldest_checked": "2007-01-01",
+   "skipped": []
   },
   "NIFTY100 QUALITY 30": {
    "done": true,
    "empties": 2,
    "oldest_checked": "2016-01-09"
+  },
+  "NIFTY200 ALPHA 30": {
+   "done": true,
+   "empties": 0,
+   "fails": {},
+   "oldest_checked": "2007-01-01",
+   "skipped": []
+  },
+  "NIFTY200 MOMENTUM 30": {
+   "done": true,
+   "empties": 0,
+   "fails": {},
+   "oldest_checked": "2007-01-01",
+   "skipped": []
+  },
+  "NIFTY200 QUALITY 30": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY200 VALUE 30": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
   },
   "NIFTY50 DIVIDEND POINTS": {
    "done": true,
@@ -367,10 +737,31 @@
    "empties": 2,
    "oldest_checked": "2008-09-16"
   },
+  "NIFTY50 USD": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2012-08-26",
+   "skipped": []
+  },
   "NIFTY50 VALUE 20": {
    "done": true,
    "empties": 2,
    "oldest_checked": "2008-06-18"
+  },
+  "NIFTY500 EQUAL WEIGHT": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY500 FLEXICAP QUALITY 30": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2024-10-10",
+   "skipped": []
   },
   "NIFTY500 HEALTHCARE": {
    "done": true,
@@ -382,10 +773,66 @@
    "empties": 2,
    "oldest_checked": "2016-01-09"
   },
+  "NIFTY500 LOW VOLATILITY 50": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY500 MOMENTUM 50": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
   "NIFTY500 MULTICAP 50:25:25": {
    "done": true,
    "empties": 0,
    "oldest_checked": "2007-01-01"
+  },
+  "NIFTY500 MULTICAP INDIA MANUFACTURING 50:30:20": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY500 MULTICAP INFRASTRUCTURE 50:30:20": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY500 MULTICAP MOMENTUM QUALITY 50": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY500 MULTIFACTOR MQVLV 50": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2024-08-11",
+   "skipped": []
+  },
+  "NIFTY500 QUALITY 50": {
+   "done": true,
+   "empties": 2,
+   "fails": {},
+   "oldest_checked": "2016-01-09",
+   "skipped": []
+  },
+  "NIFTY500 VALUE 50": {
+   "done": true,
+   "empties": 0,
+   "fails": {},
+   "oldest_checked": "2007-01-01",
+   "skipped": []
   }
  }
 }

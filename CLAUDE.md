@@ -62,7 +62,12 @@ Data: 500 stocks 2007 -> 2026-10-30 (raw), 139 NSE + 139 BSE indices, 2.34 M row
 -> `data/snapshot/latest.json` + `sectors.json`. 90 tests.
 **Phase 6 done** (2026-11-01): website LIVE at https://virajpatel27.github.io/Swing-Trading-Dashboard/ (94 Python + 10 JS tests).
 **Phase 7 done** (2026-11-01): daily automation (`scripts/daily.py`, `.github/workflows/daily.yml`), first manual run on GitHub
-succeeded; 102 tests. Next: Phase 8 (backup, restore, integrity, branch rules, README).
+succeeded; 102 tests.
+**Phase 8** (2026-11-01): weekly backup (Release zip + `backup` branch), monthly integrity check, `restore.py` / `restore.md` /
+Restore data workflow, pre-commit secret hook (`scripts/install_hooks.py`), README, Google Drive copy (his choice). 110 tests.
+Waiting: Viraj's push, ruleset, first Weekly backup run, Google Drive setup.
+- "Drive token banavo" = run `<python> scripts/gdrive_auth.py` (needs client_secret.json from him). NEVER open/read
+  gdrive_token.txt or client_secret.json: he copies the values into GitHub Secrets himself.
 - NSE bhavcopy PREVCLOSE is NOT adjusted on ex-dates; Yahoo's adjusted history has its own errors (see WORK_LOG 2026-11-01).
 - NSE's API never answers some windows (seems to hang for ranges before an index existed): a window failing twice is skipped.
 - Bot commits data on GitHub: Viraj must Pull origin before he commits. Don't poll api.github.com often (60 calls/hour without a token): read the run page HTML.

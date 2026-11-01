@@ -21,11 +21,12 @@ from swingdash import config, meta  # noqa: E402
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--baseline", type=Path, default=None, help="instruments.csv from before the run (default: the current one)")
+    ap.add_argument("--no-baseline", action="store_true", help="skip the row-drop check (after a restore to an older backup)")
     a = ap.parse_args(argv)
     data = ROOT / "data"
     v = config.load("settings")["validation"]
     base = a.baseline or data / "meta" / "instruments.csv"
-    old = pd.read_csv(base) if base.exists() else None
+    old = None if a.no_baseline else (pd.read_csv(base) if base.exists() else None)
     tdp = data / "meta" / "trading_days.csv"
     days = pd.DatetimeIndex(pd.to_datetime(pd.read_csv(tdp)["date"])) if tdp.exists() else None
     inst, issues = meta.scan(data, days, float(v["jump_pct"]), old, float(v["max_row_drop_pct"]))

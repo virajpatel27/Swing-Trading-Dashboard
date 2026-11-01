@@ -31,3 +31,11 @@ desktop.ini
 
 # Written by every daily run (the run's summary is on its Actions page)
 reports/daily_last.json
+
+# Kept by restore.py before it replaces data/ (delete by hand once the restore looks right)
+data_before_restore_*/
+reports/integrity.*
+
+# Google Drive one-time setup files (secrets: never commit)
+client_secret*.json
+gdrive_token.txt

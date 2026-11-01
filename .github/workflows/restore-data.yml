@@ -1,0 +1,70 @@
+name: Restore data
+
+# One-click restore of the data/ folder (see restore.md). Run by hand only: Actions -> Restore data -> Run workflow.
+# Give EITHER a weekly backup tag (data-YYYY-MM-DD, see Releases) OR a git commit (7+ characters) OR "backup" for the backup branch.
+# The restored data is committed only when the data check passes; then the website is rebuilt.
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: "data-YYYY-MM-DD (weekly release), a commit id, or: backup"
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-write
+  cancel-in-progress: false
+
+jobs:
+  restore:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    outputs:
+      changed: ${{ steps.save.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Restore
+        env:
+          SOURCE: ${{ inputs.source }}
+        run: |
+          case "$SOURCE" in
+            data-*) python restore.py --from-release "$SOURCE" ;;
+            backup) python restore.py --from-backup-branch ;;
+            *)      python restore.py --from-commit "$SOURCE" ;;
+          esac
+      - name: Save the restored data
+        id: save
+        env:
+          SOURCE: ${{ inputs.source }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "The data is already the same as $SOURCE."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "data: restore from $SOURCE"
+            git pull --rebase
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy:
+    needs: restore
+    if: needs.restore.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy-site.yml

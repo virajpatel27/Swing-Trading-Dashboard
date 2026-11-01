@@ -190,3 +190,26 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   Remaining warnings: Node 20 deprecation for actions/cache@v4, upload-pages-artifact, deploy-pages@v4 (harmless for now).
 - **Phase 7 done.** First real daily data: Monday 02-Nov-2026 20:15 IST (stocks) and 23:50 IST (indices).
 - NEXT: Viraj pulls the bot commit, commits the sort fix; "continue" -> Phase 8 (backup, restore, integrity, branch rules, README).
+- Viraj: "Ha, continue" -> **Phase 8** (his sort-fix commit was not pushed yet; goes with the Phase 8 push).
+- `.github/workflows/weekly-backup.yml`: Saturday 10:00 IST, data/ zip (+ SHA-256) as Release data-YYYY-MM-DD, keeps 12,
+  moves `backup` branch forward without force; failure -> issue.
+- `swingdash/integrity.py` + `scripts/integrity.py` + `monthly-integrity.yml` (1st, 11:00 IST): data check, corporate-action
+  consistency (rebuild adjusted from raw + saved CA files and compare; tolerance 0.01 % because current.csv keeps 4 decimals -
+  OLAELEC differed 0.0002 % at 1e-6), NSE spot check of random past days, freshness. Local run: OK, 0 CA differences,
+  3 spot days 0 mismatches, 2.5 min.
+- `restore.py` (--list / --from-release with SHA-256 / --from-commit / --from-backup-branch; current data moved to
+  data_before_restore_*/, git-ignored; then data check with new `validate_data.py --no-baseline`), `restore.md` (Gujarati-English
+  steps), `restore-data.yml` (one click on GitHub, commits only after the data check, then deploys).
+- `scripts/install_hooks.py`: git pre-commit hook running check_secrets on staged files (GitHub Desktop runs it); installed on
+  this PC and tested (fake `ANGEL_PIN=...` file blocked, clean file passed).
+- README rewritten (English + Gujarati quick-start, jobs table, safety), MANUAL_CHECKLIST with exact ruleset clicks.
+- Tests: 107 Python + 10 JS green; mutation caught (spot check tolerance).
+- Asked about an off-GitHub backup: **Viraj chose Google Drive.** Service accounts cannot store files in a personal Gmail
+  Drive, so: his own account via OAuth, scope `drive.file` only (app sees only its own files), consent screen published
+  ("In production", else refresh tokens die after 7 days). `scripts/gdrive_auth.py` (one-time on the PC: loopback + PKCE, writes
+  gdrive_token.txt, never prints it), `scripts/gdrive_backup.py` (refresh -> access token, folder "Swing Trading Dashboard
+  backups", resumable upload, keep 12; skips quietly without secrets), step in weekly-backup.yml. Secrets GDRIVE_CLIENT_ID /
+  GDRIVE_CLIENT_SECRET / GDRIVE_REFRESH_TOKEN; check_secrets knows Google patterns + refuses client_secret.json /
+  gdrive_token.txt. Zip size measured: 119 MB. 110 tests green.
+- NEXT: Viraj pushes Phase 8, creates the ruleset, runs Weekly backup once; Google Drive setup (8 steps in the checklist)
+  when he wants - then "Drive token banavo" -> run scripts/gdrive_auth.py (do NOT read gdrive_token.txt).

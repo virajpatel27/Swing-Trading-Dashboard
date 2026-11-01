@@ -14,7 +14,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SECRET_NAMES = ("ANGEL_API_KEY", "ANGEL_CLIENT_ID", "ANGEL_PIN", "ANGEL_TOTP_SECRET", "TELEGRAM_BOT_TOKEN")
+SECRET_NAMES = ("ANGEL_API_KEY", "ANGEL_CLIENT_ID", "ANGEL_PIN", "ANGEL_TOTP_SECRET", "TELEGRAM_BOT_TOKEN",
+                "GDRIVE_CLIENT_SECRET", "GDRIVE_REFRESH_TOKEN")
 
 PATTERNS = [
     ("filled secret variable", re.compile(r"\b(" + "|".join(SECRET_NAMES) + r")\s*[=:]\s*['\"]?(?!\$\{\{)([A-Za-z0-9+/_\-]{4,})")),
@@ -23,10 +24,12 @@ PATTERNS = [
     ("private key", re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----")),
     ("GitHub token", re.compile(r"\b(ghp|gho|ghs|github_pat)_[A-Za-z0-9_]{20,}")),
     ("Telegram bot token", re.compile(r"\b\d{8,10}:[A-Za-z0-9_\-]{35}\b")),
+    ("Google client secret", re.compile(r"GOC" r"SPX-[A-Za-z0-9_\-]{20,}")),
+    ("Google refresh token", re.compile(r"\b1//0[A-Za-z0-9_\-]{30,}")),
 ]
 SKIP_DIRS = {".git", "data", "__pycache__", ".pytest_cache", "_site", "cache"}
 SKIP_SUFFIX = {".parquet", ".gz", ".zip", ".png", ".jpg", ".ico", ".webp"}
-NEVER_COMMIT = {".env"}
+NEVER_COMMIT = {".env", "client_secret.json", "gdrive_token.txt"}
 
 
 def scan_text(text: str) -> list[tuple[int, str]]:

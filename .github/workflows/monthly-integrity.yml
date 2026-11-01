@@ -1,0 +1,36 @@
+name: Monthly integrity check
+
+# 1st of every month 11:00 IST (and by hand): deep check of all data - row counts, date gaps, duplicates, adjusted vs raw,
+# corporate-action consistency, a spot check of random past days against NSE. Changes nothing.
+# A problem opens a GitHub issue. The report is on the run's page.
+on:
+  schedule:
+    - cron: "30 5 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Integrity check
+        run: python scripts/integrity.py
+      - name: Report a problem (GitHub issue)
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh label create integrity --color D93F0B --description "Monthly integrity check found a problem" 2>/dev/null || true
+          gh issue create --title "Integrity check found a problem" --label integrity --body "See the report: $RUN_URL"

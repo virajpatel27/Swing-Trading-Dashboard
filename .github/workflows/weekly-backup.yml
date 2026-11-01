@@ -1,0 +1,70 @@
+name: Weekly backup
+
+# Every Saturday 10:00 IST (and by hand):
+#   1. the whole data/ folder as a dated zip in a GitHub Release "data-YYYY-MM-DD" (+ its SHA-256); the last 12 are kept
+#   2. the "backup" branch is moved forward to the current main (a second copy of all history; never force-pushed)
+# Git history itself is the daily backup. Restore: see restore.md (or Actions -> Restore data).
+on:
+  schedule:
+    - cron: "30 4 * * 6"            # Saturday 10:00 IST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: data-write                 # never while the daily update is writing
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Zip the data folder
+        id: zip
+        run: |
+          d=$(TZ=Asia/Kolkata date +%F)
+          tag="data-$d"
+          (cd data && zip -q -r -9 "../$tag.zip" .)
+          sha256sum "$tag.zip" | cut -d' ' -f1 > "$tag.zip.sha256"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          ls -la "$tag.zip"
+      - name: Publish as a GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.zip.outputs.tag }}
+        run: |
+          gh release delete "$TAG" --cleanup-tag -y 2>/dev/null || true      # a second run on the same day replaces it
+          gh release create "$TAG" "$TAG.zip" "$TAG.zip.sha256" --target "$GITHUB_SHA" --title "Data backup ${TAG#data-}" \
+            --notes "Snapshot of the data/ folder at commit $GITHUB_SHA. Restore: see restore.md (python restore.py --from-release $TAG)."
+      - name: Keep only the last 12 backups
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release list --limit 200 --json tagName --jq '.[].tagName' | grep '^data-' | sort -r | tail -n +13 | while read -r t; do
+            echo "deleting old backup $t"; gh release delete "$t" --cleanup-tag -y
+          done
+      - name: Copy to Google Drive (off-GitHub backup, optional)
+        env:
+          GDRIVE_CLIENT_ID: ${{ secrets.GDRIVE_CLIENT_ID }}
+          GDRIVE_CLIENT_SECRET: ${{ secrets.GDRIVE_CLIENT_SECRET }}
+          GDRIVE_REFRESH_TOKEN: ${{ secrets.GDRIVE_REFRESH_TOKEN }}
+          TAG: ${{ steps.zip.outputs.tag }}
+        run: |
+          pip install -q requests
+          python scripts/gdrive_backup.py "$TAG.zip" --keep 12
+      - name: Move the backup branch forward
+        run: git push origin "HEAD:refs/heads/backup"        # fast-forward only (no --force): history can never be lost
+      - name: Report the failure (GitHub issue)
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh label create backup-failure --color B60205 --description "Weekly backup failed" 2>/dev/null || true
+          gh issue create --title "Weekly backup failed" --label backup-failure --body "The weekly backup failed. Details: $RUN_URL"

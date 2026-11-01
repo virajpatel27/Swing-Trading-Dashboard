@@ -1,13 +1,13 @@
 {
- "checked_at": "2026-10-31 16:38",
+ "checked_at": "2026-11-01 04:08",
  "instruments": 778,
  "by_group": {
   "index BSE": 139,
   "index NSE": 139,
   "stock NSE": 500
  },
- "rows": 2259299,
+ "rows": 2335940,
  "newest_date": "2026-10-30",
  "errors": 0,
- "warnings": 1181
+ "warnings": 1151
 }

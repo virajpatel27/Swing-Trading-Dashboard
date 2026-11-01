@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2024-09-20,dividend,,1.0,0.03,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.03 Per Share,NSE
+2025-09-12,dividend,,1.0,0.04,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.04 Per Share,NSE
+2026-09-18,dividend,,1.0,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.05 Per Share,NSE

@@ -1,0 +1,6 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2017-08-16,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Special Dividend - Re 1/- Per Share,NSE
+2019-07-30,dividend,,1.0,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 1.50 Per Share,NSE
+2020-03-23,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 2 Per Share,NSE
+2020-12-23,dividend,,1.0,974,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 974 Per Share,NSE
+2022-04-12,rights,3:2,0.7276450512,80,"TERP, issue price 80, close before 146.5",applied,Rights 3:2 @ Premium Rs 75/-,NSE

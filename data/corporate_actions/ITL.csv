@@ -1,0 +1,2 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2026-09-15,dividend,,1.0,1.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 1.25 Per Share,NSE

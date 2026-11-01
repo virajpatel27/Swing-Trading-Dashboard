@@ -1,0 +1,16 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-09-13,dividend,,1,0.35,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend-35%,NSE
+2008-09-11,dividend,,1,0.4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 40%,NSE
+2009-09-10,dividend,,1,4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Rs.4/- Per Share,NSE
+2010-06-16,rights,1:20,0.97819406,716,"TERP, issue price 716, close before 1320.85",applied,Rights Eq 1:20 @ Premium Rs.715 Per Share And 3 Warrants : 1 Eq,NSE
+2010-08-18,dividend,,1,4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.4/- Per Share,NSE
+2010-12-07,split,FV 10->1,0.1,,ratio from NSE text,applied,Face Value Split From Rs.10/- To Re.1/-,NSE
+2011-09-08,dividend,,1,0.6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.60 Per Share,NSE
+2012-09-13,dividend,,1,0.6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend Rs. 0.60 Per Share,NSE
+2013-09-12,dividend,,1,0.6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.60 Per Share,NSE
+2014-08-27,dividend,,1,0.7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend - Re 0.70/- Per Share,NSE
+2015-09-03,dividend,,1,0.7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Re 0.70/- Per Share,NSE
+2016-09-15,dividend,,1,0.7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 0.70 Per Share,NSE
+2017-09-14,dividend,,1,0.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Div-Re 0.75 Per Share,NSE
+2018-09-12,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Re 1 Per Share,NSE
+2019-09-17,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Re 1 Per Share,NSE

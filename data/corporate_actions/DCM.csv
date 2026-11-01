@@ -1,0 +1,11 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2011-07-07,dividend,,1.0,2.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.2.50 Per Share,NSE
+2012-06-28,dividend,,1.0,2.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Rs 2.50 Per Share,NSE
+2012-11-22,dividend,,1.0,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend Rs.1.50 Per Share,NSE
+2013-07-04,dividend,,1.0,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Final Dividend Rs.1.50 Per Share,NSE
+2013-11-25,dividend,,1.0,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 1.50/- Per Share,NSE
+2014-07-23,dividend,,1.0,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Final Dividend Rs.1.50 Per Share,NSE
+2014-11-26,dividend,,1.0,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 1.50/- Per Share,NSE
+2015-08-10,dividend,,1.0,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Rs 1.50 Per Share,NSE
+2015-11-20,dividend,,1.0,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 1.50/- Per Share,NSE
+2019-05-30,demerger,,0.5364940736,,open 43 / close before 80.15,applied,Demerger,NSE

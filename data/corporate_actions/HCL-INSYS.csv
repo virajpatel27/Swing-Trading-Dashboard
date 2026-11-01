@@ -1,0 +1,18 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-01-25,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,2nd Int Div-100% Purpose Revised,NSE
+2007-04-30,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,3rd Int Div-Rs.2/- Per Shpurpose Revised,NSE
+2007-10-30,dividend,,1.0,4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Div - Fin-100% + Int-100%Purpose Revised,NSE
+2008-02-05,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,2nd Interim Dividend-100%Purpose Revised,NSE
+2008-04-30,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,3rd Interim Dividend-100%Purpose Revised,NSE
+2008-10-29,dividend,,1.0,4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Fin 100%+Int 100%Purpose Revised,NSE
+2009-02-04,dividend,,1.0,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,2nd Interim Dividend-75% Purpose Revised,NSE
+2009-04-28,dividend,,1.0,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,3rd Interim Dividend-75% Purpose Revised,NSE
+2010-02-02,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,2nd Int Div-Rs.2/- Per Shpurpose Revised,NSE
+2010-05-07,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Rs.2/- Per Share,NSE
+2010-11-03,dividend,,1.0,4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Final Dividend Rs.2/- Per Share/Interim Dividend Rs.2/- Per Share (Purpose Revised),NSE
+2011-02-04,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,2nd Interim Dividend-Rs.2/- Per Share (Purpose Revised),NSE
+2011-05-05,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,3rd Interim Dividend-Rs.2/- Per Share (Purpose Revised),NSE
+2011-11-09,dividend,,1.0,3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Final Dividend Rs.2/- Per Share And Interim Dividend Re.1/- Per Share (Purpose Revised),NSE
+2012-02-07,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,2nd Interim Dividend Re.1/- Per Share (Purpose Revised),NSE
+2012-05-03,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,3rd Interim Dividend Re.1/- Per Share (Purpose Revised),NSE
+2017-10-31,rights,10:21,0.9926228958,47,"TERP, issue price 47, close before 48.1",applied,Rights 10:21 @ Premium Rs 45/-,NSE

@@ -1,0 +1,14 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2009-11-25,dividend,,1.0,0.7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Re.0.70 Pr Share,NSE
+2010-09-17,scheme,,1.0,,price did not move: no change,no change,Scheme Of Arrangement,NSE
+2010-10-20,dividend,,1.0,0.9,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Re.0.90 Per Share,NSE
+2011-10-19,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Re.1/- Per Share,NSE
+2013-04-17,scheme,,0.863422292,,open 110 / close before 127.4,applied,Scheme Of Arrangement,NSE
+2013-05-20,dividend,,1.0,1.14,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Re.1.14 Per Share,NSE
+2013-06-21,scheme,,0.8010680908,,open 90 / close before 112.35,applied,Scheme Of Arrangement,NSE
+2014-07-28,dividend,,1.0,0.64,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.64/- Per Share,NSE
+2014-11-18,rights,5:8,0.9664640537,50.25,"TERP, issue price 50.25, close before 55.05",applied,Rights 5:8 @ Premium Rs 48.25/- Per Equity Share,NSE
+2015-08-17,dividend,,1.0,0.64,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Re 0.64/- Per Share,NSE
+2016-05-11,scheme,,0.1094282469,,open 14.45 / close before 132.05,applied,Scheme Of Arrangement,NSE
+2016-08-19,dividend,,1.0,0.14,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend Re 0.14/- Per Share,NSE
+2017-08-21,dividend,,1.0,0.24,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Re 0.24 Per Share,NSE

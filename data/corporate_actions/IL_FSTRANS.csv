@@ -1,0 +1,10 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2010-07-26,dividend,,1.0,3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.3/- Per Share,NSE
+2011-07-26,dividend,,1.0,3.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.3.50 Per Share,NSE
+2012-07-30,dividend,,1.0,4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend - Rs.4/- Per Share,NSE
+2013-07-30,dividend,,1.0,4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Final Dividend Rs. 4/- Per Share,NSE
+2014-03-13,rights,27:100,0.9547360299,100,"TERP, issue price 100, close before 127.05",applied,Rights 27:100 @ Premium Rs.90/- Per Equity Share,NSE
+2014-08-12,dividend,,1.0,4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Final Dividend - Rs 4/- Per Share,NSE
+2015-08-14,dividend,,1.0,4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Rs 4/- Per Share,NSE
+2015-10-07,rights,1:3,0.9751125563,90,"TERP, issue price 90, close before 99.95",applied,Rights 1:3 @ Premium Rs.80/- Per Share,NSE
+2016-07-29,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Rs 2/- Per Share,NSE

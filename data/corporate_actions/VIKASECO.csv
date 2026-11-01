@@ -1,0 +1,14 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2012-09-18,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Re 0.50 Per Share,NSE
+2013-09-19,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend - Re 0.50/- Per Share,NSE
+2014-03-27,split,FV 10->1,0.1,,ratio from NSE text,applied,Face Value Split From Rs 10/- To Re 1/-,NSE
+2014-09-19,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend - Re 0.05/- Per Share,NSE
+2014-11-13,bonus,3:2,0.4,,ratio from NSE text,applied,Bonus 3 : 2,NSE
+2015-09-22,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Re 0.05/- Per Share,NSE
+2016-09-22,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Re 0.05/- Per Share,NSE
+2017-09-20,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 0.05 Per Share,NSE
+2018-09-19,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend- Re 0.05 Per Share,NSE
+2018-11-19,demerger,,0.88214286,,open 12.35 / close before 14,applied,Scheme Of Arrangement Of Demerger,NSE
+2019-09-19,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 0.05 Per Sh,NSE
+2021-06-09,rights,13:10,0.72272354,1.35,"TERP, issue price 1.35, close before 2.65",applied,Rights 13:10 @ Premium Rs 0.35/-,NSE
+2021-11-24,rights,12:25,0.86437346,1.6,"TERP, issue price 1.6, close before 2.75",applied,Rights 12:25@ Premium Rs 0.60/-,NSE

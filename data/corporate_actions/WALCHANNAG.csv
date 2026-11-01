@@ -1,0 +1,12 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-01-16,dividend,,1,4.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Rs.4.50 Per Share,NSE
+2008-01-22,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Centenary Div. -100%,NSE
+2008-02-25,bonus,1:1,0.5,,ratio from NSE text,applied,Fv Spl-Rs10tors2/Bon-1:1,NSE
+2008-02-25,split,FV 10->2,0.2,,ratio from NSE text,applied,Fv Spl-Rs10tors2/Bon-1:1,NSE
+2009-01-21,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 50%,NSE
+2010-01-12,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Re.1/- Per Share,NSE
+2011-02-02,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Re.1/- Per Share,NSE
+2012-02-01,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Re.1/- Per Share,NSE
+2013-01-23,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend Re 1 Per Share,NSE
+2014-01-16,dividend,,1,0.4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend - Re 0.40/- Per Share,NSE
+2015-02-05,dividend,,1,0.4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend - Re 0.40/- Per Share,NSE

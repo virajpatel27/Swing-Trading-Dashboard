@@ -1,0 +1,7 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2010-02-02,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Rs.2/- Per Share Purpose Revised,NSE
+2010-07-13,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend Rs 2 Per Share,NSE
+2010-08-18,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend-Rs.2/- Per Share,NSE
+2010-11-02,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,2nd Interim Dividend-Rs.2/- Per Share (Purpose Revised),NSE
+2011-02-01,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,3rd Interim Dividend-Rs.2/- Per Share (Purpose Revised),NSE
+2011-07-27,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.2/- Per Share,NSE

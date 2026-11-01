@@ -1,0 +1,7 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2016-09-22,dividend,,1,0.3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 0.30 Per Share,NSE
+2016-10-25,split,FV 10->1,0.1,,ratio from NSE text,applied,Fv Splt Frm Rs 10 To Re 1,NSE
+2017-07-13,dividend,,1,0.01,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.01 Per Share,NSE
+2017-08-04,bonus,1:10,0.90909091,,ratio from NSE text,applied,Bonus 1:10,NSE
+2018-09-12,dividend,,1,0.01,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Re 0.01 Per Share,NSE
+2024-05-15,rights,8:11,0.74299385,1.5,"TERP, issue price 1.5, close before 3.85",applied,Rights 8:11 @ Premium Re 0.50/-,NSE

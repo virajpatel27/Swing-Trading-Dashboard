@@ -1,0 +1,6 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-07-20,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend-25%,NSE
+2007-08-30,bonus,1:1,0.5,,ratio from NSE text,applied,Bonus 1:1,NSE
+2008-08-25,dividend,,1,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 12.5%,NSE
+2009-08-06,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Re.0.10 Per Share,NSE
+2010-09-02,dividend,,1,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.20 Per Share,NSE

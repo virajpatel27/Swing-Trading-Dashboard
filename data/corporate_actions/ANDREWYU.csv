@@ -1,0 +1,2 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2023-08-24,dividend,,1.0,0.007,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.007 Per Share,NSE

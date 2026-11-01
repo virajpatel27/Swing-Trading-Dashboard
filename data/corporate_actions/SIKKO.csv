@@ -1,0 +1,6 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2022-10-28,bonus,1:2,0.66666667,,ratio from NSE text,applied,Bonus 1:2,NSE
+2022-12-28,dividend,,1,0.15,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 0.15 Per Share,NSE
+2024-12-06,rights,3:10,0.96921579,89,"TERP, issue price 89, close before 102.7",applied,Rights 3:10 @ Premium Rs 88/-,NSE
+2025-11-27,split,FV 10->1,0.1,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Re 1/- Per Share,NSE
+2025-12-08,bonus,1:1,0.5,,ratio from NSE text,applied,Bonus 1:1,NSE

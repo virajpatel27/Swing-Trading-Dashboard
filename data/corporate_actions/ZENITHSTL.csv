@@ -1,0 +1,8 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-09-06,dividend,,1,0.6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend-6% Bc Dates Revised,NSE
+2008-02-13,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Div-Rs.0.50 Pr Sh,NSE
+2008-09-05,dividend,,1,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 2%,NSE
+2009-09-15,dividend,,1,0.6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Re.0.60 Per Share,NSE
+2010-03-04,scheme,,0.81788079,,open 24.7 / close before 30.2,applied,Scheme Of Arrangement,NSE
+2010-07-07,dividend,,1,1.4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Final Dividend Rs 0.60 And Special Dividend Rs 1.40 Per Share.,NSE
+2010-08-11,bonus,1:5,0.83333333,,ratio from NSE text,applied,Bonus 1:5,NSE

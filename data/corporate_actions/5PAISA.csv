@@ -1,0 +1,3 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2019-05-28,rights,1:1,0.6082251082,80,"TERP, issue price 80, close before 369.6",applied,Rights 1:1 @ Premium Rs 70 Per Share,NSE
+2026-03-17,rights,1:2,1.0,300,rights above market price: no change,no change,Rights 1:2 @ Premium Rs 290/-,NSE

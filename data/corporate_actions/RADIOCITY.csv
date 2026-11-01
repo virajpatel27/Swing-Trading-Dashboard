@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2019-02-20,split,FV 10->2,0.2,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share,NSE
+2020-03-12,bonus,1:4,0.8,,ratio from NSE text,applied,Bonus 1:4,NSE
+2023-01-13,scheme,,0.80151229,,open 21.2 / close before 26.45,applied,Scheme Of Arrangement - Bonus Ncrps 1:10,NSE

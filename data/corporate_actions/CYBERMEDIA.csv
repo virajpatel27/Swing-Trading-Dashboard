@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-07-30,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend-10%,NSE
+2008-08-22,dividend,,1.0,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 5%,NSE
+2025-08-01,rights,2:5,0.9410203057,15.8,"TERP, issue price 15.8, close before 19.91",applied,Rights 2:5 @ Premium Rs 5.80/-,NSE

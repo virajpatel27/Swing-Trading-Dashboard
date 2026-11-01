@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2022-06-24,bonus,1:1,0.5,,ratio from NSE text,applied,Bonus 1:1,NSE
+2025-09-26,bonus,1:1,0.5,,ratio from NSE text,applied,Bonus 1:1,NSE
+2025-09-26,split,FV 4->2,0.5,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 4/- Per Share To Rs 2/- Per Share,NSE

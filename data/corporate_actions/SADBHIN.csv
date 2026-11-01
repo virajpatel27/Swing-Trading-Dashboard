@@ -1,0 +1,5 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2017-11-28,dividend,,1.0,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 0.20 Per Share,NSE
+2018-09-18,dividend,,1.0,0.3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Re 0.30 Per Share (Rate Revised),NSE
+2018-11-26,dividend,,1.0,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Div - Re 0.20 Per Share,NSE
+2019-09-17,dividend,,1.0,0.3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 0.30 Per Share,NSE

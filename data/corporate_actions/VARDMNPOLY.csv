@@ -1,0 +1,6 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-03-23,dividend,,1,0.35,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend-35% Purpose Revised,NSE
+2007-08-30,dividend,,1,0.07,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Final Dividend-7%,NSE
+2008-09-18,dividend,,1,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 20%,NSE
+2024-05-17,split,FV 10->1,0.1,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Re 1/- Per Share,NSE
+2024-08-28,rights,7:23,0.8822736,6,"TERP, issue price 6, close before 12.11",applied,Rights 7:23 @ Premium Rs 5/-,NSE

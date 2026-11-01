@@ -1,0 +1,5 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2018-07-11,dividend,,1,2.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend- Rs 2.50 Per Share,NSE
+2018-08-02,bonus,3:1,0.25,,ratio from NSE text,applied,Bonus 3:1,NSE
+2019-12-18,dividend,,1,0.65,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 0.65 Per Share,NSE
+2020-03-06,demerger,,0.25158898,,open 47.5 / close before 188.8,applied,Demerger,NSE

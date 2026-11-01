@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2017-03-09,rights,18:91,0.9782359004,750,"TERP, issue price 750, close before 863.85",applied,Rights 18:91 @ Prem Rs 740,NSE
+2024-09-17,dividend,,1.0,10,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 10 Per Share,NSE
+2026-09-21,dividend,,1.0,20,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 20 Per Share,NSE

@@ -1,0 +1,5 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2010-09-15,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.1/- Per Share,NSE
+2011-09-09,dividend,,1.0,1.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.1.20 Per Share,NSE
+2012-09-06,dividend,,1.0,1.4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Rs.1.40 Per Share(Bc Dates Revised),NSE
+2022-03-03,demerger,,0.83203125,,open 31.95 / close before 38.4,applied,Demerger,NSE

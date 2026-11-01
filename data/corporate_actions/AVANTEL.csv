@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2025-05-07,rights,10:121,0.9503666592,40,"TERP, issue price 40, close before 114.35",applied,Rights 10:121@ Premium Rs 38/-,NSE
+2025-06-12,dividend,,1.0,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.20 Per Share,NSE
+2026-06-12,dividend,,1.0,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 0.20 Per Share,NSE

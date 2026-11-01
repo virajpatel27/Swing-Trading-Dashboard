@@ -1,0 +1,2 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-12-06,dividend,,1.0,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend-15%,NSE

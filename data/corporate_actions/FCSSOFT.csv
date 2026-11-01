@@ -1,0 +1,7 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-03-26,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend-10% Purpose Revised,NSE
+2007-07-12,dividend,,1,0.15,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Final Dividend-15% Purpose Revised,NSE
+2008-09-18,dividend,,1,0.11,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 11% Purpose Revised,NSE
+2009-09-03,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Re.0.50 Per Share,NSE
+2009-10-15,split,FV 10->1,0.1,,ratio from NSE text,applied,Fv Split Rs.10/- To Re.1/,NSE
+2010-02-26,bonus,1:1,0.5,,ratio from NSE text,applied,Bonus 1:1,NSE

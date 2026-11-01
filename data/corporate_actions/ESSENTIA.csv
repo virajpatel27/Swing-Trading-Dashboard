@@ -1,0 +1,7 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2022-02-03,split,FV 3->1,0.33333333,,,before our data,Face Value Split (Sub-Division) - From Rs 3/- Per Share To Re 1/- Per Share,NSE
+2022-05-04,rights,33:13,0.98061105,1.8,"TERP, issue price 1.8, close before 1.85",applied,Rights 33:13@ Premium Rs 0.80/-,NSE
+2022-11-17,rights,37:200,0.9925658,7,"TERP, issue price 7, close before 7.35",applied,Rights 37:200 @ Premium Rs 6/-,NSE
+2024-01-11,bonus,1:1,0.5,,ratio from NSE text,applied,Bonus 1:1,NSE
+2024-05-31,rights,20:119,0.98250049,3.25,"TERP, issue price 3.25, close before 3.7",applied,Rights 20:119 @ Premium Rs 2.25/-,NSE
+2026-05-20,rights,161:250,0.94437006,1.45,"TERP, issue price 1.45, close before 1.69",applied,Rights 161:250 @ Premium Re 0.45 /-,NSE

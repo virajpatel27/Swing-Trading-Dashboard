@@ -1,0 +1,5 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2014-08-11,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend - Re 0.50/- Per Share,NSE
+2014-09-29,bonus,1:2,0.66666667,,ratio from NSE text,applied,Bonus 1:2,NSE
+2015-09-23,dividend,,1,0.35,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Re 0.35/- Per Share (Purpose Revised),NSE
+2017-07-12,bonus,2:5,0.71428571,,ratio from NSE text,applied,Bonus 2:5,NSE

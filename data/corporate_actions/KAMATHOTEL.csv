@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-07-13,dividend,,1.0,2.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend-25%,NSE
+2008-08-14,dividend,,1.0,3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 30%,NSE
+2009-09-11,dividend,,1.0,1.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Rs.1.20 Per Share,NSE

@@ -1,0 +1,10 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-05-25,dividend,,1,0.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Re.0.75 Per Sh,NSE
+2008-05-28,dividend,,1,0.8,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Re.0.80 Per Share,NSE
+2009-05-27,dividend,,1,0.8,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Re0.80 Per Share,NSE
+2010-05-28,dividend,,1,0.8,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend Re.0.80 Per Share,NSE
+2010-08-10,bonus,1:1,0.5,,ratio from NSE text,applied,Bonus 1:1,NSE
+2011-05-30,dividend,,1,0.4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.40 Per Share,NSE
+2018-11-20,rights,49:100,0.89716091,10,"TERP, issue price 10, close before 14.55",applied,Rights 49:100 @ Premium Rs 9/-,NSE
+2024-03-15,rights,13:118,0.95996704,21,"TERP, issue price 21, close before 35.2",applied,Rights 13:118 @ Premium Rs 20/-,NSE
+2025-12-05,rights,277:630,0.84176528,12.5,"TERP, issue price 12.5, close before 25.94",applied,Rights 277:630 @ Premium Rs 11.50/-,NSE

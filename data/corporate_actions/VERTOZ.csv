@@ -1,0 +1,6 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2020-10-19,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 0.10 Per Share,NSE
+2024-07-05,bonus,1:1,0.5,,ratio from NSE text,applied,Bonus 1:1,NSE
+2024-07-05,split,FV 10->1,0.1,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Re 1/- Per Share,NSE
+2025-06-25,consolidation,FV 1->10,10,,ratio from NSE text,applied,Consolidation Of Equity Shares From Re 1 Per Share To Rs 10 Per Share,NSE
+2026-06-05,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 0.10 Per Share,NSE

@@ -1,0 +1,6 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-07-12,dividend,,1.0,4.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-45%,NSE
+2008-07-10,dividend,,1.0,6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 60%,NSE
+2008-12-15,dividend,,1.0,8.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - 85%,NSE
+2009-03-13,dividend,,1.0,3.9,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,2nd Interim Dividend-39% Purpose Revised,NSE
+2026-09-16,dividend,,1.0,10,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 10 Per Share,NSE

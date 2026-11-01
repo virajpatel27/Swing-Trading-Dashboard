@@ -1,0 +1,2 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2022-08-23,dividend,,1.0,0.3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 0.30 Per Share,NSE

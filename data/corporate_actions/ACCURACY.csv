@@ -1,0 +1,5 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2022-02-25,dividend,,1,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 0.25 Per Share,NSE
+2022-08-22,dividend,,1,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 0.25 Per Share,NSE
+2022-09-22,dividend,,1,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.25 Per Share,NSE
+2023-02-15,split,FV 10->1,0.1,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Re 1/- Per Share,NSE

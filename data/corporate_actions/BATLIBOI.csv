@@ -1,0 +1,5 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-07-19,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual Bk Closure/Div-20%,NSE
+2007-09-26,split,FV 10->5,0.5,,ratio from NSE text,applied,Fv Split Rs.10/- To Rs.5/,NSE
+2008-09-16,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Div-20%/Annual Book Closr,NSE
+2026-07-31,dividend,,1,0.6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.60 Per Share,NSE

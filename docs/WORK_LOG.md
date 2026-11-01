@@ -166,3 +166,21 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   He enabled Pages (Source = GitHub Actions) and re-ran: #2 success. **LIVE: https://virajpatel27.github.io/Swing-Trading-Dashboard/**
   Checked live: 775 rows, RELIANCE chart, service worker registered. **Phase 6 done.**
 - NEXT: "continue" -> Phase 7 (daily automation at 20:15 IST, holidays, catch-up, re-check last 5 days, failure issue/Telegram).
+- Viraj: "Ha, continue" -> **Phase 7**.
+- File times (Last-Modified): NSE UDiFF bhavcopy ~16:33 IST, `ind_close_all` ~23:20 IST. -> two daily runs: 20:15 IST (stocks)
+  and 23:50 IST (NSE indices).
+- Asked Viraj about the ~100 BSE indices that Angel One lacks. **His choice: ALL BSE indices weekly from the PC** (none daily).
+  So the daily job does not use Angel One at all (no clash with the old project). Weekly: he says "BSE update karo" ->
+  `scripts/backfill.py --job bse-update` (10 days back per index, whole history for new ones) + build_snapshot + validate,
+  he commits.
+- `swingdash/daily.py` + `scripts/daily.py`: stocks from the checkpoint with the last 5 trading days re-read
+  (`restart_from`), NSE index files re-read the same way, new indices walked back, corporate actions + adjusted (NSE down ->
+  saved CA files), classification (8 min max), snapshot written only when content changed, warning for new Nifty 500 stocks
+  without history. Checkpoint/health files no longer carry a run timestamp, so a holiday run changes nothing.
+  Placeholder symbols (DUMMY*) left out of the universe (config `exclude_prefixes`).
+- `.github/workflows/daily.yml`: cron 45 14 and 20 18 UTC Mon-Fri + manual; CA cache via actions/cache; data check with the
+  pre-run baseline; commit only when changed; then calls deploy-site.yml; on failure a GitHub issue (label daily-failure,
+  one open issue, later failures comment) + optional Telegram (TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID).
+  `backfill.yml` got `symbols` / `from_date` inputs (new Nifty 500 stocks) and deploys after such a run.
+- Local dry run (Sunday 01-Nov): 5 min, re-read 5 bhavcopies + index files, 0 adjusted files changed, snapshot not rewritten,
+  only `nse_stocks.json` changed once (old "updated" field removed). Tests: 101 Python + 10 JS green, mutation caught.

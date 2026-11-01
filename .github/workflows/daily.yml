@@ -1,0 +1,94 @@
+name: Daily update
+
+# Every weekday, twice (GitHub may start a scheduled run 30-90 minutes late):
+#   20:15 IST  stocks (NSE bhavcopy is out ~16:30 IST), corporate actions, adjusted prices, indicators, website
+#   23:50 IST  the day's NSE indices (NSE's all-indices file is out ~23:20 IST), website again
+# Not at 17:00 IST: the old Stock-Live-Dashboard runs then (this job does not use Angel One at all).
+# Missed days are caught up automatically (each run starts from the last saved day and re-reads the last 5 trading days).
+# Holidays / nothing new: no file changes -> nothing committed, website not rebuilt.
+# The data is committed ONLY when the data check passes. On failure a GitHub issue is opened (and Telegram, if set up).
+# Run by hand: Actions -> Daily update -> Run workflow.
+on:
+  schedule:
+    - cron: "45 14 * * 1-5"         # 20:15 IST
+    - cron: "20 18 * * 1-5"         # 23:50 IST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: data-write                 # never together with a backfill or another daily run
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    outputs:
+      changed: ${{ steps.save.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Corporate-action cache (old years, saves NSE calls)
+        uses: actions/cache@v4
+        with:
+          path: cache
+          key: nse-ca-${{ github.run_id }}
+          restore-keys: nse-ca-
+      - name: Remember the data list before the run
+        run: cp data/meta/instruments.csv /tmp/instruments_before.csv
+      - name: Daily update
+        run: python scripts/daily.py --max-minutes 150
+      - name: Data check
+        run: python scripts/validate_data.py --baseline /tmp/instruments_before.csv
+      - name: Save data
+        id: save
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "Nothing new (holiday, weekend or already up to date)."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "data: daily $(TZ=Asia/Kolkata date +%F)"
+            git pull --rebase
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Report the failure (GitHub issue)
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          body="The daily update failed on $(TZ=Asia/Kolkata date '+%d-%b-%Y %H:%M') IST. Nothing was saved, the website shows the last good data. Details: $RUN_URL . The next run tries again and catches up missed days by itself."
+          gh label create daily-failure --color B60205 --description "Daily update failed" 2>/dev/null || true
+          open=$(gh issue list --label daily-failure --state open --json number --jq '.[0].number')
+          if [ -n "$open" ]; then gh issue comment "$open" --body "$body"; else gh issue create --title "Daily update failed" --label daily-failure --body "$body"; fi
+      - name: Report the failure (Telegram, optional)
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then echo "Telegram not set up - skipped."; exit 0; fi
+          curl -s -o /dev/null "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" --data-urlencode "text=Swing Trading Dashboard: daily update failed. ${RUN_URL}"
+
+  deploy:
+    needs: update
+    if: needs.update.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy-site.yml

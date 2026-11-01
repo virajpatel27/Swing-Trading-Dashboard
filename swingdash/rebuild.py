@@ -20,10 +20,27 @@ def rebuild_adjusted(root: Path, http, settings: dict, universe: dict, today: da
     symbols = uni["symbol"].tolist()
     ids = dict(zip(uni["symbol"], uni["id"]))
     start = int(str(universe["history_start"])[:4])
-    if raw_actions is None:
-        raw_actions = ca.load_raw(http, list(range(start, today.year + 1)), today, cache)
-    history = nse.symbol_history(nse.symbol_changes(http), symbols) if http else {}
-    per = ca.add_overrides(ca.to_actions(raw_actions, symbols, history), root / "config" / "corporate_action_overrides.csv")
+    source = "NSE"
+    try:
+        if raw_actions is None:
+            raw_actions = ca.load_raw(http, list(range(start, today.year + 1)), today, cache)
+        try:
+            history = nse.symbol_history(nse.symbol_changes(http), symbols) if http else {}
+        except Exception:  # noqa: BLE001 - renames matter only for old records; carry on without
+            history = {}
+        per = ca.to_actions(raw_actions, symbols, history)
+    except Exception as exc:  # noqa: BLE001 - NSE did not answer: keep the last good corporate actions (the saved files)
+        log(f"::warning title=Corporate actions::NSE not available ({type(exc).__name__}); using the saved corporate action files")
+        source = "saved files"
+        per = {}
+        for sym in symbols:
+            saved = ca.load(data / "corporate_actions", ids[sym])
+            saved = saved[saved["source"] != "manual override"].copy()
+            if len(saved):
+                saved["factor"] = saved["factor"].where(saved["type"].isin(adjust.EXACT))   # recomputed from prices below
+                saved[["method", "status"]] = ""
+                per[sym] = saved
+    per = ca.add_overrides(per, root / "config" / "corporate_action_overrides.csv")
     adj_div = bool(settings.get("ADJUST_DIVIDENDS", False))
     all_issues, changed, counts = [], 0, {}
     for sym in symbols:
@@ -43,7 +60,7 @@ def rebuild_adjusted(root: Path, http, settings: dict, universe: dict, today: da
         all_issues += issues
     pd.DataFrame(all_issues, columns=["instrument", "level", "check", "date", "detail"]).to_csv(
         data / "meta" / "adjust_issues.csv", index=False, lineterminator="\n")
-    res = {"stocks": len(symbols), "adjusted_files_changed": changed, "issues": len(all_issues),
+    res = {"stocks": len(symbols), "adjusted_files_changed": changed, "issues": len(all_issues), "actions_source": source,
            "actions": dict(sorted(counts.items()))}
     log(f"adjusted: {res}")
     return res

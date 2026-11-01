@@ -28,3 +28,6 @@ _site/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Written by every daily run (the run's summary is on its Actions page)
+reports/daily_last.json

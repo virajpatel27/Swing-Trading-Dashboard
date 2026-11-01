@@ -161,8 +161,23 @@ def build_sectors(snap: pd.DataFrame) -> dict:
             "levels": "NSE classification: sector -> industry -> stocks", "sectors": ranked(sectors)}
 
 
-def write(data: Path, latest: dict, sectors: dict) -> None:
+def unchanged(path: Path, new: dict) -> bool:
+    """Same content as the file on disk, apart from generated_at (then the file is left alone: nothing to commit)."""
+    if not path.exists():
+        return False
+    try:
+        old = json.loads(path.read_text(encoding="utf-8"))
+    except ValueError:
+        return False
+    strip = lambda d: {k: v for k, v in d.items() if k != "generated_at"}
+    return strip(old) == json.loads(json.dumps(strip(new), default=str))
+
+
+def write(data: Path, latest: dict, sectors: dict) -> bool:
+    """Write latest.json and sectors.json; False (nothing written) when neither changed."""
     out = data / "snapshot"
+    if unchanged(out / "latest.json", latest) and unchanged(out / "sectors.json", sectors):
+        return False
     out.mkdir(parents=True, exist_ok=True)
     head = {k: v for k, v in latest.items() if k != "rows"}
     # allow_nan=False: a NaN would make the file unreadable for browsers, so fail here instead
@@ -171,3 +186,4 @@ def write(data: Path, latest: dict, sectors: dict) -> None:
     (out / "latest.json").write_text(text, encoding="utf-8", newline="\n")
     (out / "sectors.json").write_text(json.dumps(sectors, ensure_ascii=False, indent=1, default=str, allow_nan=False) + "\n",
                                       encoding="utf-8", newline="\n")
+    return True

@@ -117,5 +117,12 @@ def write_reports(data: Path, inst: pd.DataFrame, issues: list[dict]) -> dict:
         "errors": sum(1 for i in issues if i["level"] == "error"),
         "warnings": sum(1 for i in issues if i["level"] == "warn"),
     }
-    (meta / "health.json").write_text(json.dumps(health, indent=1) + "\n", encoding="utf-8", newline="\n")
+    path = meta / "health.json"
+    try:
+        old = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        old = {}
+    same = {k: v for k, v in old.items() if k != "checked_at"} == {k: v for k, v in health.items() if k != "checked_at"}
+    if not same:                    # only the time changed -> keep the file (a holiday run then has nothing to commit)
+        path.write_text(json.dumps(health, indent=1) + "\n", encoding="utf-8", newline="\n")
     return health

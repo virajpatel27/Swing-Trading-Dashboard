@@ -20,3 +20,10 @@ Optional later: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` (failure messages on Te
 - [x] 2026-10-31 Source probe run on GitHub (Actions -> Source probe -> Run workflow)
 - [x] 2026-11-01 GitHub Pages: Settings -> Pages -> Source = GitHub Actions. Live: https://virajpatel27.github.io/Swing-Trading-Dashboard/
 - [ ] Branch rule on main: block force push + deletion (Phase 8)
+- [ ] Optional: Telegram failure messages - make a bot with @BotFather, put `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` in Secrets
+
+## Weekly
+- BSE indices: tell Claude "BSE update karo" (runs on the PC, BSE refuses GitHub); Pull origin first, then commit what it changed.
+
+## When the Daily update warns "New stocks need history"
+- Actions -> Backfill history -> job `stocks`, symbols = the names in the warning, from 2007-01-01 -> Run workflow.

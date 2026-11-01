@@ -18,7 +18,8 @@ Status: **draft, waiting for Viraj's OK** ("continue"). Nothing is built yet.
 ## 2. Decisions that differ from the original spec (and why)
 
 1. **Repo is created with GitHub Desktop, not `gh` CLI** - Viraj's rule (terminal push fails on his PC).
-2. **Daily job at 20:15 IST (cron `45 14 * * 1-5`), not 17:30-18:30.** The old Stock-Live-Dashboard uses the same Angel One account:
+2. **Daily job at 20:15 IST (cron `45 14 * * 1-5`) + 23:50 IST (`20 18 * * 1-5`, for NSE's index file out ~23:20), not 17:30-18:30.**
+   (Update 2026-11-01: BSE indices weekly from the PC by Viraj's choice; the daily job uses no Angel One.) The old Stock-Live-Dashboard uses the same Angel One account:
    its Data update starts 17:00 IST (GitHub often starts it 30-90 min late, a run may last up to 2.5 h) and again at 23:00 and 04:00 IST,
    plus Build instrument master 09:00 IST. 20:15 sits between them. NSE's daily file is out by ~19:05 IST.
    One-time backfill runs on **Saturday daytime** (no old-project job then). Weekly backup Saturday, monthly integrity 1st Saturday.

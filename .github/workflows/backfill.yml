@@ -16,6 +16,12 @@ on:
       max_minutes:
         description: "Stop cleanly after this many minutes (a job may run at most 6 hours)"
         default: "300"
+      symbols:
+        description: "stocks only: comma-separated symbols that joined the Nifty 500 (empty = all stocks)"
+        default: ""
+      from_date:
+        description: "with symbols: first day, e.g. 2007-01-01"
+        default: "2007-01-01"
 
 permissions:
   contents: write
@@ -28,6 +34,8 @@ jobs:
   backfill:
     runs-on: ubuntu-24.04
     timeout-minutes: 345
+    outputs:
+      changed: ${{ steps.save.outputs.changed }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
@@ -39,7 +47,16 @@ jobs:
       - name: Remember the data list before the run
         run: cp data/meta/instruments.csv /tmp/instruments_before.csv 2>/dev/null || true
       - name: Backfill
-        run: python scripts/backfill.py --job "${{ inputs.job }}" --max-minutes "${{ inputs.max_minutes }}"
+        env:
+          SYMBOLS: ${{ inputs.symbols }}
+          FROM_DATE: ${{ inputs.from_date }}
+        run: |
+          if [ -n "$SYMBOLS" ]; then
+            python scripts/backfill.py --job "${{ inputs.job }}" --max-minutes "${{ inputs.max_minutes }}" --symbols "$SYMBOLS" --from "$FROM_DATE"
+            python scripts/build_adjusted.py && python scripts/build_snapshot.py
+          else
+            python scripts/backfill.py --job "${{ inputs.job }}" --max-minutes "${{ inputs.max_minutes }}"
+          fi
       - name: Data check
         run: |
           if [ -f /tmp/instruments_before.csv ]; then
@@ -48,14 +65,26 @@ jobs:
             python scripts/validate_data.py
           fi
       - name: Save data
+        id: save
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data
           if git diff --cached --quiet; then
             echo "Nothing new to save."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "data: backfill ${{ inputs.job }} $(date -u +%F)"
             git pull --rebase
             git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
+
+  deploy:                            # new stocks show up on the website right away
+    needs: backfill
+    if: needs.backfill.outputs.changed == 'true' && inputs.symbols != ''
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy-site.yml

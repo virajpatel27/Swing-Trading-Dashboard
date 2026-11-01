@@ -13,7 +13,10 @@ Viraj. **Not a programmer.** Answer in Gujarati-English mix (Latin letters), sho
 4. **Old project** `C:\Users\hello\OneDrive\Documents\GitHub\Stock-Live-Dashboard`: read it to learn (Angel One login, rate limits, NSE/BSE fetch),
    **never change anything in that folder**.
 5. **Same Angel One account** as the old project. Its jobs: weekdays 17:00 IST (can start 30-90 min late, run up to 2.5 h), 23:00 and 04:00 IST daily,
-   09:00 IST instrument master, Sunday 02:00 IST backup. Our daily job: **20:15 IST** (`45 14 * * 1-5` UTC). Never schedule at 17:00 IST.
+   09:00 IST instrument master, Sunday 02:00 IST backup. Our daily job: **20:15 IST** (`45 14 * * 1-5`) and **23:50 IST** (`20 18 * * 1-5`)
+   - it does not use Angel One at all. Never schedule at 17:00 IST.
+   BSE indices: weekly from the PC only (Viraj's choice 2026-11-01). When he says "BSE update karo": run
+   `<python> scripts/backfill.py --job bse-update`, then `build_snapshot.py` and `validate_data.py`; he pulls first, then commits.
 6. **equitytimer.com is not used**: its Terms (sections 7 + 8) forbid scraping and redistribution. Sectors come from NSE's official classification.
 7. Never overwrite good data with empty/failed data. Validate before every data commit.
 8. Indicators always on ADJUSTED prices. Raw data is never changed by adjustment.
@@ -58,7 +61,7 @@ Data: 500 stocks 2007 -> 2026-10-30 (raw), 139 NSE + 139 BSE indices, 2.34 M row
 **Phase 5 done** (2026-11-01): NSE classification (`scripts/fetch_classification.py`), indicators, RS, `scripts/build_snapshot.py`
 -> `data/snapshot/latest.json` + `sectors.json`. 90 tests.
 **Phase 6 done** (2026-11-01): website LIVE at https://virajpatel27.github.io/Swing-Trading-Dashboard/ (94 Python + 10 JS tests).
-Next: Phase 7 (daily automation).
+**Phase 7** (2026-11-01): daily automation built (`scripts/daily.py`, `.github/workflows/daily.yml`), 101 tests; first GitHub run pending.
 - NSE bhavcopy PREVCLOSE is NOT adjusted on ex-dates; Yahoo's adjusted history has its own errors (see WORK_LOG 2026-11-01).
 - NSE's API never answers some windows (seems to hang for ranges before an index existed): a window failing twice is skipped.
 - Bot commits data on GitHub: Viraj must Pull origin before he commits. Don't poll api.github.com often (60 calls/hour without a token): read the run page HTML.

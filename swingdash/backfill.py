@@ -94,6 +94,9 @@ def weekdays(a: date, b: date):
 # ---------------------------------------------------------------- stocks (NSE bhavcopy)
 def stock_universe(ctx: Ctx) -> pd.DataFrame:
     uni = nse.nifty500(ctx.http, ctx.universe["stocks"]["list_url"])
+    skip = tuple(ctx.universe["stocks"].get("exclude_prefixes") or ())
+    if skip:
+        uni = uni[~uni["symbol"].str.startswith(skip)].reset_index(drop=True)
     uni["id"] = uni["symbol"].map(store.folder_name)
     path = ctx.data / "meta" / "universe_stocks.csv"
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -101,8 +104,10 @@ def stock_universe(ctx: Ctx) -> pd.DataFrame:
     return uni
 
 
-def backfill_stocks(ctx: Ctx, until: date | None = None, only: list[str] | None = None, start: date | None = None) -> dict:
-    """only + start = a small extra run for a few stocks (e.g. ones added to the list later), with its own checkpoint."""
+def backfill_stocks(ctx: Ctx, until: date | None = None, only: list[str] | None = None, start: date | None = None,
+                    restart_from: date | None = None) -> dict:
+    """only + start = a small extra run for a few stocks (e.g. ones added to the list later), with its own checkpoint.
+    restart_from = read again from this day even if the checkpoint is later (the daily job re-checks the last days)."""
     until = until or ctx.today
     uni = stock_universe(ctx)
     if only:
@@ -116,6 +121,8 @@ def backfill_stocks(ctx: Ctx, until: date | None = None, only: list[str] | None 
     if only and cp.get("symbols") != sorted(symbols):
         cp = {}                                         # a different extra list starts fresh
     first = as_date(cp["last_day"]) + timedelta(days=1) if cp.get("last_day") else (start or ctx.start)
+    if restart_from and restart_from < first:
+        first = restart_from
     days_known = read_trading_days(ctx)
     flush_every = int(ctx.settings.get("flush_every_days", 500))
     buffer: dict[str, list[pd.DataFrame]] = {}
@@ -127,9 +134,8 @@ def backfill_stocks(ctx: Ctx, until: date | None = None, only: list[str] | None 
             new = pd.concat(parts, ignore_index=True).drop(columns="symbol")
             merge_write(ctx.data / "stocks" / "raw" / ids[sym], new, store.STOCK_COLS, ctx.today)
         write_trading_days(ctx, days_known)
-        if done_until:
-            save_json(cp_path, {"last_day": done_until.isoformat(), "updated": str(ctx.today),
-                                **({"symbols": sorted(symbols)} if only else {})})
+        if done_until:            # no date stamp in the file: a holiday run must leave it unchanged (nothing to commit)
+            save_json(cp_path, {"last_day": done_until.isoformat(), **({"symbols": sorted(symbols)} if only else {})})
         ctx.log(f"  saved up to {done_until}: {len(buffer)} stocks touched, {len(days_known)} trading days known")
         buffer, since_flush = {}, 0
 
@@ -425,4 +431,39 @@ def backfill_bse_indices(ctx: Ctx, until: date | None = None) -> dict:
     return res
 
 
-JOBS = {"stocks": backfill_stocks, "nse-indices": backfill_nse_indices, "bse-indices": backfill_bse_indices}
+def update_bse_indices(ctx: Ctx, until: date | None = None) -> dict:
+    """Weekly BSE refresh (PC only - BSE refuses GitHub): every BSE index from 10 days before its last stored day to today;
+    an index BSE added since the last run gets its whole history."""
+    until = until or ctx.today
+    lst = bse.index_list(ctx.http)
+    lst["id"] = lst["code"].map(store.folder_name)
+    lst.to_csv(ctx.data / "meta" / "indices_bse.csv", index=False, lineterminator="\n")
+    added = new_indices = 0
+    stopped, empty = "", []
+    for row in lst.itertuples():
+        if ctx.out_of_time():
+            stopped = "time limit"
+            break
+        folder = ctx.data / "indices" / "bse" / row.id
+        have = store.read(folder, store.INDEX_COLS)
+        start = have["date"].max().date() - timedelta(days=10) if len(have) else ctx.start
+        try:
+            df = bse.index_history(ctx.http, row.code, start, until)
+        except Exception as exc:  # noqa: BLE001
+            stopped = f"{row.code}: {type(exc).__name__}: {str(exc)[:120]}"
+            break
+        if df.empty:
+            empty.append(row.code)
+            continue
+        before = len(have)
+        merge_write(folder, df, store.INDEX_COLS, ctx.today)
+        added += len(store.read(folder, store.INDEX_COLS)) - before
+        new_indices += before == 0
+    res = {"job": "bse-update", "indices": len(lst), "rows_added": added, "new_indices": new_indices,
+           "no_data": len(empty), "stopped": stopped}
+    ctx.log(f"bse-update: {res}")
+    return res
+
+
+JOBS = {"stocks": backfill_stocks, "nse-indices": backfill_nse_indices, "bse-indices": backfill_bse_indices,
+        "bse-update": update_bse_indices}

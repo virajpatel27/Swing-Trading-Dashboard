@@ -21,7 +21,7 @@ Angel One is used only by the Source probe (a check). The daily update does not 
 - [x] 2026-10-31 4 Angel Secrets added (login OK from GitHub)
 - [x] 2026-10-31 Source probe run on GitHub
 - [x] 2026-11-01 GitHub Pages: Settings -> Pages -> Source = GitHub Actions. Live: https://virajpatel27.github.io/Swing-Trading-Dashboard/
-- [ ] Branch protection (ruleset) for `main` and `backup`:
+- [x] 2026-11-01 Branch protection (ruleset "protect main and backup", Active) for `main` and `backup`:
       Settings -> **Rules** -> **Rulesets** -> **New ruleset** -> **New branch ruleset**
       - Ruleset name: `protect main and backup`, Enforcement status: **Active**
       - Target branches -> **Add target** -> **Include by pattern** -> `main`; again -> `backup`

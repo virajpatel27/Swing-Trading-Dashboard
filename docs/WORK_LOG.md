@@ -213,3 +213,8 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   gdrive_token.txt. Zip size measured: 119 MB. 110 tests green.
 - NEXT: Viraj pushes Phase 8, creates the ruleset, runs Weekly backup once; Google Drive setup (8 steps in the checklist)
   when he wants - then "Drive token banavo" -> run scripts/gdrive_auth.py (do NOT read gdrive_token.txt).
+- Viraj pushed Phase 8 (ca64d6e, Tests green), created ruleset "protect main and backup" (Active; targets main + backup;
+  Restrict deletions + Block force pushes only), ran Weekly backup #1 (run 41289129804): Success - Release data-2026-11-01
+  with zip (downloadable), branch `backup` = main. `restore.py --list` sees the release. Google Drive step skipped (not set up).
+- **All 8 phases done (2026-11-01).** Open, optional: Google Drive setup (checklist), Telegram. Watch the first real daily
+  runs Monday 02-Nov 20:15 / 23:50 IST.

@@ -65,7 +65,8 @@ Data: 500 stocks 2007 -> 2026-10-30 (raw), 139 NSE + 139 BSE indices, 2.34 M row
 succeeded; 102 tests.
 **Phase 8** (2026-11-01): weekly backup (Release zip + `backup` branch), monthly integrity check, `restore.py` / `restore.md` /
 Restore data workflow, pre-commit secret hook (`scripts/install_hooks.py`), README, Google Drive copy (his choice). 110 tests.
-Waiting: Viraj's push, ruleset, first Weekly backup run, Google Drive setup.
+**All 8 phases done (2026-11-01):** pushed, ruleset active, Weekly backup #1 OK (Release data-2026-11-01, `backup` branch).
+Optional and open: Google Drive setup, Telegram. First real daily data: Mon 02-Nov-2026.
 - "Drive token banavo" = run `<python> scripts/gdrive_auth.py` (needs client_secret.json from him). NEVER open/read
   gdrive_token.txt or client_secret.json: he copies the values into GitHub Secrets himself.
 - NSE bhavcopy PREVCLOSE is NOT adjusted on ex-dates; Yahoo's adjusted history has its own errors (see WORK_LOG 2026-11-01).

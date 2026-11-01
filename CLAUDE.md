@@ -56,7 +56,9 @@ https://github.com/virajpatel27/Swing-Trading-Dashboard, Tests green, Secrets se
 Data: 500 stocks 2007 -> 2026-10-30 (raw), 139 NSE + 139 BSE indices, 2.34 M rows, 92 MB, 0 errors.
 **Phase 4 done** (2026-11-01): corporate actions + adjusted prices for 500 stocks, 76 tests, ~147 MB.
 **Phase 5 done** (2026-11-01): NSE classification (`scripts/fetch_classification.py`), indicators, RS, `scripts/build_snapshot.py`
--> `data/snapshot/latest.json` + `sectors.json`. 90 tests. Next: Phase 6 (website).
+-> `data/snapshot/latest.json` + `sectors.json`. 90 tests.
+**Phase 6 done** (2026-11-01): website LIVE at https://virajpatel27.github.io/Swing-Trading-Dashboard/ (94 Python + 10 JS tests).
+Next: Phase 7 (daily automation).
 - NSE bhavcopy PREVCLOSE is NOT adjusted on ex-dates; Yahoo's adjusted history has its own errors (see WORK_LOG 2026-11-01).
 - NSE's API never answers some windows (seems to hang for ranges before an index existed): a window failing twice is skipped.
 - Bot commits data on GitHub: Viraj must Pull origin before he commits. Don't poll api.github.com often (60 calls/hour without a token): read the run page HTML.

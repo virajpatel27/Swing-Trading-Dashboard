@@ -18,5 +18,5 @@ Optional later: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` (failure messages on Te
 - [x] 2026-10-31 Repo published (public): https://github.com/virajpatel27/Swing-Trading-Dashboard
 - [x] 2026-10-31 4 Angel Secrets added (login OK from GitHub)
 - [x] 2026-10-31 Source probe run on GitHub (Actions -> Source probe -> Run workflow)
-- [ ] GitHub Pages: Settings -> Pages -> Build and deployment -> Source = **GitHub Actions** (Phase 6, before pushing the site)
+- [x] 2026-11-01 GitHub Pages: Settings -> Pages -> Source = GitHub Actions. Live: https://virajpatel27.github.io/Swing-Trading-Dashboard/
 - [ ] Branch rule on main: block force push + deletion (Phase 8)

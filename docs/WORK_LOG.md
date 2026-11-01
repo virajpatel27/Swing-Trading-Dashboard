@@ -162,3 +162,7 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - `.github/workflows/deploy-site.yml` (push to site/snapshot, manual, workflow_call): build + upload-pages-artifact@v4 +
   deploy-pages@v4. Needs Settings -> Pages -> Source = GitHub Actions BEFORE the first run. Tests workflow runs the JS tests too.
 - Tests: 94 Python + 10 JS green.
+- Viraj pushed (f06ca74): Tests green; Deploy website #1 built (34 MB artifact) but deploy failed 404 = Pages not enabled yet.
+  He enabled Pages (Source = GitHub Actions) and re-ran: #2 success. **LIVE: https://virajpatel27.github.io/Swing-Trading-Dashboard/**
+  Checked live: 775 rows, RELIANCE chart, service worker registered. **Phase 6 done.**
+- NEXT: "continue" -> Phase 7 (daily automation at 20:15 IST, holidays, catch-up, re-check last 5 days, failure issue/Telegram).

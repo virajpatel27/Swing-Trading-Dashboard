@@ -35,8 +35,8 @@ NSE HBLENGINE,warn,missing dates,2009-01-19,"2 trading days without a row (first
 NSE HONAUT,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE HSCL,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE IPCALAB,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
-NSE J&KBANK,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE JBMA,warn,missing dates,2007-02-13,"178 trading days without a row (first 2007-02-13, last 2014-02-10)"
+NSE J&KBANK,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE KAJARIACER,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE KEI,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE KPRMILL,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
@@ -293,7 +293,6 @@ NSE IRB (adjusted),warn,unexplained jump,2013-08-01,close moved 25.2% (to 2.7175
 NSE ITI (adjusted),warn,unexplained jump,2007-09-26,close moved 20.1% (to 52.65)
 NSE ITI (adjusted),warn,unexplained jump,2009-04-13,close moved 20.1% (to 24.15)
 NSE ITI (adjusted),warn,unexplained jump,2009-05-18,close moved 20.1% (to 29.6)
-NSE J&KBANK (adjusted),warn,unexplained jump,2009-05-19,close moved 20.0% (to 42.83500000000001)
 NSE JBMA (adjusted),warn,unexplained jump,2007-07-30,close moved 20.0% (to 2.8266666666666667)
 NSE JBMA (adjusted),warn,unexplained jump,2019-09-24,close moved 20.0% (to 38.88)
 NSE JINDALSTEL (adjusted),warn,unexplained jump,2007-10-31,close moved 25.5% (to 395.88166666666666)
@@ -315,6 +314,7 @@ NSE JPPOWER (adjusted),warn,unexplained jump,2014-05-19,close moved 29.2% (to 23
 NSE JSWSTEEL (adjusted),warn,unexplained jump,2008-10-31,close moved 33.7% (to 30.700000000000003)
 NSE JSWSTEEL (adjusted),warn,unexplained jump,2009-04-02,close moved 21.5% (to 30.515)
 NSE JWL (adjusted),warn,unexplained jump,2011-10-11,close moved 20.1% (to 36.8)
+NSE J&KBANK (adjusted),warn,unexplained jump,2009-05-19,close moved 20.0% (to 42.83500000000001)
 NSE KAJARIACER (adjusted),warn,unexplained jump,2007-06-25,close moved 20.1% (to 16.425)
 NSE KAJARIACER (adjusted),warn,unexplained jump,2007-12-05,close moved 20.1% (to 17.475)
 NSE KAJARIACER (adjusted),warn,unexplained jump,2009-05-22,close moved 20.1% (to 18.25)
@@ -333,9 +333,6 @@ NSE LT (adjusted),warn,unexplained jump,2009-05-18,close moved 24.5% (to 547.4)
 NSE LTFOODS (adjusted),warn,unexplained jump,2009-06-01,close moved 20.1% (to 4.665)
 NSE LTFOODS (adjusted),warn,unexplained jump,2009-08-12,close moved 20.0% (to 5.48)
 NSE LTFOODS (adjusted),warn,unexplained jump,2010-02-01,close moved 20.0% (to 6.68)
-NSE M&M (adjusted),warn,unexplained jump,2008-10-31,close moved 24.0% (to 93.625)
-NSE M&M (adjusted),warn,unexplained jump,2009-05-18,close moved 23.9% (to 158.9875)
-NSE M&MFIN (adjusted),warn,unexplained jump,2020-03-23,close moved 28.6% (to 88.89556972113188)
 NSE MANAPPURAM (adjusted),warn,unexplained jump,2010-08-02,close moved 20.0% (to 57.4)
 NSE MANAPPURAM (adjusted),warn,unexplained jump,2020-03-25,close moved 20.9% (to 101.9)
 NSE MFSL (adjusted),warn,unexplained jump,2020-03-23,close moved 29.2% (to 288.55)
@@ -354,6 +351,9 @@ NSE MRPL (adjusted),warn,unexplained jump,2008-01-21,close moved 27.5% (to 87.15
 NSE MRPL (adjusted),warn,unexplained jump,2008-01-22,close moved 22.8% (to 67.25)
 NSE MRPL (adjusted),warn,unexplained jump,2008-01-23,close moved 22.8% (to 82.55)
 NSE MRPL (adjusted),warn,unexplained jump,2009-06-05,close moved 23.5% (to 93.55)
+NSE M&M (adjusted),warn,unexplained jump,2008-10-31,close moved 24.0% (to 93.625)
+NSE M&M (adjusted),warn,unexplained jump,2009-05-18,close moved 23.9% (to 158.9875)
+NSE M&MFIN (adjusted),warn,unexplained jump,2020-03-23,close moved 28.6% (to 88.89556972113188)
 NSE NATIONALUM (adjusted),warn,unexplained jump,2008-10-24,close moved 22.1% (to 40.0125)
 NSE NAUKRI (adjusted),warn,unexplained jump,2007-07-10,close moved 20.0% (to 47.73500000000001)
 NSE NAVA (adjusted),warn,unexplained jump,2007-10-04,close moved 20.0% (to 70.0375)

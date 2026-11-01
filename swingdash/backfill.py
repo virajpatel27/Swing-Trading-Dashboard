@@ -93,12 +93,35 @@ def weekdays(a: date, b: date):
 
 # ---------------------------------------------------------------- stocks (NSE bhavcopy)
 def stock_universe(ctx: Ctx) -> pd.DataFrame:
-    uni = nse.nifty500(ctx.http, ctx.universe["stocks"]["list_url"])
-    skip = tuple(ctx.universe["stocks"].get("exclude_prefixes") or ())
+    """The stock list. source all_nse_eq = every NSE main-board equity (EQUITY_L.csv); nifty500 = the Nifty 500 only.
+    Column n500 marks Nifty 500 members either way. A download failure or a suspiciously short list keeps the saved list."""
+    cfg = ctx.universe["stocks"]
+    path = ctx.data / "meta" / "universe_stocks.csv"
+    saved = pd.read_csv(path) if path.exists() else None
+    try:
+        n5 = nse.nifty500(ctx.http, cfg["list_url"])
+        if cfg.get("source", "nifty500") == "all_nse_eq":
+            uni = nse.equity_list(ctx.http, cfg["all_list_url"])
+            uni = uni.merge(n5[["symbol", "industry"]], on="symbol", how="left")
+            uni["industry"] = uni["industry"].fillna("")
+            # Nifty 500 members that EQUITY_L.csv does not carry (REITs such as EMBASSY are listed separately) stay in
+            extra = n5[~n5["symbol"].isin(uni["symbol"])].assign(listed="")
+            uni = pd.concat([uni, extra[["symbol", "name", "isin", "series", "listed", "industry"]]], ignore_index=True)
+        else:
+            uni = n5.assign(listed="")
+        uni["n500"] = uni["symbol"].isin(n5["symbol"])
+    except Exception as exc:  # noqa: BLE001
+        if saved is None:
+            raise
+        ctx.log(f"  stock list not available ({type(exc).__name__}); using the saved list")
+        return saved
+    skip = tuple(cfg.get("exclude_prefixes") or ())
     if skip:
         uni = uni[~uni["symbol"].str.startswith(skip)].reset_index(drop=True)
     uni["id"] = uni["symbol"].map(store.folder_name)
-    path = ctx.data / "meta" / "universe_stocks.csv"
+    if saved is not None and len(uni) < 0.9 * len(saved):
+        ctx.log(f"  ::warning title=Stock list::NSE list has {len(uni)} stocks, saved list {len(saved)} - keeping the saved list")
+        return saved
     path.parent.mkdir(parents=True, exist_ok=True)
     uni.to_csv(path, index=False, lineterminator="\n")
     return uni

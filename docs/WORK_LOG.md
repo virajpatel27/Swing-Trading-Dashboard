@@ -218,3 +218,16 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   with zip (downloadable), branch `backup` = main. `restore.py --list` sees the release. Google Drive step skipped (not set up).
 - **All 8 phases done (2026-11-01).** Open, optional: Google Drive setup (checklist), Telegram. Watch the first real daily
   runs Monday 02-Nov 20:15 / 23:50 IST.
+
+### 2026-11-01 (later): ALL NSE main-board stocks
+- Viraj: "mare NSE na badha listed stock dashboard ma joiye chhe, 01-01-2007 thi". Asked SME or not -> **main board only**.
+- NSE `content/equities/EQUITY_L.csv`: 2,620 stocks (EQ 2,357, BE 230, BZ 33), 690 listed before 2007. REITs (EMBASSY,
+  BIRET, BAGMANE) are not in it -> Nifty 500 members missing from EQUITY_L are added. Universe = 2,623.
+- config `stocks.source: all_nse_eq`; `stock_universe` keeps the saved list when NSE fails or the new list is < 90 % of it;
+  column `n500` (Nifty 500 member) -> snapshot column -> website views "All stocks" / "Nifty 500" (Market + Screener).
+- `scripts/backfill.py --restart-from 2007-01-01` (all stocks, read again from that day; retries continue from the checkpoint).
+  backfill.yml: inputs restart_from, job classification; after any job: adjusted / classification (15 min) / snapshot, deploy.
+- Size estimate: data ~540 MB, site ~420 MB, weekly zip ~430 MB (Google Drive keep 12 -> 6).
+- Tests: 113 Python + 11 JS green.
+- NEXT: Viraj pushes; runs Backfill history (stocks, restart_from 2007-01-01; ~2-3 h on GitHub; run again if it stops on
+  time), then Backfill history (classification, 240 min) until all stocks have NSE sectors.

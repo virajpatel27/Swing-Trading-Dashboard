@@ -2,8 +2,8 @@
 
 **Live: https://virajpatel27.github.io/Swing-Trading-Dashboard/**
 
-A free, fast, mobile-friendly dashboard for swing traders in Indian markets: all NSE indices, all BSE indices and the Nifty 500
-stocks, with daily prices since 1 January 2007 **adjusted for splits, bonus issues, rights and demergers**, technical indicators,
+A free, fast, mobile-friendly dashboard for swing traders in Indian markets: all NSE indices, all BSE indices and all NSE main-board
+stocks (~2,600; Nifty 500 members marked), with daily prices since 1 January 2007 **adjusted for splits, bonus issues, rights and demergers**, technical indicators,
 relative strength, a sector/industry view and a swing screener. Updated automatically every trading day.
 
 > **Educational purpose only, not investment advice.** End-of-day data; it may contain errors.
@@ -21,7 +21,7 @@ relative strength, a sector/industry view and a swing screener. Updated automati
 - iPhone (Safari): link kholo -> niche Share ⬆️ -> **Add to Home Screen**
 
 **Website ma shu chhe:**
-- **Market**: badha NSE + BSE indices ane 500 stocks - LTP, 1D thi 5Y %, 52W high/low thi antar, volume, RSI, trend, RS.
+- **Market**: badha NSE + BSE indices ane NSE na badha ~2,600 stocks ("Nifty 500" button thi faqt Nifty 500) - LTP, 1D thi 5Y %, 52W high/low thi antar, volume, RSI, trend, RS.
   Column par tap = sort, row par tap = chart. Search, sector filter, CSV download.
 - **Screener**: conditions tick karo (50 & 200 EMA upar, RSI 50-70, 52W high pase, volume spike, strong RS, breakout ...).
 - **Sectors**: heatmap ane momentum ranking; sector -> industry -> stocks.
@@ -43,7 +43,7 @@ Data pachho lavvo hoy to: [restore.md](restore.md) (Actions -> Restore data -> e
 
 | Part | What | Where |
 |---|---|---|
-| Raw prices | NSE daily bhavcopy (as traded), 2007 -> today, Nifty 500 | `data/stocks/raw/<SYMBOL>/` |
+| Raw prices | NSE daily bhavcopy (as traded), 2007 -> today, all NSE main-board stocks | `data/stocks/raw/<SYMBOL>/` |
 | Corporate actions | NSE corporate actions (split, bonus, rights, demerger, scheme), parsed + audited | `data/corporate_actions/<SYMBOL>.csv` |
 | Adjusted prices | back-adjusted: last adjusted close = last real close; volume / factor | `data/stocks/adjusted/<SYMBOL>/` |
 | NSE indices | NSE daily all-indices file (2012 ->) + NSE historical API (2007 ->), 139 indices | `data/indices/nse/` |

@@ -134,6 +134,23 @@ def nifty500(http, url: str) -> pd.DataFrame:
                          "industry": df["Industry"].str.strip(), "isin": df["ISIN Code"].str.strip(), "series": df["Series"].str.strip()})
 
 
+def equity_list(http, url: str) -> pd.DataFrame:
+    """All equity shares listed on NSE's main board (EQUITY_L.csv: ~2,600 in EQ / BE / BZ series)."""
+    r = http.get(url)
+    if r.status_code != 200:
+        raise SourceError(f"NSE equity list: HTTP {r.status_code}")
+    return parse_equity_list(r.content)
+
+
+def parse_equity_list(content: bytes) -> pd.DataFrame:
+    df = pd.read_csv(io.BytesIO(content))
+    df.columns = [c.strip() for c in df.columns]
+    return pd.DataFrame({"symbol": df["SYMBOL"].astype(str).str.strip(), "name": df["NAME OF COMPANY"].astype(str).str.strip(),
+                         "isin": df["ISIN NUMBER"].astype(str).str.strip(), "series": df["SERIES"].astype(str).str.strip(),
+                         "listed": pd.to_datetime(df["DATE OF LISTING"].astype(str).str.strip(), format="%d-%b-%Y", errors="coerce")
+                         .dt.strftime("%Y-%m-%d")})
+
+
 # ---------------------------------------------------------------- indices
 def api_json(http, path: str, referer: str | None = None):
     http.warm_up(HOME)

@@ -20,7 +20,7 @@ from . import store
 from .adjust import ADJ_COLS
 
 DISCLAIMER = "Educational purpose only, not investment advice."
-COLUMNS = ["id", "kind", "exchange", "symbol", "name", "category", "macro", "sector", "industry", "basic_industry", "first_date",
+COLUMNS = ["id", "kind", "exchange", "symbol", "name", "category", "n500", "macro", "sector", "industry", "basic_industry", "first_date",
            "date", "stale", "close", "raw_close", "chg_1d", "chg_1w", "chg_1m", "chg_3m", "chg_6m", "chg_1y", "chg_3y", "chg_5y",
            "hi52", "lo52", "from_hi52", "from_lo52", "volume", "avg_vol20", "vol_ratio", "ema10", "ema20", "ema50", "ema200",
            "rsi14", "macd", "macd_signal", "macd_hist", "atr14", "atr_pct", "trend", "rs_3m", "rs_6m", "rs_rating", "flags"]
@@ -84,6 +84,7 @@ def build(data: Path, log=print) -> tuple[dict, dict]:
         raw = store.read(data / "stocks" / "raw" / r.id, store.STOCK_COLS)
         c = cls.loc[r.symbol] if r.symbol in cls.index else {}
         info = {"id": r.id, "kind": "stock", "exchange": "NSE", "symbol": r.symbol, "name": r.name, "category": "",
+                "n500": bool(getattr(r, "n500", True)),
                 "macro": c.get("macro", ""), "sector": c.get("sector", "") or r.industry, "industry": c.get("industry", ""),
                 "basic_industry": c.get("basic_industry", "")}
         row, score = instrument_row(adj, info, nifty if len(nifty) else None, True, raw["close"].iat[-1] if len(raw) else None)
@@ -97,7 +98,7 @@ def build(data: Path, log=print) -> tuple[dict, dict]:
             if len(df) < 2:
                 continue
             info = {"id": r.id, "kind": "index", "exchange": exch, "symbol": getattr(r, "code", r.name), "name": getattr(r, name_col),
-                    "category": getattr(r, "category", ""), "macro": "", "sector": "", "industry": "", "basic_industry": ""}
+                    "category": getattr(r, "category", ""), "n500": False, "macro": "", "sector": "", "industry": "", "basic_industry": ""}
             row, score = instrument_row(df, info, bench if len(bench) else None, False)
             rows.append(row)
             scores.append(("index", score))

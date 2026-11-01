@@ -57,7 +57,7 @@ jobs:
           TAG: ${{ steps.zip.outputs.tag }}
         run: |
           pip install -q requests
-          python scripts/gdrive_backup.py "$TAG.zip" --keep 12
+          python scripts/gdrive_backup.py "$TAG.zip" --keep 6     # ~430 MB each since all NSE stocks
       - name: Move the backup branch forward
         run: git push origin "HEAD:refs/heads/backup"        # fast-forward only (no --force): history can never be lost
       - name: Report the failure (GitHub issue)

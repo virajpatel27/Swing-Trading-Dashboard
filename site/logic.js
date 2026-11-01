@@ -56,6 +56,7 @@
     return rows.filter((r) => {
       if (hideStale && r.stale) return false;
       if (view === "stock" && r.kind !== "stock") return false;
+      if (view === "n500" && !(r.kind === "stock" && r.n500)) return false;
       if (view === "nse" && !(r.kind === "index" && r.exchange === "NSE")) return false;
       if (view === "bse" && !(r.kind === "index" && r.exchange === "BSE")) return false;
       if (sector && r.sector !== sector) return false;

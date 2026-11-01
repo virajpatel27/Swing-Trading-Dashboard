@@ -28,6 +28,8 @@ def main(argv=None) -> int:
                     help="compact = join each instrument's history files into one (no download)")
     ap.add_argument("--symbols", default="", help="stocks job only: comma-separated symbols for a small extra run")
     ap.add_argument("--from", dest="start", type=date.fromisoformat, default=None, help="with --symbols: first day")
+    ap.add_argument("--restart-from", type=date.fromisoformat, default=None,
+                    help="stocks job: read again from this day for ALL stocks (e.g. 2007-01-01 after adding stocks to the list)")
     ap.add_argument("--max-minutes", type=float, default=330)
     ap.add_argument("--until", type=date.fromisoformat, default=None, help="last day to fetch (default: today)")
     ap.add_argument("--attempts", type=int, default=5, help="restarts after a network stop (each continues from the checkpoint)")
@@ -52,6 +54,9 @@ def main(argv=None) -> int:
             try:
                 if job == "stocks" and a.symbols:
                     res = backfill.backfill_stocks(ctx, a.until, only=a.symbols.split(","), start=a.start)
+                elif job == "stocks" and a.restart_from:
+                    res = backfill.backfill_stocks(ctx, a.until, restart_from=a.restart_from)
+                    a.restart_from = None            # a retry after a network stop continues from the checkpoint
                 else:
                     res = backfill.JOBS[job](ctx, a.until)
             except Exception as exc:  # noqa: BLE001 - e.g. a list download failed before any checkpointed work

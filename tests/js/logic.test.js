@@ -92,3 +92,11 @@ test("heat levels are clamped and scaled by period", () => {
   assert.equal(SD.heatLevel(8, "1m"), 4);
   assert.equal(SD.heatLevel(null, "1m"), 0);
 });
+
+test("Nifty 500 view shows only member stocks", () => {
+  const r = SD.rowsFromSnapshot({ columns: ["id", "kind", "exchange", "symbol", "name", "n500", "stale", "flags"],
+    rows: [["A", "stock", "NSE", "A", "A", true, false, []], ["B", "stock", "NSE", "B", "B", false, false, []],
+      ["N", "index", "NSE", "N", "N", false, false, []]] });
+  assert.deepEqual(SD.filterRows(r, { view: "n500" }).map((x) => x.id), ["A"]);
+  assert.deepEqual(SD.filterRows(r, { view: "stock" }).map((x) => x.id), ["A", "B"]);
+});

@@ -28,7 +28,7 @@ Angel One is used only by the Source probe (a check). The daily update does not 
       - Tick **Restrict deletions** and **Block force pushes** (leave everything else unticked, so the daily bot can still save data)
       - **Create**
 - [ ] Optional: Telegram (see the table above)
-- [ ] Google Drive off-GitHub backup (Viraj chose it 2026-11-01). Weekly zip ~120 MB, 12 kept = ~1.5 GB of the free 15 GB.
+- [ ] Google Drive off-GitHub backup (Viraj chose it 2026-11-01). Weekly zip ~430 MB (all NSE stocks), 6 kept = ~2.6 GB of the free 15 GB.
       The app gets the narrow permission `drive.file`: it sees ONLY the files it created, nothing else in your Drive.
       1. https://console.cloud.google.com -> sign in with your Gmail -> project dropdown (top) -> **New project** ->
          name `swing-dash-backup` -> **Create** (then make sure this project is selected)

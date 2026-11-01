@@ -2,8 +2,9 @@
 history_start: 2007-01-01
 
 stocks:
-  source: nifty500                   # nifty500 (default). Later option: all_nse_eq
-  list_url: https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv
+  source: all_nse_eq                 # all_nse_eq = every NSE main-board stock (Viraj, 2026-11-01); nifty500 = Nifty 500 only
+  all_list_url: https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv
+  list_url: https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv   # also marks Nifty 500 members (n500)
   series_priority: [EQ, BE, BZ, SM, ST, RR, IV]   # one row per day: the first series found in this order (RR = REIT, IV = InvIT)
   exclude_prefixes: [DUMMY]          # NSE lists placeholder symbols (e.g. DUMMYHEG) that never trade
 

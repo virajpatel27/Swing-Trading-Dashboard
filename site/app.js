@@ -122,8 +122,8 @@
   function renderMarket() {
     const st = state.market;
     const sectors = [...new Set(state.rows.filter((r) => r.kind === "stock" && r.sector).map((r) => r.sector))].sort();
-    view.innerHTML = `<h1>Market</h1><p class="sub">All NSE and BSE indices and Nifty 500 stocks. Tap a column to sort, a row to open its chart.</p>
-      <div class="controls">${seg("view", [["all", "All"], ["stock", "Stocks"], ["nse", "NSE indices"], ["bse", "BSE indices"]], st.view)}
+    view.innerHTML = `<h1>Market</h1><p class="sub">All NSE and BSE indices and all NSE main-board stocks. Tap a column to sort, a row to open its chart.</p>
+      <div class="controls">${seg("view", [["all", "All"], ["stock", "All stocks"], ["n500", "Nifty 500"], ["nse", "NSE indices"], ["bse", "BSE indices"]], st.view)}
         <select id="sector" aria-label="Sector"><option value="">All sectors</option>${sectors.map((s) => `<option ${s === st.sector ? "selected" : ""}>${esc(s)}</option>`).join("")}</select>
         <input id="q" type="search" placeholder="Search symbol, name, industry" value="${esc(st.text)}" aria-label="Search">
         <button class="btn" id="csv" type="button">CSV</button> <span class="count" id="count"></span></div><div id="tbl"></div>`;
@@ -149,7 +149,7 @@
       `<label class="chip ${st.screens.includes(k) ? "on" : ""}"><input type="checkbox" value="${k}" ${st.screens.includes(k) ? "checked" : ""}>${s.label}</label>`).join("");
     view.innerHTML = `<h1>Swing screener</h1><p class="sub">Tick the conditions; a result must meet all of them. Indicators use adjusted prices of ${SD.fmtDate(state.dataDate)}.</p>
       <div class="chips" id="chips">${chips}</div>
-      <div class="controls">${seg("uni", [["stock", "Stocks"], ["all", "Stocks + indices"]], st.universe)}
+      <div class="controls">${seg("uni", [["stock", "All stocks"], ["n500", "Nifty 500"], ["all", "Stocks + indices"]], st.universe)}
         <input id="q" type="search" placeholder="Search in results" value="${esc(st.text)}" aria-label="Search">
         <button class="btn" id="csv" type="button">CSV</button> <span class="count" id="count"></span></div><div id="tbl"></div>`;
     const cols = [...COLS.slice(0, 2), COLS[2], COLS[4], COLS[5], COLS[10], COLS[12], COLS[13], COLS[15],

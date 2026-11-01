@@ -46,9 +46,10 @@ Viraj. **Not a programmer.** Answer in Gujarati-English mix (Latin letters), sho
 ## Status
 Phase 1 plan approved 2026-10-31 (daily 20:15 IST OK). Phase 2: skeleton + PC probe done; repo published (public)
 https://github.com/virajpatel27/Swing-Trading-Dashboard, Tests green, Secrets set, GitHub probe done. **Phase 2 done** (2026-10-31).
-**Phase 3** (2026-10-31): storage, backfill, validation built (40 tests). Data: 500 stocks 2007 -> 2026-10-30, 139 BSE indices,
-139 NSE indices (2012+ complete for all; pre-2012 for 57; the rest + gap fill to finish from GitHub Actions because NSE's API
-blocked this PC after ~1 h). Don't poll api.github.com often (60 calls/hour without a token): read the run page HTML.
+**Phase 3 done** (2026-11-01): storage, backfill (steps A files / B walk-back / C gaps / D lonely early rows), validation, 42 tests.
+Data: 500 stocks 2007 -> 2026-10-30 (raw), 139 NSE + 139 BSE indices, 2.34 M rows, 92 MB, 0 errors. Next: Phase 4.
+- NSE's API never answers some windows (seems to hang for ranges before an index existed): a window failing twice is skipped.
+- Bot commits data on GitHub: Viraj must Pull origin before he commits. Don't poll api.github.com often (60 calls/hour without a token): read the run page HTML.
 - NSE politeness: never run two jobs on the same NSE host at once; the NSE API stops answering after ~20-25 min of steady calls.
 Repo folder on the PC: `C:\Users\hello\OneDrive\Documents\Swing Trading\Swing Trading` (nested). Manual steps: `docs/MANUAL_CHECKLIST.md`.
 Read GitHub run results without a token via the public API (`api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/runs`,

@@ -100,3 +100,8 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   real start (2024) -> fake 70-160% "jumps". Added step D `nse_index_islands` (<= 20 rows followed by >= 60 trading days with no
   row are dropped at the start, listed in checkpoint "trimmed"). Test + mutation check, 42 tests green.
 - NEXT: Viraj Pull origin; I run the nse-indices job locally (only step D has work), validate; Viraj commits + pushes.
+- Pulled (ff8dfec). Step D locally: 47 indices, 66 lonely early rows dropped (dates 2016-07-07 / 2023-04-12: NSE's daily file
+  carried early values of later-launched indices). Data check: 778 instruments, 2,335,874 rows, **0 errors**, 1,055 warnings
+  (880 jumps = mostly stock splits/bonus for Phase 4; index jumps left are real: 18-May-2009, Dividend Points resets, leverage).
+  Data 92 MB, 1,556 files. **Phase 3 done.**
+- NEXT: Viraj commits + pushes; "continue" -> Phase 4 (corporate actions + adjusted prices).

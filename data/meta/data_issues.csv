@@ -470,6 +470,9 @@ NSE ITC,warn,unexplained jump,2016-07-01,close moved 31.5% (to 252.35)
 NSE ITI,warn,unexplained jump,2007-09-26,close moved 20.1% (to 52.65)
 NSE ITI,warn,unexplained jump,2009-04-13,close moved 20.1% (to 24.15)
 NSE ITI,warn,unexplained jump,2009-05-18,close moved 20.1% (to 29.6)
+NSE J&KBANK,warn,unexplained jump,2009-05-19,close moved 20.0% (to 428.35)
+NSE J&KBANK,warn,unexplained jump,2014-09-04,close moved 89.3% (to 168.7)
+NSE J&KBANK,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE JBMA,warn,unexplained jump,2007-07-30,close moved 20.0% (to 84.8)
 NSE JBMA,warn,unexplained jump,2007-10-24,close moved 27.4% (to 68.5)
 NSE JBMA,warn,unexplained jump,2014-10-08,close moved 76.0% (to 248.9)
@@ -503,9 +506,6 @@ NSE JSWSTEEL,warn,unexplained jump,2017-01-04,close moved 90.1% (to 163.05)
 NSE JUBLFOOD,warn,unexplained jump,2018-06-21,close moved 50.2% (to 1356.65)
 NSE JUBLFOOD,warn,unexplained jump,2022-04-19,close moved 80.8% (to 546.2)
 NSE JWL,warn,unexplained jump,2011-10-11,close moved 20.1% (to 36.8)
-NSE J&KBANK,warn,unexplained jump,2009-05-19,close moved 20.0% (to 428.35)
-NSE J&KBANK,warn,unexplained jump,2014-09-04,close moved 89.3% (to 168.7)
-NSE J&KBANK,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE KAJARIACER,warn,unexplained jump,2007-06-25,close moved 20.1% (to 32.85)
 NSE KAJARIACER,warn,unexplained jump,2007-12-05,close moved 20.1% (to 34.95)
 NSE KAJARIACER,warn,unexplained jump,2009-05-22,close moved 20.1% (to 36.5)
@@ -552,6 +552,13 @@ NSE LTFOODS,warn,unexplained jump,2010-02-01,close moved 20.0% (to 66.8)
 NSE LTFOODS,warn,unexplained jump,2017-02-07,close moved 89.2% (to 50.7)
 NSE LTFOODS,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE LUPIN,warn,unexplained jump,2010-08-27,close moved 80.0% (to 373.1)
+NSE M&M,warn,unexplained jump,2008-10-31,close moved 24.0% (to 374.5)
+NSE M&M,warn,unexplained jump,2009-05-18,close moved 23.9% (to 635.95)
+NSE M&M,warn,unexplained jump,2010-03-29,close moved 48.8% (to 553.6)
+NSE M&M,warn,unexplained jump,2017-12-21,close moved 51.9% (to 742.2)
+NSE M&MFIN,warn,unexplained jump,2013-02-15,close moved 80.0% (to 201.8)
+NSE M&MFIN,warn,unexplained jump,2020-03-23,close moved 28.6% (to 149.85)
+NSE M&MFIN,warn,unexplained jump,2020-07-22,close moved 32.5% (to 153.85)
 NSE MANAPPURAM,warn,unexplained jump,2010-08-02,close moved 20.0% (to 114.8)
 NSE MANAPPURAM,warn,unexplained jump,2011-06-09,close moved 49.3% (to 58.65)
 NSE MANAPPURAM,warn,unexplained jump,2020-03-25,close moved 20.9% (to 101.9)
@@ -593,13 +600,6 @@ NSE MRPL,warn,unexplained jump,2008-01-23,close moved 22.8% (to 82.55)
 NSE MRPL,warn,unexplained jump,2009-06-05,close moved 23.5% (to 93.55)
 NSE MSUMI,warn,unexplained jump,2022-11-16,close moved 26.9% (to 60.65)
 NSE MSUMI,warn,unexplained jump,2025-07-18,close moved 32.5% (to 43.52)
-NSE M&M,warn,unexplained jump,2008-10-31,close moved 24.0% (to 374.5)
-NSE M&M,warn,unexplained jump,2009-05-18,close moved 23.9% (to 635.95)
-NSE M&M,warn,unexplained jump,2010-03-29,close moved 48.8% (to 553.6)
-NSE M&M,warn,unexplained jump,2017-12-21,close moved 51.9% (to 742.2)
-NSE M&MFIN,warn,unexplained jump,2013-02-15,close moved 80.0% (to 201.8)
-NSE M&MFIN,warn,unexplained jump,2020-03-23,close moved 28.6% (to 149.85)
-NSE M&MFIN,warn,unexplained jump,2020-07-22,close moved 32.5% (to 153.85)
 NSE NATCOPHARM,warn,unexplained jump,2015-11-26,close moved 78.9% (to 543.85)
 NSE NATCOPHARM,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE NATIONALUM,warn,unexplained jump,2008-10-24,close moved 22.1% (to 160.05)
@@ -931,40 +931,8 @@ NSE INDIA VIX,warn,unexplained jump,2015-08-24,close moved 64.3% (to 28.13)
 NSE INDIA VIX,warn,unexplained jump,2016-09-29,close moved 33.2% (to 18.45)
 NSE INDIA VIX,warn,unexplained jump,2018-02-06,close moved 24.7% (to 20.02)
 NSE NIFTY100 ALPHA 30,warn,missing dates,2019-06-27,"1 trading days without a row (first 2019-06-27, last 2019-06-27)"
-NSE NIFTY100 ENHANCED ESG,warn,unexplained jump,2018-03-28,close moved 22.9% (to 1924.39)
-NSE NIFTY100 ENHANCED ESG,warn,missing dates,2016-07-08,"429 trading days without a row (first 2016-07-08, last 2023-04-11)"
+NSE NIFTY100 ENHANCED ESG,warn,missing dates,2023-04-06,"3 trading days without a row (first 2023-04-06, last 2023-04-11)"
 NSE NIFTY100 LIQUID 15,warn,unexplained jump,2009-05-18,close moved 20.3% (to 2240.05)
-NSE NIFTY100 QUALITY 30,warn,unexplained jump,2018-07-16,close moved 24.9% (to 2688.4)
-NSE NIFTY100 QUALITY 30,warn,missing dates,2016-07-08,"501 trading days without a row (first 2016-07-08, last 2018-07-13)"
-NSE NIFTY200 QUALITY 30,warn,unexplained jump,2018-04-18,close moved 27.3% (to 9276.34)
-NSE NIFTY200 QUALITY 30,warn,missing dates,2016-07-08,"439 trading days without a row (first 2016-07-08, last 2018-04-17)"
-NSE NIFTY200 VALUE 30,warn,unexplained jump,2023-04-12,close moved 82.5% (to 6428.28)
-NSE NIFTY200 VALUE 30,warn,unexplained jump,2024-06-13,close moved 107.4% (to 13332.34)
-NSE NIFTY200 VALUE 30,warn,missing dates,2016-07-08,"1956 trading days without a row (first 2016-07-08, last 2024-06-12)"
-NSE NIFTY500 EQUAL WEIGHT,warn,unexplained jump,2023-04-12,close moved 92.9% (to 7862.75)
-NSE NIFTY500 EQUAL WEIGHT,warn,unexplained jump,2024-06-03,close moved 70.9% (to 13440.7)
-NSE NIFTY500 EQUAL WEIGHT,warn,missing dates,2016-07-08,"1948 trading days without a row (first 2016-07-08, last 2024-05-31)"
-NSE NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED,warn,unexplained jump,2023-04-12,close moved 116.8% (to 10307.44)
-NSE NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED,warn,unexplained jump,2024-06-10,close moved 62.2% (to 16719.21)
-NSE NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED,warn,missing dates,2016-07-08,"1953 trading days without a row (first 2016-07-08, last 2024-06-07)"
-NSE NIFTY500 LOW VOLATILITY 50,warn,unexplained jump,2023-04-12,close moved 114.3% (to 13173.98)
-NSE NIFTY500 LOW VOLATILITY 50,warn,unexplained jump,2024-12-20,close moved 52.1% (to 20034.87)
-NSE NIFTY500 LOW VOLATILITY 50,warn,missing dates,2016-07-08,"2086 trading days without a row (first 2016-07-08, last 2024-12-19)"
-NSE NIFTY500 MOMENTUM 50,warn,unexplained jump,2023-04-12,close moved 199.3% (to 29361.89)
-NSE NIFTY500 MOMENTUM 50,warn,unexplained jump,2024-06-05,close moved 88.6% (to 55367.55)
-NSE NIFTY500 MOMENTUM 50,warn,missing dates,2016-07-08,"1950 trading days without a row (first 2016-07-08, last 2024-06-04)"
-NSE NIFTY500 MULTICAP INDIA MANUFACTURING 50:30:20,warn,unexplained jump,2023-04-12,close moved 91.7% (to 8575.24)
-NSE NIFTY500 MULTICAP INDIA MANUFACTURING 50:30:20,warn,unexplained jump,2024-03-07,close moved 48.8% (to 12761.16)
-NSE NIFTY500 MULTICAP INDIA MANUFACTURING 50:30:20,warn,missing dates,2016-07-08,"1893 trading days without a row (first 2016-07-08, last 2024-03-06)"
-NSE NIFTY500 MULTICAP INFRASTRUCTURE 50:30:20,warn,unexplained jump,2023-04-12,close moved 118.7% (to 8118.89)
-NSE NIFTY500 MULTICAP INFRASTRUCTURE 50:30:20,warn,unexplained jump,2024-03-07,close moved 56.9% (to 12742.08)
-NSE NIFTY500 MULTICAP INFRASTRUCTURE 50:30:20,warn,missing dates,2016-07-08,"1893 trading days without a row (first 2016-07-08, last 2024-03-06)"
-NSE NIFTY500 MULTICAP MOMENTUM QUALITY 50,warn,unexplained jump,2023-04-12,close moved 167.6% (to 23982.28)
-NSE NIFTY500 MULTICAP MOMENTUM QUALITY 50,warn,unexplained jump,2024-09-05,close moved 104.4% (to 49011.43)
-NSE NIFTY500 MULTICAP MOMENTUM QUALITY 50,warn,missing dates,2016-07-08,"2013 trading days without a row (first 2016-07-08, last 2024-09-04)"
-NSE NIFTY500 QUALITY 50,warn,unexplained jump,2023-04-12,close moved 82.3% (to 11198.82)
-NSE NIFTY500 QUALITY 50,warn,unexplained jump,2024-12-20,close moved 74.3% (to 19524.05)
-NSE NIFTY500 QUALITY 50,warn,missing dates,2016-07-08,"2086 trading days without a row (first 2016-07-08, last 2024-12-19)"
 NSE NIFTY50 DIVIDEND POINTS,warn,zero/negative price,2007-03-30,O 0.0 H 0.0 L 0.0 C 0.0
 NSE NIFTY50 DIVIDEND POINTS,warn,zero/negative price,2007-04-02,O 0.0 H 0.0 L 0.0 C 0.0
 NSE NIFTY50 DIVIDEND POINTS,warn,zero/negative price,2007-04-03,O 0.0 H 0.0 L 0.0 C 0.0
@@ -1034,17 +1002,12 @@ NSE NIFTY 8-13 YR G-SEC,warn,bad candle,2016-06-24,O 1525.18 H 1526.11 L 1522.64
 NSE NIFTY 8-13 YR G-SEC,warn,bad candle,2016-06-27,O 1526.72 H 1529.98 L 1526.72 C 1530.37
 NSE NIFTY 8-13 YR G-SEC,warn,bad candle,,11 bad candles in total
 NSE NIFTY 8-13 YR G-SEC,warn,missing dates,2011-08-12,"125 trading days without a row (first 2011-08-12, last 2015-11-06)"
-NSE NIFTY ALPHA LOW-VOLATILITY 30,warn,unexplained jump,2017-07-13,close moved 23.6% (to 9708.42)
-NSE NIFTY ALPHA LOW-VOLATILITY 30,warn,missing dates,2016-07-08,"250 trading days without a row (first 2016-07-08, last 2017-07-12)"
-NSE NIFTY ALPHA QUALITY LOW-VOLATILITY 30,warn,unexplained jump,2017-07-13,close moved 20.3% (to 8242.72)
-NSE NIFTY ALPHA QUALITY LOW-VOLATILITY 30,warn,missing dates,2016-07-08,"253 trading days without a row (first 2016-07-08, last 2023-04-11)"
-NSE NIFTY ALPHA QUALITY VALUE LOW-VOLATILITY 30,warn,missing dates,2016-07-08,"253 trading days without a row (first 2016-07-08, last 2023-04-11)"
+NSE NIFTY ALPHA QUALITY LOW-VOLATILITY 30,warn,missing dates,2023-04-06,"3 trading days without a row (first 2023-04-06, last 2023-04-11)"
+NSE NIFTY ALPHA QUALITY VALUE LOW-VOLATILITY 30,warn,missing dates,2023-04-06,"3 trading days without a row (first 2023-04-06, last 2023-04-11)"
 NSE NIFTY BHARAT BOND INDEX - APRIL 2030,warn,missing dates,2025-08-01,"1 trading days without a row (first 2025-08-01, last 2025-08-01)"
 NSE NIFTY BHARAT BOND INDEX - APRIL 2031,warn,missing dates,2025-08-01,"1 trading days without a row (first 2025-08-01, last 2025-08-01)"
 NSE NIFTY BHARAT BOND INDEX - APRIL 2032,warn,missing dates,2025-03-27,"2 trading days without a row (first 2025-03-27, last 2025-08-01)"
 NSE NIFTY BHARAT BOND INDEX - APRIL 2033,warn,missing dates,2025-03-27,"2 trading days without a row (first 2025-03-27, last 2025-08-01)"
-NSE NIFTY CAPITAL MARKETS,warn,unexplained jump,2024-09-13,close moved 178.0% (to 3291.08)
-NSE NIFTY CAPITAL MARKETS,warn,missing dates,2023-04-13,"349 trading days without a row (first 2023-04-13, last 2024-09-12)"
 NSE NIFTY COMPOSITE G-SEC INDEX,warn,bad candle,2016-06-20,O 1563.08 H 1563.08 L 1560.01 C 1564.77
 NSE NIFTY COMPOSITE G-SEC INDEX,warn,bad candle,2016-06-22,O 1559.7 H 1561.25 L 1559.7 C 1567.84
 NSE NIFTY COMPOSITE G-SEC INDEX,warn,bad candle,2016-06-23,O 1571.0 H 1571.45 L 1569.61 C 1568.44
@@ -1052,87 +1015,28 @@ NSE NIFTY COMPOSITE G-SEC INDEX,warn,bad candle,2016-06-24,O 1567.14 H 1567.8 L 
 NSE NIFTY COMPOSITE G-SEC INDEX,warn,bad candle,2016-06-27,O 1568.3 H 1571.9 L 1568.3 C 1572.78
 NSE NIFTY COMPOSITE G-SEC INDEX,warn,bad candle,,13 bad candles in total
 NSE NIFTY COMPOSITE G-SEC INDEX,warn,missing dates,2011-10-14,"113 trading days without a row (first 2011-10-14, last 2015-10-09)"
-NSE NIFTY CORE HOUSING,warn,unexplained jump,2023-04-12,close moved 92.2% (to 10596.94)
-NSE NIFTY CORE HOUSING,warn,missing dates,2016-07-08,"1690 trading days without a row (first 2016-07-08, last 2023-05-12)"
-NSE NIFTY EV & NEW AGE AUTOMOTIVE,warn,unexplained jump,2024-05-30,close moved 68.8% (to 2968.08)
-NSE NIFTY EV & NEW AGE AUTOMOTIVE,warn,missing dates,2023-04-13,"276 trading days without a row (first 2023-04-13, last 2024-05-29)"
-NSE NIFTY FINANCIAL SERVICES 25/50,warn,unexplained jump,2020-08-10,close moved 42.5% (to 10942.75)
-NSE NIFTY FINANCIAL SERVICES 25/50,warn,missing dates,2016-07-08,"1007 trading days without a row (first 2016-07-08, last 2020-08-07)"
-NSE NIFTY FINANCIAL SERVICES EX-BANK,warn,unexplained jump,2022-02-03,close moved 116.4% (to 17626.64)
-NSE NIFTY FINANCIAL SERVICES EX-BANK,warn,missing dates,2016-07-08,"1380 trading days without a row (first 2016-07-08, last 2023-04-11)"
+NSE NIFTY CORE HOUSING,warn,missing dates,2023-04-13,"20 trading days without a row (first 2023-04-13, last 2023-05-12)"
+NSE NIFTY FINANCIAL SERVICES EX-BANK,warn,missing dates,2023-04-06,"3 trading days without a row (first 2023-04-06, last 2023-04-11)"
 NSE NIFTY HIGH BETA 50,warn,missing dates,2015-12-01,"5 trading days without a row (first 2015-12-01, last 2023-04-11)"
 NSE NIFTY HOUSING,warn,missing dates,2022-02-01,"25 trading days without a row (first 2022-02-01, last 2022-03-08)"
-NSE NIFTY INDIA CORPORATE GROUP INDEX - TATA GROUP 25% CAP,warn,unexplained jump,2023-04-12,close moved 158.6% (to 10068.39)
-NSE NIFTY INDIA CORPORATE GROUP INDEX - TATA GROUP 25% CAP,warn,unexplained jump,2024-04-08,close moved 63.1% (to 16422.75)
-NSE NIFTY INDIA CORPORATE GROUP INDEX - TATA GROUP 25% CAP,warn,missing dates,2016-07-08,"1912 trading days without a row (first 2016-07-08, last 2024-04-05)"
 NSE NIFTY INDIA DEFENCE,warn,missing dates,2023-04-06,"3 trading days without a row (first 2023-04-06, last 2023-04-11)"
-NSE NIFTY INDIA DIGITAL,warn,unexplained jump,2021-12-14,close moved 118.5% (to 6999.26)
-NSE NIFTY INDIA DIGITAL,warn,missing dates,2016-07-08,"1341 trading days without a row (first 2016-07-08, last 2021-12-13)"
-NSE NIFTY INDIA MANUFACTURING,warn,unexplained jump,2021-08-17,close moved 69.8% (to 7552.99)
-NSE NIFTY INDIA MANUFACTURING,warn,missing dates,2016-07-08,"1261 trading days without a row (first 2016-07-08, last 2021-08-16)"
-NSE NIFTY INDIA NEW AGE CONSUMPTION,warn,unexplained jump,2023-04-12,close moved 61.1% (to 5913.51)
-NSE NIFTY INDIA NEW AGE CONSUMPTION,warn,unexplained jump,2024-10-23,close moved 96.9% (to 11642.28)
-NSE NIFTY INDIA NEW AGE CONSUMPTION,warn,missing dates,2016-07-08,"2046 trading days without a row (first 2016-07-08, last 2024-10-22)"
-NSE NIFTY INDIA RAILWAYS PSU,warn,unexplained jump,2024-11-27,close moved 161.5% (to 4009.2)
-NSE NIFTY INDIA RAILWAYS PSU,warn,missing dates,2023-04-13,"399 trading days without a row (first 2023-04-13, last 2024-11-26)"
-NSE NIFTY INDIA SELECT 5 CORPORATE GROUPS (MAATR),warn,unexplained jump,2023-04-12,close moved 228.8% (to 23576.08)
-NSE NIFTY INDIA SELECT 5 CORPORATE GROUPS (MAATR),warn,unexplained jump,2024-11-13,close moved 50.2% (to 35422.96)
-NSE NIFTY INDIA SELECT 5 CORPORATE GROUPS (MAATR),warn,missing dates,2016-07-08,"2061 trading days without a row (first 2016-07-08, last 2024-11-12)"
-NSE NIFTY INDIA TOURISM,warn,unexplained jump,2023-04-12,close moved 126.3% (to 4929.72)
-NSE NIFTY INDIA TOURISM,warn,unexplained jump,2024-06-19,close moved 72.7% (to 8513.47)
-NSE NIFTY INDIA TOURISM,warn,missing dates,2016-07-08,"1959 trading days without a row (first 2016-07-08, last 2024-06-18)"
-NSE NIFTY IPO,warn,unexplained jump,2024-07-18,close moved 76.5% (to 2193.63)
-NSE NIFTY IPO,warn,missing dates,2023-04-13,"309 trading days without a row (first 2023-04-13, last 2024-07-16)"
 NSE NIFTY LOW VOLATILITY 50,warn,missing dates,2015-12-01,"5 trading days without a row (first 2015-12-01, last 2023-04-11)"
-NSE NIFTY MICROCAP 250,warn,unexplained jump,2021-05-11,close moved 79.5% (to 7787.72)
-NSE NIFTY MICROCAP 250,warn,missing dates,2016-07-08,"1195 trading days without a row (first 2016-07-08, last 2021-06-18)"
-NSE NIFTY MIDCAP150 MOMENTUM 50,warn,unexplained jump,2022-08-17,close moved 239.7% (to 33196.76)
-NSE NIFTY MIDCAP150 MOMENTUM 50,warn,missing dates,2016-07-08,"1512 trading days without a row (first 2016-07-08, last 2023-04-11)"
-NSE NIFTY MIDCAP150 QUALITY 50,warn,unexplained jump,2020-08-10,close moved 51.6% (to 10648.86)
-NSE NIFTY MIDCAP150 QUALITY 50,warn,missing dates,2016-07-08,"1007 trading days without a row (first 2016-07-08, last 2020-08-07)"
-NSE NIFTY MIDCAP SELECT,warn,unexplained jump,2021-09-15,close moved 124.8% (to 7234.91)
-NSE NIFTY MIDCAP SELECT,warn,missing dates,2016-07-08,"1280 trading days without a row (first 2016-07-08, last 2021-09-14)"
-NSE NIFTY MIDSMALLCAP400 MOMENTUM QUALITY 100,warn,unexplained jump,2023-04-12,close moved 176.7% (to 28009.09)
-NSE NIFTY MIDSMALLCAP400 MOMENTUM QUALITY 100,warn,unexplained jump,2024-02-12,close moved 52.2% (to 42629.23)
-NSE NIFTY MIDSMALLCAP400 MOMENTUM QUALITY 100,warn,missing dates,2016-07-08,"1875 trading days without a row (first 2016-07-08, last 2024-02-09)"
-NSE NIFTY MIDSMALL FINANCIAL SERVICES,warn,unexplained jump,2022-08-04,close moved 22.2% (to 7727.55)
-NSE NIFTY MIDSMALL FINANCIAL SERVICES,warn,missing dates,2016-07-08,"1505 trading days without a row (first 2016-07-08, last 2023-04-11)"
-NSE NIFTY MIDSMALL HEALTHCARE,warn,unexplained jump,2022-08-04,close moved 125.9% (to 20927.33)
-NSE NIFTY MIDSMALL HEALTHCARE,warn,missing dates,2016-07-08,"1505 trading days without a row (first 2016-07-08, last 2023-04-11)"
-NSE NIFTY MIDSMALL INDIA CONSUMPTION,warn,unexplained jump,2022-10-10,close moved 141.9% (to 11292.83)
-NSE NIFTY MIDSMALL INDIA CONSUMPTION,warn,missing dates,2016-07-08,"1548 trading days without a row (first 2016-07-08, last 2023-04-11)"
-NSE NIFTY MIDSMALL IT & TELECOM,warn,unexplained jump,2022-08-04,close moved 224.5% (to 6151.59)
-NSE NIFTY MIDSMALL IT & TELECOM,warn,missing dates,2016-07-08,"1505 trading days without a row (first 2016-07-08, last 2023-04-11)"
-NSE NIFTY NON-CYCLICAL CONSUMER,warn,unexplained jump,2021-11-17,close moved 131.0% (to 10692.12)
-NSE NIFTY NON-CYCLICAL CONSUMER,warn,missing dates,2016-07-08,"1326 trading days without a row (first 2016-07-08, last 2023-04-11)"
+NSE NIFTY MICROCAP 250,warn,missing dates,2021-05-25,"2 trading days without a row (first 2021-05-25, last 2021-06-18)"
+NSE NIFTY MIDCAP150 MOMENTUM 50,warn,missing dates,2023-04-06,"3 trading days without a row (first 2023-04-06, last 2023-04-11)"
+NSE NIFTY MIDSMALL FINANCIAL SERVICES,warn,missing dates,2023-04-06,"3 trading days without a row (first 2023-04-06, last 2023-04-11)"
+NSE NIFTY MIDSMALL HEALTHCARE,warn,missing dates,2023-04-06,"3 trading days without a row (first 2023-04-06, last 2023-04-11)"
+NSE NIFTY MIDSMALL INDIA CONSUMPTION,warn,missing dates,2023-04-06,"3 trading days without a row (first 2023-04-06, last 2023-04-11)"
+NSE NIFTY MIDSMALL IT & TELECOM,warn,missing dates,2023-04-06,"3 trading days without a row (first 2023-04-06, last 2023-04-11)"
+NSE NIFTY NON-CYCLICAL CONSUMER,warn,missing dates,2023-04-06,"3 trading days without a row (first 2023-04-06, last 2023-04-11)"
 NSE NIFTY PSU BANK,warn,unexplained jump,2017-10-25,close moved 29.6% (to 4009.8)
 NSE NIFTY PSU BANK,warn,missing dates,2010-06-08,"11 trading days without a row (first 2010-06-08, last 2010-06-22)"
-NSE NIFTY QUALITY LOW-VOLATILITY 30,warn,missing dates,2016-07-08,"253 trading days without a row (first 2016-07-08, last 2023-04-11)"
+NSE NIFTY QUALITY LOW-VOLATILITY 30,warn,missing dates,2023-04-06,"3 trading days without a row (first 2023-04-06, last 2023-04-11)"
 NSE NIFTY REALTY,warn,unexplained jump,2008-10-24,close moved 23.7% (to 232.63)
 NSE NIFTY REALTY,warn,unexplained jump,2009-05-18,close moved 23.7% (to 396.18)
-NSE NIFTY RURAL,warn,unexplained jump,2023-04-12,close moved 79.0% (to 9678.76)
-NSE NIFTY RURAL,warn,unexplained jump,2024-07-26,close moved 59.4% (to 15423.23)
-NSE NIFTY RURAL,warn,missing dates,2016-07-08,"1985 trading days without a row (first 2016-07-08, last 2024-07-25)"
-NSE NIFTY SMALLCAP250 MOMENTUM QUALITY 100,warn,unexplained jump,2023-04-12,close moved 164.9% (to 27402.93)
-NSE NIFTY SMALLCAP250 MOMENTUM QUALITY 100,warn,unexplained jump,2023-12-21,close moved 47.1% (to 40304.22)
-NSE NIFTY SMALLCAP250 MOMENTUM QUALITY 100,warn,missing dates,2016-07-08,"1841 trading days without a row (first 2016-07-08, last 2023-12-20)"
-NSE NIFTY SMALLCAP250 QUALITY 50,warn,unexplained jump,2023-03-16,close moved 128.1% (to 14756.29)
-NSE NIFTY SMALLCAP250 QUALITY 50,warn,missing dates,2016-07-08,"1657 trading days without a row (first 2016-07-08, last 2023-04-11)"
+NSE NIFTY SMALLCAP250 QUALITY 50,warn,missing dates,2023-04-06,"3 trading days without a row (first 2023-04-06, last 2023-04-11)"
 NSE NIFTY SMALLCAP 100,warn,missing dates,2015-12-01,"1 trading days without a row (first 2015-12-01, last 2015-12-01)"
 NSE NIFTY SMALLCAP 500,warn,missing dates,2026-01-02,"16 trading days without a row (first 2026-01-02, last 2026-01-27)"
-NSE NIFTY TOP 10 EQUAL WEIGHT,warn,unexplained jump,2023-04-12,close moved 163.1% (to 7468.12)
-NSE NIFTY TOP 10 EQUAL WEIGHT,warn,unexplained jump,2024-06-26,close moved 21.8% (to 9098.08)
-NSE NIFTY TOP 10 EQUAL WEIGHT,warn,missing dates,2016-07-08,"1964 trading days without a row (first 2016-07-08, last 2024-06-25)"
-NSE NIFTY TOP 15 EQUAL WEIGHT,warn,unexplained jump,2023-04-12,close moved 120.9% (to 7423.9)
-NSE NIFTY TOP 15 EQUAL WEIGHT,warn,unexplained jump,2024-10-16,close moved 34.4% (to 9977.63)
-NSE NIFTY TOP 15 EQUAL WEIGHT,warn,missing dates,2016-07-08,"2041 trading days without a row (first 2016-07-08, last 2024-10-15)"
-NSE NIFTY TOP 20 EQUAL WEIGHT,warn,unexplained jump,2023-04-12,close moved 123.3% (to 6421.38)
-NSE NIFTY TOP 20 EQUAL WEIGHT,warn,unexplained jump,2024-10-23,close moved 40.6% (to 9029.53)
-NSE NIFTY TOP 20 EQUAL WEIGHT,warn,missing dates,2016-07-08,"2046 trading days without a row (first 2016-07-08, last 2024-10-22)"
-NSE NIFTY TOTAL MARKET,warn,unexplained jump,2021-10-14,close moved 124.0% (to 8769.06)
-NSE NIFTY TOTAL MARKET,warn,missing dates,2016-07-08,"1301 trading days without a row (first 2016-07-08, last 2021-10-13)"
-NSE NIFTY TRANSPORTATION & LOGISTICS,warn,unexplained jump,2022-02-22,close moved 57.5% (to 10910.54)
-NSE NIFTY TRANSPORTATION & LOGISTICS,warn,missing dates,2016-07-08,"1393 trading days without a row (first 2016-07-08, last 2023-04-11)"
+NSE NIFTY TRANSPORTATION & LOGISTICS,warn,missing dates,2023-04-06,"3 trading days without a row (first 2023-04-06, last 2023-04-11)"
 BSE BSE DOLLEX 100,warn,bad candle,2008-05-07,O 1362.12 H 1364.36 L 1348.56 C 1337.24
 BSE BSE DOLLEX 100,warn,bad candle,2010-09-13,O 1303.83 H 1323.94 L 1303.83 C 1326.87
 BSE BSE DOLLEX 100,warn,bad candle,2020-07-27,O 1562.51 H 1557.06 L 1542.12 C 1543.83

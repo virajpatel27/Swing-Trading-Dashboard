@@ -9,9 +9,11 @@ from pathlib import Path
 import pandas as pd
 
 from . import store, validate
+from .adjust import ADJ_COLS
 
 GROUPS = [  # (kind, exchange, folder under data/, columns, list file in data/meta, id column, name column, source)
     ("stock", "NSE", "stocks/raw", store.STOCK_COLS, "universe_stocks.csv", "id", "symbol", "NSE bhavcopy"),
+    ("stock-adjusted", "NSE", "stocks/adjusted", ADJ_COLS, "universe_stocks.csv", "id", "symbol", "NSE bhavcopy + NSE corporate actions"),
     ("index", "NSE", "indices/nse", store.INDEX_COLS, "indices_nse.csv", "id", "name", "NSE historicalOR"),
     ("index", "BSE", "indices/bse", store.INDEX_COLS, "indices_bse.csv", "id", "name", "BSE ProduceCSVForDate"),
 ]
@@ -32,12 +34,17 @@ def scan(data: Path, trading_days: pd.DatetimeIndex | None, jump_pct: float, old
             cats = dict(zip(ldf[id_col], ldf["category"] if "category" in ldf.columns else ldf.get("industry", [""] * len(ldf))))
         if not base.exists():
             continue
+        has_adjusted = (data / "stocks" / "adjusted").exists()
         for folder in sorted(p for p in base.iterdir() if p.is_dir()):
             rel = f"{sub}/{folder.name}"
             df = store.read(folder, cols)
-            label = f"{exch} {names.get(folder.name, folder.name)}"
-            issues += validate.check_series(label, df, trading_days if exch == "NSE" else None, jump_pct)
+            label = f"{exch} {names.get(folder.name, folder.name)}" + (" (adjusted)" if kind == "stock-adjusted" else "")
+            # big moves are judged on the ADJUSTED series (raw prices jump at every split/bonus by design)
+            jump = float("inf") if kind == "stock" and has_adjusted else jump_pct
+            issues += validate.check_series(label, df, trading_days if exch == "NSE" and kind != "stock-adjusted" else None, jump)
             issues += validate.check_row_drop(label, int(old_rows.get(rel, 0)), len(df), max_drop_pct)
+            if kind == "stock-adjusted":
+                issues += check_adjusted_vs_raw(label, df, store.read(data / "stocks" / "raw" / folder.name, store.STOCK_COLS))
             rows.append({"kind": kind, "exchange": exch, "id": folder.name, "name": names.get(folder.name, folder.name),
                          "category": cats.get(folder.name, ""), "path": rel,
                          "first_date": df["date"].min().strftime("%Y-%m-%d") if len(df) else "",
@@ -48,7 +55,26 @@ def scan(data: Path, trading_days: pd.DatetimeIndex | None, jump_pct: float, old
     for path in old_rows:
         if path not in now:
             issues.append(validate.issue(path, "error", "instrument disappeared", "folder is gone"))
+    adj_issues = data / "meta" / "adjust_issues.csv"
+    if adj_issues.exists() and adj_issues.stat().st_size:
+        issues += pd.read_csv(adj_issues, dtype=str).fillna("").to_dict("records")
     return pd.DataFrame(rows, columns=INSTRUMENT_COLS), issues
+
+
+def check_adjusted_vs_raw(label: str, adj: pd.DataFrame, raw: pd.DataFrame) -> list[dict]:
+    """Adjusted must have the same days as raw, end on the same close, and differ from raw only by a factor in (0, 1e3]."""
+    if raw.empty:
+        return [validate.issue(label, "error", "adjusted without raw", "no raw prices for this stock")]
+    if len(adj) != len(raw) or not adj["date"].reset_index(drop=True).equals(raw["date"].reset_index(drop=True)):
+        return [validate.issue(label, "error", "adjusted/raw days differ", f"adjusted {len(adj)} rows, raw {len(raw)} rows")]
+    out = []
+    if abs(adj["close"].iat[-1] - raw["close"].iat[-1]) > 1e-6 * max(1.0, raw["close"].iat[-1]):
+        out.append(validate.issue(label, "error", "last adjusted close != last raw close",
+                                  f"{adj['close'].iat[-1]} vs {raw['close'].iat[-1]}", adj["date"].iat[-1]))
+    ratio = (adj["close"] / raw["close"]).where(raw["close"] > 0)
+    if ((ratio <= 0) | (ratio > 1e3)).any():
+        out.append(validate.issue(label, "error", "adjustment factor out of range", f"min {ratio.min()}, max {ratio.max()}"))
+    return out
 
 
 def write_reports(data: Path, inst: pd.DataFrame, issues: list[dict]) -> dict:

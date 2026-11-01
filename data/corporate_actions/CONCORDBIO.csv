@@ -1,0 +1,5 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2024-06-21,dividend,,1,8.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 8.75 Per Share,NSE
+2025-09-03,dividend,,1,10.7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 10.70 Per Share,NSE
+2026-07-24,dividend,,1,7.55,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 7.55 Per Share,NSE
+2026-11-04,bonus,1:1,0.5,,,future,Bonus 1:1,NSE

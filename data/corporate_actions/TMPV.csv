@@ -1,0 +1,18 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-06-01,dividend,,1,3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend-150%,NSE
+2008-06-16,dividend,,1,15,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Rs.15 Per Share Purpose Revised,NSE
+2008-09-09,rights,1:6,,,rights without issue price,NOT APPLIED,Rights Eq 1:6/Dif Vot 1:6,NSE
+2009-08-03,dividend,,1,6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Rs.6/- Per Share,NSE
+2010-08-10,dividend,,1,15,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Rs.15/- Per Share,NSE
+2011-07-19,dividend,,1,20,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Rs.20/- Per Share,NSE
+2011-09-12,split,FV 10->2,0.2,,ratio from NSE text,applied,Face Value Split From Rs.10/- To Rs.2/-,NSE
+2012-07-18,dividend,,1,4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend Rs 4 Per Share,NSE
+2013-07-30,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.2/- Per Share,NSE
+2014-07-09,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend - Rs 2/- Per Share,NSE
+2015-04-06,rights,6:109,0.98938789,450,"TERP, issue price 450, close before 564.9",applied,Rights 6:109 @ Premium Rs. 448/- Per Share,NSE
+2016-07-18,dividend,,1,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.20/- Per Share,NSE
+2023-07-28,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 2 Per Share,NSE
+2024-06-11,dividend,,1,6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 3 Per Share & Special Dividend - Rs 3 Per Share,NSE
+2025-06-04,dividend,,1,6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 6 Per Share,NSE
+2025-10-14,demerger,,0.60537268,,open 400 / close before 660.75,applied,Demerger,NSE
+2026-06-19,dividend,,1,3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 3 Per Share,NSE

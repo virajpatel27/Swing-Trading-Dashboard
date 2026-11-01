@@ -105,3 +105,27 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   (880 jumps = mostly stock splits/bonus for Phase 4; index jumps left are real: 18-May-2009, Dividend Points resets, leverage).
   Data 92 MB, 1,556 files. **Phase 3 done.**
 - NEXT: Viraj commits + pushes; "continue" -> Phase 4 (corporate actions + adjusted prices).
+- Viraj pushed (292d16d), "Ha, continue" -> **Phase 4**.
+- NSE corporate actions: one call per year (2007-2026, ~1.5-2.7k records/year, ~3 s each), cached in `cache/` (not in git).
+- **NSE bhavcopy PREVCLOSE is NOT adjusted on ex-dates** (RELIANCE bonus day shows 2655.70) -> factors come from the action text;
+  demerger/scheme from the ex-day price (special pre-open session open, or the close when open/close differ > 30 %).
+- Parser (`swingdash/corporate_actions.py`) reads the many NSE spellings incl. old abbreviations ("Fv Splt Frm Rs 10 To Re 1",
+  "Fv Spl-Rs10tore1/Bon-1:1", "Bon 5:1", "Rs 5/ To 2/", "... Each To Rs 2/- Each"); "SPL" alone = special dividend; "Sub-Division"
+  is not a dividend (bug caught by a test). DVR/debenture/NCRPS "bonus" is not an equity bonus.
+- `swingdash/adjust.py` back-adjustment (factor per type, cumulative backwards, volume / factor, last adjusted close = last raw
+  close); ex-date moved up to 5 trading days when the price changed on another day; action not seen in prices -> not applied +
+  issue. `config/corporate_action_overrides.csv` for incomplete NSE records (1: SUNTV 2007, Yahoo agrees 0 mismatches).
+- `swingdash/rebuild.py` + `scripts/build_adjusted.py`: 500 stocks -> data/corporate_actions/<ID>.csv (452 files) and
+  data/stocks/adjusted/<ID>/. Applied: 244 bonus, 195 split, 20 demerger, 56 rights, 14 scheme. Issues: 2 rights without issue
+  price (TATASTEEL 2007, TMPV 2008). Big drops left in adjusted series: 4, all real (YESBANK, IDEA Mar-2020, SUZLON Oct-2008,
+  POLICYBZR Sep-2026); no rise > 60 %. Unexplained jumps 944 -> ~460 (real market moves: 2009 election day, PSU bank
+  recap 25-Oct-2017, circuits ...).
+- Data check now also: adjusted group, adjusted-vs-raw consistency (same days, same last close, factor range) as ERRORS,
+  adjust issues merged into data_issues.csv; raw stocks no longer judged for jumps (adjusted are). 0 errors, 1,278 instruments.
+- `scripts/crosscheck_yfinance.py` (validation only) -> data/meta/crosscheck_yfinance.csv: 499 compared, median 0.03 % of days
+  differ (> 2 %), 24 stocks > 5 %: Yahoo-side errors (unadjusted history before 1-Jan-2024/2025/2026 for TRENT, GPIL, CGCL,
+  MOTILALOFS; a stale 18-Mar-2025 value in 10 stocks; missed rights/demerger jumps J&KBANK 2017, TMPV 2025) or a different
+  demerger factor (SIEMENS 2025). Our adjusted series have no one-day move > 40 % except ZEEL 14-Sep-2021 (real).
+- Tests: 76 green (22 Phase 4 incl. real RELIANCE bonus / IRCTC split / RELIANCE demerger), mutations caught.
+  Size now: raw 71 MB, adjusted 53 MB, indices 21 MB, CA 2 MB = ~147 MB, 3,001 files.
+- NEXT: Viraj commits + pushes; "continue" -> Phase 5 (sector/industry, indicators, relative strength, snapshot).

@@ -1,0 +1,6 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2016-07-19,dividend,,1.0,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.25/- Per Share,NSE
+2017-07-20,dividend,,1.0,0.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.75 Per Share,NSE
+2018-07-23,dividend,,1.0,0.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend Re 0.75 Per Share,NSE
+2025-07-11,dividend,,1.0,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 0.25 Per Share,NSE
+2026-08-07,dividend,,1.0,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.25 Per Share,NSE

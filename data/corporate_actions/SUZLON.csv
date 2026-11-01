@@ -1,0 +1,6 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-03-16,dividend,,1,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Rs.5/- Per Sh Purpose Revised,NSE
+2008-01-21,split,FV 10->2,0.2,,ratio from NSE text,applied,Fv Split Rs.10/- To Rs.2/,NSE
+2008-07-17,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend-Re.1 Per Sh.,NSE
+2010-06-09,rights,2:15,1,63,rights above market price: no change,no change,Rights 2:15 @ Premium Rs.61/-,NSE
+2022-10-03,rights,5:21,0.91821397,5,"TERP, issue price 5, close before 8.7",applied,Rights 5:21 @ Premium Rs 3/-,NSE

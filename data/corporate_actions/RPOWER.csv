@@ -1,0 +1,3 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2008-05-30,bonus,3:5,0.625,,ratio from NSE text,applied,Bonus 3:5,NSE
+2015-11-19,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1/- Per Share,NSE

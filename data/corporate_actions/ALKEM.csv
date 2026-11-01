@@ -1,0 +1,22 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2016-03-18,dividend,,1.0,9.7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend -Rs 9.70/- Per Share,NSE
+2016-11-23,dividend,,1.0,6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend Rs 6/- Per Share,NSE
+2017-08-31,dividend,,1.0,9,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend -Rs 9/- Per Share,NSE
+2018-02-16,dividend,,1.0,6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 6 Per Share (Purpose Revised),NSE
+2018-08-23,dividend,,1.0,7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend- Rs 7 Per Share,NSE
+2019-02-15,dividend,,1.0,8,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 8 Per Share,NSE
+2019-08-19,dividend,,1.0,8,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 8 Per Share,NSE
+2020-02-13,dividend,,1.0,22,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 22 Per Share,NSE
+2020-08-10,dividend,,1.0,3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 3 Per Share,NSE
+2021-02-11,dividend,,1.0,25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 25 Per Share,NSE
+2021-08-09,dividend,,1.0,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 5 Per Share,NSE
+2022-02-10,dividend,,1.0,30,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 30 Per Sh,NSE
+2022-08-08,dividend,,1.0,4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 4 Per Share,NSE
+2023-02-17,dividend,,1.0,40,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 15 Per Share & Special Dividend Rs 25 Per Share,NSE
+2023-08-10,dividend,,1.0,10,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 10 Per Share,NSE
+2024-02-16,dividend,,1.0,35,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 35 Per Share,NSE
+2024-08-09,dividend,,1.0,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 5 Per Share,NSE
+2025-02-14,dividend,,1.0,37,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 37 Per Share,NSE
+2025-08-08,dividend,,1.0,8,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 8 Per Share,NSE
+2026-02-20,dividend,,1.0,43,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 43 Per Share,NSE
+2026-08-07,dividend,,1.0,10,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 10 Per Share,NSE

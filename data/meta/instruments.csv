@@ -499,6 +499,506 @@ stock,NSE,ZENTEC,ZENTEC,Capital Goods,stocks/raw/ZENTEC,2015-03-30,2026-10-30,28
 stock,NSE,ZFCVINDIA,ZFCVINDIA,Automobile and Auto Components,stocks/raw/ZFCVINDIA,2022-04-01,2026-10-30,1130,NSE bhavcopy
 stock,NSE,ZYDUSLIFE,ZYDUSLIFE,Healthcare,stocks/raw/ZYDUSLIFE,2007-01-02,2026-10-30,4892,NSE bhavcopy
 stock,NSE,ZYDUSWELL,ZYDUSWELL,Fast Moving Consumer Goods,stocks/raw/ZYDUSWELL,2009-11-13,2026-10-30,4189,NSE bhavcopy
+stock-adjusted,NSE,360ONE,360ONE,Financial Services,stocks/adjusted/360ONE,2019-09-19,2026-10-30,1757,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AADHARHFC,AADHARHFC,Financial Services,stocks/adjusted/AADHARHFC,2024-05-15,2026-10-30,609,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AARTIIND,AARTIIND,Chemicals,stocks/adjusted/AARTIIND,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AAVAS,AAVAS,Financial Services,stocks/adjusted/AAVAS,2018-10-08,2026-10-30,1990,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ABB,ABB,Capital Goods,stocks/adjusted/ABB,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ABBOTINDIA,ABBOTINDIA,Healthcare,stocks/adjusted/ABBOTINDIA,2010-01-08,2026-10-30,4152,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ABCAPITAL,ABCAPITAL,Financial Services,stocks/adjusted/ABCAPITAL,2017-09-01,2026-10-30,2262,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ABDL,ABDL,Fast Moving Consumer Goods,stocks/adjusted/ABDL,2024-07-02,2026-10-30,577,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ABREL,ABREL,Realty,stocks/adjusted/ABREL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ABSLAMC,ABSLAMC,Financial Services,stocks/adjusted/ABSLAMC,2021-10-11,2026-10-30,1248,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ACC,ACC,Construction Materials,stocks/adjusted/ACC,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ACE,ACE,Capital Goods,stocks/adjusted/ACE,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ACMESOLAR,ACMESOLAR,Power,stocks/adjusted/ACMESOLAR,2024-11-13,2026-10-30,484,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ACUTAAS,ACUTAAS,Healthcare,stocks/adjusted/ACUTAAS,2021-09-14,2026-10-30,1267,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ADANIENSOL,ADANIENSOL,Power,stocks/adjusted/ADANIENSOL,2015-07-31,2026-10-30,2776,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ADANIENT,ADANIENT,Metals & Mining,stocks/adjusted/ADANIENT,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ADANIGREEN,ADANIGREEN,Power,stocks/adjusted/ADANIGREEN,2018-06-18,2026-10-30,2065,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ADANIPORTS,ADANIPORTS,Services,stocks/adjusted/ADANIPORTS,2007-11-27,2026-10-30,4667,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ADANIPOWER,ADANIPOWER,Power,stocks/adjusted/ADANIPOWER,2009-08-20,2026-10-30,4244,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AEGISLOG,AEGISLOG,Oil Gas & Consumable Fuels,stocks/adjusted/AEGISLOG,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AEGISVOPAK,AEGISVOPAK,Oil Gas & Consumable Fuels,stocks/adjusted/AEGISVOPAK,2025-06-02,2026-10-30,351,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AETHER,AETHER,Chemicals,stocks/adjusted/AETHER,2022-06-03,2026-10-30,1088,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AFCONS,AFCONS,Construction,stocks/adjusted/AFCONS,2024-11-04,2026-10-30,491,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AFFLE,AFFLE,Information Technology,stocks/adjusted/AFFLE,2019-08-08,2026-10-30,1783,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AIAENG,AIAENG,Capital Goods,stocks/adjusted/AIAENG,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AIIL,AIIL,Financial Services,stocks/adjusted/AIIL,2024-04-23,2026-10-30,624,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AJANTPHARM,AJANTPHARM,Healthcare,stocks/adjusted/AJANTPHARM,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ALKEM,ALKEM,Healthcare,stocks/adjusted/ALKEM,2015-12-23,2026-10-30,2679,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AMBER,AMBER,Consumer Durables,stocks/adjusted/AMBER,2018-01-30,2026-10-30,2159,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AMBUJACEM,AMBUJACEM,Construction Materials,stocks/adjusted/AMBUJACEM,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ANANDRATHI,ANANDRATHI,Financial Services,stocks/adjusted/ANANDRATHI,2021-12-14,2026-10-30,1205,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ANANTRAJ,ANANTRAJ,Realty,stocks/adjusted/ANANTRAJ,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ANGELONE,ANGELONE,Financial Services,stocks/adjusted/ANGELONE,2020-10-05,2026-10-30,1500,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ANTHEM,ANTHEM,Healthcare,stocks/adjusted/ANTHEM,2025-07-21,2026-10-30,316,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ANURAS,ANURAS,Chemicals,stocks/adjusted/ANURAS,2021-03-24,2026-10-30,1383,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,APARINDS,APARINDS,Capital Goods,stocks/adjusted/APARINDS,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,APLAPOLLO,APLAPOLLO,Capital Goods,stocks/adjusted/APLAPOLLO,2011-12-14,2026-10-30,3669,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,APOLLOHOSP,APOLLOHOSP,Healthcare,stocks/adjusted/APOLLOHOSP,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,APOLLOTYRE,APOLLOTYRE,Automobile and Auto Components,stocks/adjusted/APOLLOTYRE,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,APTUS,APTUS,Financial Services,stocks/adjusted/APTUS,2021-08-24,2026-10-30,1281,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ARE_M,ARE&M,Automobile and Auto Components,stocks/adjusted/ARE_M,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ASAHIINDIA,ASAHIINDIA,Automobile and Auto Components,stocks/adjusted/ASAHIINDIA,2007-01-02,2026-10-30,4891,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ASHOKLEY,ASHOKLEY,Capital Goods,stocks/adjusted/ASHOKLEY,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ASIANPAINT,ASIANPAINT,Consumer Durables,stocks/adjusted/ASIANPAINT,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ASTERDM,ASTERDM,Healthcare,stocks/adjusted/ASTERDM,2018-02-26,2026-10-30,2141,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ASTRAL,ASTRAL,Capital Goods,stocks/adjusted/ASTRAL,2007-03-20,2026-10-30,4839,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ATGL,ATGL,Oil Gas & Consumable Fuels,stocks/adjusted/ATGL,2018-11-05,2026-10-30,1971,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ATHERENERG,ATHERENERG,Automobile and Auto Components,stocks/adjusted/ATHERENERG,2025-05-06,2026-10-30,370,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ATUL,ATUL,Chemicals,stocks/adjusted/ATUL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AUBANK,AUBANK,Financial Services,stocks/adjusted/AUBANK,2017-07-10,2026-10-30,2299,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AUROPHARMA,AUROPHARMA,Healthcare,stocks/adjusted/AUROPHARMA,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AVANTIFEED,AVANTIFEED,Fast Moving Consumer Goods,stocks/adjusted/AVANTIFEED,2015-04-15,2026-10-30,2852,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AWL,AWL,Fast Moving Consumer Goods,stocks/adjusted/AWL,2022-02-08,2026-10-30,1166,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AXISBANK,AXISBANK,Financial Services,stocks/adjusted/AXISBANK,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,AZAD,AZAD,Capital Goods,stocks/adjusted/AZAD,2023-12-28,2026-10-30,700,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BAGMANE,BAGMANE,Realty,stocks/adjusted/BAGMANE,2026-05-14,2026-10-30,117,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BAJAJ-AUTO,BAJAJ-AUTO,Automobile and Auto Components,stocks/adjusted/BAJAJ-AUTO,2008-05-26,2026-10-30,4547,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BAJAJFINSV,BAJAJFINSV,Financial Services,stocks/adjusted/BAJAJFINSV,2008-05-26,2026-10-30,4546,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BAJAJHFL,BAJAJHFL,Financial Services,stocks/adjusted/BAJAJHFL,2024-09-16,2026-10-30,525,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BAJAJHLDNG,BAJAJHLDNG,Financial Services,stocks/adjusted/BAJAJHLDNG,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BAJFINANCE,BAJFINANCE,Financial Services,stocks/adjusted/BAJFINANCE,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BALKRISIND,BALKRISIND,Automobile and Auto Components,stocks/adjusted/BALKRISIND,2007-01-02,2026-10-30,4888,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BALRAMCHIN,BALRAMCHIN,Fast Moving Consumer Goods,stocks/adjusted/BALRAMCHIN,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BANDHANBNK,BANDHANBNK,Financial Services,stocks/adjusted/BANDHANBNK,2018-03-27,2026-10-30,2121,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BANKBARODA,BANKBARODA,Financial Services,stocks/adjusted/BANKBARODA,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BANKINDIA,BANKINDIA,Financial Services,stocks/adjusted/BANKINDIA,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BATAINDIA,BATAINDIA,Consumer Durables,stocks/adjusted/BATAINDIA,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BBOX,BBOX,Information Technology,stocks/adjusted/BBOX,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BDL,BDL,Capital Goods,stocks/adjusted/BDL,2018-03-23,2026-10-30,2123,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BEL,BEL,Capital Goods,stocks/adjusted/BEL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BELRISE,BELRISE,Automobile and Auto Components,stocks/adjusted/BELRISE,2025-05-28,2026-10-30,354,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BEML,BEML,Capital Goods,stocks/adjusted/BEML,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BERGEPAINT,BERGEPAINT,Consumer Durables,stocks/adjusted/BERGEPAINT,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BHARATCOAL,BHARATCOAL,Oil Gas & Consumable Fuels,stocks/adjusted/BHARATCOAL,2026-01-19,2026-10-30,193,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BHARATFORG,BHARATFORG,Automobile and Auto Components,stocks/adjusted/BHARATFORG,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BHARTIARTL,BHARTIARTL,Telecommunication,stocks/adjusted/BHARTIARTL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BHARTIHEXA,BHARTIHEXA,Telecommunication,stocks/adjusted/BHARTIHEXA,2024-04-12,2026-10-30,630,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BHEL,BHEL,Capital Goods,stocks/adjusted/BHEL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BIOCON,BIOCON,Healthcare,stocks/adjusted/BIOCON,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BIRET,BIRET,Realty,stocks/adjusted/BIRET,2021-02-16,2026-10-30,1408,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BLS,BLS,Consumer Services,stocks/adjusted/BLS,2016-06-15,2026-10-30,2562,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BLUESTARCO,BLUESTARCO,Consumer Durables,stocks/adjusted/BLUESTARCO,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BOSCHLTD,BOSCHLTD,Automobile and Auto Components,stocks/adjusted/BOSCHLTD,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BPCL,BPCL,Oil Gas & Consumable Fuels,stocks/adjusted/BPCL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BRIGADE,BRIGADE,Realty,stocks/adjusted/BRIGADE,2007-12-31,2026-10-30,4645,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BRITANNIA,BRITANNIA,Fast Moving Consumer Goods,stocks/adjusted/BRITANNIA,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BSE,BSE,Financial Services,stocks/adjusted/BSE,2017-02-03,2026-10-30,2404,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BSOFT,BSOFT,Information Technology,stocks/adjusted/BSOFT,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CAMS,CAMS,Financial Services,stocks/adjusted/CAMS,2020-10-05,2026-10-30,1500,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CANBK,CANBK,Financial Services,stocks/adjusted/CANBK,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CANFINHOME,CANFINHOME,Financial Services,stocks/adjusted/CANFINHOME,2007-01-02,2026-10-30,4891,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CANHLIFE,CANHLIFE,Financial Services,stocks/adjusted/CANHLIFE,2025-10-17,2026-10-30,255,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CAPLIPOINT,CAPLIPOINT,Healthcare,stocks/adjusted/CAPLIPOINT,2014-06-23,2026-10-30,3047,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CARBORUNIV,CARBORUNIV,Capital Goods,stocks/adjusted/CARBORUNIV,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CARTRADE,CARTRADE,Consumer Services,stocks/adjusted/CARTRADE,2021-08-20,2026-10-30,1283,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CASTROLIND,CASTROLIND,Oil Gas & Consumable Fuels,stocks/adjusted/CASTROLIND,2014-03-14,2026-10-30,3112,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CCL,CCL,Fast Moving Consumer Goods,stocks/adjusted/CCL,2007-01-02,2026-10-30,4891,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CDSL,CDSL,Financial Services,stocks/adjusted/CDSL,2017-06-30,2026-10-30,2305,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CEATLTD,CEATLTD,Automobile and Auto Components,stocks/adjusted/CEATLTD,2008-02-01,2026-10-30,4621,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CEMPRO,CEMPRO,Construction,stocks/adjusted/CEMPRO,2007-01-02,2026-10-30,4866,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CENTRALBK,CENTRALBK,Financial Services,stocks/adjusted/CENTRALBK,2007-08-21,2026-10-30,4736,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CESC,CESC,Power,stocks/adjusted/CESC,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CGCL,CGCL,Financial Services,stocks/adjusted/CGCL,2010-10-29,2026-10-30,3892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CGPOWER,CGPOWER,Capital Goods,stocks/adjusted/CGPOWER,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CHAMBLFERT,CHAMBLFERT,Chemicals,stocks/adjusted/CHAMBLFERT,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CHENNPETRO,CHENNPETRO,Oil Gas & Consumable Fuels,stocks/adjusted/CHENNPETRO,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CHOICEIN,CHOICEIN,Financial Services,stocks/adjusted/CHOICEIN,2022-04-08,2026-10-30,1125,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CHOLAFIN,CHOLAFIN,Financial Services,stocks/adjusted/CHOLAFIN,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CHOLAHLDNG,CHOLAHLDNG,Financial Services,stocks/adjusted/CHOLAHLDNG,2017-09-25,2026-10-30,2246,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CIEINDIA,CIEINDIA,Automobile and Auto Components,stocks/adjusted/CIEINDIA,2007-08-30,2026-10-30,4725,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CIPLA,CIPLA,Healthcare,stocks/adjusted/CIPLA,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CLEAN,CLEAN,Chemicals,stocks/adjusted/CLEAN,2021-07-19,2026-10-30,1305,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CLEANMAX,CLEANMAX,Power,stocks/adjusted/CLEANMAX,2026-03-02,2026-10-30,164,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CMPDI,CMPDI,Services,stocks/adjusted/CMPDI,2026-03-30,2026-10-30,146,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,COALINDIA,COALINDIA,Oil Gas & Consumable Fuels,stocks/adjusted/COALINDIA,2010-11-04,2026-10-30,3945,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,COCHINSHIP,COCHINSHIP,Capital Goods,stocks/adjusted/COCHINSHIP,2017-08-11,2026-10-30,2275,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,COFORGE,COFORGE,Information Technology,stocks/adjusted/COFORGE,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,COHANCE,COHANCE,Healthcare,stocks/adjusted/COHANCE,2020-03-09,2026-10-30,1642,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,COLPAL,COLPAL,Fast Moving Consumer Goods,stocks/adjusted/COLPAL,2007-12-17,2026-10-30,4653,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CONCOR,CONCOR,Services,stocks/adjusted/CONCOR,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CONCORDBIO,CONCORDBIO,Healthcare,stocks/adjusted/CONCORDBIO,2023-08-18,2026-10-30,788,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,COROMANDEL,COROMANDEL,Chemicals,stocks/adjusted/COROMANDEL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CPPLUS,CPPLUS,Capital Goods,stocks/adjusted/CPPLUS,2025-08-05,2026-10-30,305,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CRAFTSMAN,CRAFTSMAN,Automobile and Auto Components,stocks/adjusted/CRAFTSMAN,2021-03-25,2026-10-30,1382,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CREDITACC,CREDITACC,Financial Services,stocks/adjusted/CREDITACC,2018-08-23,2026-10-30,2019,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CRISIL,CRISIL,Financial Services,stocks/adjusted/CRISIL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CROMPTON,CROMPTON,Consumer Durables,stocks/adjusted/CROMPTON,2016-05-13,2026-10-30,2585,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CUB,CUB,Financial Services,stocks/adjusted/CUB,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CUMMINSIND,CUMMINSIND,Capital Goods,stocks/adjusted/CUMMINSIND,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CUPID,CUPID,Fast Moving Consumer Goods,stocks/adjusted/CUPID,2016-09-16,2026-10-30,2499,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,CYIENT,CYIENT,Information Technology,stocks/adjusted/CYIENT,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,DABUR,DABUR,Fast Moving Consumer Goods,stocks/adjusted/DABUR,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,DALBHARAT,DALBHARAT,Construction Materials,stocks/adjusted/DALBHARAT,2019-01-22,2026-10-30,1918,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,DATAPATTNS,DATAPATTNS,Capital Goods,stocks/adjusted/DATAPATTNS,2021-12-24,2026-10-30,1197,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,DEEPAKFERT,DEEPAKFERT,Chemicals,stocks/adjusted/DEEPAKFERT,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,DEEPAKNTR,DEEPAKNTR,Chemicals,stocks/adjusted/DEEPAKNTR,2010-09-29,2026-10-30,3879,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,DELHIVERY,DELHIVERY,Services,stocks/adjusted/DELHIVERY,2022-05-24,2026-10-30,1096,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,DEVYANI,DEVYANI,Consumer Services,stocks/adjusted/DEVYANI,2021-08-16,2026-10-30,1286,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,DIVISLAB,DIVISLAB,Healthcare,stocks/adjusted/DIVISLAB,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,DIXON,DIXON,Consumer Durables,stocks/adjusted/DIXON,2017-09-18,2026-10-30,2251,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,DLF,DLF,Realty,stocks/adjusted/DLF,2007-07-05,2026-10-30,4768,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,DMART,DMART,Consumer Services,stocks/adjusted/DMART,2017-03-21,2026-10-30,2374,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,DOMS,DOMS,Fast Moving Consumer Goods,stocks/adjusted/DOMS,2023-12-20,2026-10-30,705,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,DRREDDY,DRREDDY,Healthcare,stocks/adjusted/DRREDDY,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ECLERX,ECLERX,Services,stocks/adjusted/ECLERX,2007-12-31,2026-10-30,4644,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,EICHERMOT,EICHERMOT,Automobile and Auto Components,stocks/adjusted/EICHERMOT,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,EIDPARRY,EIDPARRY,Fast Moving Consumer Goods,stocks/adjusted/EIDPARRY,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,EIHOTEL,EIHOTEL,Consumer Services,stocks/adjusted/EIHOTEL,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ELECON,ELECON,Capital Goods,stocks/adjusted/ELECON,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ELGIEQUIP,ELGIEQUIP,Capital Goods,stocks/adjusted/ELGIEQUIP,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,EMAMILTD,EMAMILTD,Fast Moving Consumer Goods,stocks/adjusted/EMAMILTD,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,EMBASSY,EMBASSY,Realty,stocks/adjusted/EMBASSY,2019-04-01,2026-10-30,1871,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,EMCURE,EMCURE,Healthcare,stocks/adjusted/EMCURE,2024-07-10,2026-10-30,571,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,EMMVEE,EMMVEE,Capital Goods,stocks/adjusted/EMMVEE,2025-11-18,2026-10-30,235,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ENDURANCE,ENDURANCE,Automobile and Auto Components,stocks/adjusted/ENDURANCE,2016-10-19,2026-10-30,2478,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ENGINERSIN,ENGINERSIN,Construction,stocks/adjusted/ENGINERSIN,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ENRIN,ENRIN,Capital Goods,stocks/adjusted/ENRIN,2025-06-19,2026-10-30,338,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ESCORTS,ESCORTS,Capital Goods,stocks/adjusted/ESCORTS,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ETERNAL,ETERNAL,Consumer Services,stocks/adjusted/ETERNAL,2021-07-23,2026-10-30,1302,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,EXIDEIND,EXIDEIND,Automobile and Auto Components,stocks/adjusted/EXIDEIND,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,FACT,FACT,Chemicals,stocks/adjusted/FACT,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,FEDERALBNK,FEDERALBNK,Financial Services,stocks/adjusted/FEDERALBNK,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,FINCABLES,FINCABLES,Capital Goods,stocks/adjusted/FINCABLES,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,FIRSTCRY,FIRSTCRY,Consumer Services,stocks/adjusted/FIRSTCRY,2024-08-13,2026-10-30,548,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,FIVESTAR,FIVESTAR,Financial Services,stocks/adjusted/FIVESTAR,2022-11-21,2026-10-30,973,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,FLUOROCHEM,FLUOROCHEM,Chemicals,stocks/adjusted/FLUOROCHEM,2019-10-16,2026-10-30,1740,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,FORCEMOT,FORCEMOT,Automobile and Auto Components,stocks/adjusted/FORCEMOT,2019-08-19,2026-10-30,1704,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,FORTIS,FORTIS,Healthcare,stocks/adjusted/FORTIS,2007-05-09,2026-10-30,4809,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,FRACTAL,FRACTAL,Information Technology,stocks/adjusted/FRACTAL,2026-02-16,2026-10-30,174,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,FSL,FSL,Services,stocks/adjusted/FSL,2007-02-22,2026-10-30,4859,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GABRIEL,GABRIEL,Automobile and Auto Components,stocks/adjusted/GABRIEL,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GAIL,GAIL,Oil Gas & Consumable Fuels,stocks/adjusted/GAIL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GALLANTT,GALLANTT,Capital Goods,stocks/adjusted/GALLANTT,2007-01-02,2026-10-30,4796,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GESHIP,GESHIP,Services,stocks/adjusted/GESHIP,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GICRE,GICRE,Financial Services,stocks/adjusted/GICRE,2017-10-25,2026-10-30,2226,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GILLETTE,GILLETTE,Fast Moving Consumer Goods,stocks/adjusted/GILLETTE,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GLAND,GLAND,Healthcare,stocks/adjusted/GLAND,2020-11-20,2026-10-30,1467,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GLAXO,GLAXO,Healthcare,stocks/adjusted/GLAXO,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GLENMARK,GLENMARK,Healthcare,stocks/adjusted/GLENMARK,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GMDCLTD,GMDCLTD,Metals & Mining,stocks/adjusted/GMDCLTD,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GMRAIRPORT,GMRAIRPORT,Services,stocks/adjusted/GMRAIRPORT,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GODFRYPHLP,GODFRYPHLP,Fast Moving Consumer Goods,stocks/adjusted/GODFRYPHLP,2007-01-02,2026-10-30,4890,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GODREJCP,GODREJCP,Fast Moving Consumer Goods,stocks/adjusted/GODREJCP,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GODREJIND,GODREJIND,Diversified,stocks/adjusted/GODREJIND,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GODREJPROP,GODREJPROP,Realty,stocks/adjusted/GODREJPROP,2010-01-05,2026-10-30,4155,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GPIL,GPIL,Capital Goods,stocks/adjusted/GPIL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GRANULES,GRANULES,Healthcare,stocks/adjusted/GRANULES,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GRAPHITE,GRAPHITE,Capital Goods,stocks/adjusted/GRAPHITE,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GRASIM,GRASIM,Construction Materials,stocks/adjusted/GRASIM,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GRAVITA,GRAVITA,Metals & Mining,stocks/adjusted/GRAVITA,2010-11-16,2026-10-30,3937,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GROWW,GROWW,Financial Services,stocks/adjusted/GROWW,2025-11-12,2026-10-30,239,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GRSE,GRSE,Capital Goods,stocks/adjusted/GRSE,2018-10-10,2026-10-30,1988,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,GVT_D,GVT&D,Capital Goods,stocks/adjusted/GVT_D,2008-06-30,2026-10-30,4522,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HAL,HAL,Capital Goods,stocks/adjusted/HAL,2018-03-28,2026-10-30,2120,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HAVELLS,HAVELLS,Consumer Durables,stocks/adjusted/HAVELLS,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HBLENGINE,HBLENGINE,Capital Goods,stocks/adjusted/HBLENGINE,2007-01-04,2026-10-30,4889,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HCLTECH,HCLTECH,Information Technology,stocks/adjusted/HCLTECH,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HDBFS,HDBFS,Financial Services,stocks/adjusted/HDBFS,2025-07-02,2026-10-30,329,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HDFCAMC,HDFCAMC,Financial Services,stocks/adjusted/HDFCAMC,2018-08-06,2026-10-30,2030,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HDFCBANK,HDFCBANK,Financial Services,stocks/adjusted/HDFCBANK,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HDFCLIFE,HDFCLIFE,Financial Services,stocks/adjusted/HDFCLIFE,2017-11-17,2026-10-30,2209,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HEGAM,HEGAM,Capital Goods,stocks/adjusted/HEGAM,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HEROMOTOCO,HEROMOTOCO,Automobile and Auto Components,stocks/adjusted/HEROMOTOCO,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HEXT,HEXT,Information Technology,stocks/adjusted/HEXT,2025-02-19,2026-10-30,417,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HFCL,HFCL,Telecommunication,stocks/adjusted/HFCL,2011-03-09,2026-10-30,3860,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HINDALCO,HINDALCO,Metals & Mining,stocks/adjusted/HINDALCO,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HINDCOPPER,HINDCOPPER,Metals & Mining,stocks/adjusted/HINDCOPPER,2010-01-08,2026-10-30,4152,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HINDPETRO,HINDPETRO,Oil Gas & Consumable Fuels,stocks/adjusted/HINDPETRO,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HINDUNILVR,HINDUNILVR,Fast Moving Consumer Goods,stocks/adjusted/HINDUNILVR,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HINDZINC,HINDZINC,Metals & Mining,stocks/adjusted/HINDZINC,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HOMEFIRST,HOMEFIRST,Financial Services,stocks/adjusted/HOMEFIRST,2021-02-03,2026-10-30,1417,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HONASA,HONASA,Fast Moving Consumer Goods,stocks/adjusted/HONASA,2023-11-07,2026-10-30,734,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HONAUT,HONAUT,Capital Goods,stocks/adjusted/HONAUT,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HSCL,HSCL,Chemicals,stocks/adjusted/HSCL,2007-03-02,2026-10-30,4852,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HUDCO,HUDCO,Financial Services,stocks/adjusted/HUDCO,2017-05-19,2026-10-30,2334,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,HYUNDAI,HYUNDAI,Automobile and Auto Components,stocks/adjusted/HYUNDAI,2024-10-22,2026-10-30,500,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ICICIAMC,ICICIAMC,Financial Services,stocks/adjusted/ICICIAMC,2025-12-19,2026-10-30,212,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ICICIBANK,ICICIBANK,Financial Services,stocks/adjusted/ICICIBANK,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ICICIGI,ICICIGI,Financial Services,stocks/adjusted/ICICIGI,2017-09-27,2026-10-30,2244,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ICICILIFE,ICICILIFE,Financial Services,stocks/adjusted/ICICILIFE,2016-09-29,2026-10-30,2490,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IDBI,IDBI,Financial Services,stocks/adjusted/IDBI,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IDEA,IDEA,Telecommunication,stocks/adjusted/IDEA,2007-03-09,2026-10-30,4848,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IDFCFIRSTB,IDFCFIRSTB,Financial Services,stocks/adjusted/IDFCFIRSTB,2015-11-06,2026-10-30,2710,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IEX,IEX,Financial Services,stocks/adjusted/IEX,2017-10-23,2026-10-30,2228,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IFCI,IFCI,Financial Services,stocks/adjusted/IFCI,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IGIL,IGIL,Services,stocks/adjusted/IGIL,2024-12-20,2026-10-30,459,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IGL,IGL,Oil Gas & Consumable Fuels,stocks/adjusted/IGL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IIFL,IIFL,Financial Services,stocks/adjusted/IIFL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IKS,IKS,Information Technology,stocks/adjusted/IKS,2024-12-19,2026-10-30,460,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,INDHOTEL,INDHOTEL,Consumer Services,stocks/adjusted/INDHOTEL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,INDIACEM,INDIACEM,Construction Materials,stocks/adjusted/INDIACEM,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,INDIAMART,INDIAMART,Consumer Services,stocks/adjusted/INDIAMART,2019-07-04,2026-10-30,1808,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,INDIANB,INDIANB,Financial Services,stocks/adjusted/INDIANB,2007-03-01,2026-10-30,4854,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,INDIGO,INDIGO,Services,stocks/adjusted/INDIGO,2015-11-10,2026-10-30,2708,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,INDUSINDBK,INDUSINDBK,Financial Services,stocks/adjusted/INDUSINDBK,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,INDUSTOWER,INDUSTOWER,Telecommunication,stocks/adjusted/INDUSTOWER,2012-12-28,2026-10-30,3413,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,INFY,INFY,Information Technology,stocks/adjusted/INFY,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,INOXINDIA,INOXINDIA,Capital Goods,stocks/adjusted/INOXINDIA,2023-12-21,2026-10-30,704,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,INOXWIND,INOXWIND,Capital Goods,stocks/adjusted/INOXWIND,2015-04-09,2026-10-30,2855,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,INTELLECT,INTELLECT,Information Technology,stocks/adjusted/INTELLECT,2014-12-18,2026-10-30,2929,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IOB,IOB,Financial Services,stocks/adjusted/IOB,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IOC,IOC,Oil Gas & Consumable Fuels,stocks/adjusted/IOC,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IPCALAB,IPCALAB,Healthcare,stocks/adjusted/IPCALAB,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IRB,IRB,Construction,stocks/adjusted/IRB,2008-02-25,2026-10-30,4605,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IRCON,IRCON,Construction,stocks/adjusted/IRCON,2018-09-28,2026-10-30,1995,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IRCTC,IRCTC,Consumer Services,stocks/adjusted/IRCTC,2019-10-14,2026-10-30,1742,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IREDA,IREDA,Financial Services,stocks/adjusted/IREDA,2023-11-29,2026-10-30,720,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,IRFC,IRFC,Financial Services,stocks/adjusted/IRFC,2021-01-29,2026-10-30,1420,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ITC,ITC,Fast Moving Consumer Goods,stocks/adjusted/ITC,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ITCHOTELS,ITCHOTELS,Consumer Services,stocks/adjusted/ITCHOTELS,2025-01-29,2026-10-30,432,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ITI,ITI,Telecommunication,stocks/adjusted/ITI,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,J_KBANK,J&KBANK,Financial Services,stocks/adjusted/J_KBANK,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JAINREC,JAINREC,Metals & Mining,stocks/adjusted/JAINREC,2025-10-01,2026-10-30,266,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JBMA,JBMA,Automobile and Auto Components,stocks/adjusted/JBMA,2007-01-02,2026-10-30,4715,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JINDALSAW,JINDALSAW,Capital Goods,stocks/adjusted/JINDALSAW,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JINDALSTEL,JINDALSTEL,Metals & Mining,stocks/adjusted/JINDALSTEL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JIOFIN,JIOFIN,Financial Services,stocks/adjusted/JIOFIN,2023-08-21,2026-10-30,787,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JKCEMENT,JKCEMENT,Construction Materials,stocks/adjusted/JKCEMENT,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JKTYRE,JKTYRE,Automobile and Auto Components,stocks/adjusted/JKTYRE,2007-03-19,2026-10-30,4842,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JMFINANCIL,JMFINANCIL,Financial Services,stocks/adjusted/JMFINANCIL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JPPOWER,JPPOWER,Power,stocks/adjusted/JPPOWER,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JSL,JSL,Metals & Mining,stocks/adjusted/JSL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JSWCEMENT,JSWCEMENT,Construction Materials,stocks/adjusted/JSWCEMENT,2025-08-14,2026-10-30,298,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JSWENERGY,JSWENERGY,Power,stocks/adjusted/JSWENERGY,2010-01-04,2026-10-30,4156,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JSWINFRA,JSWINFRA,Services,stocks/adjusted/JSWINFRA,2023-10-03,2026-10-30,758,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JSWSTEEL,JSWSTEEL,Metals & Mining,stocks/adjusted/JSWSTEEL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JUBLFOOD,JUBLFOOD,Consumer Services,stocks/adjusted/JUBLFOOD,2010-02-08,2026-10-30,4132,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JUBLINGREA,JUBLINGREA,Chemicals,stocks/adjusted/JUBLINGREA,2021-03-19,2026-10-30,1386,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JWL,JWL,Capital Goods,stocks/adjusted/JWL,2010-10-18,2026-10-30,3958,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,JYOTICNC,JYOTICNC,Capital Goods,stocks/adjusted/JYOTICNC,2024-01-16,2026-10-30,687,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,KAJARIACER,KAJARIACER,Consumer Durables,stocks/adjusted/KAJARIACER,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,KALYANKJIL,KALYANKJIL,Consumer Durables,stocks/adjusted/KALYANKJIL,2021-03-26,2026-10-30,1381,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,KARURVYSYA,KARURVYSYA,Financial Services,stocks/adjusted/KARURVYSYA,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,KAYNES,KAYNES,Capital Goods,stocks/adjusted/KAYNES,2022-11-22,2026-10-30,972,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,KEC,KEC,Construction,stocks/adjusted/KEC,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,KEI,KEI,Capital Goods,stocks/adjusted/KEI,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,KFINTECH,KFINTECH,Financial Services,stocks/adjusted/KFINTECH,2022-12-29,2026-10-30,945,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,KIMS,KIMS,Healthcare,stocks/adjusted/KIMS,2021-06-28,2026-10-30,1320,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,KIRLOSBROS,KIRLOSBROS,Capital Goods,stocks/adjusted/KIRLOSBROS,2010-04-20,2026-10-30,4086,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,KIRLOSENG,KIRLOSENG,Capital Goods,stocks/adjusted/KIRLOSENG,2010-12-24,2026-10-30,3911,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,KOTAKBANK,KOTAKBANK,Financial Services,stocks/adjusted/KOTAKBANK,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,KPIL,KPIL,Construction,stocks/adjusted/KPIL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,KPITTECH,KPITTECH,Information Technology,stocks/adjusted/KPITTECH,2019-04-22,2026-10-30,1858,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,KPRMILL,KPRMILL,Textiles,stocks/adjusted/KPRMILL,2007-08-28,2026-10-30,4730,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,KSB,KSB,Capital Goods,stocks/adjusted/KSB,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,LALPATHLAB,LALPATHLAB,Healthcare,stocks/adjusted/LALPATHLAB,2015-12-23,2026-10-30,2679,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,LAURUSLABS,LAURUSLABS,Healthcare,stocks/adjusted/LAURUSLABS,2016-12-19,2026-10-30,2437,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,LEMONTREE,LEMONTREE,Consumer Services,stocks/adjusted/LEMONTREE,2018-04-09,2026-10-30,2114,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,LENSKART,LENSKART,Consumer Services,stocks/adjusted/LENSKART,2025-11-10,2026-10-30,241,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,LGEINDIA,LGEINDIA,Consumer Durables,stocks/adjusted/LGEINDIA,2025-10-14,2026-10-30,258,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,LICHSGFIN,LICHSGFIN,Financial Services,stocks/adjusted/LICHSGFIN,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,LICI,LICI,Financial Services,stocks/adjusted/LICI,2022-05-17,2026-10-30,1101,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,LINDEINDIA,LINDEINDIA,Chemicals,stocks/adjusted/LINDEINDIA,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,LLOYDSME,LLOYDSME,Metals & Mining,stocks/adjusted/LLOYDSME,2023-07-17,2026-10-30,811,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,LODHA,LODHA,Realty,stocks/adjusted/LODHA,2021-04-19,2026-10-30,1368,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,LT,LT,Construction,stocks/adjusted/LT,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,LTF,LTF,Financial Services,stocks/adjusted/LTF,2011-08-12,2026-10-30,3751,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,LTFOODS,LTFOODS,Fast Moving Consumer Goods,stocks/adjusted/LTFOODS,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,LTM,LTM,Information Technology,stocks/adjusted/LTM,2016-07-21,2026-10-30,2537,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,LTTS,LTTS,Information Technology,stocks/adjusted/LTTS,2016-09-23,2026-10-30,2494,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,LUPIN,LUPIN,Healthcare,stocks/adjusted/LUPIN,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,M_M,M&M,Automobile and Auto Components,stocks/adjusted/M_M,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,M_MFIN,M&MFIN,Financial Services,stocks/adjusted/M_MFIN,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MAHABANK,MAHABANK,Financial Services,stocks/adjusted/MAHABANK,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MANAPPURAM,MANAPPURAM,Financial Services,stocks/adjusted/MANAPPURAM,2010-06-30,2026-10-30,4035,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MANKIND,MANKIND,Healthcare,stocks/adjusted/MANKIND,2023-05-09,2026-10-30,859,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MARICO,MARICO,Fast Moving Consumer Goods,stocks/adjusted/MARICO,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MARUTI,MARUTI,Automobile and Auto Components,stocks/adjusted/MARUTI,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MAXHEALTH,MAXHEALTH,Healthcare,stocks/adjusted/MAXHEALTH,2020-08-21,2026-10-30,1530,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MAZDOCK,MAZDOCK,Capital Goods,stocks/adjusted/MAZDOCK,2020-10-12,2026-10-30,1495,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MCX,MCX,Financial Services,stocks/adjusted/MCX,2012-03-09,2026-10-30,3612,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MEDANTA,MEDANTA,Healthcare,stocks/adjusted/MEDANTA,2022-11-16,2026-10-30,976,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MEESHO,MEESHO,Consumer Services,stocks/adjusted/MEESHO,2025-12-10,2026-10-30,219,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MFSL,MFSL,Financial Services,stocks/adjusted/MFSL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MGL,MGL,Oil Gas & Consumable Fuels,stocks/adjusted/MGL,2016-07-01,2026-10-30,2550,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MINDACORP,MINDACORP,Automobile and Auto Components,stocks/adjusted/MINDACORP,2012-03-19,2026-10-30,3198,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MMTC,MMTC,Services,stocks/adjusted/MMTC,2010-01-08,2026-10-30,4152,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MOTHERSON,MOTHERSON,Automobile and Auto Components,stocks/adjusted/MOTHERSON,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MOTILALOFS,MOTILALOFS,Financial Services,stocks/adjusted/MOTILALOFS,2007-09-11,2026-10-30,4721,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MPHASIS,MPHASIS,Information Technology,stocks/adjusted/MPHASIS,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MRF,MRF,Automobile and Auto Components,stocks/adjusted/MRF,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MRPL,MRPL,Oil Gas & Consumable Fuels,stocks/adjusted/MRPL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MSUMI,MSUMI,Automobile and Auto Components,stocks/adjusted/MSUMI,2022-03-28,2026-10-30,1134,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MTARTECH,MTARTECH,Capital Goods,stocks/adjusted/MTARTECH,2021-03-15,2026-10-30,1390,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,MUTHOOTFIN,MUTHOOTFIN,Financial Services,stocks/adjusted/MUTHOOTFIN,2011-05-06,2026-10-30,3821,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NAM-INDIA,NAM-INDIA,Financial Services,stocks/adjusted/NAM-INDIA,2017-11-06,2026-10-30,2218,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NATCOPHARM,NATCOPHARM,Healthcare,stocks/adjusted/NATCOPHARM,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NATIONALUM,NATIONALUM,Metals & Mining,stocks/adjusted/NATIONALUM,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NAUKRI,NAUKRI,Consumer Services,stocks/adjusted/NAUKRI,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NAVA,NAVA,Power,stocks/adjusted/NAVA,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NAVINFLUOR,NAVINFLUOR,Chemicals,stocks/adjusted/NAVINFLUOR,2007-06-01,2026-10-30,4791,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NBCC,NBCC,Construction,stocks/adjusted/NBCC,2012-04-12,2026-10-30,3590,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NCC,NCC,Construction,stocks/adjusted/NCC,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NESTLEIND,NESTLEIND,Fast Moving Consumer Goods,stocks/adjusted/NESTLEIND,2010-01-08,2026-10-30,4152,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NETWEB,NETWEB,Information Technology,stocks/adjusted/NETWEB,2023-07-27,2026-10-30,803,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NEULANDLAB,NEULANDLAB,Healthcare,stocks/adjusted/NEULANDLAB,2008-10-13,2026-10-30,4409,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NH,NH,Healthcare,stocks/adjusted/NH,2016-01-06,2026-10-30,2670,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NHPC,NHPC,Power,stocks/adjusted/NHPC,2009-09-01,2026-10-30,4236,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NIACL,NIACL,Financial Services,stocks/adjusted/NIACL,2017-11-13,2026-10-30,2213,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NLCINDIA,NLCINDIA,Power,stocks/adjusted/NLCINDIA,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NMDC,NMDC,Metals & Mining,stocks/adjusted/NMDC,2008-03-03,2026-10-30,4600,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NSLNISP,NSLNISP,Metals & Mining,stocks/adjusted/NSLNISP,2023-02-20,2026-10-30,909,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NTPC,NTPC,Power,stocks/adjusted/NTPC,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NTPCGREEN,NTPCGREEN,Power,stocks/adjusted/NTPCGREEN,2024-11-27,2026-10-30,476,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NUVAMA,NUVAMA,Financial Services,stocks/adjusted/NUVAMA,2023-09-26,2026-10-30,762,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NUVOCO,NUVOCO,Construction Materials,stocks/adjusted/NUVOCO,2021-08-23,2026-10-30,1282,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,NYKAA,NYKAA,Consumer Services,stocks/adjusted/NYKAA,2021-11-10,2026-10-30,1228,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,OBEROIRLTY,OBEROIRLTY,Realty,stocks/adjusted/OBEROIRLTY,2010-10-20,2026-10-30,3956,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,OFSS,OFSS,Information Technology,stocks/adjusted/OFSS,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,OIL,OIL,Oil Gas & Consumable Fuels,stocks/adjusted/OIL,2009-09-30,2026-10-30,4217,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,OLAELEC,OLAELEC,Automobile and Auto Components,stocks/adjusted/OLAELEC,2024-08-09,2026-10-30,550,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,OLECTRA,OLECTRA,Automobile and Auto Components,stocks/adjusted/OLECTRA,2007-01-02,2026-10-30,4887,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ONESOURCE,ONESOURCE,Healthcare,stocks/adjusted/ONESOURCE,2025-01-24,2026-10-30,435,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ONGC,ONGC,Oil Gas & Consumable Fuels,stocks/adjusted/ONGC,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PAGEIND,PAGEIND,Textiles,stocks/adjusted/PAGEIND,2007-03-16,2026-10-30,4831,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PARADEEP,PARADEEP,Chemicals,stocks/adjusted/PARADEEP,2022-05-27,2026-10-30,1093,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PATANJALI,PATANJALI,Fast Moving Consumer Goods,stocks/adjusted/PATANJALI,2022-07-13,2026-10-30,1060,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PAYTM,PAYTM,Financial Services,stocks/adjusted/PAYTM,2021-11-18,2026-10-30,1222,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PCBL,PCBL,Chemicals,stocks/adjusted/PCBL,2022-01-13,2026-10-30,1183,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PERSISTENT,PERSISTENT,Information Technology,stocks/adjusted/PERSISTENT,2010-04-06,2026-10-30,4095,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PETRONET,PETRONET,Oil Gas & Consumable Fuels,stocks/adjusted/PETRONET,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PFC,PFC,Financial Services,stocks/adjusted/PFC,2007-02-23,2026-10-30,4858,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PFOCUS,PFOCUS,Media Entertainment & Publication,stocks/adjusted/PFOCUS,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PGEL,PGEL,Consumer Durables,stocks/adjusted/PGEL,2011-09-26,2026-10-30,3721,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PHOENIXLTD,PHOENIXLTD,Realty,stocks/adjusted/PHOENIXLTD,2007-04-23,2026-10-30,4818,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PIDILITIND,PIDILITIND,Chemicals,stocks/adjusted/PIDILITIND,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PIIND,PIIND,Chemicals,stocks/adjusted/PIIND,2011-06-15,2026-10-30,3791,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PINELABS,PINELABS,Financial Services,stocks/adjusted/PINELABS,2025-11-14,2026-10-30,237,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PIRAMALFIN,PIRAMALFIN,Financial Services,stocks/adjusted/PIRAMALFIN,2025-11-07,2026-10-30,242,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PNB,PNB,Financial Services,stocks/adjusted/PNB,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PNBHOUSING,PNBHOUSING,Financial Services,stocks/adjusted/PNBHOUSING,2016-11-07,2026-10-30,2466,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,POLICYBZR,POLICYBZR,Financial Services,stocks/adjusted/POLICYBZR,2021-11-15,2026-10-30,1225,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,POLYCAB,POLYCAB,Capital Goods,stocks/adjusted/POLYCAB,2019-04-16,2026-10-30,1860,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,POLYMED,POLYMED,Healthcare,stocks/adjusted/POLYMED,2011-12-07,2026-10-30,3674,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,POONAWALLA,POONAWALLA,Financial Services,stocks/adjusted/POONAWALLA,2007-01-02,2026-10-30,4874,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,POWERGRID,POWERGRID,Power,stocks/adjusted/POWERGRID,2007-10-05,2026-10-30,4704,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,POWERINDIA,POWERINDIA,Capital Goods,stocks/adjusted/POWERINDIA,2020-03-30,2026-10-30,1628,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PPLPHARMA,PPLPHARMA,Healthcare,stocks/adjusted/PPLPHARMA,2022-10-19,2026-10-30,994,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PREMIERENE,PREMIERENE,Capital Goods,stocks/adjusted/PREMIERENE,2024-09-03,2026-10-30,534,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PRESTIGE,PRESTIGE,Realty,stocks/adjusted/PRESTIGE,2010-10-27,2026-10-30,3951,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PRIVISCL,PRIVISCL,Chemicals,stocks/adjusted/PRIVISCL,2015-05-08,2026-10-30,2836,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PTCIL,PTCIL,Capital Goods,stocks/adjusted/PTCIL,2023-06-09,2026-10-30,836,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PVRINOX,PVRINOX,Media Entertainment & Publication,stocks/adjusted/PVRINOX,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PWL,PWL,Consumer Services,stocks/adjusted/PWL,2025-11-18,2026-10-30,235,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,RADICO,RADICO,Fast Moving Consumer Goods,stocks/adjusted/RADICO,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,RAILTEL,RAILTEL,Telecommunication,stocks/adjusted/RAILTEL,2021-02-26,2026-10-30,1400,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,RAINBOW,RAINBOW,Healthcare,stocks/adjusted/RAINBOW,2022-05-10,2026-10-30,1106,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,RAMCOCEM,RAMCOCEM,Construction Materials,stocks/adjusted/RAMCOCEM,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,RBLBANK,RBLBANK,Financial Services,stocks/adjusted/RBLBANK,2016-08-31,2026-10-30,2509,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,RECLTD,RECLTD,Financial Services,stocks/adjusted/RECLTD,2008-03-12,2026-10-30,4594,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,REDINGTON,REDINGTON,Services,stocks/adjusted/REDINGTON,2007-02-15,2026-10-30,4862,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,RELIANCE,RELIANCE,Oil Gas & Consumable Fuels,stocks/adjusted/RELIANCE,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,RHIM,RHIM,Capital Goods,stocks/adjusted/RHIM,2012-03-12,2026-10-30,3609,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,RITES,RITES,Construction,stocks/adjusted/RITES,2018-07-02,2026-10-30,2055,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,RKFORGE,RKFORGE,Automobile and Auto Components,stocks/adjusted/RKFORGE,2007-01-02,2026-10-30,4825,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,RPOWER,RPOWER,Power,stocks/adjusted/RPOWER,2008-02-11,2026-10-30,4615,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,RRKABEL,RRKABEL,Capital Goods,stocks/adjusted/RRKABEL,2023-09-20,2026-10-30,766,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,RUBICON,RUBICON,Healthcare,stocks/adjusted/RUBICON,2025-10-16,2026-10-30,256,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,RVNL,RVNL,Construction,stocks/adjusted/RVNL,2019-04-11,2026-10-30,1863,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SAGILITY,SAGILITY,Information Technology,stocks/adjusted/SAGILITY,2024-11-12,2026-10-30,485,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SAIL,SAIL,Metals & Mining,stocks/adjusted/SAIL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SAILIFE,SAILIFE,Healthcare,stocks/adjusted/SAILIFE,2024-12-18,2026-10-30,461,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SAMMAANCAP,SAMMAANCAP,Financial Services,stocks/adjusted/SAMMAANCAP,2013-07-23,2026-10-30,3271,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SANSERA,SANSERA,Automobile and Auto Components,stocks/adjusted/SANSERA,2021-09-24,2026-10-30,1259,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SARDAEN,SARDAEN,Metals & Mining,stocks/adjusted/SARDAEN,2009-12-03,2026-10-30,4175,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SBICARD,SBICARD,Financial Services,stocks/adjusted/SBICARD,2020-03-16,2026-10-30,1638,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SBILIFE,SBILIFE,Financial Services,stocks/adjusted/SBILIFE,2017-10-03,2026-10-30,2241,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SBIN,SBIN,Financial Services,stocks/adjusted/SBIN,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SCHAEFFLER,SCHAEFFLER,Automobile and Auto Components,stocks/adjusted/SCHAEFFLER,2007-01-02,2026-10-30,4890,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SCHNEIDER,SCHNEIDER,Capital Goods,stocks/adjusted/SCHNEIDER,2012-03-20,2026-10-30,3605,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SCI,SCI,Services,stocks/adjusted/SCI,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SHREECEM,SHREECEM,Construction Materials,stocks/adjusted/SHREECEM,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SHRIPISTON,SHRIPISTON,Automobile and Auto Components,stocks/adjusted/SHRIPISTON,2016-06-09,2026-10-30,2550,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SHRIRAMFIN,SHRIRAMFIN,Financial Services,stocks/adjusted/SHRIRAMFIN,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SHYAMMETL,SHYAMMETL,Capital Goods,stocks/adjusted/SHYAMMETL,2021-06-24,2026-10-30,1322,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SIEMENS,SIEMENS,Capital Goods,stocks/adjusted/SIEMENS,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SIGNATURE,SIGNATURE,Realty,stocks/adjusted/SIGNATURE,2023-09-27,2026-10-30,761,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SJVN,SJVN,Power,stocks/adjusted/SJVN,2010-05-20,2026-10-30,4064,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SOBHA,SOBHA,Realty,stocks/adjusted/SOBHA,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SOLARINDS,SOLARINDS,Chemicals,stocks/adjusted/SOLARINDS,2007-01-02,2026-10-30,4890,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SONACOMS,SONACOMS,Automobile and Auto Components,stocks/adjusted/SONACOMS,2021-06-24,2026-10-30,1322,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SRF,SRF,Chemicals,stocks/adjusted/SRF,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,STARHEALTH,STARHEALTH,Financial Services,stocks/adjusted/STARHEALTH,2021-12-10,2026-10-30,1207,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,STLTECH,STLTECH,Telecommunication,stocks/adjusted/STLTECH,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SUMICHEM,SUMICHEM,Chemicals,stocks/adjusted/SUMICHEM,2020-01-27,2026-10-30,1671,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SUNDARMFIN,SUNDARMFIN,Financial Services,stocks/adjusted/SUNDARMFIN,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SUNPHARMA,SUNPHARMA,Healthcare,stocks/adjusted/SUNPHARMA,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SUNTV,SUNTV,Media Entertainment & Publication,stocks/adjusted/SUNTV,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SUPREMEIND,SUPREMEIND,Capital Goods,stocks/adjusted/SUPREMEIND,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SUZLON,SUZLON,Capital Goods,stocks/adjusted/SUZLON,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SWANCORP,SWANCORP,Chemicals,stocks/adjusted/SWANCORP,2012-05-29,2026-10-30,3558,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SWIGGY,SWIGGY,Consumer Services,stocks/adjusted/SWIGGY,2024-11-13,2026-10-30,484,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SYNGENE,SYNGENE,Healthcare,stocks/adjusted/SYNGENE,2015-08-11,2026-10-30,2769,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SYRMA,SYRMA,Capital Goods,stocks/adjusted/SYRMA,2022-08-26,2026-10-30,1030,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TARIL,TARIL,Capital Goods,stocks/adjusted/TARIL,2007-12-28,2026-10-30,4646,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TATACAP,TATACAP,Financial Services,stocks/adjusted/TATACAP,2025-10-13,2026-10-30,259,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TATACHEM,TATACHEM,Chemicals,stocks/adjusted/TATACHEM,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TATACOMM,TATACOMM,Telecommunication,stocks/adjusted/TATACOMM,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TATACONSUM,TATACONSUM,Fast Moving Consumer Goods,stocks/adjusted/TATACONSUM,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TATAELXSI,TATAELXSI,Information Technology,stocks/adjusted/TATAELXSI,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TATAINVEST,TATAINVEST,Financial Services,stocks/adjusted/TATAINVEST,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TATAPOWER,TATAPOWER,Power,stocks/adjusted/TATAPOWER,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TATASTEEL,TATASTEEL,Metals & Mining,stocks/adjusted/TATASTEEL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TATATECH,TATATECH,Information Technology,stocks/adjusted/TATATECH,2023-11-30,2026-10-30,719,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TBOTEK,TBOTEK,Consumer Services,stocks/adjusted/TBOTEK,2024-05-15,2026-10-30,609,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TCS,TCS,Information Technology,stocks/adjusted/TCS,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TDPOWERSYS,TDPOWERSYS,Capital Goods,stocks/adjusted/TDPOWERSYS,2011-09-08,2026-10-30,3730,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TECHM,TECHM,Information Technology,stocks/adjusted/TECHM,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TECHNOE,TECHNOE,Construction,stocks/adjusted/TECHNOE,2018-12-04,2026-10-30,1952,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TEGA,TEGA,Capital Goods,stocks/adjusted/TEGA,2021-12-13,2026-10-30,1206,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TEJASNET,TEJASNET,Telecommunication,stocks/adjusted/TEJASNET,2017-06-27,2026-10-30,2308,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TENNIND,TENNIND,Automobile and Auto Components,stocks/adjusted/TENNIND,2025-11-19,2026-10-30,234,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,THANGAMAYL,THANGAMAYL,Consumer Durables,stocks/adjusted/THANGAMAYL,2010-02-19,2026-10-30,4119,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,THERMAX,THERMAX,Capital Goods,stocks/adjusted/THERMAX,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TIINDIA,TIINDIA,Automobile and Auto Components,stocks/adjusted/TIINDIA,2017-11-02,2026-10-30,2220,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TIMKEN,TIMKEN,Capital Goods,stocks/adjusted/TIMKEN,2007-02-06,2026-10-30,4869,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TITAGARH,TITAGARH,Capital Goods,stocks/adjusted/TITAGARH,2008-04-21,2026-10-30,4570,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TITAN,TITAN,Consumer Durables,stocks/adjusted/TITAN,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TMCV,TMCV,Capital Goods,stocks/adjusted/TMCV,2025-11-12,2026-10-30,239,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TMPV,TMPV,Automobile and Auto Components,stocks/adjusted/TMPV,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TORNTPHARM,TORNTPHARM,Healthcare,stocks/adjusted/TORNTPHARM,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TORNTPOWER,TORNTPOWER,Power,stocks/adjusted/TORNTPOWER,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TRENT,TRENT,Consumer Services,stocks/adjusted/TRENT,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TRIDENT,TRIDENT,Textiles,stocks/adjusted/TRIDENT,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TRITURBINE,TRITURBINE,Capital Goods,stocks/adjusted/TRITURBINE,2011-10-28,2026-10-30,3701,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TTML,TTML,Telecommunication,stocks/adjusted/TTML,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,TVSMOTOR,TVSMOTOR,Automobile and Auto Components,stocks/adjusted/TVSMOTOR,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,UBL,UBL,Fast Moving Consumer Goods,stocks/adjusted/UBL,2008-07-28,2026-10-30,4502,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,UCOBANK,UCOBANK,Financial Services,stocks/adjusted/UCOBANK,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ULTRACEMCO,ULTRACEMCO,Construction Materials,stocks/adjusted/ULTRACEMCO,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,UNIONBANK,UNIONBANK,Financial Services,stocks/adjusted/UNIONBANK,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,UNITDSPR,UNITDSPR,Fast Moving Consumer Goods,stocks/adjusted/UNITDSPR,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,UNOMINDA,UNOMINDA,Automobile and Auto Components,stocks/adjusted/UNOMINDA,2007-02-02,2026-10-30,4833,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,UPL,UPL,Chemicals,stocks/adjusted/UPL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,URBANCO,URBANCO,Consumer Services,stocks/adjusted/URBANCO,2025-09-17,2026-10-30,276,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,USHAMART,USHAMART,Capital Goods,stocks/adjusted/USHAMART,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,UTIAMC,UTIAMC,Financial Services,stocks/adjusted/UTIAMC,2020-10-12,2026-10-30,1495,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,VAML,VAML,Metals & Mining,stocks/adjusted/VAML,2026-06-15,2026-10-30,96,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,VBL,VBL,Fast Moving Consumer Goods,stocks/adjusted/VBL,2016-11-08,2026-10-30,2465,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,VEDL,VEDL,Metals & Mining,stocks/adjusted/VEDL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,VEDPOWER,VEDPOWER,Power,stocks/adjusted/VEDPOWER,2026-06-15,2026-10-30,96,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,VIJAYA,VIJAYA,Healthcare,stocks/adjusted/VIJAYA,2021-09-14,2026-10-30,1267,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,VISL,VISL,Metals & Mining,stocks/adjusted/VISL,2026-06-15,2026-10-30,96,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,VMM,VMM,Consumer Services,stocks/adjusted/VMM,2024-12-18,2026-10-30,461,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,VOGL,VOGL,Oil Gas & Consumable Fuels,stocks/adjusted/VOGL,2026-06-15,2026-10-30,96,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,VOLTAS,VOLTAS,Consumer Durables,stocks/adjusted/VOLTAS,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,VTL,VTL,Textiles,stocks/adjusted/VTL,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,WAAREEENER,WAAREEENER,Capital Goods,stocks/adjusted/WAAREEENER,2024-10-28,2026-10-30,496,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,WELCORP,WELCORP,Capital Goods,stocks/adjusted/WELCORP,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,WELSPUNLIV,WELSPUNLIV,Textiles,stocks/adjusted/WELSPUNLIV,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,WHIRLPOOL,WHIRLPOOL,Consumer Durables,stocks/adjusted/WHIRLPOOL,2010-01-08,2026-10-30,4152,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,WIPRO,WIPRO,Information Technology,stocks/adjusted/WIPRO,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,WOCKPHARMA,WOCKPHARMA,Healthcare,stocks/adjusted/WOCKPHARMA,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,YESBANK,YESBANK,Financial Services,stocks/adjusted/YESBANK,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ZEEL,ZEEL,Media Entertainment & Publication,stocks/adjusted/ZEEL,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ZENSARTECH,ZENSARTECH,Information Technology,stocks/adjusted/ZENSARTECH,2007-01-02,2026-10-30,4893,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ZENTEC,ZENTEC,Capital Goods,stocks/adjusted/ZENTEC,2015-03-30,2026-10-30,2861,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ZFCVINDIA,ZFCVINDIA,Automobile and Auto Components,stocks/adjusted/ZFCVINDIA,2022-04-01,2026-10-30,1130,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ZYDUSLIFE,ZYDUSLIFE,Healthcare,stocks/adjusted/ZYDUSLIFE,2007-01-02,2026-10-30,4892,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ZYDUSWELL,ZYDUSWELL,Fast Moving Consumer Goods,stocks/adjusted/ZYDUSWELL,2009-11-13,2026-10-30,4189,NSE bhavcopy + NSE corporate actions
 index,NSE,INDIA_VIX,INDIA VIX,BROAD MARKET INDICES,indices/nse/INDIA_VIX,2010-07-19,2026-10-30,4030,NSE historicalOR
 index,NSE,NIFTY100_ALPHA_30,NIFTY100 ALPHA 30,STRATEGY INDICES,indices/nse/NIFTY100_ALPHA_30,2007-01-02,2026-10-30,4903,NSE historicalOR
 index,NSE,NIFTY100_ENHANCED_ESG,NIFTY100 ENHANCED ESG,THEMATIC INDICES,indices/nse/NIFTY100_ENHANCED_ESG,2018-03-28,2026-10-30,2117,NSE historicalOR

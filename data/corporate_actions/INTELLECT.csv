@@ -1,0 +1,8 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2015-01-16,scheme,,1.0,,price did not move: no change,no change,Scheme Of Arrangement-To Ascertain Eligible Members To Provide Option To Opt For Ncd In Place Of Equity Shares,NSE
+2017-07-17,rights,5:22,0.9367591175,86,"TERP, issue price 86, close before 130.6",applied,Rights 5:22 @ Premium Rs 81/-,NSE
+2022-07-21,dividend,,1.0,2.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 2.5 Per Share,NSE
+2023-07-21,dividend,,1.0,2.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 2.50 Per Share,NSE
+2024-06-19,dividend,,1.0,3.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 3.50 Per Share,NSE
+2025-07-18,dividend,,1.0,7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting /Dividend - Rs 4 Per Share & Special Dividend - Rs 3 Per Share,NSE
+2026-07-24,dividend,,1.0,7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 4 Per Share/Special Dividend - Rs 3 Per Share,NSE

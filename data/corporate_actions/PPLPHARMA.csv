@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2023-08-02,rights,5:46,0.9765608451,81,"TERP, issue price 81, close before 106.45",applied,Rights 5:46 @ Premium Rs 71/-,NSE
+2024-07-12,dividend,,1.0,0.11,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 0.11 Per Share,NSE
+2025-07-16,dividend,,1.0,0.14,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.14 Per Share,NSE

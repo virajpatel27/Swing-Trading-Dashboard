@@ -1,0 +1,8 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2018-07-12,bonus,1:1,0.5,,ratio from NSE text,applied,Bonus 1:1/Dividend- Rs 13.5 Per Share,NSE
+2018-07-12,dividend,,1,13.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Bonus 1:1/Dividend- Rs 13.5 Per Share,NSE
+2019-07-19,dividend,,1,6.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend Rs 6.75 Per Share,NSE
+2023-09-08,dividend,,1,7.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 7.20 Per Share,NSE
+2024-09-11,dividend,,1,10,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 10 Per Share,NSE
+2025-09-04,dividend,,1,10,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 10 Per Share,NSE
+2026-09-04,dividend,,1,13.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 13.25 Per Share,NSE

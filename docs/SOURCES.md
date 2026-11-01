@@ -43,6 +43,13 @@ Script: `scripts/probe_sources.py`.
 - BSE answered from the PC. The old project found BSE refuses GitHub's servers -> checked by the GitHub probe.
 - Angel One instrument master: 147,460 instruments, 2,745 NSE "-EQ" stocks.
 
+## Corporate actions (Phase 4)
+- NSE `api/corporates-corporateActions?index=equities&from_date=01-01-YYYY&to_date=31-12-YYYY`: a whole year per call.
+- NSE bhavcopy PREVCLOSE is the raw previous close even on ex-dates (not adjusted): it cannot give factors.
+- Yahoo `Close` (auto_adjust=False) is adjusted for splits/bonus and often, not always, for demergers/rights; it has errors
+  (history before some 1-January not adjusted, stale days). Used only as a cross-check.
+- BSE corporate actions (secondary) answer only the PC; not needed so far (NSE covered every stock in the universe).
+
 ## Open questions for Phase 3
 - Daily values for the ~110 BSE indices that Angel One does not list (BSE API refuses GitHub).
 - (answered) NSE's `ind_close_all` archive starts 21-Feb-2012 (30 indices that day).

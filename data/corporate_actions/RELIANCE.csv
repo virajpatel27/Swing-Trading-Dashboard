@@ -1,0 +1,26 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-03-21,dividend,,1,11,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Rs.11/- Per Sh Purpose Revised,NSE
+2008-05-08,dividend,,1,13,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Rs.13 Per Share,NSE
+2009-10-16,dividend,,1,13,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Rs.13/- Per Share,NSE
+2009-11-26,bonus,1:1,0.5,,ratio from NSE text,applied,Bonus 1:1,NSE
+2010-05-10,dividend,,1,7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend Rs 7 Per Share,NSE
+2011-05-05,dividend,,1,8,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Rs.8/- Per Share,NSE
+2012-05-31,dividend,,1,8.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.8.50 Per Share,NSE
+2013-05-10,dividend,,1,9,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend Rs. 9 Per Equity Share,NSE
+2014-05-16,dividend,,1,9.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend Rs. 9.50 Per Equity Share,NSE
+2015-05-08,dividend,,1,10,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 10/- Per Share,NSE
+2016-03-17,dividend,,1,10.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 10.50/- Per Share (Purpose Revised),NSE
+2017-07-13,dividend,,1,11,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 11/- Per Share,NSE
+2017-09-07,bonus,1:1,0.5,,ratio from NSE text,applied,Bonus 1:1,NSE
+2018-06-27,dividend,,1,6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend- Rs 6 Per Share,NSE
+2019-08-02,dividend,,1,6.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 6.50 Per Share,NSE
+2020-05-13,rights,1:15,0.99060968,1257,"TERP, issue price 1257, close before 1479.25",applied,Rights 1:15 @ Premium Rs 1247,NSE
+2020-07-02,dividend,,1,6.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 6.50 Per Share,NSE
+2021-06-11,dividend,,1,7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 7 Per Share,NSE
+2022-08-18,dividend,,1,8,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 8 Per Share,NSE
+2023-07-20,demerger,,0.90785932,,open 2580 / close before 2841.85,applied,Demerger,NSE
+2023-08-21,dividend,,1,9,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 9 Per Share,NSE
+2024-08-19,dividend,,1,10,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 10 Per Share,NSE
+2024-10-28,bonus,1:1,0.5,,ratio from NSE text,applied,Bonus 1:1,NSE
+2025-08-14,dividend,,1,5.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 5.5 Per Share,NSE
+2026-06-05,dividend,,1,6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 6 Per Share,NSE

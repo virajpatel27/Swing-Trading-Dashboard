@@ -1,0 +1,67 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-01-25,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Re.1/- Per Sh Purpose Revised,NSE
+2007-05-03,dividend,,1,1.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,4th Int Div-Rs1.25 Per Shpurpose Revised,NSE
+2007-08-07,dividend,,1,0.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Re.0.75 Per Sh Purpose Revised,NSE
+2007-10-30,dividend,,1,0.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Re.0.75 Per Sh Purpose Revised,NSE
+2008-01-23,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,3rd Int Div - Re 1 Per Sh,NSE
+2008-03-12,rights,1:7,0.98617137,123,"TERP, issue price 123, close before 138.3",applied,Rights-Eq 1:7@Prem Rs122,NSE
+2008-05-05,dividend,,1,0.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,4th Interim Dividend-75% Purpose Revised,NSE
+2008-08-01,dividend,,1,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Fin Div-75% + Int Div-75%Purpose Revised,NSE
+2008-10-31,dividend,,1,0.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,2nd Interim Dividend -75%Purpose Revised,NSE
+2009-01-29,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,3rd Interim Dividend-100%Purpose Revised,NSE
+2009-05-11,dividend,,1,0.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,4th Int Div-Re.0.75 Pr Shpurpose Revised,NSE
+2009-11-13,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,2nd Int Div-Re.1/- Pr Shrpurpose Revised,NSE
+2010-02-01,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,3rd Int Div-Re.1/- Pr Shrpurpose Revised,NSE
+2010-05-03,dividend,,1,1.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,4th Int Div-Re.1.25 Pr Shpurpose Revised,NSE
+2010-07-30,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend-Re.1/- Per Share (Purpose Revised),NSE
+2010-11-08,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1 Per Share (Purpose Revised),NSE
+2011-01-28,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,3rd Interim Dividend-Re.1/- Per Share (Purpose Revised),NSE
+2011-05-09,dividend,,1,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,4th Interim Dividend - Rs 1.50 Per Share (Purpose Revised),NSE
+2011-07-29,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend Re.1/- Per Share (Purpose Revised),NSE
+2011-11-01,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,2nd Interim Dividend Re.1/- Per Share (Purpose Revised),NSE
+2012-01-30,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,3rd Interim Dividend Re.1/- Per Share (Purpose Revised),NSE
+2012-05-09,dividend,,1,1.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,4th Interim Dividend Rs.1.75 Per Share (Purpose Revised),NSE
+2012-11-08,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,2nd Interim Dividend Re.1/- Per Share (Purpose Revised),NSE
+2013-02-07,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend Re 1 Per Share (Purpose Revised),NSE
+2013-05-08,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Fourth Interim Dividend Rs.2/- Per Equity Share (Purpose Revised),NSE
+2013-08-08,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1/- Per Share (Purpose Revised),NSE
+2013-11-18,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,2nd Interim Dividend Re.1/- Per Share (Purpose Revised),NSE
+2014-02-07,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Third Interim Dividend - Re 1/- Per Share (Purpose Revised),NSE
+2014-05-06,dividend,,1,2.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Fourth Interim Dividend - Rs 2.25/- Per Share (Purpose Revised),NSE
+2014-08-01,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1/- Per Share (Purpose Revised),NSE
+2014-11-11,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,2nd Interim Dividend Re.1/- Per Share (Purpose Revised),NSE
+2015-02-12,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Third Interim Dividend - Re 1/- Per Share (Purpose Revised),NSE
+2015-05-05,dividend,,1,2.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Fourth Interim Dividend - Rs 2.50/- Per Share (Purpose Revised),NSE
+2015-08-05,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1/- Per Share (Purpose Revised),NSE
+2015-10-30,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1/- Per Share (Purpose Revised),NSE
+2016-02-03,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1/- Per Share (Purpose Revised),NSE
+2016-05-10,dividend,,1,2.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 2.75/- Per Share (Purpose Revised),NSE
+2016-08-05,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1/- Per Share (Purpose Revised),NSE
+2016-11-15,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend Re 1/- Per Share (Purpose Revised),NSE
+2017-02-06,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend Re 1/- Per Share (Purpose Revised),NSE
+2017-05-16,dividend,,1,12,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend Rs 12/- Per Share (Purpose Revised),NSE
+2017-06-22,bonus,1:1,0.5,,ratio from NSE text,applied,Bonus 1:1,NSE
+2017-08-07,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1/- Per Share (Purpose Revised),NSE
+2017-11-08,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1/- Per Share (Purpose Revised),NSE
+2018-02-06,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend -Re 1/- Per Share (Purpose Revised),NSE
+2018-05-15,dividend,,1,7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend- Rs 7 Per Share (Purpose Revised),NSE
+2018-08-06,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend-Rs 2/- Per Share (Purpose Revised),NSE
+2018-09-12,bonus,1:2,0.66666667,,ratio from NSE text,applied,Bonus 1:2,NSE
+2018-11-13,dividend,,1,4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 4 Per Share,NSE
+2019-02-05,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 2 Per Share,NSE
+2019-05-10,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 2 Per Share,NSE
+2019-08-08,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 2 Per Share,NSE
+2019-11-14,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 2 Per Share,NSE
+2020-02-05,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 2 Per Share,NSE
+2023-11-09,dividend,,1,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 5 Per Share,NSE
+2024-05-14,dividend,,1,10,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 10 Per Share,NSE
+2024-08-16,dividend,,1,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 5 Per Share,NSE
+2024-10-31,dividend,,1,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 5 Per Share,NSE
+2025-02-03,dividend,,1,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 5 Per Share,NSE
+2025-05-13,dividend,,1,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 5 Per Share,NSE
+2025-08-13,dividend,,1,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 5 Per Share,NSE
+2025-11-07,dividend,,1,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 5 Per Share,NSE
+2026-01-30,dividend,,1,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 5 Per Share,NSE
+2026-05-12,dividend,,1,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 5 Per Share,NSE
+2026-08-13,dividend,,1,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 5 Per Share,NSE
+2026-11-04,dividend,,,5,,future,Interim Dividend - Rs 5 Per Share,NSE

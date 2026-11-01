@@ -1,0 +1,2 @@
+symbol,ex_date,type,ratio,factor,note
+SUNTV,2007-07-23,split,price-derived,0.5,"NSE text 'Agm/Spl/Bon-1:1/Div-20%' has no split ratio; close 1758.75 -> 436.60 (x0.248) = bonus 1:1 (x0.5) times 0.5"

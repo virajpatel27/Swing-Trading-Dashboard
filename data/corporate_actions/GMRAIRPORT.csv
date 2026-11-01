@@ -1,0 +1,7 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-09-28,split,FV 10->2,0.2,,ratio from NSE text,applied,Fv Split Rs.10/- To Rs.2/,NSE
+2009-10-01,split,FV 2->1,0.5,,ratio from NSE text,applied,Fv Split Rs.2/- To Re.1/-,NSE
+2013-09-05,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.10/- Per Share,NSE
+2014-09-09,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend - Re 0.10/- Per Share,NSE
+2015-03-11,rights,3:14,0.98109244,15,"TERP, issue price 15, close before 16.8",applied,Rights 3:14 @ Premium Rs 14/- Per Share,NSE
+2022-01-11,demerger,,0.90299278,,open 43.75 / close before 48.45,applied,Demerger,NSE

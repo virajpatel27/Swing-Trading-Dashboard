@@ -648,5 +648,5 @@ BSE BSE REALTY,warn,unexplained jump,2009-05-18,close moved 23.4% (to 2968.75)
 BSE BSE SME IPO,warn,bad candle,2013-05-24,O 255.07 H 256.07 L 254.85 C 256.08
 BSE BSE SME IPO,warn,bad candle,2015-10-08,O 806.81 H 809.6 L 806.33 C 809.61
 BSE BSE SME IPO,warn,bad candle,2023-06-30,O 26094.94 H 26377.13 L 26082.26 C 26082.25
-NSE TMPV,warn,corporate action without factor,2008-09-09,rights: rights without issue price
 NSE TATASTEEL,warn,corporate action without factor,2007-10-29,rights: rights without issue price
+NSE TMPV,warn,corporate action without factor,2008-09-09,rights: rights without issue price

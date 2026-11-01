@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-01 12:01",
+ "generated_at": "2026-11-01 12:17",
  "disclaimer": "Educational purpose only, not investment advice.",
  "levels": "NSE classification: sector -> industry -> stocks",
  "sectors": [
@@ -416,10 +416,10 @@
      "chg_1m": 3.07,
      "chg_3m": 3.01,
      "chg_6m": 16.59,
-     "chg_1y": NaN,
+     "chg_1y": null,
      "pct_above_ema50": 0.0,
      "pct_above_ema200": 100.0,
-     "avg_rs_rating": NaN,
+     "avg_rs_rating": null,
      "constituents": [
       "PWL"
      ],

@@ -147,3 +147,18 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   Snapshot rebuilt with sectors: latest.json 298 KB, sectors.json 34 KB; data check 0 errors. On 30-Oct-2026 Media and IT rank
   top by momentum, Construction / Diversified bottom. **Phase 5 done.**
 - NEXT: Viraj commits + pushes; "continue" -> Phase 6 (website).
+- Viraj pushed (1534a73), "Ha, continue" -> **Phase 6**.
+- `site/`: index.html, styles.css (tokens, light/dark incl. toggle saved in localStorage), logic.js (pure: filters, sort, CSV,
+  Indian number format, raw = adjusted / factor, weekly candles, EMA, ranges, heat levels; 10 node tests in tests/js),
+  app.js (hash routes: Market table, Screener with 8 conditions, Sectors heatmap -> industries -> stocks, Watchlist in
+  localStorage, detail page with lightweight-charts@4.2.0 from unpkg loaded only when a chart opens: candles, EMA 20/50/200,
+  volume, corporate-action markers, 1M..MAX with weekly candles for 3Y/5Y/MAX, Adjusted/Raw toggle - EMAs hidden in Raw),
+  sw.js (app files cache-first, data network-first, offline copy), manifest + icons (scripts/make_icons.py, pure-Python PNG).
+- `swingdash/site_build.py` + `scripts/build_site.py` -> _site/ (git-ignored): 778 chart files, 107 MB (RELIANCE 265 KB).
+- Bug found in the browser: sectors.json had NaN (browsers reject it). Fixed (null), JSON now written with allow_nan=False,
+  data check rejects NaN/Infinity in snapshot files. Test added.
+- Browser checks (local http.server on 8765): all routes work, no console errors, no page-wide horizontal scroll at 375 px
+  on market / detail / sectors / screener, dark mode + chart colours switch.
+- `.github/workflows/deploy-site.yml` (push to site/snapshot, manual, workflow_call): build + upload-pages-artifact@v4 +
+  deploy-pages@v4. Needs Settings -> Pages -> Source = GitHub Actions BEFORE the first run. Tests workflow runs the JS tests too.
+- Tests: 94 Python + 10 JS green.

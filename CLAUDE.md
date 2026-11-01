@@ -43,6 +43,9 @@ Viraj. **Not a programmer.** Answer in Gujarati-English mix (Latin letters), sho
 - Adjusted prices: `<python> scripts/build_adjusted.py` (NSE corporate actions -> `data/corporate_actions/`, `data/stocks/adjusted/`;
   raw never changed). Fixes for incomplete NSE records: `config/corporate_action_overrides.csv` (always with a note).
   Validation only: `<python> scripts/crosscheck_yfinance.py` -> `data/meta/crosscheck_yfinance.csv`.
+- Website: `site/` (logic.js = pure, tested with `node --test tests/js/*.test.js`; app.js = page). Build `<python> scripts/build_site.py`
+  -> `_site/` (git-ignored). Preview: the "site" entry in `C:\Users\hello\OneDrive\Documents\Swing Trading\.claude\launch.json`
+  (http.server on 8765). Published by `.github/workflows/deploy-site.yml` to GitHub Pages.
 - Storage: `swingdash/store.py` - per instrument `hist_<y0>_<y1>.parquet` (closed years) + `current.csv` (this year).
   Meta: `data/meta/instruments.csv`, `data_issues.csv`, `health.json`, `trading_days.csv`, `universe_stocks.csv`, `indices_nse.csv`, `indices_bse.csv`.
 

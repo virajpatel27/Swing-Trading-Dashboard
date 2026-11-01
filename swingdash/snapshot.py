@@ -147,8 +147,10 @@ def build_sectors(snap: pd.DataFrame) -> dict:
             return items
         score = (df["chg_1m"].rank(pct=True) + df["chg_3m"].rank(pct=True)) / 2
         df["momentum"] = score.round(3)
-        df["momentum_rank"] = score.rank(ascending=False, method="min").astype(int)
-        return df.sort_values("momentum_rank").to_dict("records")
+        df["momentum_rank"] = score.rank(ascending=False, method="min", na_option="bottom").astype(int)
+        df = df.sort_values("momentum_rank")
+        # browsers reject NaN in JSON: missing numbers become null
+        return [{k: (None if isinstance(v, float) and not np.isfinite(v) else v) for k, v in rec.items()} for rec in df.to_dict("records")]
 
     sectors = []
     for sec, g in st.groupby("sector"):
@@ -163,8 +165,9 @@ def write(data: Path, latest: dict, sectors: dict) -> None:
     out = data / "snapshot"
     out.mkdir(parents=True, exist_ok=True)
     head = {k: v for k, v in latest.items() if k != "rows"}
-    lines = [json.dumps(row, separators=(",", ":"), ensure_ascii=False) for row in latest["rows"]]
-    text = json.dumps(head, ensure_ascii=False)[:-1] + ',\n"rows":[\n' + ",\n".join(lines) + "\n]}\n"
+    # allow_nan=False: a NaN would make the file unreadable for browsers, so fail here instead
+    lines = [json.dumps(row, separators=(",", ":"), ensure_ascii=False, allow_nan=False) for row in latest["rows"]]
+    text = json.dumps(head, ensure_ascii=False, allow_nan=False)[:-1] + ',\n"rows":[\n' + ",\n".join(lines) + "\n]}\n"
     (out / "latest.json").write_text(text, encoding="utf-8", newline="\n")
-    (out / "sectors.json").write_text(json.dumps(sectors, ensure_ascii=False, indent=1, default=str) + "\n",
+    (out / "sectors.json").write_text(json.dumps(sectors, ensure_ascii=False, indent=1, default=str, allow_nan=False) + "\n",
                                       encoding="utf-8", newline="\n")

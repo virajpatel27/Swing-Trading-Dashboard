@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Swing Trading Dashboard</title>
+  <meta name="description" content="NSE and BSE indices and Nifty 500 stocks for swing traders: adjusted prices since 2007, indicators, screener, sectors.">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // theme before first paint (no flash): saved choice, else the system setting
+    try { const t = localStorage.getItem("sd-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="#/"><img src="icons/favicon-32.png" alt="" width="22" height="22"><span>Swing Trading Dashboard</span></a>
+    <nav class="tabs" aria-label="Main">
+      <a href="#/" data-tab="market">Market</a>
+      <a href="#/screener" data-tab="screener">Screener</a>
+      <a href="#/sectors" data-tab="sectors">Sectors</a>
+      <a href="#/watchlist" data-tab="watchlist">Watchlist</a>
+    </nav>
+    <button id="theme" class="icon-btn" type="button" aria-label="Switch dark / light mode" title="Dark / light mode">◐</button>
+  </header>
+  <div id="status" class="status" role="status">Loading…</div>
+  <main id="view" tabindex="-1"></main>
+  <footer class="foot">
+    <p><strong>Educational purpose only, not investment advice.</strong> End-of-day data; may contain errors.</p>
+    <p>Sources: NSE (bhavcopy, indices, corporate actions, classification), BSE (indices). Stock prices are adjusted for splits,
+      bonus, rights and demergers (toggle "Raw" on a chart to see prices as traded). Charts by
+      <a href="https://www.tradingview.com/" target="_blank" rel="noopener">TradingView</a> Lightweight Charts™.</p>
+  </footer>
+  <script src="logic.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

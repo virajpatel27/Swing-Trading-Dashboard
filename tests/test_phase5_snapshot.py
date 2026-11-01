@@ -89,3 +89,16 @@ def test_data_check_catches_incomplete_snapshot(tmp_path):
     latest["rows"] = latest["rows"][:2]
     snapshot.write(data, latest, sectors)
     assert meta.check_snapshot(data, rows)[0]["check"] == "snapshot incomplete"
+
+
+def test_snapshot_files_have_no_nan_for_browsers(tmp_path):
+    from swingdash import meta
+    data = make_market(tmp_path)
+    latest, sectors = snapshot.build(data, log=lambda m: None)   # FLAT/UPCO have no 3Y move -> missing values
+    snapshot.write(data, latest, sectors)
+    for name in ("latest.json", "sectors.json"):
+        text = (data / "snapshot" / name).read_text(encoding="utf-8")
+        assert "NaN" not in text and "Infinity" not in text
+    (data / "snapshot/sectors.json").write_text('{"sectors": [{"chg_1y": NaN}]}')
+    rows = [{"kind": "stock", "rows": 400, "last_date": latest["data_date"]}] * 5
+    assert meta.check_snapshot(data, rows)[0]["check"] == "snapshot unreadable"

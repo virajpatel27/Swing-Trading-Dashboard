@@ -67,10 +67,15 @@ def check_snapshot(data: Path, rows: list[dict]) -> list[dict]:
     p = data / "snapshot" / "latest.json"
     if not p.exists():
         return []
+    def no_nan(token):
+        raise ValueError(f"{token} is not allowed in JSON")       # browsers cannot read NaN / Infinity
     try:
-        snap = json.loads(p.read_text(encoding="utf-8"))
-    except ValueError:
-        return [validate.issue("snapshot", "error", "snapshot unreadable", "latest.json is not valid JSON")]
+        snap = json.loads(p.read_text(encoding="utf-8"), parse_constant=no_nan)
+        sec = data / "snapshot" / "sectors.json"
+        if sec.exists():
+            json.loads(sec.read_text(encoding="utf-8"), parse_constant=no_nan)
+    except ValueError as exc:
+        return [validate.issue("snapshot", "error", "snapshot unreadable", f"not valid JSON for browsers: {str(exc)[:80]}")]
     expected = sum(1 for r in rows if r["kind"] in ("stock", "index") and r["rows"] >= 2)
     newest = max((r["last_date"] for r in rows if r["last_date"]), default="")
     out = []

@@ -35,7 +35,8 @@ def scan(data: Path, trading_days: pd.DatetimeIndex | None, jump_pct: float, old
         if not base.exists():
             continue
         has_adjusted = (data / "stocks" / "adjusted").exists()
-        for folder in sorted(p for p in base.iterdir() if p.is_dir()):
+        # sort by the plain name: Windows sorts paths case-insensitively, Linux does not ("J_KBANK" vs "JAINREC")
+        for folder in sorted((p for p in base.iterdir() if p.is_dir()), key=lambda p: p.name):
             rel = f"{sub}/{folder.name}"
             df = store.read(folder, cols)
             label = f"{exch} {names.get(folder.name, folder.name)}" + (" (adjusted)" if kind == "stock-adjusted" else "")

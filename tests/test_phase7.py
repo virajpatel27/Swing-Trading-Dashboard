@@ -119,3 +119,12 @@ def test_placeholder_symbols_are_left_out(tmp_path):
     ctx = make_ctx(tmp_path, FakeHttp(lambda url: Resp(200, uni.encode())))
     ctx.universe["stocks"]["exclude_prefixes"] = ["DUMMY"]
     assert backfill.stock_universe(ctx)["symbol"].tolist() == ["TCS"]
+
+
+def test_instrument_list_order_is_the_same_on_windows_and_linux(tmp_path):
+    data = tmp_path / "data"
+    for sid in ("JAINREC", "J_KBANK", "jlow"):
+        store.write(data / "indices/bse" / sid, pd.DataFrame({"date": pd.to_datetime(["2026-01-01"]), "open": 1.0, "high": 1.0,
+                                                               "low": 1.0, "close": 1.0}), store.INDEX_COLS, date(2026, 3, 1))
+    inst, _ = meta.scan(data, None, 20.0, None, 1.0)
+    assert inst["id"].tolist() == ["JAINREC", "J_KBANK", "jlow"]          # plain string order ('A' < '_' < 'j')

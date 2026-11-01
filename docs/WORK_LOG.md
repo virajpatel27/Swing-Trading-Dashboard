@@ -184,3 +184,9 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   `backfill.yml` got `symbols` / `from_date` inputs (new Nifty 500 stocks) and deploys after such a run.
 - Local dry run (Sunday 01-Nov): 5 min, re-read 5 bhavcopies + index files, 0 adjusted files changed, snapshot not rewritten,
   only `nse_stocks.json` changed once (old "updated" field removed). Tests: 101 Python + 10 JS green, mutation caught.
+- Viraj pushed (2a1f829) and ran Daily update #1 by hand (run 41285843577): **Success**, 4.5 min incl. deploy; summary "new
+  trading days: none" (Sunday). The bot commit (ec8a88c) only re-ordered instruments.csv / data_issues.csv: Windows sorts
+  paths case-insensitively, Linux not (J_KBANK). Fixed: sort by plain name; test added (102 green).
+  Remaining warnings: Node 20 deprecation for actions/cache@v4, upload-pages-artifact, deploy-pages@v4 (harmless for now).
+- **Phase 7 done.** First real daily data: Monday 02-Nov-2026 20:15 IST (stocks) and 23:50 IST (indices).
+- NEXT: Viraj pulls the bot commit, commits the sort fix; "continue" -> Phase 8 (backup, restore, integrity, branch rules, README).

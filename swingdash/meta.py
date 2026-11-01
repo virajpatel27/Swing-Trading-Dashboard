@@ -55,10 +55,30 @@ def scan(data: Path, trading_days: pd.DatetimeIndex | None, jump_pct: float, old
     for path in old_rows:
         if path not in now:
             issues.append(validate.issue(path, "error", "instrument disappeared", "folder is gone"))
+    issues += check_snapshot(data, rows)
     adj_issues = data / "meta" / "adjust_issues.csv"
     if adj_issues.exists() and adj_issues.stat().st_size:
         issues += pd.read_csv(adj_issues, dtype=str).fillna("").to_dict("records")
     return pd.DataFrame(rows, columns=INSTRUMENT_COLS), issues
+
+
+def check_snapshot(data: Path, rows: list[dict]) -> list[dict]:
+    """latest.json must cover (nearly) every stock and index and carry the newest data date."""
+    p = data / "snapshot" / "latest.json"
+    if not p.exists():
+        return []
+    try:
+        snap = json.loads(p.read_text(encoding="utf-8"))
+    except ValueError:
+        return [validate.issue("snapshot", "error", "snapshot unreadable", "latest.json is not valid JSON")]
+    expected = sum(1 for r in rows if r["kind"] in ("stock", "index") and r["rows"] >= 2)
+    newest = max((r["last_date"] for r in rows if r["last_date"]), default="")
+    out = []
+    if len(snap.get("rows", [])) < 0.95 * expected:
+        out.append(validate.issue("snapshot", "error", "snapshot incomplete", f"{len(snap.get('rows', []))} rows for {expected} instruments"))
+    if snap.get("data_date") != newest:
+        out.append(validate.issue("snapshot", "warn", "snapshot date", f"snapshot {snap.get('data_date')}, newest data {newest}"))
+    return out
 
 
 def check_adjusted_vs_raw(label: str, adj: pd.DataFrame, raw: pd.DataFrame) -> list[dict]:

@@ -129,3 +129,21 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Tests: 76 green (22 Phase 4 incl. real RELIANCE bonus / IRCTC split / RELIANCE demerger), mutations caught.
   Size now: raw 71 MB, adjusted 53 MB, indices 21 MB, CA 2 MB = ~147 MB, 3,001 files.
 - NEXT: Viraj commits + pushes; "continue" -> Phase 5 (sector/industry, indicators, relative strength, snapshot).
+- Viraj pushed (688b762), "Ha, continue" -> **Phase 5**.
+- NSE GetQuoteApi gives macro / sector / industryInfo / basicIndustry + indexList (index memberships). `swingdash/classification.py`
+  + `scripts/fetch_classification.py` -> data/meta/classification.csv (asks only missing or > 30-day-old entries, keeps the last
+  good entry when NSE fails, Nifty 500 list industry as fallback). Fetch for 500 stocks started 11:2x in background (NSE ~3-5 s/call).
+- `swingdash/indicators.py`: EMA 10/20/50/200, RSI14 + ATR14 (Wilder), MACD 12/26/9, 52W high/low (252 days), returns
+  1D..5Y, trend rule, breakout/breakdown 52W and 20D, volume spike, RS vs benchmark (3M/6M) and RS rating 1-99
+  (0.4*3M + 0.2*6M + 0.2*9M + 0.2*12M, percentile; stocks among stocks, indices among indices, stale ones not ranked).
+- `swingdash/snapshot.py` + `scripts/build_snapshot.py` -> data/snapshot/latest.json (column-wise, one instrument per line,
+  271 KB, 778 rows, ~1.5 min) and sectors.json (sector -> industry -> constituents, medians, % above EMA50/200, momentum
+  rank = avg percentile of median 1M and 3M). First real run: 3 stale (BSE CARBONEX, GREENEX, Liquid Rate - discontinued),
+  trend of 500 stocks on 30-Oct-2026: 232 strong downtrend, 158 sideways, 45 strong uptrend.
+- Data check: snapshot must cover >= 95 % of instruments (error) and carry the newest date (warn).
+- Tests: 90 green (indicators by hand calculations, snapshot on a small fake market, classification fallbacks); mutations
+  caught (raw instead of adjusted, stale ranked).
+- Classification done: 500 of 501 from NSE (13 macro, 20 sectors, 52 industries, 126 basic industries); DUMMYHEG = fallback.
+  Snapshot rebuilt with sectors: latest.json 298 KB, sectors.json 34 KB; data check 0 errors. On 30-Oct-2026 Media and IT rank
+  top by momentum, Construction / Diversified bottom. **Phase 5 done.**
+- NEXT: Viraj commits + pushes; "continue" -> Phase 6 (website).

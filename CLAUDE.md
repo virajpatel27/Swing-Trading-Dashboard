@@ -51,7 +51,9 @@ Phase 1 plan approved 2026-10-31 (daily 20:15 IST OK). Phase 2: skeleton + PC pr
 https://github.com/virajpatel27/Swing-Trading-Dashboard, Tests green, Secrets set, GitHub probe done. **Phase 2 done** (2026-10-31).
 **Phase 3 done** (2026-11-01): storage, backfill (steps A files / B walk-back / C gaps / D lonely early rows), validation, 42 tests.
 Data: 500 stocks 2007 -> 2026-10-30 (raw), 139 NSE + 139 BSE indices, 2.34 M rows, 92 MB, 0 errors.
-**Phase 4 done** (2026-11-01): corporate actions + adjusted prices for 500 stocks, 76 tests, ~147 MB. Next: Phase 5.
+**Phase 4 done** (2026-11-01): corporate actions + adjusted prices for 500 stocks, 76 tests, ~147 MB.
+**Phase 5 done** (2026-11-01): NSE classification (`scripts/fetch_classification.py`), indicators, RS, `scripts/build_snapshot.py`
+-> `data/snapshot/latest.json` + `sectors.json`. 90 tests. Next: Phase 6 (website).
 - NSE bhavcopy PREVCLOSE is NOT adjusted on ex-dates; Yahoo's adjusted history has its own errors (see WORK_LOG 2026-11-01).
 - NSE's API never answers some windows (seems to hang for ranges before an index existed): a window failing twice is skipped.
 - Bot commits data on GitHub: Viraj must Pull origin before he commits. Don't poll api.github.com often (60 calls/hour without a token): read the run page HTML.

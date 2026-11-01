@@ -390,3 +390,29 @@ def test_nse_parsers_fill_close_only_rows():
     df = nse.parse_index_history([{"EOD_TIMESTAMP": "02-JAN-2007", "EOD_OPEN_INDEX_VAL": None, "EOD_HIGH_INDEX_VAL": None,
                                    "EOD_LOW_INDEX_VAL": None, "EOD_CLOSE_INDEX_VAL": 5.0}])
     assert df.iloc[0][["open", "high", "low", "close"]].tolist() == [5.0] * 4
+
+
+def test_walk_skips_a_window_that_fails_twice(tmp_path):
+    def route(url):
+        if "ind_close_all" in url:
+            return Resp(404)
+        if "allIndices" in url:
+            return Resp(200, data={"data": [{"index": "NIFTY 50", "key": "BROAD"}]})
+        frm = pd.to_datetime(url.split("from=")[1].split("&")[0], format="%d-%m-%Y")
+        to = pd.to_datetime(url.split("to=")[1].split("&")[0], format="%d-%m-%Y")
+        if frm <= pd.Timestamp("2025-10-15") <= to:
+            raise ConnectionError("NSE never answers this window")
+        if to < pd.Timestamp("2025-03-01"):
+            return Resp(200, data={"data": []})
+        return Resp(200, data={"data": [{"EOD_TIMESTAMP": to.strftime("%d-%b-%Y"), "EOD_CLOSE_INDEX_VAL": 1}]})
+    ctx = make_ctx(tmp_path, FakeHttp(route))
+    ctx.universe["history_start"] = "2024-01-01"
+    ctx.settings["nse_index_file_start"] = "2026-02-27"
+    r1 = backfill.backfill_nse_indices(ctx, until=date(2026, 2, 28))
+    assert "never answers" in r1["stopped"]                          # 1st failure: stop, retry later
+    r2 = backfill.backfill_nse_indices(ctx, until=date(2026, 2, 28))
+    assert r2["stopped"] == "" and r2["finished_total"] == 1          # 2nd failure: skipped, walk finished
+    st = json.loads((tmp_path / "data/meta/checkpoints/nse_indices.json").read_text())["walk"]["NIFTY 50"]
+    assert len(st["skipped"]) == 1
+    df = store.read(tmp_path / "data/indices/nse/NIFTY_50", store.INDEX_COLS)
+    assert df["date"].min() < pd.Timestamp("2025-10-01")              # older windows still fetched after the skip

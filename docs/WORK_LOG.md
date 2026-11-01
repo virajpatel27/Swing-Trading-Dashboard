@@ -82,3 +82,11 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   indices 19 MB, meta 0.3 MB = ~90 MB (plan estimate was ~160 MB).
 - NEXT: Viraj commits code + data (GitHub Desktop), runs Backfill history (nse-indices) on GitHub until it says nothing is left,
   then pulls the bot's commits. Open question for Phase 7: daily values for the ~100 BSE indices Angel One does not list.
+
+## 2026-11-01
+- Viraj pushed Phase 3 (1a61268), Tests green. Backfill history #1 (run 41218210541, nse-indices) = "Success" in 30 min but no
+  progress: stuck on the SAME window as the PC (NIFTY100 LOW VOLATILITY 30, window ending 16-Nov-2008, ReadTimeout). So NSE had
+  not blocked the PC: this one request never answers, and the script kept asking it. Bot commit da1d1b0 changed only meta files.
+- Fix: a window that fails twice is skipped and listed (`walk[name].skipped`, gaps: listed as empty with `fails`), the walk goes on.
+  Test + mutation check. 41 tests green.
+- NEXT: Viraj Pull origin (bot commit), commit + push the fix, run Backfill history (nse-indices) again.

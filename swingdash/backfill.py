@@ -260,22 +260,25 @@ def nse_index_gaps(ctx: Ctx, lst: pd.DataFrame, cp: dict, cp_path: Path) -> str:
         span = days[(days >= have["date"].min()) & (days <= have["date"].max())]
         missing = list(span.difference(pd.DatetimeIndex(have["date"])))
         windows = [w for w in gap_windows(missing, chunk) if [w[0].isoformat(), w[1].isoformat()] not in [list(e) for e in empty]]
-        parts, stopped = [], ""
+        parts, stopped, fails = [], "", dict(st.get("fails", {}))
         for a, b in windows:
             if ctx.out_of_time():
                 stopped = "time limit"
                 break
             try:
                 df = nse.index_history(ctx.http, row.name, a, b)
-            except Exception as exc:  # noqa: BLE001
-                stopped = f"gaps {row.name} {a}: {type(exc).__name__}: {str(exc)[:120]}"
-                break
+            except Exception as exc:  # noqa: BLE001 - a window that fails twice is given up (listed as empty)
+                fails[a.isoformat()] = fails.get(a.isoformat(), 0) + 1
+                if fails[a.isoformat()] < 2:
+                    stopped = f"gaps {row.name} {a}: {type(exc).__name__}: {str(exc)[:120]}"
+                    break
+                df = pd.DataFrame()
             if df.empty:
                 empty.append((a.isoformat(), b.isoformat()))
             else:
                 parts.append(df)
         store.write(folder, store.fill_ohl(pd.concat([have, *parts], ignore_index=True)), store.INDEX_COLS, ctx.today)
-        gaps[row.name] = {"done": not stopped, "empty": [list(e) for e in empty], "filled_windows": len(parts)}
+        gaps[row.name] = {"done": not stopped, "empty": [list(e) for e in empty], "filled_windows": len(parts), "fails": fails}
         save_json(cp_path, cp)
         if stopped:
             return stopped
@@ -306,6 +309,7 @@ def backfill_nse_indices(ctx: Ctx, until: date | None = None) -> dict:
             have = store.read(ctx.data / "indices" / "nse" / row.id, store.INDEX_COLS)
             end = have["date"].min().date() - timedelta(days=1) if len(have) else until
         empties, parts = int(st.get("empties", 0)), []
+        fails, skipped = dict(st.get("fails", {})), list(st.get("skipped", []))
         while end >= ctx.start and empties < 2:
             if ctx.out_of_time():
                 stopped = "time limit"
@@ -314,14 +318,23 @@ def backfill_nse_indices(ctx: Ctx, until: date | None = None) -> dict:
             try:
                 df = nse.index_history(ctx.http, row.name, begin, end)
             except Exception as exc:  # noqa: BLE001
-                stopped = f"{row.name} {begin}: {type(exc).__name__}: {str(exc)[:120]}"
-                break
-            if df.empty:
+                # NSE never answers some windows (e.g. NIFTY100 LOW VOLATILITY 30 around Nov-2008, from PC and GitHub alike):
+                # after the 2nd failure of the same window it is skipped and listed, so the walk goes on
+                key = begin.isoformat()
+                fails[key] = fails.get(key, 0) + 1
+                if fails[key] < 2:
+                    st = {**st, "fails": fails, "skipped": skipped}
+                    stopped = f"{row.name} {begin}: {type(exc).__name__}: {str(exc)[:120]}"
+                    break
+                skipped.append([key, end.isoformat()])
+                ctx.log(f"  NSE {row.name}: window {key}..{end} failed twice, skipped")
+                df = None
+            if df is not None and df.empty:
                 empties += 1
-            else:
+            elif df is not None:
                 empties = 0
                 parts.append(df)
-            st = {"oldest_checked": begin.isoformat(), "empties": empties}
+            st = {"oldest_checked": begin.isoformat(), "empties": empties, "fails": fails, "skipped": skipped}
             end = begin - timedelta(days=1)
         if parts:
             merge_write(ctx.data / "indices" / "nse" / row.id, pd.concat(parts, ignore_index=True), store.INDEX_COLS, ctx.today)

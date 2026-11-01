@@ -90,3 +90,13 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Fix: a window that fails twice is skipped and listed (`walk[name].skipped`, gaps: listed as empty with `fails`), the walk goes on.
   Test + mutation check. 41 tests green.
 - NEXT: Viraj Pull origin (bot commit), commit + push the fix, run Backfill history (nse-indices) again.
+- Pushed (925c52e + merge 2fa51f2). Backfill history #2 (run 41257286029, ~1.5 h): walk 57 -> 117 of 139, data check 0 errors,
+  2,297,373 rows, bot commit fb5ccf3. Skipped windows (failed twice): NIFTY RURAL 2015-10..2016-04, NIFTY100 ESG 2013-04..2013-10
+  - probably before those indices existed: NSE's API seems to hang instead of answering "empty" for some such ranges.
+- NEXT: run Backfill history (nse-indices) once more for the last 22 indices + step C (gaps).
+- Backfill history #3 (run 41265003200): walk 139/139, gaps 139/139 (597 windows filled, 1,105 empty, 0 failed), bot commit
+  c54cf66. Data check: 2,335,940 rows, 0 errors, 1,151 warnings. 48 of 139 NSE indices start in Jan-2007 (others launched later).
+- Left: 4 Equal Weight indices (NIFTY500 EW, TOP 10/15/20 EW) have 1-2 lonely rows (2016-07-07, 2023-04-12) years before their
+  real start (2024) -> fake 70-160% "jumps". Added step D `nse_index_islands` (<= 20 rows followed by >= 60 trading days with no
+  row are dropped at the start, listed in checkpoint "trimmed"). Test + mutation check, 42 tests green.
+- NEXT: Viraj Pull origin; I run the nse-indices job locally (only step D has work), validate; Viraj commits + pushes.

@@ -416,3 +416,20 @@ def test_walk_skips_a_window_that_fails_twice(tmp_path):
     assert len(st["skipped"]) == 1
     df = store.read(tmp_path / "data/indices/nse/NIFTY_50", store.INDEX_COLS)
     assert df["date"].min() < pd.Timestamp("2025-10-01")              # older windows still fetched after the skip
+
+
+def test_leading_island_is_found_and_trimmed(tmp_path):
+    days = pd.bdate_range("2016-01-01", "2024-12-31")
+    real = list(days[days >= "2024-06-03"])
+    dates = pd.Series([pd.Timestamp("2016-07-07"), pd.Timestamp("2023-04-12"), *real])
+    assert backfill.leading_island(dates, days) == 2                     # both lonely rows go
+    assert backfill.leading_island(pd.Series(real), days) == 0           # a clean history is untouched
+    gap_later = pd.Series([*days[:300], *days[500:800]])
+    assert backfill.leading_island(gap_later, days) == 0                 # 300 rows then a gap: real data, not an island
+    ctx = make_ctx(tmp_path, FakeHttp(lambda url: Resp(404)))
+    backfill.write_trading_days(ctx, {d.date() for d in days})
+    store.write(tmp_path / "data/indices/nse/EW", series(dates), store.INDEX_COLS, ctx.today)
+    cp = {}
+    backfill.nse_index_islands(ctx, pd.DataFrame({"name": ["EW"], "id": ["EW"]}), cp, tmp_path / "cp.json")
+    assert store.read(tmp_path / "data/indices/nse/EW", store.INDEX_COLS)["date"].min() == pd.Timestamp("2024-06-03")
+    assert cp["trimmed"]["EW"] == ["2016-07-07", "2023-04-12"]

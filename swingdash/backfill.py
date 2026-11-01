@@ -287,6 +287,39 @@ def nse_index_gaps(ctx: Ctx, lst: pd.DataFrame, cp: dict, cp_path: Path) -> str:
     return ""
 
 
+def leading_island(dates: pd.Series, days: pd.DatetimeIndex, max_rows: int = 20, min_gap: int = 60) -> int:
+    """How many rows at the start are a small island cut off from the rest: <= max_rows rows, then >= min_gap trading days
+    with no row (e.g. NIFTY500 EQUAL WEIGHT: 1 row in 2016, 1 in 2023, real data from 2024). 0 = nothing to cut."""
+    cut = 0
+    d = pd.DatetimeIndex(dates).sort_values()
+    while True:
+        rest = d[cut:]
+        if len(rest) <= max_rows:
+            return cut
+        pos = days.searchsorted(rest)                          # trading-day number of each row
+        gaps = pos[1:max_rows + 1] - pos[:max_rows] - 1        # trading days without a row after each of the first rows
+        big = [i for i, g in enumerate(gaps) if g >= min_gap]
+        if not big:
+            return cut
+        cut += big[-1] + 1
+
+
+def nse_index_islands(ctx: Ctx, lst: pd.DataFrame, cp: dict, cp_path: Path) -> None:
+    """Step D: drop small isolated groups of rows before an index's real start (listed in the checkpoint as 'trimmed')."""
+    days = pd.DatetimeIndex(sorted(pd.Timestamp(d) for d in read_trading_days(ctx)))
+    trimmed = cp.setdefault("trimmed", {})
+    for row in lst.itertuples():
+        folder = ctx.data / "indices" / "nse" / row.id
+        have = store.read(folder, store.INDEX_COLS)
+        n = leading_island(have["date"], days) if len(have) else 0
+        if n:
+            gone = have.iloc[:n]
+            trimmed[row.name] = trimmed.get(row.name, []) + [d.strftime("%Y-%m-%d") for d in gone["date"]]
+            store.write(folder, have.iloc[n:], store.INDEX_COLS, ctx.today)
+            ctx.log(f"  NSE {row.name}: dropped {n} isolated early row(s) {trimmed[row.name][-n:]}")
+    save_json(cp_path, cp)
+
+
 def backfill_nse_indices(ctx: Ctx, until: date | None = None) -> dict:
     """Step A: daily all-indices files (2012 ->). Step B, per index: walk back from its oldest stored day 90 days at a time
     with the historicalOR API (it knows old index names); two empty windows in a row = the index did not exist yet."""
@@ -348,6 +381,8 @@ def backfill_nse_indices(ctx: Ctx, until: date | None = None) -> dict:
         ctx.log(f"  NSE {row.name}: done")
     if not stopped:
         stopped = nse_index_gaps(ctx, lst, cp, cp_path)
+    if not stopped:
+        nse_index_islands(ctx, lst, cp, cp_path)
     res = {"job": "nse-indices", "indices": len(lst), "finished_now": done,
            "finished_total": sum(1 for v in walk.values() if v.get("done")), "files_last_day": cp.get("files_last_day"),
            "unmatched_names": len(cp.get("unmatched_names", [])),

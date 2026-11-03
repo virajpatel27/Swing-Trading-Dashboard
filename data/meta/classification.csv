@@ -380,7 +380,7 @@ BLISSGVS,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,,
 BLKASHYAP,Industrials,Construction,Construction,Civil Construction,,NSE,2026-11-01
 BLS,Consumer Discretionary,Consumer Services,Leisure Services,Tour Travel Related Services,NIFTY 500;NIFTY CONSUMER SERVICES;NIFTY INDIA DIGITAL;NIFTY INDIA TOURISM;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY MIDSMALLCAP400 MOMENTUM QUALITY 100;NIFTY SMALLCAP 250;NIFTY SMALLCAP 500;NIFTY SMALLCAP250 MOMENTUM QUALITY 100;NIFTY SMALLCAP250 QUALITY 50;NIFTY TOTAL MARKET;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 GROWTH 50;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25;NIFTY500 QUALITY 50,NSE,2026-11-01
 BLSE,Information Technology,Information Technology,IT - Services,IT Enabled Services,,NSE,2026-11-01
-BLSPOLY,,,,,,Nifty 500 list,2026-11-03
+BLSPOLY,Commodities,Chemicals,Chemicals & Petrochemicals,Specialty Chemicals,,NSE,2026-11-03
 BLUECHIP,Financial Services,Financial Services,Finance,Investment Company,,NSE,2026-11-01
 BLUECLOUDS,Information Technology,Information Technology,IT - Software,Software Products,,NSE,2026-11-01
 BLUECOAST,Consumer Discretionary,Consumer Services,Leisure Services,Hotels & Resorts,,NSE,2026-11-01
@@ -811,7 +811,7 @@ GENUSPOWER,Industrials,Capital Goods,Electrical Equipment,Other Electrical Equip
 GEOJITFSL,Financial Services,Financial Services,Capital Markets,Stockbroking & Allied,,NSE,2026-11-03
 GERMAN,Industrials,Capital Goods,Industrial Products,Iron & Steel Products,NIFTY IPO,NSE,2026-11-03
 GESHIP,Services,Services,Transport Services,Shipping,NIFTY 500;NIFTY COMMERCIAL & TRANSPORT SERVICES;NIFTY INDIA INFRASTRUCTURE & LOGISTICS;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY MIDSMALLCAP400 MOMENTUM QUALITY 100;NIFTY SMALLCAP 100;NIFTY SMALLCAP 250;NIFTY SMALLCAP 50;NIFTY SMALLCAP 500;NIFTY SMALLCAP250 MOMENTUM QUALITY 100;NIFTY TOTAL MARKET;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MOMENTUM 50;NIFTY500 MULTICAP 50:25:25;NIFTY500 MULTICAP INFRASTRUCTURE 50:30:20;NIFTY500 MULTICAP MOMENTUM QUALITY 50;NIFTY500 VALUE 50,NSE,2026-11-01
-GFLLIMITED,,,,,,Nifty 500 list,2026-11-03
+GFLLIMITED,Financial Services,Financial Services,Finance,Holding Company,,NSE,2026-11-03
 GHCL,Commodities,Chemicals,Chemicals & Petrochemicals,Commodity Chemicals,,NSE,2026-11-03
 GHCLTEXTIL,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,NSE,2026-11-03
 GICHSGFIN,Financial Services,Financial Services,Finance,Housing Finance Company,,NSE,2026-11-03
@@ -1629,7 +1629,7 @@ NPST,Financial Services,Financial Services,Financial Technology (Fintech),Financ
 NRAIL,Commodities,Forest Materials,Paper Forest & Jute Products,Paper & Paper Products,,NSE,2026-11-03
 NRBBEARING,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,,NSE,2026-11-03
 NRL,Commodities,Metals & Mining,Metals & Minerals Trading,Trading - Metals,,NSE,2026-11-03
-NSIL,,,,,,Nifty 500 list,2026-11-03
+NSIL,Financial Services,Financial Services,Finance,Investment Company,,NSE,2026-11-03
 NSLNISP,Commodities,Metals & Mining,Ferrous Metals,Iron & Steel,NIFTY 500;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY SMALLCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25;NIFTY500 SHARIAH,NSE,2026-11-01
 NTCIND,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Cigarettes & Tobacco Products,Cigarettes & Tobacco Products,,NSE,2026-11-03
 NTPC,Utilities,Power,Power,Power Generation,NIFTY 50;NIFTY 100;NIFTY 200;NIFTY 500;NIFTY AI CATALYSTS;NIFTY ALPHA LOW-VOLATILITY 30;NIFTY ALPHA QUALITY VALUE LOW-VOLATILITY 30;NIFTY COMMODITIES;NIFTY CPSE;NIFTY DIVIDEND OPPORTUNITIES 50;NIFTY ENERGY;NIFTY HOUSING;NIFTY INDIA FPI 150;NIFTY INDIA INFRASTRUCTURE & LOGISTICS;NIFTY INDIA RAILWAYS PSU;NIFTY INFRASTRUCTURE;NIFTY LARGEMIDCAP 250;NIFTY LOW VOLATILITY 50;NIFTY POWER;NIFTY PSE;NIFTY RURAL;NIFTY SERVICES SECTOR;NIFTY TOP 20 EQUAL WEIGHT;NIFTY TOTAL MARKET;NIFTY100 ENHANCED ESG;NIFTY100 EQUAL WEIGHT;NIFTY100 ESG;NIFTY100 ESG SECTOR LEADERS;NIFTY100 LOW VOLATILITY 30;NIFTY200 MOMENTUM 30;NIFTY200 VALUE 30;NIFTY50 EQUAL WEIGHT;NIFTY50 VALUE 20;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 LOW VOLATILITY 50;NIFTY500 MULTICAP 50:25:25;NIFTY500 MULTICAP INFRASTRUCTURE 50:30:20;NIFTY500 VALUE 50,NSE,2026-11-01
@@ -1696,15 +1696,15 @@ PAGEIND,Consumer Discretionary,Textiles,Textiles & Apparels,Garments & Apparels,
 PAISALO,Financial Services,Financial Services,Finance,Non Banking Financial Company (NBFC),NIFTY MICROCAP 250;NIFTY NBFC;NIFTY TOTAL MARKET,NSE,2026-11-03
 PAKKA,Commodities,Forest Materials,Paper Forest & Jute Products,Paper & Paper Products,,NSE,2026-11-03
 PALASHSECU,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Food Products,Packaged Foods,,NSE,2026-11-03
-PALREDTEC,,,,,,Nifty 500 list,2026-11-03
-PANACEABIO,,,,,,Nifty 500 list,2026-11-03
+PALREDTEC,Services,Services,Commercial Services & Supplies,Trading & Distributors,,NSE,2026-11-03
+PANACEABIO,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,,NSE,2026-11-03
 PANACHE,,,,,,Nifty 500 list,2026-11-03
-PANAMAPET,,,,,,Nifty 500 list,2026-11-03
-PANCHMAHQ,,,,,,Nifty 500 list,2026-11-03
-PANORAMA,,,,,,Nifty 500 list,2026-11-03
-PANSARI,,,,,,Nifty 500 list,2026-11-03
-PAR,,,,,,Nifty 500 list,2026-11-03
-PARACABLES,,,,,,Nifty 500 list,2026-11-03
+PANAMAPET,Energy,Oil Gas & Consumable Fuels,Petroleum Products,Lubricants,,NSE,2026-11-03
+PANCHMAHQ,Industrials,Capital Goods,Industrial Products,Iron & Steel Products,,NSE,2026-11-03
+PANORAMA,Consumer Discretionary,Media Entertainment & Publication,Entertainment,Film Production Distribution & Exhibition,,NSE,2026-11-03
+PANSARI,Consumer Discretionary,Realty,Realty,Residential Commercial Projects,,NSE,2026-11-03
+PAR,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,,NSE,2026-11-03
+PARACABLES,Industrials,Capital Goods,Industrial Products,Cables - Electricals,,NSE,2026-11-03
 PARADEEP,Commodities,Chemicals,Fertilizers & Agrochemicals,Fertilizers,NIFTY 500;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY SMALLCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25,NSE,2026-11-01
 PARAGMILK,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Food Products,Dairy Products,,NSE,2026-11-03
 PARAS,Industrials,Capital Goods,Aerospace & Defense,Aerospace & Defense,NIFTY INDIA DEFENCE;NIFTY INDIA DEFENCE EQUAL WEIGHT;NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,NSE,2026-11-03
@@ -1750,7 +1750,7 @@ PICCADIL,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Beverages,Breweri
 PIDILITIND,Commodities,Chemicals,Chemicals & Petrochemicals,Specialty Chemicals,NIFTY NEXT 50;NIFTY 100;NIFTY 200;NIFTY 500;NIFTY ALPHA LOW-VOLATILITY 30;NIFTY ALPHA QUALITY LOW-VOLATILITY 30;NIFTY CHEMICALS;NIFTY COMMODITIES;NIFTY INDIA FPI 150;NIFTY INDIA MANUFACTURING;NIFTY LARGEMIDCAP 250;NIFTY LOW VOLATILITY 50;NIFTY NEXT 100;NIFTY QUALITY LOW-VOLATILITY 30;NIFTY SHARIAH 25;NIFTY TOTAL MARKET;NIFTY100 ENHANCED ESG;NIFTY100 EQUAL WEIGHT;NIFTY100 ESG;NIFTY100 ESG SECTOR LEADERS;NIFTY100 LOW VOLATILITY 30;NIFTY100 QUALITY 30;NIFTY200 QUALITY 30;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 LOW VOLATILITY 50;NIFTY500 MULTICAP 50:25:25;NIFTY500 MULTIFACTOR MQVLV 50;NIFTY500 SHARIAH,NSE,2026-11-01
 PIGL,Industrials,Capital Goods,Electrical Equipment,Other Electrical Equipment,,NSE,2026-11-03
 PIIND,Commodities,Chemicals,Fertilizers & Agrochemicals,Pesticides & Agrochemicals,NIFTY 200;NIFTY 500;NIFTY CHEMICALS;NIFTY INDIA FPI 150;NIFTY INDIA MANUFACTURING;NIFTY LARGEMIDCAP 250;NIFTY MIDCAP 100;NIFTY MIDCAP 150;NIFTY MIDCAP150 QUALITY 50;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY MIDSMALLCAP400 MOMENTUM QUALITY 100;NIFTY RURAL;NIFTY TOTAL MARKET;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 LOW VOLATILITY 50;NIFTY500 MULTICAP 50:25:25;NIFTY500 MULTICAP INDIA MANUFACTURING 50:30:20,NSE,2026-11-01
-PILANIINVS,,,,,,Nifty 500 list,2026-11-03
+PILANIINVS,Financial Services,Financial Services,Finance,Investment Company,NIFTY INDIA CORPORATE GROUP INDEX - ADITYA BIRLA GROUP,NSE,2026-11-03
 PILITA,Consumer Discretionary,Consumer Durables,Consumer Durables,Plastic Products - Consumer,,NSE,2026-11-03
 PINELABS,Financial Services,Financial Services,Financial Technology (Fintech),Financial Technology (Fintech),NIFTY 500;NIFTY INDIA DIGITAL;NIFTY INDIA INTERNET;NIFTY INDIA NEW AGE CONSUMPTION;NIFTY IPO;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY SMALLCAP 100;NIFTY SMALLCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25,NSE,2026-11-01
 PIONEEREMB,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,NSE,2026-11-03
@@ -1857,13 +1857,13 @@ RAJOOENG,Industrials,Capital Goods,Industrial Manufacturing,Industrial Products,
 RAJPALAYAM,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,NSE,2026-11-03
 RAJRATAN,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,,NSE,2026-11-03
 RAJRILTD,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,NSE,2026-11-03
-RAJSREESUG,,,,,,Nifty 500 list,2026-11-03
-RAJTV,,,,,,Nifty 500 list,2026-11-03
-RALLIS,,,,,,Nifty 500 list,2026-11-03
-RAMANEWS,,,,,,Nifty 500 list,2026-11-03
-RAMAPHO,,,,,,Nifty 500 list,2026-11-03
-RAMASTEEL,,,,,,Nifty 500 list,2026-11-03
-RAMBHAJO,,,,,,Nifty 500 list,2026-11-03
+RAJSREESUG,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Agricultural Food & other Products,Sugar,,NSE,2026-11-03
+RAJTV,Consumer Discretionary,Media Entertainment & Publication,Entertainment,TV Broadcasting & Software Production,NIFTY WAVES,NSE,2026-11-03
+RALLIS,Commodities,Chemicals,Fertilizers & Agrochemicals,Pesticides & Agrochemicals,NIFTY INDIA CORPORATE GROUP INDEX - TATA GROUP;NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,NSE,2026-11-03
+RAMANEWS,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Beverages,Other Beverages,,NSE,2026-11-03
+RAMAPHO,Commodities,Chemicals,Fertilizers & Agrochemicals,Fertilizers,,NSE,2026-11-03
+RAMASTEEL,Industrials,Capital Goods,Industrial Products,Iron & Steel Products,,NSE,2026-11-03
+RAMBHAJO,Consumer Discretionary,Consumer Durables,Consumer Durables,Gems Jewellery And Watches,NIFTY IPO,NSE,2026-11-03
 RAMCOCEM,Commodities,Construction Materials,Cement & Cement Products,Cement & Cement Products,NIFTY 500;NIFTY CEMENT;NIFTY CORE HOUSING;NIFTY INDIA INFRASTRUCTURE & LOGISTICS;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY SMALLCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25;NIFTY500 MULTICAP INFRASTRUCTURE 50:30:20;NIFTY500 SHARIAH,NSE,2026-11-01
 RAMCOIND,Commodities,Construction Materials,Other Construction Materials,Other Construction Materials,,NSE,2026-11-03
 RAMCOSYS,Information Technology,Information Technology,IT - Software,Software Products,,NSE,2026-11-03
@@ -2049,7 +2049,7 @@ SETCO,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto
 SETL,Industrials,Capital Goods,Industrial Manufacturing,Industrial Products,,NSE,2026-11-03
 SETUINFRA,Industrials,Construction,Construction,Civil Construction,,NSE,2026-11-03
 SEYAIND,Commodities,Chemicals,Chemicals & Petrochemicals,Specialty Chemicals,,NSE,2026-11-03
-SFCTECH,,,,,,Nifty 500 list,2026-11-03
+SFCTECH,Utilities,Utilities,Other Utilities,Waste Management,,NSE,2026-11-03
 SFL,Consumer Discretionary,Consumer Durables,Consumer Durables,Furniture Home Furnishing,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,NSE,2026-11-03
 SGFIN,Financial Services,Financial Services,Finance,Non Banking Financial Company (NBFC),,NSE,2026-11-03
 SGIL,Industrials,Capital Goods,Industrial Products,Castings & Forgings,,NSE,2026-11-03

@@ -60,7 +60,7 @@ per day) - the repo grows only ~50 MB a year. Details and decisions: [docs/PLAN.
 
 | Workflow | When | What |
 |---|---|---|
-| Daily update | Mon-Fri 20:15 + 23:50 IST, manual | new days (+ re-check of the last 5), corporate actions, adjusted, indicators, data check, commit, website. Failure -> GitHub issue (+ optional Telegram) |
+| Daily update | Mon-Fri 20:15 + 23:50 IST (+ safety runs 02:30 and 08:00 IST), manual | new days (+ re-check of the last 5), corporate actions, adjusted, indicators, data check, commit, website. Failure -> GitHub issue (+ optional Telegram) |
 | Deploy website | after a data change, on site changes, manual | builds `_site/` (one chart file per instrument) and publishes it |
 | Weekly backup | Saturday 10:00 IST | `data/` zip (~120 MB) as Release `data-YYYY-MM-DD` (last 12 kept), a copy in Google Drive (once set up), `backup` branch moved forward |
 | Monthly integrity check | 1st of the month 11:00 IST | data check, corporate-action consistency, NSE spot check, freshness |

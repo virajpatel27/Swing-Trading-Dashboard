@@ -25,6 +25,7 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          ref: main                    # the newest main, not the commit of the moment this run was queued
       - name: Zip the data folder
         id: zip
         run: |
@@ -40,8 +41,8 @@ jobs:
           TAG: ${{ steps.zip.outputs.tag }}
         run: |
           gh release delete "$TAG" --cleanup-tag -y 2>/dev/null || true      # a second run on the same day replaces it
-          gh release create "$TAG" "$TAG.zip" "$TAG.zip.sha256" --target "$GITHUB_SHA" --title "Data backup ${TAG#data-}" \
-            --notes "Snapshot of the data/ folder at commit $GITHUB_SHA. Restore: see restore.md (python restore.py --from-release $TAG)."
+          gh release create "$TAG" "$TAG.zip" "$TAG.zip.sha256" --target "$(git rev-parse HEAD)" --title "Data backup ${TAG#data-}" \
+            --notes "Snapshot of the data/ folder at commit $(git rev-parse --short HEAD). Restore: see restore.md (python restore.py --from-release $TAG)."
       - name: Keep only the last 12 backups
         env:
           GH_TOKEN: ${{ github.token }}

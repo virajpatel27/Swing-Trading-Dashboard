@@ -14,7 +14,8 @@ Viraj. **Not a programmer.** Answer in Gujarati-English mix (Latin letters), sho
    **never change anything in that folder**.
 5. **Same Angel One account** as the old project. Its jobs: weekdays 17:00 IST (can start 30-90 min late, run up to 2.5 h), 23:00 and 04:00 IST daily,
    09:00 IST instrument master, Sunday 02:00 IST backup. Our daily job: **20:15 IST** (`45 14 * * 1-5`) and **23:50 IST** (`20 18 * * 1-5`)
-   - it does not use Angel One at all. Never schedule at 17:00 IST.
+   + safety runs 02:30 and 08:00 IST (GitHub started runs hours late on 02/03-Nov) - it does not use Angel One at all.
+   Never schedule at 17:00 IST. Data workflows must check out `ref: main` (a queued run otherwise gets an old commit).
    BSE indices: weekly from the PC only (Viraj's choice 2026-11-01). When he says "BSE update karo": run
    `<python> scripts/backfill.py --job bse-update`, then `build_snapshot.py` and `validate_data.py`; he pulls first, then commits.
 6. **equitytimer.com is not used**: its Terms (sections 7 + 8) forbid scraping and redistribution. Sectors come from NSE's official classification.

@@ -41,6 +41,8 @@ jobs:
       changed: ${{ steps.save.outputs.changed }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: main                    # the newest main, not the commit of the moment this run was queued
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"

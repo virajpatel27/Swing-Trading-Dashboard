@@ -231,3 +231,25 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Tests: 113 Python + 11 JS green.
 - NEXT: Viraj pushes; runs Backfill history (stocks, restart_from 2007-01-01; ~2-3 h on GitHub; run again if it stops on
   time), then Backfill history (classification, 240 min) until all stocks have NSE sectors.
+- Backfill #4 (run 41290076592): restart_from was left empty -> only the new list, ~300 classifications, snapshot (30 min).
+  Backfill #5 (run 41292927474, restart_from 2007-01-01): Success ~2.5 h: 2,623 stocks, 13.67 M rows, 0 errors,
+  688 stocks from Jan-2007.
+
+## 2026-11-03
+- First scheduled daily data: only ONE of Monday's two runs happened, and late (snapshot generated 23:07 UTC = 04:37 IST
+  Tue). Data date 2026-11-02 for stocks and NSE indices, 0 errors, 2,625 stocks (2 new listings). Watch whether GitHub keeps
+  delaying/skipping scheduled runs.
+- RELIANCE +11.6 % on 02-Nov (close 1,300.00 at the high, volume 88 M vs 15 M) - matches NSE's bhavcopy: real.
+- Sector data: 1,240 of 2,623 stocks have NSE classification -> run Backfill history (job classification, 240 min).
+- BSE indices still at 30-Oct (weekly from the PC, Viraj says "BSE update karo").
+- Backfill #6 (classification, run 41556719281): Success - 2,587 of 2,623 stocks have NSE classification (36 without answer;
+  the daily run asks again).
+- **Daily update #3 failed** (run 41557321163, issue opened): it was Monday's 23:50 IST schedule started ~14 h late, then
+  queued 2 h behind the classification backfill (same `data-write` group). actions/checkout gave it the commit of the moment
+  it was QUEUED (094f631), so `git pull --rebase` in "Save data" (step 9) conflicted with the classification commit.
+  Nothing lost (no new trading day yet at that time). Fix: data workflows check out `ref: main` (daily, backfill, restore,
+  weekly backup - its release/tag now point at that HEAD). Daily got two safety schedules: 02:30 IST (0 21 * * 1-5) and
+  08:00 IST (30 2 * * 2-6); nothing new -> nothing committed.
+- Note: index files_last_day may show today before NSE's file exists (a missing file still advances the loop); harmless
+  because every run re-reads the last 5 trading days.
+- NEXT: Viraj pulls, commits + pushes the workflow fix, closes the "Daily update failed" issue after the next green run.

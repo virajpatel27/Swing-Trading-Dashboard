@@ -10,6 +10,7 @@ NSE AARTIDRUGS,warn,missing dates,2009-05-18,"1 trading days without a row (firs
 NSE AARTIIND,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE AARVI,warn,missing dates,2017-11-01,"293 trading days without a row (first 2017-11-01, last 2020-07-29)"
 NSE ABAN,warn,missing dates,2026-03-12,"50 trading days without a row (first 2026-03-12, last 2026-08-10)"
+NSE ABCIND,warn,missing dates,2022-04-05,"257 trading days without a row (first 2022-04-05, last 2025-06-16)"
 NSE ABCOTS,warn,missing dates,2022-04-05,"257 trading days without a row (first 2022-04-05, last 2025-06-16)"
 NSE ABINFRA,warn,missing dates,2019-08-01,"717 trading days without a row (first 2019-08-01, last 2024-10-17)"
 NSE ABMINTLLTD,warn,missing dates,2022-07-22,"44 trading days without a row (first 2022-07-22, last 2026-10-19)"

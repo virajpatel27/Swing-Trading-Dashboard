@@ -28,7 +28,7 @@ stock,NSE,ABANSENT,ABANSENT,,stocks/raw/ABANSENT,2026-04-20,2026-11-03,136,NSE b
 stock,NSE,ABB,ABB,Capital Goods,stocks/raw/ABB,2007-01-02,2026-11-03,4895,NSE bhavcopy
 stock,NSE,ABBOTINDIA,ABBOTINDIA,Healthcare,stocks/raw/ABBOTINDIA,2010-01-08,2026-11-03,4154,NSE bhavcopy
 stock,NSE,ABCAPITAL,ABCAPITAL,Financial Services,stocks/raw/ABCAPITAL,2017-09-01,2026-11-03,2264,NSE bhavcopy
-stock,NSE,ABCIND,ABCIND,,stocks/raw/ABCIND,2026-10-26,2026-11-03,7,NSE bhavcopy
+stock,NSE,ABCIND,ABCIND,,stocks/raw/ABCIND,2022-01-11,2026-11-03,930,NSE bhavcopy
 stock,NSE,ABCOTS,ABCOTS,,stocks/raw/ABCOTS,2022-01-11,2026-10-30,928,NSE bhavcopy
 stock,NSE,ABDL,ABDL,Fast Moving Consumer Goods,stocks/raw/ABDL,2024-07-02,2026-11-03,579,NSE bhavcopy
 stock,NSE,ABFRL,ABFRL,,stocks/raw/ABFRL,2013-07-17,2026-11-03,3277,NSE bhavcopy
@@ -2655,7 +2655,7 @@ stock-adjusted,NSE,ABANSENT,ABANSENT,,stocks/adjusted/ABANSENT,2026-04-20,2026-1
 stock-adjusted,NSE,ABB,ABB,Capital Goods,stocks/adjusted/ABB,2007-01-02,2026-11-03,4895,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,ABBOTINDIA,ABBOTINDIA,Healthcare,stocks/adjusted/ABBOTINDIA,2010-01-08,2026-11-03,4154,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,ABCAPITAL,ABCAPITAL,Financial Services,stocks/adjusted/ABCAPITAL,2017-09-01,2026-11-03,2264,NSE bhavcopy + NSE corporate actions
-stock-adjusted,NSE,ABCIND,ABCIND,,stocks/adjusted/ABCIND,2026-10-26,2026-11-03,7,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ABCIND,ABCIND,,stocks/adjusted/ABCIND,2022-01-11,2026-11-03,930,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,ABCOTS,ABCOTS,,stocks/adjusted/ABCOTS,2022-01-11,2026-10-30,928,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,ABDL,ABDL,Fast Moving Consumer Goods,stocks/adjusted/ABDL,2024-07-02,2026-11-03,579,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,ABFRL,ABFRL,,stocks/adjusted/ABFRL,2013-07-17,2026-11-03,3277,NSE bhavcopy + NSE corporate actions

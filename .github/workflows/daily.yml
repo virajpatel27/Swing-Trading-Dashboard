@@ -1,19 +1,23 @@
 name: Daily update
 
-# Every weekday (GitHub may start a scheduled run late - on 02/03-Nov-2026 by hours - so there are safety runs too):
-#   20:15 IST  stocks (NSE bhavcopy is out ~16:30 IST), corporate actions, adjusted prices, indicators, website
-#   23:50 IST  the day's NSE indices (NSE's all-indices file is out ~23:20 IST), website again
-# Not at 17:00 IST: the old Stock-Live-Dashboard runs then (this job does not use Angel One at all).
+# Every weekday (Viraj, 03-Nov-2026: "data by 4:30 PM"). NSE's bhavcopy is out ~16:33 IST; the allIndices API has every
+# NSE index's close right after 15:30. A run takes ~15 min + 2 min website, so with GitHub on time the site shows the day ~17:00.
+#   16:40 IST  stocks + same-day NSE index values, corporate actions, adjusted prices, indicators, website
+#   17:20, 18:30 IST  retries (GitHub sometimes starts scheduled runs late or skips them - by hours on 02/03-Nov-2026)
+#   23:50 IST  NSE's official all-indices file (~23:20 IST) replaces the same-day index values
+#   08:00 IST  last safety run (next morning)
+# This job does not use Angel One, so it cannot clash with the old Stock-Live-Dashboard's 17:00 IST Angel job.
 # Missed days are caught up automatically (each run starts from the last saved day and re-reads the last 5 trading days).
 # Holidays / nothing new: no file changes -> nothing committed, website not rebuilt.
 # The data is committed ONLY when the data check passes. On failure a GitHub issue is opened (and Telegram, if set up).
 # Run by hand: Actions -> Daily update -> Run workflow.
 on:
   schedule:
-    - cron: "45 14 * * 1-5"         # 20:15 IST
+    - cron: "10 11 * * 1-5"         # 16:40 IST
+    - cron: "50 11 * * 1-5"         # 17:20 IST
+    - cron: "0 13 * * 1-5"          # 18:30 IST
     - cron: "20 18 * * 1-5"         # 23:50 IST
-    - cron: "0 21 * * 1-5"          # 02:30 IST  safety runs: GitHub sometimes starts scheduled runs hours late
-    - cron: "30 2 * * 2-6"          # 08:00 IST  or skips them; a run with nothing new commits nothing
+    - cron: "30 2 * * 2-6"          # 08:00 IST (next morning)
   workflow_dispatch:
 
 permissions:

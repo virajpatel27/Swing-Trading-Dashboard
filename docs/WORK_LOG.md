@@ -253,3 +253,10 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Note: index files_last_day may show today before NSE's file exists (a missing file still advances the loop); harmless
   because every run re-reads the last 5 trading days.
 - NEXT: Viraj pulls, commits + pushes the workflow fix, closes the "Daily update failed" issue after the next green run.
+- Pushed (903188d + merge 9bde3f7), Tests green.
+- Viraj: wants the dashboard updated at ~16:30 IST ("NSE ni website ma 4:30 data aavi jai chhe"). Checked: UDiFF bhavcopy
+  Last-Modified 11:03 UTC = 16:33 IST on 02 and 03-Nov. NSE `api/allIndices` gives open/high/low/last of all 139 indices
+  with "timestamp": "03-Nov-2026 15:30" -> `nse.index_closes_today` (None while the market is open; 0 = no value) and
+  `daily.add_index_closes_today` (adds the day only where missing; the official file replaces it later via the 5-day re-read).
+  Live check: 139/139 matched. Schedule now 16:40 / 17:20 / 18:30 / 23:50 IST + 08:00 next morning (no Angel One, so no
+  clash with the old project's 17:00 Angel job). 115 tests green.

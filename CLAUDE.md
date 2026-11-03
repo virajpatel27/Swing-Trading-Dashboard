@@ -13,9 +13,10 @@ Viraj. **Not a programmer.** Answer in Gujarati-English mix (Latin letters), sho
 4. **Old project** `C:\Users\hello\OneDrive\Documents\GitHub\Stock-Live-Dashboard`: read it to learn (Angel One login, rate limits, NSE/BSE fetch),
    **never change anything in that folder**.
 5. **Same Angel One account** as the old project. Its jobs: weekdays 17:00 IST (can start 30-90 min late, run up to 2.5 h), 23:00 and 04:00 IST daily,
-   09:00 IST instrument master, Sunday 02:00 IST backup. Our daily job: **20:15 IST** (`45 14 * * 1-5`) and **23:50 IST** (`20 18 * * 1-5`)
-   + safety runs 02:30 and 08:00 IST (GitHub started runs hours late on 02/03-Nov) - it does not use Angel One at all.
-   Never schedule at 17:00 IST. Data workflows must check out `ref: main` (a queued run otherwise gets an old commit).
+   09:00 IST instrument master, Sunday 02:00 IST backup. Our daily job (Viraj 03-Nov: data by ~16:30): **16:40, 17:20, 18:30,
+   23:50 IST** Mon-Fri + **08:00 IST** next morning. It uses NO Angel One, so running near 17:00 is fine; never add Angel calls
+   to the daily job. Stocks: bhavcopy ~16:33 IST; NSE indices same day from the allIndices API (after 15:30), replaced by the
+   official ind_close_all file (~23:20). Data workflows must check out `ref: main` (a queued run otherwise gets an old commit).
    BSE indices: weekly from the PC only (Viraj's choice 2026-11-01). When he says "BSE update karo": run
    `<python> scripts/backfill.py --job bse-update`, then `build_snapshot.py` and `validate_data.py`; he pulls first, then commits.
 6. **equitytimer.com is not used**: its Terms (sections 7 + 8) forbid scraping and redistribution. Sectors come from NSE's official classification.

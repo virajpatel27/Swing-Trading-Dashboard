@@ -128,3 +128,31 @@ def test_instrument_list_order_is_the_same_on_windows_and_linux(tmp_path):
                                                                "low": 1.0, "close": 1.0}), store.INDEX_COLS, date(2026, 3, 1))
     inst, _ = meta.scan(data, None, 20.0, None, 1.0)
     assert inst["id"].tolist() == ["JAINREC", "J_KBANK", "jlow"]          # plain string order ('A' < '_' < 'j')
+
+
+ALL_INDICES = {"timestamp": "03-Nov-2026 15:30", "data": [
+    {"index": "NIFTY 50", "open": 23582.25, "high": 23810.85, "low": 23482.8, "last": 23810.85},
+    {"index": "NIFTY BANK", "open": 0, "high": 0, "low": 0, "last": 51000.5},           # 0 = no value in this API
+    {"index": "SOME NEW INDEX", "open": 1, "high": 1, "low": 1, "last": 1}]}
+
+
+def test_parse_index_closes_only_after_the_session():
+    df = nse.parse_index_closes(ALL_INDICES)
+    assert df["date"].iat[0] == pd.Timestamp("2026-11-03") and df["close"].tolist() == [23810.85, 51000.5, 1.0]
+    assert df.loc[1, ["open", "high", "low"]].tolist() == [51000.5] * 3                 # filled with the close
+    assert nse.parse_index_closes({**ALL_INDICES, "timestamp": "03-Nov-2026 11:42"}) is None   # market still open
+
+
+def test_same_day_index_values_fill_only_missing_days(tmp_path):
+    ctx = make_ctx(tmp_path, FakeHttp(lambda url: Resp(200, data=ALL_INDICES)))
+    (tmp_path / "data/meta").mkdir(parents=True)
+    pd.DataFrame({"name": ["NIFTY 50", "NIFTY BANK"], "id": ["NIFTY_50", "NIFTY_BANK"]}).to_csv(tmp_path / "data/meta/indices_nse.csv", index=False)
+    official = pd.DataFrame({"date": pd.to_datetime(["2026-11-02", "2026-11-03"]), "open": 1.0, "high": 1.0, "low": 1.0, "close": [5.0, 6.0]})
+    store.write(tmp_path / "data/indices/nse/NIFTY_BANK", official, store.INDEX_COLS, ctx.today)
+    store.write(tmp_path / "data/indices/nse/NIFTY_50", official.iloc[:1], store.INDEX_COLS, ctx.today)
+    assert daily.add_index_closes_today(ctx, log=lambda m: None) == 1
+    n50 = store.read(tmp_path / "data/indices/nse/NIFTY_50", store.INDEX_COLS)
+    assert n50["close"].tolist() == [5.0, 23810.85]
+    bank = store.read(tmp_path / "data/indices/nse/NIFTY_BANK", store.INDEX_COLS)
+    assert bank["close"].tolist() == [5.0, 6.0]                                         # an existing (official) day is not touched
+    assert daily.add_index_closes_today(ctx, log=lambda m: None) == 0                   # a second run adds nothing

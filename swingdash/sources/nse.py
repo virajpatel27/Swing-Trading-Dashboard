@@ -164,6 +164,26 @@ def api_json(http, path: str, referer: str | None = None):
         raise SourceError(f"NSE {path.split('?')[0]}: reply was not JSON") from None
 
 
+def index_closes_today(http) -> pd.DataFrame | None:
+    """Every NSE index's open/high/low/close of the latest session from the allIndices API (one call, available right after
+    15:30 IST - hours before the official ind_close_all file). None while the market is still open."""
+    return parse_index_closes(api_json(http, "api/allIndices"))
+
+
+def parse_index_closes(data: dict) -> pd.DataFrame | None:
+    ts = pd.to_datetime(str(data.get("timestamp", "")), format="%d-%b-%Y %H:%M", errors="coerce")
+    if pd.isna(ts) or (ts.hour, ts.minute) < (15, 30):          # session not finished: values are not closes yet
+        return None
+    rows = [r for r in data.get("data") or [] if r.get("last") not in (None, "", 0)]
+    out = pd.DataFrame({"name": [str(r["index"]).strip() for r in rows], "date": ts.normalize(),
+                        "open": [r.get("open") for r in rows], "high": [r.get("high") for r in rows],
+                        "low": [r.get("low") for r in rows], "close": [r.get("last") for r in rows]})
+    for c in ("open", "high", "low", "close"):
+        out[c] = pd.to_numeric(out[c], errors="coerce")
+        out[c] = out[c].where(out[c] > 0)                       # 0 = "no value" in this API
+    return fill_ohl(out.dropna(subset=["close"]))
+
+
 def all_indices(http) -> pd.DataFrame:
     data = api_json(http, "api/allIndices").get("data") or []
     if not data:

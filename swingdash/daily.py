@@ -37,6 +37,35 @@ def is_holiday(http, today: date) -> bool | None:
         return None
 
 
+def add_index_closes_today(ctx: backfill.Ctx, log=print) -> int:
+    """The latest session's NSE index values from the allIndices API (out right after 15:30 IST), for indices that do not
+    have that day yet. The official all-indices file (~23:20 IST) replaces them later: every run re-reads the last days."""
+    from .sources import nse
+    try:
+        day = nse.index_closes_today(ctx.http)
+    except Exception as exc:  # noqa: BLE001 - optional: the official file brings the day anyway
+        log(f"  same-day NSE index values not available ({type(exc).__name__})")
+        return 0
+    if day is None or day.empty:
+        return 0
+    lst = pd.read_csv(ctx.data / "meta" / "indices_nse.csv")
+    by_key = {backfill.index_key(n): i for n, i in zip(lst["name"], lst["id"])}
+    added = 0
+    for r in day.itertuples():
+        sid = by_key.get(backfill.index_key(r.name))
+        if not sid:
+            continue
+        folder = ctx.data / "indices" / "nse" / sid
+        have = store.read(folder, store.INDEX_COLS)
+        if len(have) and (have["date"] == r.date).any():
+            continue                                        # the day is there already (official file or an earlier run)
+        backfill.merge_write(folder, pd.DataFrame([{"date": r.date, "open": r.open, "high": r.high, "low": r.low,
+                                                    "close": r.close}]), store.INDEX_COLS, ctx.today)
+        added += 1
+    log(f"  same-day NSE index values added for {added} indices")
+    return added
+
+
 def new_stocks_without_history(data: Path, min_rows: int = 30) -> list[str]:
     """Stocks in the universe with (almost) no history: they joined the list; run a stocks backfill for them."""
     uni = pd.read_csv(data / "meta" / "universe_stocks.csv")
@@ -73,6 +102,7 @@ def run(ctx: backfill.Ctx, log=print) -> dict:
             backfill.save_json(cp_path, cp)
     i = backfill.backfill_nse_indices(ctx, until=ctx.today)
     res["nse_indices"] = {k: i[k] for k in ("files_last_day", "finished_total", "stopped")}
+    res["nse_indices_same_day"] = add_index_closes_today(ctx, log)
 
     # 3. corporate actions + adjusted prices
     a = rebuild.rebuild_adjusted(ctx.root, ctx.http, ctx.settings, ctx.universe, ctx.today, cache=ctx.root / "cache", log=log)

@@ -29,7 +29,7 @@ relative strength, a sector/industry view and a swing screener. Updated automati
 - **Chart**: 2007 thi candles, EMA 20/50/200, volume, split/bonus na nishan, 1M...MAX, **Adjusted / Raw** toggle.
 - ◐ button = dark / light.
 
-**Data kyare update thay:** Somvar-Shukravar **20:15 IST** (stocks) ane **23:50 IST** (NSE indices). Holiday hoy to kai nahi.
+**Data kyare update thay:** Somvar-Shukravar sanje **~16:45-17:00 IST** (stocks + NSE indices; GitHub moDu kare to 17:20 ke 18:30 e). Holiday hoy to kai nahi.
 BSE indices athvadiye ek vaar (Claude ne kaho "BSE update karo").
 
 **Kai bagde to:** GitHub tamne email karshe (Issue "Daily update failed"). Website par chhello saro data j rahe chhe.
@@ -60,7 +60,7 @@ per day) - the repo grows only ~50 MB a year. Details and decisions: [docs/PLAN.
 
 | Workflow | When | What |
 |---|---|---|
-| Daily update | Mon-Fri 20:15 + 23:50 IST (+ safety runs 02:30 and 08:00 IST), manual | new days (+ re-check of the last 5), corporate actions, adjusted, indicators, data check, commit, website. Failure -> GitHub issue (+ optional Telegram) |
+| Daily update | Mon-Fri 16:40 IST (+ retries 17:20, 18:30; official index file 23:50; safety 08:00), manual | new days (+ re-check of the last 5), corporate actions, adjusted, indicators, data check, commit, website. Failure -> GitHub issue (+ optional Telegram) |
 | Deploy website | after a data change, on site changes, manual | builds `_site/` (one chart file per instrument) and publishes it |
 | Weekly backup | Saturday 10:00 IST | `data/` zip (~120 MB) as Release `data-YYYY-MM-DD` (last 12 kept), a copy in Google Drive (once set up), `backup` branch moved forward |
 | Monthly integrity check | 1st of the month 11:00 IST | data check, corporate-action consistency, NSE spot check, freshness |

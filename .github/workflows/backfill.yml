@@ -75,7 +75,7 @@ jobs:
             classification)
               python scripts/fetch_classification.py --max-minutes "$MAX" ;;
           esac
-          python scripts/audit_stocks.py
+          python scripts/audit_stocks.py --master-only     # stocks.csv only; the audit report is made on the PC
           python scripts/build_snapshot.py
       - name: Data check
         run: |
@@ -95,7 +95,7 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "data: backfill ${{ inputs.job }} $(date -u +%F)"
-            git pull --rebase
+            git pull --rebase --autostash      # files outside data/ (reports) must not block the pull
             git push
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi

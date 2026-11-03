@@ -319,3 +319,7 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   `swingdash/registry.py` + tests/test_scan_phase1.py (test_registry_dependencies). 126 Python + 11 JS tests green.
 - NEXT: Viraj reviews the audit, commits + pushes (GitHub Desktop), runs Backfill history (classification) once or twice and
   Backfill history (stocks, the 6 renamed symbols, from 2007-01-01); then "continue" for S2.
+- Backfill #7 (run 41653289107, stocks, 6 renamed symbols): download + data check OK, but "Save data" failed (exit 128):
+  the new audit step rewrote reports/stock_audit.md (outside data/, not committed by the bot) and `git pull --rebase`
+  refuses to run with unstaged changes -> nothing saved. Fix: workflows run `audit_stocks.py --master-only` (stocks.csv
+  only) and all data workflows use `git pull --rebase --autostash`. Re-run Backfill after the push.

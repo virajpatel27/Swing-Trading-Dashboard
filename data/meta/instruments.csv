@@ -1718,7 +1718,7 @@ stock,NSE,PARNAXLAB,PARNAXLAB,,stocks/raw/PARNAXLAB,2026-08-17,2026-11-03,54,NSE
 stock,NSE,PARSVNATH,PARSVNATH,,stocks/raw/PARSVNATH,2007-01-02,2026-11-03,4891,NSE bhavcopy
 stock,NSE,PASHUPATI,PASHUPATI,,stocks/raw/PASHUPATI,2017-09-08,2026-11-03,1119,NSE bhavcopy
 stock,NSE,PASUPTAC,PASUPTAC,,stocks/raw/PASUPTAC,2021-10-12,2026-11-03,1249,NSE bhavcopy
-stock,NSE,PATANJALI,PATANJALI,Fast Moving Consumer Goods,stocks/raw/PATANJALI,2022-07-13,2026-11-03,1062,NSE bhavcopy
+stock,NSE,PATANJALI,PATANJALI,Fast Moving Consumer Goods,stocks/raw/PATANJALI,2020-01-27,2026-11-03,1673,NSE bhavcopy
 stock,NSE,PATELENG,PATELENG,,stocks/raw/PATELENG,2007-01-02,2026-11-03,4895,NSE bhavcopy
 stock,NSE,PATELRMART,PATELRMART,,stocks/raw/PATELRMART,2025-08-26,2026-11-03,293,NSE bhavcopy
 stock,NSE,PATINTLOG,PATINTLOG,,stocks/raw/PATINTLOG,2008-01-11,2026-11-03,4583,NSE bhavcopy
@@ -1726,10 +1726,10 @@ stock,NSE,PAUSHAKLTD,PAUSHAKLTD,,stocks/raw/PAUSHAKLTD,2025-12-01,2026-11-03,228
 stock,NSE,PAVNAIND,PAVNAIND,,stocks/raw/PAVNAIND,2021-03-09,2026-11-03,1076,NSE bhavcopy
 stock,NSE,PAYTM,PAYTM,Financial Services,stocks/raw/PAYTM,2021-11-18,2026-11-03,1224,NSE bhavcopy
 stock,NSE,PBMPOLY,PBMPOLY,,stocks/raw/PBMPOLY,2026-08-17,2026-11-03,46,NSE bhavcopy
-stock,NSE,PCBL,PCBL,Chemicals,stocks/raw/PCBL,2022-01-13,2026-11-03,1185,NSE bhavcopy
+stock,NSE,PCBL,PCBL,Chemicals,stocks/raw/PCBL,2007-01-02,2026-11-03,4894,NSE bhavcopy
 stock,NSE,PCJEWELLER,PCJEWELLER,,stocks/raw/PCJEWELLER,2012-12-27,2026-11-03,3416,NSE bhavcopy
 stock,NSE,PDMJEPAPER,PDMJEPAPER,,stocks/raw/PDMJEPAPER,2016-03-30,2026-11-03,2616,NSE bhavcopy
-stock,NSE,PDSL,PDSL,,stocks/raw/PDSL,2022-02-17,2026-11-03,1161,NSE bhavcopy
+stock,NSE,PDSL,PDSL,,stocks/raw/PDSL,2014-10-21,2026-11-03,2966,NSE bhavcopy
 stock,NSE,PEARLPOLY,PEARLPOLY,,stocks/raw/PEARLPOLY,2007-01-02,2026-11-03,4575,NSE bhavcopy
 stock,NSE,PENIND,PENIND,,stocks/raw/PENIND,2010-11-25,2026-11-03,3933,NSE bhavcopy
 stock,NSE,PENINLAND,PENINLAND,,stocks/raw/PENINLAND,2007-01-02,2026-11-03,4893,NSE bhavcopy
@@ -1878,7 +1878,7 @@ stock,NSE,RATNAVEER,RATNAVEER,,stocks/raw/RATNAVEER,2023-09-11,2026-11-03,774,NS
 stock,NSE,RAYMOND,RAYMOND,,stocks/raw/RAYMOND,2007-01-02,2026-11-03,4895,NSE bhavcopy
 stock,NSE,RAYMONDLSL,RAYMONDLSL,,stocks/raw/RAYMONDLSL,2024-09-05,2026-11-03,534,NSE bhavcopy
 stock,NSE,RAYMONDREL,RAYMONDREL,,stocks/raw/RAYMONDREL,2025-07-01,2026-11-03,332,NSE bhavcopy
-stock,NSE,RBA,RBA,,stocks/raw/RBA,2022-02-17,2026-11-03,1161,NSE bhavcopy
+stock,NSE,RBA,RBA,,stocks/raw/RBA,2020-12-14,2026-11-03,1454,NSE bhavcopy
 stock,NSE,RBLBANK,RBLBANK,Financial Services,stocks/raw/RBLBANK,2016-08-31,2026-11-03,2511,NSE bhavcopy
 stock,NSE,RBZJEWEL,RBZJEWEL,,stocks/raw/RBZJEWEL,2023-12-27,2026-11-03,703,NSE bhavcopy
 stock,NSE,RCF,RCF,,stocks/raw/RCF,2007-01-02,2026-11-03,4895,NSE bhavcopy
@@ -2042,7 +2042,7 @@ stock,NSE,SEKURITIND,SEKURITIND,,stocks/raw/SEKURITIND,2026-08-17,2026-11-03,54,
 stock,NSE,SEMAC,SEMAC,,stocks/raw/SEMAC,2007-01-02,2026-11-03,4712,NSE bhavcopy
 stock,NSE,SENCO,SENCO,,stocks/raw/SENCO,2023-07-14,2026-11-03,814,NSE bhavcopy
 stock,NSE,SENORES,SENORES,,stocks/raw/SENORES,2024-12-30,2026-11-03,456,NSE bhavcopy
-stock,NSE,SEPC,SEPC,,stocks/raw/SEPC,2022-03-09,2026-11-03,1148,NSE bhavcopy
+stock,NSE,SEPC,SEPC,,stocks/raw/SEPC,2008-02-20,2026-11-03,4609,NSE bhavcopy
 stock,NSE,SERVOTECH,SERVOTECH,,stocks/raw/SERVOTECH,2017-08-24,2026-11-03,1716,NSE bhavcopy
 stock,NSE,SESHAPAPER,SESHAPAPER,,stocks/raw/SESHAPAPER,2007-01-02,2026-11-03,4844,NSE bhavcopy
 stock,NSE,SETCO,SETCO,,stocks/raw/SETCO,2016-07-01,2026-11-03,2552,NSE bhavcopy
@@ -2615,7 +2615,7 @@ stock,NSE,ZENITHSTL,ZENITHSTL,,stocks/raw/ZENITHSTL,2007-04-30,2026-11-03,4426,N
 stock,NSE,ZENSARTECH,ZENSARTECH,Information Technology,stocks/raw/ZENSARTECH,2007-01-02,2026-11-03,4895,NSE bhavcopy
 stock,NSE,ZENTEC,ZENTEC,Capital Goods,stocks/raw/ZENTEC,2015-03-30,2026-11-03,2863,NSE bhavcopy
 stock,NSE,ZETWERK,ZETWERK,,stocks/raw/ZETWERK,2026-10-23,2026-11-03,8,NSE bhavcopy
-stock,NSE,ZFCVINDIA,ZFCVINDIA,Automobile and Auto Components,stocks/raw/ZFCVINDIA,2022-04-01,2026-11-03,1132,NSE bhavcopy
+stock,NSE,ZFCVINDIA,ZFCVINDIA,Automobile and Auto Components,stocks/raw/ZFCVINDIA,2008-10-01,2026-11-03,4456,NSE bhavcopy
 stock,NSE,ZFSTEERING,ZFSTEERING,,stocks/raw/ZFSTEERING,2026-04-21,2026-11-03,135,NSE bhavcopy
 stock,NSE,ZIMLAB,ZIMLAB,,stocks/raw/ZIMLAB,2022-11-25,2026-11-03,971,NSE bhavcopy
 stock,NSE,ZODIAC,ZODIAC,,stocks/raw/ZODIAC,2017-12-05,2026-11-03,1789,NSE bhavcopy
@@ -4345,7 +4345,7 @@ stock-adjusted,NSE,PARNAXLAB,PARNAXLAB,,stocks/adjusted/PARNAXLAB,2026-08-17,202
 stock-adjusted,NSE,PARSVNATH,PARSVNATH,,stocks/adjusted/PARSVNATH,2007-01-02,2026-11-03,4891,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,PASHUPATI,PASHUPATI,,stocks/adjusted/PASHUPATI,2017-09-08,2026-11-03,1119,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,PASUPTAC,PASUPTAC,,stocks/adjusted/PASUPTAC,2021-10-12,2026-11-03,1249,NSE bhavcopy + NSE corporate actions
-stock-adjusted,NSE,PATANJALI,PATANJALI,Fast Moving Consumer Goods,stocks/adjusted/PATANJALI,2022-07-13,2026-11-03,1062,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PATANJALI,PATANJALI,Fast Moving Consumer Goods,stocks/adjusted/PATANJALI,2020-01-27,2026-11-03,1673,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,PATELENG,PATELENG,,stocks/adjusted/PATELENG,2007-01-02,2026-11-03,4895,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,PATELRMART,PATELRMART,,stocks/adjusted/PATELRMART,2025-08-26,2026-11-03,293,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,PATINTLOG,PATINTLOG,,stocks/adjusted/PATINTLOG,2008-01-11,2026-11-03,4583,NSE bhavcopy + NSE corporate actions
@@ -4353,10 +4353,10 @@ stock-adjusted,NSE,PAUSHAKLTD,PAUSHAKLTD,,stocks/adjusted/PAUSHAKLTD,2025-12-01,
 stock-adjusted,NSE,PAVNAIND,PAVNAIND,,stocks/adjusted/PAVNAIND,2021-03-09,2026-11-03,1076,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,PAYTM,PAYTM,Financial Services,stocks/adjusted/PAYTM,2021-11-18,2026-11-03,1224,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,PBMPOLY,PBMPOLY,,stocks/adjusted/PBMPOLY,2026-08-17,2026-11-03,46,NSE bhavcopy + NSE corporate actions
-stock-adjusted,NSE,PCBL,PCBL,Chemicals,stocks/adjusted/PCBL,2022-01-13,2026-11-03,1185,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PCBL,PCBL,Chemicals,stocks/adjusted/PCBL,2007-01-02,2026-11-03,4894,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,PCJEWELLER,PCJEWELLER,,stocks/adjusted/PCJEWELLER,2012-12-27,2026-11-03,3416,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,PDMJEPAPER,PDMJEPAPER,,stocks/adjusted/PDMJEPAPER,2016-03-30,2026-11-03,2616,NSE bhavcopy + NSE corporate actions
-stock-adjusted,NSE,PDSL,PDSL,,stocks/adjusted/PDSL,2022-02-17,2026-11-03,1161,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,PDSL,PDSL,,stocks/adjusted/PDSL,2014-10-21,2026-11-03,2966,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,PEARLPOLY,PEARLPOLY,,stocks/adjusted/PEARLPOLY,2007-01-02,2026-11-03,4575,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,PENIND,PENIND,,stocks/adjusted/PENIND,2010-11-25,2026-11-03,3933,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,PENINLAND,PENINLAND,,stocks/adjusted/PENINLAND,2007-01-02,2026-11-03,4893,NSE bhavcopy + NSE corporate actions
@@ -4505,7 +4505,7 @@ stock-adjusted,NSE,RATNAVEER,RATNAVEER,,stocks/adjusted/RATNAVEER,2023-09-11,202
 stock-adjusted,NSE,RAYMOND,RAYMOND,,stocks/adjusted/RAYMOND,2007-01-02,2026-11-03,4895,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,RAYMONDLSL,RAYMONDLSL,,stocks/adjusted/RAYMONDLSL,2024-09-05,2026-11-03,534,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,RAYMONDREL,RAYMONDREL,,stocks/adjusted/RAYMONDREL,2025-07-01,2026-11-03,332,NSE bhavcopy + NSE corporate actions
-stock-adjusted,NSE,RBA,RBA,,stocks/adjusted/RBA,2022-02-17,2026-11-03,1161,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,RBA,RBA,,stocks/adjusted/RBA,2020-12-14,2026-11-03,1454,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,RBLBANK,RBLBANK,Financial Services,stocks/adjusted/RBLBANK,2016-08-31,2026-11-03,2511,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,RBZJEWEL,RBZJEWEL,,stocks/adjusted/RBZJEWEL,2023-12-27,2026-11-03,703,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,RCF,RCF,,stocks/adjusted/RCF,2007-01-02,2026-11-03,4895,NSE bhavcopy + NSE corporate actions
@@ -4669,7 +4669,7 @@ stock-adjusted,NSE,SEKURITIND,SEKURITIND,,stocks/adjusted/SEKURITIND,2026-08-17,
 stock-adjusted,NSE,SEMAC,SEMAC,,stocks/adjusted/SEMAC,2007-01-02,2026-11-03,4712,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,SENCO,SENCO,,stocks/adjusted/SENCO,2023-07-14,2026-11-03,814,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,SENORES,SENORES,,stocks/adjusted/SENORES,2024-12-30,2026-11-03,456,NSE bhavcopy + NSE corporate actions
-stock-adjusted,NSE,SEPC,SEPC,,stocks/adjusted/SEPC,2022-03-09,2026-11-03,1148,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,SEPC,SEPC,,stocks/adjusted/SEPC,2008-02-20,2026-11-03,4609,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,SERVOTECH,SERVOTECH,,stocks/adjusted/SERVOTECH,2017-08-24,2026-11-03,1716,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,SESHAPAPER,SESHAPAPER,,stocks/adjusted/SESHAPAPER,2007-01-02,2026-11-03,4844,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,SETCO,SETCO,,stocks/adjusted/SETCO,2016-07-01,2026-11-03,2552,NSE bhavcopy + NSE corporate actions
@@ -5242,7 +5242,7 @@ stock-adjusted,NSE,ZENITHSTL,ZENITHSTL,,stocks/adjusted/ZENITHSTL,2007-04-30,202
 stock-adjusted,NSE,ZENSARTECH,ZENSARTECH,Information Technology,stocks/adjusted/ZENSARTECH,2007-01-02,2026-11-03,4895,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,ZENTEC,ZENTEC,Capital Goods,stocks/adjusted/ZENTEC,2015-03-30,2026-11-03,2863,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,ZETWERK,ZETWERK,,stocks/adjusted/ZETWERK,2026-10-23,2026-11-03,8,NSE bhavcopy + NSE corporate actions
-stock-adjusted,NSE,ZFCVINDIA,ZFCVINDIA,Automobile and Auto Components,stocks/adjusted/ZFCVINDIA,2022-04-01,2026-11-03,1132,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ZFCVINDIA,ZFCVINDIA,Automobile and Auto Components,stocks/adjusted/ZFCVINDIA,2008-10-01,2026-11-03,4456,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,ZFSTEERING,ZFSTEERING,,stocks/adjusted/ZFSTEERING,2026-04-21,2026-11-03,135,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,ZIMLAB,ZIMLAB,,stocks/adjusted/ZIMLAB,2022-11-25,2026-11-03,971,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,ZODIAC,ZODIAC,,stocks/adjusted/ZODIAC,2017-12-05,2026-11-03,1789,NSE bhavcopy + NSE corporate actions

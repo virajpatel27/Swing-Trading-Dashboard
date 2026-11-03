@@ -627,6 +627,8 @@ NSE PASHUPATI,warn,missing dates,2017-10-23,"1140 trading days without a row (fi
 NSE PATINTLOG,warn,missing dates,2008-12-19,"55 trading days without a row (first 2008-12-19, last 2014-03-03)"
 NSE PAVNAIND,warn,missing dates,2021-05-19,"319 trading days without a row (first 2021-05-19, last 2023-05-29)"
 NSE PBMPOLY,warn,missing dates,2026-08-20,"8 trading days without a row (first 2026-08-20, last 2026-09-16)"
+NSE PCBL,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
+NSE PDSL,warn,missing dates,2014-10-22,"4 trading days without a row (first 2014-10-22, last 2018-12-05)"
 NSE PEARLPOLY,warn,missing dates,2007-06-25,"320 trading days without a row (first 2007-06-25, last 2020-11-19)"
 NSE PENINLAND,warn,missing dates,2023-06-15,"2 trading days without a row (first 2023-06-15, last 2023-06-16)"
 NSE PFOCUS,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
@@ -742,6 +744,7 @@ NSE SECMARK,warn,missing dates,2024-03-18,"4 trading days without a row (first 2
 NSE SECURKLOUD,warn,missing dates,2019-11-04,"183 trading days without a row (first 2019-11-04, last 2020-09-04)"
 NSE SEJALLTD,warn,missing dates,2021-12-15,"57 trading days without a row (first 2021-12-15, last 2024-09-27)"
 NSE SEMAC,warn,missing dates,2007-04-27,"183 trading days without a row (first 2007-04-27, last 2026-09-02)"
+NSE SEPC,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE SERVOTECH,warn,missing dates,2017-10-16,"553 trading days without a row (first 2017-10-16, last 2021-08-30)"
 NSE SESHAPAPER,warn,missing dates,2008-12-30,"51 trading days without a row (first 2008-12-30, last 2016-02-05)"
 NSE SETUINFRA,warn,missing dates,2013-09-03,"261 trading days without a row (first 2013-09-03, last 2026-05-29)"
@@ -978,6 +981,7 @@ NSE XPROINDIA,warn,missing dates,2009-05-18,"3 trading days without a row (first
 NSE ZEELEARN,warn,missing dates,2023-06-20,"19 trading days without a row (first 2023-06-20, last 2023-07-21)"
 NSE ZENITHEXPO,warn,missing dates,2007-01-08,"1874 trading days without a row (first 2007-01-08, last 2026-10-22)"
 NSE ZENITHSTL,warn,missing dates,2008-04-01,"390 trading days without a row (first 2008-04-01, last 2022-03-11)"
+NSE ZFCVINDIA,warn,missing dates,2009-03-05,"3 trading days without a row (first 2009-03-05, last 2009-05-18)"
 NSE ZODIAC,warn,missing dates,2018-01-23,"410 trading days without a row (first 2018-01-23, last 2021-12-06)"
 NSE ZODIACLOTH,warn,missing dates,2008-05-13,"64 trading days without a row (first 2008-05-13, last 2017-01-10)"
 NSE ZSARACOM,warn,missing dates,2026-08-06,"1 trading days without a row (first 2026-08-06, last 2026-08-06)"
@@ -2544,6 +2548,8 @@ NSE PATINTLOG (adjusted),warn,unexplained jump,2021-10-28,close moved 40.8% (to 
 NSE PATINTLOG (adjusted),warn,unexplained jump,2023-12-11,close moved 20.0% (to 19.740560861613496)
 NSE PAVNAIND (adjusted),warn,unexplained jump,2022-09-05,close moved 49.3% (to 20.5)
 NSE PAYTM (adjusted),warn,unexplained jump,2024-02-02,close moved 20.0% (to 487.2)
+NSE PCBL (adjusted),warn,unexplained jump,2009-05-19,close moved 20.0% (to 7.220000000000001)
+NSE PCBL (adjusted),warn,unexplained jump,2009-05-20,close moved 20.0% (to 8.665000000000001)
 NSE PCJEWELLER (adjusted),warn,unexplained jump,2018-02-02,close moved 24.8% (to 36.425000000000004)
 NSE PCJEWELLER (adjusted),warn,unexplained jump,2018-04-27,close moved 24.9% (to 17.78)
 NSE PCJEWELLER (adjusted),warn,unexplained jump,2018-05-02,close moved 23.4% (to 11.065000000000001)
@@ -2825,6 +2831,7 @@ NSE SEAMECLTD (adjusted),warn,unexplained jump,2009-02-25,close moved 20.1% (to 
 NSE SECURKLOUD (adjusted),warn,unexplained jump,2018-07-02,close moved 20.0% (to 392.2)
 NSE SECURKLOUD (adjusted),warn,unexplained jump,2024-10-09,close moved 20.0% (to 42.36)
 NSE SEMAC (adjusted),warn,unexplained jump,2007-11-23,close moved 20.0% (to 750.3493653877051)
+NSE SEPC (adjusted),warn,unexplained jump,2009-10-20,close moved 20.7% (to 210.97247788169557)
 NSE SERVOTECH (adjusted),warn,unexplained jump,2026-02-02,close moved 26.4% (to 74.63)
 NSE SESHAPAPER (adjusted),warn,unexplained jump,2009-07-27,close moved 20.0% (to 22.19)
 NSE SESHAPAPER (adjusted),warn,unexplained jump,2010-10-27,close moved 20.0% (to 52.32000000000001)

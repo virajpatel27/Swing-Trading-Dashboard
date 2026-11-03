@@ -39,3 +39,6 @@ reports/integrity.*
 # Google Drive one-time setup files (secrets: never commit)
 client_secret*.json
 gdrive_token.txt
+
+# Third-party reference material (scanthecharts screenshots + exports): never publish (public repo)
+reference/

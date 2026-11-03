@@ -77,6 +77,13 @@ Optional and open: Google Drive setup, Telegram. First real daily data: Mon 02-N
 - NSE's API never answers some windows (seems to hang for ranges before an index existed): a window failing twice is skipped.
 - Bot commits data on GitHub: Viraj must Pull origin before he commits. Don't poll api.github.com often (60 calls/hour without a token): read the run page HTML.
 - NSE politeness: never run two jobs on the same NSE host at once; the NSE API stops answering after ~20-25 min of steady calls.
+**Scanner edition (2026-11-03):** master prompt phases S0-S12 (`reference/MASTER_PROMPT.md`, git-ignored). Third-party
+material (scanthecharts screenshots, all-stocks.csv export) stays in `reference/` (git-ignored, NEVER commit; calibration only,
+descriptions in our own words). S0 done (`docs/reference-notes.md`, `docs/feature-dependency-map.md`). S1 done:
+`swingdash/stock_master.py` -> `data/meta/stocks.csv` (built by the daily job), `scripts/audit_stocks.py` ->
+`reports/stock_audit.md`, `scripts/find_renames.py` -> `config/symbol_changes_extra.csv` (renames NSE's file misses, found by
+ISIN), `backfill.carry_over_renames` (older days of a renamed stock move to the new symbol), `config/fields.yaml` + test.
+Free float = 100 - promoter % (NSE shareholding API), liquid = median 30-session turnover >= 1 Cr and close >= 5.
 Repo folder on the PC: `C:\Users\hello\OneDrive\Documents\Swing Trading\Swing Trading` (nested). Manual steps: `docs/MANUAL_CHECKLIST.md`.
 Read GitHub run results without a token via the public API (`api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/runs`,
 then `.../actions/runs/<id>/jobs` and `.../check-runs/<job id>/annotations`). Logs, Summary page and artifacts need a signed-in user,

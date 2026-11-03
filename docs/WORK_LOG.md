@@ -260,3 +260,62 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   `daily.add_index_closes_today` (adds the day only where missing; the official file replaces it later via the 5-day re-read).
   Live check: 139/139 matched. Schedule now 16:40 / 17:20 / 18:30 / 23:50 IST + 08:00 next morning (no Angel One, so no
   clash with the old project's 17:00 Angel job). 115 tests green.
+- Pushed (bffacc2). Manual Daily update #4 (run 41637751171): Success ~18:26 IST. Live: data date 2026-11-03 for stocks AND
+  NSE indices (same-day values from allIndices: NIFTY 50 23,810.85 +1.58 %), 0 errors. BSE still 30-Oct (weekly PC job).
+- NEXT: Viraj closes the "Daily update failed" issue; tomorrow check that the 16:40 IST schedule delivers by ~17:00.
+
+### 2026-11-03 (evening): new master prompt (scanner edition) - not started
+- Viraj shared Downloads/MASTER_PROMPT.md (phases 0-12: stock master, groups/themes, ~60 indicators + field registry,
+  column settings, scanner engine + formula editor, patterns, fundamentals, earnings scanners, groups, breadth),
+  SN.zip (287 screenshots of scanthecharts; also Warm-up, Heatmap, RRG, News, Earnings pages), all-stocks.csv (their
+  export: 2,609 stocks x 105 columns) and sector-ranks.csv. Third-party material: keep in a git-ignored reference/ folder,
+  never commit (public repo); use only to calibrate.
+- all-stocks.csv is the **03-Nov-2026** session (RELIANCE 1,307.90), not 30-Oct (the screenshots are 30-Oct). Its "themes"
+  column is an unquoted list -> fix with a regex before pandas. 2,596 of its symbols are in our list; their industry = NSE
+  basic industry for 84 %, sector 90 %; RS rating correlation 0.986 with ours.
+- Formula check on 03-Nov (ours on adjusted data vs theirs, ~2,226 stocks): price 100 %, RSI(14) Wilder 99.3 % within 0.5,
+  ADR%(20) = 100*(SMA(H/L,20)-1) 100 %, RVol = volume / average of the previous 20 days (a ratio, not %) 99.7 % within 0.05,
+  % from SMA50 99.7 % within 0.1, % from SMA200 94.3 %, 1M return (21 sessions) 99.9 %. -> they use standard formulas on
+  adjusted prices; calibrating against their export works.
+- NEXT: Viraj's go for Phase 0.
+
+### 2026-11-03 (night): Phase 0 (study + feasibility) - done, waiting for "continue"
+- Viewed all 287 screenshots -> `docs/reference-notes.md` (own words: scanner tree + counts, chart header / markers /
+  overlays, 96 columns in 8 groups, 16 indicators with defaults, chart settings, fundamentals tab, Groups, Market breadth,
+  Warm-up, Earnings, Heatmap, RRG, News). Numbers read off the screenshots (RRG values, breadth values) are kept private in
+  `reference/calibration.md` (git-ignored with the rest of reference/).
+- Real source tests (read-only, ~45 calls): delivery % exists from 2007 (MTO files) and 2020+ (full bhavcopy); F&O list,
+  price bands, bulk/block (today), index members (niftyindices), delisted list, IPO list, event calendar, board meetings,
+  announcements, FII/DII (today only), shareholding (21 quarters), results XBRL from Mar-2017 (old feed, ends Dec-2024) +
+  `api/integrated-filing-results` (2025 ->). GetQuoteApi gives issuedSize + ffmc (shares, float). `api/quote-equity`
+  answers 403 (not needed). BSE->NSE movers (MARSONS) have no old NSE results.
+- Matrix, size / runtime estimate, storage plan, phase plan, UNKNOWN list -> `docs/feature-dependency-map.md`.
+  No MISSING item blocks a major feature. Measured: data 541 MB, .git 414 MB.
+- NEXT: Viraj reviews the matrix and says "continue" (Phase 1). Ask before commit (new docs + .gitignore reference/).
+
+### 2026-11-03 (night): Scanner Phase S1 - stock master + audit (done, waiting for Viraj's OK)
+- `swingdash/stock_master.py` -> `data/meta/stocks.csv` (one row per stock: ISIN, series, listing, first / last day,
+  status, n500, F&O, price band, face value, shares, promoter %, free float %, raw close, market cap, float market cap,
+  median + average 30-session turnover, liquid, sector levels). Built by the daily job (step 4b) and after every backfill.
+- Share count + promoter holding come with the monthly classification call (GetQuoteApi + shareholding API = 2 calls per
+  stock). classification.csv got columns shares, float_pct_nse, face_value, promoter_pct, shp_date. Entries without a share
+  count are asked again -> the first fill takes ~4.5 h of NSE calls (daily runs do ~8 min each, or Backfill history ->
+  job classification). After a split / bonus / rights / consolidation the count is asked again (`share_count_changed`).
+- Checked against the reference export (03-Nov): F&O 218 = 218 identical; free float = 100 - promoter % (their definition,
+  90 % within 0.1 pt; NSE's own ffmc free float differs, kept only as fallback); TITAN shares x price = their market cap;
+  their "30-day rupee volume" is an AVERAGE (ours within ~1 %), but the liquid rule uses the MEDIAN (tooltip): 1,545 liquid
+  on 02-Nov vs their 1,507 on 30-Oct (with the average it would be ~1,600).
+- Audit (`scripts/audit_stocks.py` -> `reports/stock_audit.md` / .csv): 2,626 stocks (EQ 2,391, BE 199, BZ 33, REIT 3),
+  missing 0, extra 3 (REITs, on purpose), 12 shares traded but not in NSE's equity list (old / insolvency names), 34 late
+  starts, 38 without NSE sector, 0 share counts yet.
+- **Renames NSE's symbolchange.csv misses**: found by the same ISIN in the bhavcopy before/after the first stored day
+  (`scripts/find_renames.py` -> `config/symbol_changes_extra.csv`): RUCHI->PATANJALI, PHILIPCARB->PCBL, PDSMFL->PDSL,
+  BURGERKING->RBA, SHRIRAMEPC->SEPC, WABCOINDIA->ZFCVINDIA. Their history before 2022 must be re-read: Backfill history,
+  job stocks, symbols PATANJALI,PCBL,PDSL,RBA,SEPC,ZFCVINDIA, from 2007-01-01.
+- ABCOTS -> ABCIND (NSE file, 02-Nov): the older days sit in the ABCOTS folder -> new `backfill.carry_over_renames` copies
+  them into the new symbol's folder on the next run (daily or backfill), automatically for future renames too.
+- Bhavcopy parser keeps the ISIN now (audit: ETFs with INF... ISINs are not "new listings").
+- Field registry `config/fields.yaml` (current_phase 1; 64 fields incl. all snapshot and stocks.csv columns) +
+  `swingdash/registry.py` + tests/test_scan_phase1.py (test_registry_dependencies). 126 Python + 11 JS tests green.
+- NEXT: Viraj reviews the audit, commits + pushes (GitHub Desktop), runs Backfill history (classification) once or twice and
+  Backfill history (stocks, the 6 renamed symbols, from 2007-01-01); then "continue" for S2.

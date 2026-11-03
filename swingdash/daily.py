@@ -4,7 +4,8 @@
   2. NSE indices  NSE daily all-indices file the same way (it appears ~23:20 IST, so the 23:50 run brings the day's indices),
                   new indices get their history, gaps are filled
   3. corporate actions + adjusted prices (rebuilt for every stock; only changed files are written)
-  4. sector/industry for new stocks or entries older than 30 days
+  4. sector/industry + share count for new stocks, entries older than 30 days, or after a split / bonus
+     4b. stock master data/meta/stocks.csv (F&O flag, price band, market cap, free float, liquid flag)
   5. snapshot (latest.json, sectors.json) - written only when its content changed
 The data check and the commit are separate workflow steps. BSE indices are NOT here: BSE refuses GitHub (weekly PC job).
 Nothing new (holiday, weekend, second run of the day) -> no file changes -> nothing to commit.
@@ -17,7 +18,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import backfill, classification, rebuild, snapshot, store
+from . import backfill, classification, rebuild, snapshot, stock_master, store
 
 
 def recheck_start(days: set[date], n: int, fallback: date) -> date:
@@ -108,11 +109,18 @@ def run(ctx: backfill.Ctx, log=print) -> dict:
     a = rebuild.rebuild_adjusted(ctx.root, ctx.http, ctx.settings, ctx.universe, ctx.today, cache=ctx.root / "cache", log=log)
     res["adjusted"] = {k: a[k] for k in ("adjusted_files_changed", "issues", "actions_source")}
 
-    # 4. classification for new / old entries (bounded time)
+    # 4. classification + share count for new / old entries and stocks whose share count changed (bounded time)
     uni = pd.read_csv(data / "meta" / "universe_stocks.csv")
     c = classification.update(data / "meta" / "classification.csv", uni, ctx.http, ctx.today,
-                              int(ctx.settings.get("classification_refresh_days", 30)), time.monotonic() + 8 * 60, log=log)
+                              int(ctx.settings.get("classification_refresh_days", 30)), time.monotonic() + 8 * 60, log=log,
+                              force=stock_master.share_count_changed(data, ctx.today))
     res["classification"] = c
+
+    # 4b. stock master (F&O flag, price band, market cap, liquid flag)
+    fno, bands = stock_master.download_lists(ctx.http, log)
+    master = stock_master.build(data, fno, bands, ctx.settings.get("liquid"), log=log)
+    res["stock_master_written"] = stock_master.write(data, master)
+    res["liquid_stocks"] = int(master["liquid"].sum())
 
     # 5. snapshot
     latest, sectors = snapshot.build(data, log=log)

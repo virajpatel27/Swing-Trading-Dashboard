@@ -5,6 +5,7 @@ from __future__ import annotations
 import io
 import zipfile
 from datetime import date
+from pathlib import Path
 
 import pandas as pd
 
@@ -29,21 +30,25 @@ def bhav_url(d: date) -> str:
 
 
 def parse_bhav(content: bytes) -> pd.DataFrame:
-    """Either bhavcopy format -> columns date, symbol, series, open, high, low, close, prev_close, volume, value."""
+    """Either bhavcopy format -> columns date, symbol, series, open, high, low, close, prev_close, volume, value, isin
+    (isin empty in old files before ~2011, which have no ISIN column)."""
     with zipfile.ZipFile(io.BytesIO(content)) as z:
         raw = pd.read_csv(z.open(z.namelist()[0]))
     raw.columns = [str(c).strip() for c in raw.columns]
     if "TckrSymb" in raw.columns:
         df = pd.DataFrame({"date": raw["TradDt"], "symbol": raw["TckrSymb"], "series": raw["SctySrs"],
                            "open": raw["OpnPric"], "high": raw["HghPric"], "low": raw["LwPric"], "close": raw["ClsPric"],
-                           "prev_close": raw["PrvsClsgPric"], "volume": raw["TtlTradgVol"], "value": raw["TtlTrfVal"]})
+                           "prev_close": raw["PrvsClsgPric"], "volume": raw["TtlTradgVol"], "value": raw["TtlTrfVal"],
+                           "isin": raw.get("ISIN", "")})
     else:
         df = pd.DataFrame({"date": raw["TIMESTAMP"], "symbol": raw["SYMBOL"], "series": raw["SERIES"],
                            "open": raw["OPEN"], "high": raw["HIGH"], "low": raw["LOW"], "close": raw["CLOSE"],
-                           "prev_close": raw["PREVCLOSE"], "volume": raw["TOTTRDQTY"], "value": raw["TOTTRDVAL"]})
+                           "prev_close": raw["PREVCLOSE"], "volume": raw["TOTTRDQTY"], "value": raw["TOTTRDVAL"],
+                           "isin": raw.get("ISIN", "")})
     df["date"] = pd.to_datetime(df["date"], format="mixed", dayfirst=False).dt.normalize()
     df["symbol"] = df["symbol"].astype(str).str.strip()
     df["series"] = df["series"].astype(str).str.strip()
+    df["isin"] = df["isin"].fillna("").astype(str).str.strip()
     return df
 
 
@@ -72,11 +77,21 @@ def pick_rows(day: pd.DataFrame, wanted: dict[str, str], series_priority: list[s
 
 
 # ---------------------------------------------------------------- symbols
-def symbol_changes(http) -> pd.DataFrame:
+EXTRA_CHANGES = Path(__file__).resolve().parents[2] / "config" / "symbol_changes_extra.csv"
+
+
+def symbol_changes(http, extra: Path | None = EXTRA_CHANGES) -> pd.DataFrame:
+    """NSE's symbolchange.csv plus our own additions (config/symbol_changes_extra.csv): NSE's file misses some renames,
+    e.g. PHILIPCARB -> PCBL in 2022 (found by the same ISIN in the bhavcopy, scripts/find_renames.py)."""
     r = http.get(f"{ARCH}/content/equities/symbolchange.csv")
     if r.status_code != 200:
         raise SourceError(f"NSE symbol changes: HTTP {r.status_code}")
-    return parse_symbol_changes(r.content)
+    out = parse_symbol_changes(r.content)
+    if extra is not None and extra.exists():
+        add = pd.read_csv(extra, dtype=str)
+        add = pd.DataFrame({"old": add["old"].str.strip(), "new": add["new"].str.strip(), "date": pd.to_datetime(add["date"])})
+        out = pd.concat([out, add], ignore_index=True).drop_duplicates(["old", "new"], keep="first")
+    return out
 
 
 def parse_symbol_changes(content: bytes) -> pd.DataFrame:
@@ -227,3 +242,67 @@ def index_close_file(http, d: date) -> pd.DataFrame | None:
                         "low": pd.to_numeric(df["Low Index Value"], errors="coerce"),
                         "close": pd.to_numeric(df["Closing Index Value"], errors="coerce")})
     return fill_ohl(out.dropna(subset=["close"]))
+
+
+# ---------------------------------------------------------------- stock master lists (checked 2026-11-03)
+def _get_csv(http, url: str, what: str) -> bytes:
+    r = http.get(url)
+    if r.status_code != 200:
+        raise SourceError(f"{what}: HTTP {r.status_code}")
+    return r.content
+
+
+def fno_symbols(http) -> set[str]:
+    """Stocks with futures & options (fo_mktlots.csv; index rows such as NIFTY never match a stock symbol)."""
+    return parse_fno(_get_csv(http, f"{ARCH}/content/fo/fo_mktlots.csv", "F&O list"))
+
+
+def parse_fno(content: bytes) -> set[str]:
+    df = pd.read_csv(io.BytesIO(content), dtype=str)
+    df.columns = [c.strip() for c in df.columns]
+    syms = df["SYMBOL"].astype(str).str.strip()
+    return {s for s in syms if s and s.upper() != "SYMBOL"}
+
+
+def price_bands(http) -> pd.DataFrame:
+    """Today's price band (circuit limit, %) per symbol + series (sec_list.csv: 2 / 5 / 10 / 20 or 'No Band')."""
+    return parse_price_bands(_get_csv(http, f"{ARCH}/content/equities/sec_list.csv", "price bands"))
+
+
+def parse_price_bands(content: bytes) -> pd.DataFrame:
+    df = pd.read_csv(io.BytesIO(content), dtype=str)
+    df.columns = [c.strip() for c in df.columns]
+    return pd.DataFrame({"symbol": df["Symbol"].str.strip(), "series": df["Series"].str.strip(),
+                         "band": df["Band"].astype(str).str.strip()})
+
+
+def delisted(http) -> pd.DataFrame:
+    """Companies NSE has delisted (symbol, name, date, type)."""
+    return parse_delisted(_get_csv(http, f"{ARCH}/content/equities/delisted.csv", "delisted list"))
+
+
+def parse_delisted(content: bytes) -> pd.DataFrame:
+    df = pd.read_csv(io.BytesIO(content), dtype=str, encoding="latin-1").iloc[:, :4]
+    df.columns = ["symbol", "name", "date", "type"]
+    df = df.dropna(subset=["symbol"])
+    return pd.DataFrame({"symbol": df["symbol"].str.strip(), "name": df["name"].str.strip(),
+                         "date": pd.to_datetime(df["date"].str.strip(), format="%d-%b-%y", errors="coerce").dt.strftime("%Y-%m-%d"),
+                         "type": df["type"].fillna("").str.strip()})
+
+
+def latest_promoter_holding(http, symbol: str) -> tuple[float, str] | None:
+    """(promoter & promoter group %, quarter end 'YYYY-MM-DD') of the newest shareholding pattern; None when NSE has none."""
+    rows = api_json(http, f"api/corporate-share-holdings-master?index=equities&symbol={symbol}")
+    return parse_promoter_holding(rows if isinstance(rows, list) else [])
+
+
+def parse_promoter_holding(rows: list[dict]) -> tuple[float, str] | None:
+    best = None
+    for r in rows:
+        try:
+            pct, day = float(r.get("pr_and_prgrp")), pd.to_datetime(r.get("date"), format="%d-%b-%Y")
+        except (TypeError, ValueError):
+            continue
+        if 0 <= pct <= 100 and (best is None or day > best[1]):
+            best = (pct, day)
+    return None if best is None else (best[0], best[1].strftime("%Y-%m-%d"))

@@ -31,6 +31,12 @@ Script: `scripts/probe_sources.py`.
 | Trading holidays | NSE `api/holiday-master?type=trading` (20 in 2026) | "no new file" detection | - |
 | Universe | NSE `ind_nifty500list.csv` (501 stocks, has a broad Industry column) | - | - |
 | Sector / industry | NSE `GetQuoteApi getSymbolData` (macro, sector, basicIndustry fields) | Nifty 500 list "Industry" column | - |
+| Shares issued, face value (Phase 1 scanner plan) | same GetQuoteApi answer (`issuedSize`, `faceValue`; TITAN 887,786,160 = NSE's market cap / price) | keep last good | - |
+| Free float % | 100 - promoter & group % from NSE `api/corporate-share-holdings-master` (newest quarter) | NSE `ffmc / totalMarketCap` (NSE's index free float, differs) | reference export: 90 % within 0.1 pt |
+| F&O stocks | NSE `content/fo/fo_mktlots.csv` (218 stocks on 03-Nov) | keep saved flags | reference export: 218 / 218 identical |
+| Price band (circuit %) | NSE `content/equities/sec_list.csv` (today only) | keep saved bands | - |
+| Delisted companies | NSE `content/equities/delisted.csv` (latin-1, ~330 rows) | - | audit only |
+| Missing symbol renames | same ISIN in the bhavcopy of two neighbouring days (ISIN column from ~2011) -> `config/symbol_changes_extra.csv` | - | 6 found 03-Nov: RUCHI->PATANJALI, PHILIPCARB->PCBL, PDSMFL->PDSL, BURGERKING->RBA, SHRIRAMEPC->SEPC, WABCOINDIA->ZFCVINDIA |
 
 **Not used:** equitytimer.com (Terms forbid scraping + redistribution). niftyindices.com: its old history address
 (`Backpage.aspx/getHistoricaldatatabletoString`) now returns a web page; the NSE API gives the same data, so niftyindices is dropped for now.

@@ -15,6 +15,15 @@ Status: **draft, waiting for Viraj's OK** ("continue"). Nothing is built yet.
 | 7 | Daily automation: holidays, catch-up, last-5-day re-check, Pages deploy, failure issue / Telegram | `.github/workflows/daily.yml` ... |
 | 8 | Backup (weekly Release zip, `backup` branch), monthly integrity, branch rules, restore, README, checklist | live URL |
 
+**Scanner edition (master prompt of 2026-11-03, phases "S0".."S12"):** plan, matrix and storage plan in
+`docs/feature-dependency-map.md`; screenshot study in `docs/reference-notes.md`; every field in `config/fields.yaml`.
+
+| Phase | What | Status |
+|---|---|---|
+| S0 | Study + feasibility | done 2026-11-03 |
+| S1 | Stock master `data/meta/stocks.csv` (shares, float, F&O, band, market cap, liquid), audit `reports/stock_audit.md`, renames by ISIN, field registry | done 2026-11-03 (waiting for Viraj's OK) |
+| S2-S12 | price foundation, groups, indicator engine, table + chart, scanners, patterns, fundamentals, earnings + groups, breadth, optional, hardening | open |
+
 ## 2. Decisions that differ from the original spec (and why)
 
 1. **Repo is created with GitHub Desktop, not `gh` CLI** - Viraj's rule (terminal push fails on his PC).

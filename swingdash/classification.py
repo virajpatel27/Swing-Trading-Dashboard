@@ -1,8 +1,11 @@
 """Sector / industry from NSE's official 4-level classification (macro -> sector -> industry -> basic industry), plus the NSE
 indices a stock belongs to. Source: NSE GetQuoteApi (checked 2026-10-31). equitytimer.com is NOT used (its Terms forbid
 scraping). Fallback when NSE does not answer: the "Industry" column of the Nifty 500 list (one broad level).
+The same answer carries the share count (issuedSize), face value and NSE's free-float market cap (ffmc -> float_pct_nse).
+A second call (shareholding pattern) gives the promoter holding: free float = 100 - promoter % (the usual definition).
 
-    data/meta/classification.csv   symbol, macro, sector, industry, basic_industry, indices, source, fetched
+    data/meta/classification.csv   symbol, macro, sector, industry, basic_industry, indices, shares, float_pct_nse,
+                                   face_value, promoter_pct, shp_date, source, fetched
 """
 from __future__ import annotations
 
@@ -14,7 +17,8 @@ import pandas as pd
 
 from .sources import nse
 
-COLS = ["symbol", "macro", "sector", "industry", "basic_industry", "indices", "source", "fetched"]
+COLS = ["symbol", "macro", "sector", "industry", "basic_industry", "indices", "shares", "float_pct_nse", "face_value",
+        "promoter_pct", "shp_date", "source", "fetched"]
 
 
 def _find(obj, key):
@@ -39,7 +43,25 @@ def parse_quote(data: dict) -> dict | None:
     idx = _find(data, "indexList") or []
     clean = lambda v: " ".join(str(v).split()) if v not in (None, "", "-", "NA") else ""
     return {"macro": clean(macro), "sector": clean(sector), "industry": clean(industry), "basic_industry": clean(basic),
-            "indices": ";".join(" ".join(str(i).split()) for i in idx)}
+            "indices": ";".join(" ".join(str(i).split()) for i in idx), **parse_shares(data)}
+
+
+def _num(v) -> float | None:
+    try:
+        x = float(str(v).replace(",", ""))
+    except (TypeError, ValueError):
+        return None
+    return x if x > 0 else None
+
+
+def parse_shares(data: dict) -> dict:
+    """Shares issued, NSE's free float % (= free-float market cap / total market cap; NSE's index definition, a fallback
+    only) and face value. Empty strings when NSE leaves them out."""
+    shares, ffmc, mcap = _num(_find(data, "issuedSize")), _num(_find(data, "ffmc")), _num(_find(data, "totalMarketCap"))
+    face = _num(_find(data, "faceValue"))
+    pct = round(100 * ffmc / mcap, 2) if ffmc and mcap else None
+    return {"shares": str(int(shares)) if shares else "", "float_pct_nse": "" if pct is None else str(min(pct, 100.0)),
+            "face_value": "" if face is None else f"{face:g}"}
 
 
 def fetch_one(http, symbol: str, series: str = "EQ") -> dict | None:
@@ -49,22 +71,31 @@ def fetch_one(http, symbol: str, series: str = "EQ") -> dict | None:
     if r.status_code != 200:
         return None
     try:
-        return parse_quote(r.json())
+        info = parse_quote(r.json())
     except ValueError:
         return None
+    if info:
+        try:
+            got = nse.latest_promoter_holding(http, symbol)
+        except Exception:  # noqa: BLE001 - the share pattern is optional; asked again next refresh
+            got = None
+        info["promoter_pct"], info["shp_date"] = (f"{got[0]:g}", got[1]) if got else ("", "")
+    return info
 
 
 def update(path: Path, universe: pd.DataFrame, http, today: date, refresh_days: int = 30, deadline: float = float("inf"),
-           log=print, clock=time.monotonic) -> dict:
-    """Ask NSE for stocks with no entry or an entry older than refresh_days; keep the last good entry when NSE fails.
+           log=print, clock=time.monotonic, force: set[str] | None = None) -> dict:
+    """Ask NSE for stocks with no entry, an entry older than refresh_days, no share count yet, or in `force` (e.g. a split
+    or bonus since the last answer changed the share count); keep the last good entry when NSE fails.
     Stocks NSE never answered for get the Nifty 500 list's broad industry (source 'Nifty 500 list')."""
     old = pd.read_csv(path, dtype=str).fillna("") if path.exists() else pd.DataFrame(columns=COLS)
-    have = {r["symbol"]: r for r in old.to_dict("records")}
+    have = {r["symbol"]: {c: r.get(c, "") for c in COLS} for r in old.to_dict("records")}
+    force = force or set()
     asked = got = 0
     for r in universe.itertuples():
         cur = have.get(r.symbol)
-        fresh = cur and cur.get("source") == "NSE" and cur.get("fetched") and \
-            (today - date.fromisoformat(cur["fetched"])).days < refresh_days
+        fresh = cur and cur.get("source") == "NSE" and cur.get("fetched") and cur.get("shares") and \
+            r.symbol not in force and (today - date.fromisoformat(cur["fetched"])).days < refresh_days
         if fresh:
             continue
         if clock() > deadline:
@@ -76,10 +107,12 @@ def update(path: Path, universe: pd.DataFrame, http, today: date, refresh_days: 
             info = None
         if info:
             got += 1
+            info["shares"] = info.get("shares") or "0"      # NSE answered without a share count: do not ask again every run
             have[r.symbol] = {"symbol": r.symbol, **info, "source": "NSE", "fetched": today.isoformat()}
         elif not cur:
             have[r.symbol] = {"symbol": r.symbol, "macro": "", "sector": getattr(r, "industry", ""), "industry": "",
-                              "basic_industry": "", "indices": "", "source": "Nifty 500 list", "fetched": today.isoformat()}
+                              "basic_industry": "", "indices": "", "shares": "", "float_pct_nse": "", "face_value": "",
+                              "promoter_pct": "", "shp_date": "", "source": "Nifty 500 list", "fetched": today.isoformat()}
     out = pd.DataFrame(list(have.values()), columns=COLS)
     out = out[out["symbol"].isin(universe["symbol"])].sort_values("symbol")
     path.parent.mkdir(parents=True, exist_ok=True)

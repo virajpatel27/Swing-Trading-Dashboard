@@ -127,6 +127,32 @@ def stock_universe(ctx: Ctx) -> pd.DataFrame:
     return uni
 
 
+def carry_over_renames(ctx: Ctx, changes: pd.DataFrame, uni: pd.DataFrame) -> list[str]:
+    """A stock renamed after its history was stored (e.g. ABCOTS -> ABCIND on 02-Nov-2026) has its older days in the old
+    symbol's folder. Copy the days before the change that the new folder lacks into it (the old folder is left as it is).
+    Returns the new symbols that got days."""
+    ids = dict(zip(uni["symbol"], uni["id"]))
+    raw = ctx.data / "stocks" / "raw"
+    done = []
+    for r in changes.sort_values("date").itertuples():
+        if r.new not in ids or r.old in ids:
+            continue
+        old_dir = raw / store.folder_name(r.old)
+        if not old_dir.is_dir():
+            continue
+        old = store.read(old_dir, store.STOCK_COLS)
+        old = old[old["date"] < r.date]
+        new_dir = raw / ids[r.new]
+        have = store.read(new_dir, store.STOCK_COLS)
+        missing = old[~old["date"].isin(have["date"])] if len(have) else old
+        if missing.empty:
+            continue
+        merge_write(new_dir, missing, store.STOCK_COLS, ctx.today)
+        ctx.log(f"  rename {r.old} -> {r.new} ({r.date:%Y-%m-%d}): {len(missing)} older days carried over")
+        done.append(r.new)
+    return done
+
+
 def backfill_stocks(ctx: Ctx, until: date | None = None, only: list[str] | None = None, start: date | None = None,
                     restart_from: date | None = None) -> dict:
     """only + start = a small extra run for a few stocks (e.g. ones added to the list later), with its own checkpoint.
@@ -137,7 +163,9 @@ def backfill_stocks(ctx: Ctx, until: date | None = None, only: list[str] | None 
         uni = uni[uni["symbol"].isin(only)]
     symbols = uni["symbol"].tolist()
     ids = dict(zip(uni["symbol"], uni["id"]))
-    history = nse.symbol_history(nse.symbol_changes(ctx.http), symbols)
+    changes = nse.symbol_changes(ctx.http)
+    history = nse.symbol_history(changes, symbols)
+    carry_over_renames(ctx, changes, uni)
     prio = ctx.universe["stocks"]["series_priority"]
     cp_path = checkpoint(ctx, "nse_stocks_extra" if only else "nse_stocks")
     cp = load_json(cp_path, {})

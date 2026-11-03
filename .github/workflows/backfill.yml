@@ -75,6 +75,7 @@ jobs:
             classification)
               python scripts/fetch_classification.py --max-minutes "$MAX" ;;
           esac
+          python scripts/audit_stocks.py
           python scripts/build_snapshot.py
       - name: Data check
         run: |

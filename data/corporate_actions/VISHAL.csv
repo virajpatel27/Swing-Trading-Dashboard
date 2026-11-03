@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2020-12-16,bonus,1:2,0.66666667,,ratio from NSE text,applied,Bonus 1:2,NSE
+2021-08-05,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 0.50 Per Share,NSE
+2022-03-10,bonus,2:1,0.33333333,,ratio from NSE text,applied,Bonus 2:1,NSE

@@ -1,0 +1,5 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2009-09-10,dividend,,1.0,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Re.0.25 Per Share,NSE
+2010-12-22,dividend,,1.0,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.50 Per Share,NSE
+2011-12-26,dividend,,1.0,0.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Re.0.75 Per Share,NSE
+2023-09-11,demerger,,0.9464627151,,open 24.75 / close before 26.15,applied,Demerger,NSE

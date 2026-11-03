@@ -1,0 +1,10 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-08-16,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Re.1/- Per Share,NSE
+2008-08-28,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 10%,NSE
+2011-02-23,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend-Re.1/- Per Share (Purpose Revised),NSE
+2011-07-05,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.1/- Per Share,NSE
+2012-06-12,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.1/- Per Share,NSE
+2013-06-25,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Re 1 Per Equity Share,NSE
+2014-07-23,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend - Re 1/- Per Share,NSE
+2015-07-21,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Re 1/- Per Share,NSE
+2016-09-21,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Re 1/- Per Share,NSE

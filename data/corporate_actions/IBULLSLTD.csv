@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2013-05-06,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend Re.1/- Per Equity Share,NSE
+2018-05-11,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1 Per Share,NSE
+2022-09-01,demerger,,0.8828828829,,open 49 / close before 55.5,applied,Demerger,NSE

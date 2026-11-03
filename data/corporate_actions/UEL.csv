@@ -1,0 +1,5 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2024-05-22,demerger,,1,,price did not fall: no change,no change,Demerger,NSE
+2024-09-20,bonus,1:4,0.8,,ratio from NSE text,applied,Bonus 1:4,NSE
+2025-05-30,bonus,17:25,0.5952381,,ratio from NSE text,applied,Bonus 17:25,NSE
+2025-10-10,bonus,2:1,0.33333333,,ratio from NSE text,applied,Bonus 2:1,NSE

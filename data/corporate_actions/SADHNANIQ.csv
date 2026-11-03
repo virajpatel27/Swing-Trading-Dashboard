@@ -1,0 +1,7 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2023-07-05,bonus,2:9,0.81818182,,ratio from NSE text,applied,Bonus 2:9,NSE
+2023-09-18,dividend,,1,0.15,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 0.15 Per Share,NSE
+2024-09-13,rights,1:3,0.76865304,6.06,"TERP, issue price 6.06, close before 81.22",applied,Rights 1:3 @ Premium Rs 5.06/-,NSE
+2024-09-17,dividend,,1,0.15,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.15 Per Share,NSE
+2025-09-22,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.10 Per Share,NSE
+2026-02-18,rights,8:1,0.26955833,1,"TERP, issue price 1, close before 5.61",applied,Rights 8:1 @ Premium Rs 0/-,NSE

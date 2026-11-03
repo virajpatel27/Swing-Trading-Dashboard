@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2012-11-01,split,FV 5->1,0.2,,ratio from NSE text,applied,Face Value Split From Rs.5/- To Re.1/-,NSE
+2013-02-01,bonus,1:10,0.90909091,,ratio from NSE text,applied,Bonus 1:10,NSE
+2024-01-30,bonus,1:1,0.5,,ratio from NSE text,applied,Bonus 1:1,NSE

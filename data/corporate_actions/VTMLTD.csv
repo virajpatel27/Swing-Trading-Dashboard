@@ -1,0 +1,5 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2012-05-30,dividend,,1,4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.4/- Per Share,NSE
+2012-08-16,split,FV 10->1,0.1,,ratio from NSE text,applied,Face Value Split From Rs.10/- To Re.1/-,NSE
+2013-02-26,dividend,,1,0.7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Div. Of Re. 0.70/- Per Equity Share Re.1/- Each,NSE
+2014-06-10,dividend,,1,0.7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Div - Re. 0.70 Per Share (70%),NSE

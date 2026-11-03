@@ -1,0 +1,10 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2021-11-22,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 1 Per Share,NSE
+2022-08-08,rights,9:25,0.91293597,91,"TERP, issue price 91, close before 135.6",applied,Rights 9:25 @ Premium Rs 90/-,NSE
+2022-12-13,dividend,,1,1.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 1.20 Per Share,NSE
+2023-12-15,dividend,,1,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 1.50 Per Share,NSE
+2024-07-23,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1 Per Share,NSE
+2024-09-23,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 1 Per Share,NSE
+2025-02-14,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1 Per Share,NSE
+2026-01-16,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1 Per Share,NSE
+2026-08-05,split,FV 10->1,0.1,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Re 1/- Per Share,NSE

@@ -1,0 +1,9 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2008-08-27,dividend,,1.0,13.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 675%,NSE
+2011-04-21,scheme,,1.0,,price did not move: no change,no change,Scheme Of Arrangement,NSE
+2011-09-22,dividend,,1.0,0.3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Re 0.30 Per Share,NSE
+2011-12-07,scheme,,0.8743038982,,open 54.95 / close before 62.85,applied,Scheme Of Arrangement,NSE
+2013-05-07,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend Rs. 2 Per Equity Share,NSE
+2013-08-05,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1 Per Equity Share,NSE
+2013-10-31,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re.1/- Per Share,NSE
+2014-05-06,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Third Interim Dividend - Rs.1/- Per Share,NSE

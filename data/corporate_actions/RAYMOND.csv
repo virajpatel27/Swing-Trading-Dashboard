@@ -1,0 +1,17 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-05-30,dividend,,1.0,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend-50%,NSE
+2008-05-30,dividend,,1.0,2.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 25%,NSE
+2011-05-18,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.1/- Per Share,NSE
+2012-05-16,dividend,,1.0,2.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.2.50 Per Share,NSE
+2013-05-24,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Final Dividend Re.1/- Per Equity Share,NSE
+2014-05-30,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Final Dividend - Rs 2/- Per Share,NSE
+2015-05-27,dividend,,1.0,3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 3/- Per Share,NSE
+2016-05-26,dividend,,1.0,3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 3/- Per Share,NSE
+2017-05-25,dividend,,1.0,1.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 1.25/- Per Share,NSE
+2018-05-22,dividend,,1.0,3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend- Rs 3 Per Share,NSE
+2019-05-23,dividend,,1.0,3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Rs 3 Per Share,NSE
+2022-06-30,dividend,,1.0,3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 3 Per Share,NSE
+2023-06-23,dividend,,1.0,3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 3 Per Share,NSE
+2024-06-13,dividend,,1.0,10,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 10 Per Share,NSE
+2024-07-11,demerger,,0.6039098888,,open 1906 / close before 3156.1,applied,Demerger,NSE
+2025-05-14,demerger,,0.3356133734,,open 525 / close before 1564.3,applied,Demerger,NSE

@@ -1,0 +1,6 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2012-09-05,rights,12:25,0.9616530358,22,"TERP, issue price 22, close before 24.95",applied,Rights 12:25 @ Premium Rs.12/- Per Share,NSE
+2022-09-15,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 2 Per Share,NSE
+2023-09-15,dividend,,1.0,2.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 2.50 Per Share,NSE
+2025-09-12,dividend,,1.0,2.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 2.50 Per Share,NSE
+2026-09-11,dividend,,1.0,2.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 2.50 Per Share,NSE

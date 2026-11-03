@@ -1,0 +1,3 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2020-06-30,rights,9:77,0.985706984,110,"TERP, issue price 110, close before 127.4",applied,Rights 9:77 Partly Paid @ Premium Rs 100/-,NSE
+2025-05-22,demerger,,0.3643799963,,open 98 / close before 268.95,applied,Demerger,NSE

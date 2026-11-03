@@ -1,0 +1,17 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-10-12,scheme,,0.78216704,,open 34.65 / close before 44.3,applied,Scheme Of Arrangement,NSE
+2008-09-24,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 20%,NSE
+2009-09-22,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Rs.2/- Per Share,NSE
+2010-05-10,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Re.1/- Per Share,NSE
+2010-06-23,split,FV 10->5,0.5,,ratio from NSE text,applied,Face Value Split From Rs.10/- To Rs.5/-,NSE
+2010-09-06,dividend,,1,0.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.75 Per Share,NSE
+2011-08-17,dividend,,1,1.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.1.25 Per Share,NSE
+2012-09-06,dividend,,1,1.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend - Rs.1.25 Per Share,NSE
+2013-09-11,dividend,,1,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.25 Per Share,NSE
+2014-09-18,dividend,,1,0.125,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend - Re 0.125/- Per Share,NSE
+2015-09-18,dividend,,1,0.125,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Re 0.125 Per Share,NSE
+2016-09-21,dividend,,1,0.125,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.125 Per Share,NSE
+2017-09-19,dividend,,1,0.125,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 0.125 Per Share,NSE
+2018-09-18,dividend,,1,0.125,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend- Re 0.125 Per Share,NSE
+2019-09-18,dividend,,1,125,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs.0125 Per Share,NSE
+2026-08-06,rights,3:5,0.6820429,50,"TERP, issue price 50, close before 328.7",applied,Rights 3:5 @ Premium Rs 45/-,NSE

@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2022-09-21,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 1 Per Share,NSE
+2023-09-22,dividend,,1,1.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 1.20 Per Share,NSE
+2023-11-08,bonus,1:7,0.875,,ratio from NSE text,applied,Bonus 1:7,NSE

@@ -1,0 +1,16 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-02-20,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend-100%,NSE
+2007-08-30,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Fin Div-Re.1/- Per Sh,NSE
+2007-11-16,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Rs.2.00 Per Sh,NSE
+2008-08-14,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Final Div- Rs.2 Per Share,NSE
+2009-09-10,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Rs.2/- Per Share,NSE
+2010-09-16,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.1/- Per Share,NSE
+2011-09-08,dividend,,1.0,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.1.50 Per Share,NSE
+2012-07-12,dividend,,1.0,2.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Rs 2.50 Per Share,NSE
+2013-07-18,dividend,,1.0,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.1.50 Per Share,NSE
+2014-08-13,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend - Re 1/- Per Share,NSE
+2015-08-05,dividend,,1.0,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend - Re 0.50/- Per Share,NSE
+2016-07-18,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Re 1/- Per Share,NSE
+2017-07-19,dividend,,1.0,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend- Re. 0.50 Per Share,NSE
+2018-07-20,dividend,,1.0,0.6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend- Re 0.60 Per Share,NSE
+2019-12-04,dividend,,1.0,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 0.50 Per Share,NSE

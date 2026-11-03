@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2024-09-02,dividend,,1.0,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 0.20 Per Share,NSE
+2025-09-16,dividend,,1.0,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 0.20 Per Share,NSE
+2026-09-21,dividend,,1.0,0.3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.20 Per Share/Special Dividend - Re 0.10 Per Share,NSE

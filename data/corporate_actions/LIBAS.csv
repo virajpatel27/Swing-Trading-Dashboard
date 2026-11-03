@@ -1,0 +1,6 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2020-09-22,dividend,,1,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 0.20 Per Share,NSE
+2021-04-06,bonus,1:5,0.83333333,,ratio from NSE text,applied,Bonus 1:5,NSE
+2021-09-06,dividend,,1,0.01,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 0.01 Per Share,NSE
+2021-09-21,bonus,1:5,0.83333333,,ratio from NSE text,applied,Bonus 1:5,NSE
+2022-09-15,rights,1:2,0.93181818,21,"TERP, issue price 21, close before 26.4",applied,Rights 1:2 @ Premium Rs 11/-,NSE

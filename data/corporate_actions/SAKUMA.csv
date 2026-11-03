@@ -1,0 +1,20 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-07-03,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend-5%,NSE
+2008-08-12,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 5%,NSE
+2011-08-10,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.1/- Per Share,NSE
+2012-09-20,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.1/- Per Share,NSE
+2013-07-19,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Re 1/- Per Share,NSE
+2014-08-20,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend - Re 1/- Per Share,NSE
+2015-08-03,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Re 1/- Per Share,NSE
+2016-03-17,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1/- Per Share (Purpose Revised),NSE
+2017-09-15,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 1/- Per Share,NSE
+2018-09-19,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Re 1 Per Share,NSE
+2018-11-12,split,FV 10->1,0.1,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Re 1/- Per Share,NSE
+2019-09-13,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 0.10 Per Share,NSE
+2020-12-01,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Re 0.1 Per Share,NSE
+2021-09-20,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 0.05 Per Sh,NSE
+2022-09-21,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 0.05 Per Share,NSE
+2023-09-22,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 0.05 Per Share,NSE
+2024-04-15,rights,33:98,0.99416428,25.3,"TERP, issue price 25.3, close before 25.9",applied,Rights 33:98 @ Premium Rs 24.30/-,NSE
+2024-07-16,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 0.05 Per Share,NSE
+2024-08-09,bonus,4:1,0.2,,ratio from NSE text,applied,Bonus 4:1,NSE

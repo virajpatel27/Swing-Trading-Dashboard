@@ -1,0 +1,7 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-09-13,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend-10%,NSE
+2008-09-17,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 10%,NSE
+2009-09-14,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Re.1/- Per Share,NSE
+2009-12-29,bonus,1:1,0.5,,ratio from NSE text,applied,Bonus 1:1,NSE
+2025-11-14,split,FV 10->1,0.1,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Re 1/- Per Share,NSE
+2026-09-15,dividend,,1,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.25 Per Share,NSE

@@ -1,0 +1,7 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2010-08-26,dividend,,1,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.20 Per Share,NSE
+2011-09-22,dividend,,1,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.20 Per Share,NSE
+2012-04-13,bonus,2:1,0.33333333,,ratio from NSE text,applied,Bonus 2:1,NSE
+2012-09-20,dividend,,1,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Re 0.20 Per Share,NSE
+2013-09-19,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend - Re 0.10/- Per Share,NSE
+2014-09-23,dividend,,1,0.01,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend - Re 0.01/- Per Share,NSE

@@ -1,0 +1,11 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2016-08-03,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend -Re 1/- Per Share,NSE
+2017-08-03,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annua General Meeting/Dividend-Re 1/- Per Share,NSE
+2018-09-12,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Re 1 Per Share,NSE
+2019-08-06,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 1 Per Share,NSE
+2022-08-04,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 1 Per Share,NSE
+2023-08-04,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 1 Per Share,NSE
+2024-08-02,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 1 Per Share,NSE
+2024-09-20,bonus,1:4,0.8,,ratio from NSE text,applied,Bonus 1:4,NSE
+2025-08-01,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 1 Per Share,NSE
+2026-08-06,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 1 Per Share,NSE

@@ -1,0 +1,8 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-09-12,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Final Dividend-10% Purpose Revised,NSE
+2008-09-17,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 10%,NSE
+2009-09-22,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Re.1/- Per Share,NSE
+2010-09-22,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Re.1/- Per Share,NSE
+2011-09-20,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Re.1/- Per Share,NSE
+2012-09-21,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Re 1 Per Share,NSE
+2016-05-12,scheme,,0.5567928731,,open 100 / close before 179.6,applied,Scheme Of Arrangement,NSE

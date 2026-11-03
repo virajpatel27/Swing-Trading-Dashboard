@@ -1,0 +1,2 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2008-01-22,split,FV 10->2,0.2,,ratio from NSE text,applied,Fv Split Rs.10/- To Rs.2/,NSE

@@ -1,0 +1,2 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2013-04-10,split,FV 10->1,0.1,,ratio from NSE text,applied,Face Value Split From Rs.10 To Re.1,NSE

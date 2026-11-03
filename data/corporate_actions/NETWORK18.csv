@@ -1,0 +1,3 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2008-02-14,dividend,,1.0,1.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Div-Rs1.25 Per Sh,NSE
+2012-09-11,rights,307:50,0.9957216718,30,"TERP, issue price 30, close before 30.15",applied,Rights 307:50 @ Premium Rs.25/- Per Share,NSE

@@ -1,0 +1,7 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2021-12-02,bonus,2:1,0.33333333,,ratio from NSE text,applied,Bonus 2:1,NSE
+2022-09-19,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 1 Per Sh,NSE
+2023-09-15,dividend,,1,0.6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.60 Per Share,NSE
+2024-09-17,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 1 Per Sh,NSE
+2025-09-04,dividend,,1,0.7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.70 Per Share,NSE
+2026-07-17,dividend,,1,0.7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.70 Per Share,NSE

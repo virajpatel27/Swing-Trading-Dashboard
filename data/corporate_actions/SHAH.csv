@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2016-10-13,split,FV 10->1,0.1,,ratio from NSE text,applied,Face Value Split From Rs 10 To Re 1,NSE
+2022-12-23,rights,110:100,0.82752613,2.75,"TERP, issue price 2.75, close before 4.1",applied,Rights 110:100 @ Premium Rs 1.75/-,NSE
+2026-05-27,rights,36:311,0.99340341,4.86,"TERP, issue price 4.86, close before 5.19",applied,Rights 36:311 @ Premium Rs 3.86,NSE

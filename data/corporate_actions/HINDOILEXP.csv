@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-11-15,rights,2:3,0.9703996834,117,"TERP, issue price 117, close before 126.35",applied,Rights-Eq 2:3@ Prem Rs107,NSE
+2008-08-11,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Re.1 Per Share Bc Dates Revised,NSE
+2010-08-23,dividend,,1.0,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend-Re.0.50 Per Share,NSE

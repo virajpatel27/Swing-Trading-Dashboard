@@ -1,0 +1,16 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-09-11,dividend,,1.0,1.077,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend-10.77%,NSE
+2008-09-05,dividend,,1.0,0.664,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 6.64%,NSE
+2009-08-28,dividend,,1.0,0.6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Re.0.60 Per Share,NSE
+2010-08-30,dividend,,1.0,1.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.1.05 Per Share,NSE
+2011-08-29,dividend,,1.0,0.85,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.85 Per Share,NSE
+2015-09-15,dividend,,1.0,0.17,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Re 0.17/- Per Share,NSE
+2016-09-19,dividend,,1.0,1.21,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 1.21 Per Share,NSE
+2019-02-13,dividend,,1.0,1.09,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 1.09 Per Share,NSE
+2019-09-09,dividend,,1.0,0.77,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 0.77 Per Share,NSE
+2020-03-19,dividend,,1.0,0.95,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 0.95 Per Share,NSE
+2023-06-09,dividend,,1.0,1.53,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 1.53 Per Share,NSE
+2023-09-22,dividend,,1.0,1.26,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 1.26 Per Share,NSE
+2024-09-20,dividend,,1.0,0.27,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 0.27 Per Share,NSE
+2025-09-22,dividend,,1.0,1.56,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 1.56 Per Share,NSE
+2026-09-11,dividend,,1.0,1.04,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 1.04 Per Share,NSE

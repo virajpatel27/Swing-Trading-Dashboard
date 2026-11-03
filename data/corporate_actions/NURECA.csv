@@ -1,0 +1,3 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2021-09-21,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 2 Per Share,NSE
+2022-02-24,dividend,,1.0,3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 3 Per Share,NSE

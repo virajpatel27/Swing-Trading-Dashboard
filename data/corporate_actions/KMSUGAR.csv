@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2010-03-26,split,FV 10->2,0.2,,,NOT APPLIED: price did not move,Fv Split Rs.10 To Rs.2,NSE
+2021-08-18,dividend,,1,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 0.20 Per Share,NSE
+2026-10-01,demerger,,0.80463183,,open 27.1 / close before 33.68,applied,Demerger,NSE

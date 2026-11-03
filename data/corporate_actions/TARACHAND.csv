@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2024-12-05,split,FV 10->2,0.2,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share,NSE
+2025-02-07,dividend,,1,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 0.20 Per Share,NSE
+2026-07-09,dividend,,1,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.20 Per Share,NSE

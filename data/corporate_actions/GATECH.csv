@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2017-01-10,bonus,1:4,0.8,,ratio from NSE text,applied,Bonus 1:4,NSE
+2024-07-16,rights,1:1,0.86231884,1,"TERP, issue price 1, close before 1.38",applied,Rights 1:1 @ Premium Rs 0/-,NSE
+2025-04-28,rights,51:82,1,1,rights above market price: no change,no change,Rights 51:82 @ Premium Rs 0/-,NSE

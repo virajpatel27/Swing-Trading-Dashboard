@@ -1,0 +1,14 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-07-13,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Re.1/- Per Sh,NSE
+2008-05-28,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Re.1 Per Share,NSE
+2009-08-14,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Re.0.50 Per Share,NSE
+2010-02-23,rights,3:11,,,rights without issue price,NOT APPLIED,Rights-Eq3:11 & 1wrnt:1eq,NSE
+2010-06-17,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.1/- Per Share,NSE
+2011-08-29,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Re 1 Per Share,NSE
+2021-07-29,dividend,,1,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 5 Per Sh,NSE
+2022-08-04,dividend,,1,7.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 7.50 Per Share,NSE
+2023-08-04,dividend,,1,12.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 12.50 Per Share,NSE
+2024-08-05,dividend,,1,10,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 10 Per Share,NSE
+2024-09-11,split,FV 10->2,0.2,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share,NSE
+2025-08-01,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 1 Per Share,NSE
+2026-08-04,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.50 Per Share,NSE

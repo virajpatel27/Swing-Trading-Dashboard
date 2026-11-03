@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2021-08-31,bonus,1:10,0.90909091,,ratio from NSE text,applied,Bonus 1:10,NSE
+2023-11-01,split,FV 10->1,0.1,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Re 1/- Per Share,NSE
+2024-10-03,rights,1:2,0.95906433,2,"TERP, issue price 2, close before 2.28",applied,Rights 1:2 @ Premium Re 1/-,NSE

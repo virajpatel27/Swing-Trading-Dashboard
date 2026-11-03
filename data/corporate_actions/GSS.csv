@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2008-09-23,dividend,,1.0,2.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 25%,NSE
+2009-12-21,dividend,,1.0,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Rs.1.50 Per Share,NSE
+2010-12-21,dividend,,1.0,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.1.50 Per Share,NSE

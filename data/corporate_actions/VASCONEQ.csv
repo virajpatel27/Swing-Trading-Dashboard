@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2011-09-14,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.1/- Per Share,NSE
+2015-06-23,rights,14:19,0.9944178628,15,"TERP, issue price 15, close before 15.2",applied,Rights 14:19 @ Premium Rs 5/- Per Share,NSE
+2023-08-21,dividend,,1.0,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 0.25 Per Share,NSE

@@ -1,0 +1,32 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-05-25,dividend,,1,0.6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 30% Rd Changed To Bc/Purpose Revised,NSE
+2008-07-23,dividend,,1,0.6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 30%,NSE
+2009-07-30,dividend,,1,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Rs.1.50 Per Share,NSE
+2009-11-05,dividend,,1,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Rs.1.50 Per Share,NSE
+2010-06-24,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.2/- Per Share,NSE
+2010-11-10,dividend,,1,3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend-Rs.3/- Per Share,NSE
+2011-07-18,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.2/- Per Share,NSE
+2012-06-28,dividend,,1,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend Rs 5 Per Share,NSE
+2012-08-16,dividend,,1,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend Rs 1.50 Per Share,NSE
+2012-11-08,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend Re 1 Per Share,NSE
+2013-06-21,dividend,,1,3.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.3.50 Per Share,NSE
+2014-07-16,dividend,,1,2.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Final Dividend - Rs 2.50/- Per Share,NSE
+2015-07-16,dividend,,1,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 5/- Per Share,NSE
+2016-03-17,dividend,,1,3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 3/- Per Share (Purpose Revised),NSE
+2016-07-18,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend -Rs 2/- Per Share,NSE
+2017-06-14,dividend,,1,6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 6/- Per Share,NSE
+2018-06-07,dividend,,1,7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Dividend- Rs 7 Per Share,NSE
+2019-06-20,dividend,,1,7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Rs 7 Per Share,NSE
+2020-02-18,dividend,,1,10,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Dividend - Rs 10 Per Share,NSE
+2020-03-20,dividend,,1,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 5 Per Share,NSE
+2021-02-08,dividend,,1,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 5.00 Per Share,NSE
+2021-05-18,dividend,,1,10,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 10 Per Share,NSE
+2022-01-31,dividend,,1,7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 7 Per Share,NSE
+2022-05-26,dividend,,1,8,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 8 Per Share,NSE
+2023-04-12,dividend,,1,7,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 7 Per Share,NSE
+2023-05-15,split,FV 10->2,0.2,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share,NSE
+2023-06-15,dividend,,1,0.6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 0.60 Per Share,NSE
+2024-06-14,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 0.50 Per Share,NSE
+2025-06-27,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Rs 0.50 Per Share,NSE
+2026-06-25,dividend,,1,1.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 1.20 Per Share,NSE
+2026-08-13,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1 Per Share,NSE

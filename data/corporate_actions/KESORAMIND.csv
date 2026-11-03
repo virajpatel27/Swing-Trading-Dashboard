@@ -1,0 +1,15 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-03-20,dividend,,1.0,4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Rs.4/- Per Sh Purpose Revised,NSE
+2008-06-09,dividend,,1.0,5.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Div-Rs.5.50 Per Share,NSE
+2008-11-17,dividend,,1.0,2.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Rs.2.25 Per Share,NSE
+2009-06-09,dividend,,1.0,3.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Rs.3.25 Per Share,NSE
+2009-11-16,dividend,,1.0,2.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Rs.2.25 Per Share,NSE
+2010-06-14,dividend,,1.0,3.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Rs.3.25 Pr Share,NSE
+2010-11-24,dividend,,1.0,2.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend Rs 2.25 Per Share,NSE
+2011-06-17,dividend,,1.0,3.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend-Rs.3.25 Per Share,NSE
+2012-06-28,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.1/- Per Share,NSE
+2013-05-15,dividend,,1.0,56,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Rights 7:5@Premium Rs.55 Per Share/Annual General Meeting / Dividend Re.1/- Per Equity Share (Purpose Revised),NSE
+2013-05-15,rights,7:5,0.7900459544,65,"TERP, issue price 65, close before 101.55",applied,Rights 7:5@Premium Rs.55 Per Share/Annual General Meeting / Dividend Re.1/- Per Equity Share (Purpose Revised),NSE
+2019-12-24,demerger,,0.9280138768,,open 53.5 / close before 57.65,applied,Demerger,NSE
+2021-09-16,rights,133:274,0.8554726201,50,"TERP, issue price 50, close before 89.65",applied,Rights 133:274 @ Premium Rs 40/-,NSE
+2025-03-10,demerger,,0.0499706917,,open 10.23 / close before 204.72,applied,Demerger,NSE

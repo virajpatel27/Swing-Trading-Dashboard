@@ -1,0 +1,3 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2008-10-08,rights,121:100,1.0,22,rights above market price: no change,no change,Rights-121:100 Prem@Rs.21,NSE
+2018-11-05,dividend,,1.0,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 0.50 Per Share,NSE

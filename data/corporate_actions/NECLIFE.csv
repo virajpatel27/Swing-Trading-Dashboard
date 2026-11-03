@@ -1,0 +1,16 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2007-09-18,dividend,,1,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Final Dividend-20%,NSE
+2008-09-18,dividend,,1,0.4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 40%,NSE
+2008-11-12,split,FV 10->1,0.1,,ratio from NSE text,applied,Fv Split Rs.10/- To Re.1/,NSE
+2009-09-03,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Re.0.10 Per Share,NSE
+2010-01-21,dividend,,1,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Re.0.25 Per Sharepurpose Revised,NSE
+2011-09-21,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.10 Per Share,NSE
+2012-09-20,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.10 Per Share,NSE
+2013-09-19,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.10 Per Share,NSE
+2014-08-21,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting / Final Dividend - Re 0.10/- Per Share,NSE
+2015-09-22,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/ Dividend - Re 0.10/- Per Share,NSE
+2016-09-22,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 0.10 Per Share,NSE
+2017-09-20,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 0.05 Per Share,NSE
+2018-09-19,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend- Re 0.05 Per Share,NSE
+2019-09-19,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 0.05 Per Share,NSE
+2020-09-11,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 0.05 Per Share,NSE

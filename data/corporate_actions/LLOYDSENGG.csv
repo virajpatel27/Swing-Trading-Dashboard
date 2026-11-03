@@ -1,0 +1,8 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2022-08-04,dividend,,1.0,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 0.05 Per Share,NSE
+2023-07-17,dividend,,1.0,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 0.10 Per Share,NSE
+2023-12-14,rights,1:17,0.9619112013,15.5,"TERP, issue price 15.5, close before 49.3",applied,Rights 1:17 @ Premium Rs 14.50/-,NSE
+2024-07-19,dividend,,1.0,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 0.20 Per Share,NSE
+2025-04-28,rights,9:34,0.8843321553,32,"TERP, issue price 32, close before 71.53",applied,Rights 9:34 @ Premium Rs 31/-,NSE
+2025-08-14,dividend,,1.0,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 0.25 Per Share,NSE
+2026-08-14,dividend,,1.0,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.25 Per Share,NSE

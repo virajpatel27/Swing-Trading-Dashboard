@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2021-09-07,rights,11:8,0.5399857109,11.35,"TERP, issue price 11.35, close before 55.25",applied,Rights 11:8 @ Premium Rs 6.35/-,NSE
+2023-05-30,rights,13:20,0.8096468562,10,"TERP, issue price 10, close before 19.35",applied,Rights 13:20 @ Premium Rs 5/-,NSE
+2025-03-20,rights,11:30,0.9556578037,10,"TERP, issue price 10, close before 11.98",applied,Rights 11:30 @ Premium Rs 5/-,NSE

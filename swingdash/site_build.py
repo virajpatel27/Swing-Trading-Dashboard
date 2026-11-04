@@ -2,6 +2,7 @@
 
   _site/index.html, app.js, styles.css, sw.js, manifest.webmanifest, icons/    copied from site/
   _site/data/latest.json, sectors.json, health.json                            the daily snapshot (loaded first, small)
+  _site/data/screen.json                                                       every engine field per stock (Phase S4)
   _site/data/c/<s|n|b>/<id>.json                                                one chart file per stock / NSE index / BSE index,
                                                                                 loaded only when that chart is opened
 Chart file (column-wise): d = dates as yyyymmdd, o h l c = ADJUSTED prices, v = volume, f = adjustment factor (raw = adjusted / f),
@@ -63,6 +64,8 @@ def build(root: Path, out: Path, log=print) -> dict:
     for name in ("latest.json", "sectors.json"):
         shutil.copy2(data / "snapshot" / name, out / "data" / name)
     shutil.copy2(data / "meta" / "health.json", out / "data" / "health.json")
+    if (data / "snapshot" / "screen.json").exists():      # all engine fields per stock (built by scripts/build_screen.py)
+        shutil.copy2(data / "snapshot" / "screen.json", out / "data" / "screen.json")
 
     snap = json.loads((data / "snapshot" / "latest.json").read_text(encoding="utf-8"))
     cols = snap["columns"]

@@ -11,9 +11,10 @@
 #   provided_in_phase  0 = built before the scanner plan (existing dashboard), 1..12 = scanner plan phase
 #   source             where the raw data comes from
 #   file               stocks = data/meta/stocks.csv, snapshot = data/snapshot/latest.json,
-#                      delivery = data/stocks/delivery/<ID>/, groups = data/groups/<level>/<id>/
+#                      delivery = data/stocks/delivery/<ID>/, groups = data/groups/<level>/<id>/,
+#                      screen = data/snapshot/screen.json (every engine field, latest day; Phase S4)
 
-current_phase: 3
+current_phase: 4
 
 sources:
   equity_list: NSE EQUITY_L.csv - every main-board equity (symbol, name, ISIN, series, listing date)
@@ -29,48 +30,49 @@ sources:
   theme_rules: config/theme_rules.yaml - our theme lists (NSE thematic indices, NSE industries, hand-picked)
   mto: NSE MTO_ddmmyyyy.DAT - security-wise delivery position, every trading day from 2007
   settings: config/settings.yaml (parameters such as the liquid rule)
+  indicator_settings: config/indicators.yaml and config/stage.yaml (engine parameters)
 
 fields:
   # ------------------------------------------------------------ identity (phase 0 / 1)
-  - {id: id, label: Folder id, type: text, formula: "Symbol made safe as a folder name", inputs: [symbol], provided_in_phase: 0, source: derived, file: [stocks, snapshot]}
-  - {id: symbol, label: Symbol, type: text, formula: "Current NSE symbol (older symbols followed through renames)", inputs: [equity_list, symbol_changes], provided_in_phase: 0, source: NSE, file: [stocks, snapshot]}
-  - {id: name, label: Company, type: text, formula: "Company name as NSE lists it", inputs: [equity_list], provided_in_phase: 0, source: NSE, file: [stocks, snapshot]}
+  - {id: id, label: Folder id, type: text, formula: "Symbol made safe as a folder name", inputs: [symbol], provided_in_phase: 0, source: derived, file: [screen, stocks, snapshot]}
+  - {id: symbol, label: Symbol, type: text, formula: "Current NSE symbol (older symbols followed through renames)", inputs: [equity_list, symbol_changes], provided_in_phase: 0, source: NSE, file: [screen, stocks, snapshot]}
+  - {id: name, label: Company, type: text, formula: "Company name as NSE lists it", inputs: [equity_list], provided_in_phase: 0, source: NSE, file: [screen, stocks, snapshot]}
   - {id: kind, label: Kind, type: text, formula: "stock or index", inputs: [], provided_in_phase: 0, source: derived, file: [snapshot]}
   - {id: exchange, label: Exchange, type: text, formula: "NSE or BSE", inputs: [], provided_in_phase: 0, source: derived, file: [snapshot]}
   - {id: category, label: Index category, type: text, formula: "NSE / BSE index group (indices only)", inputs: [index_history], provided_in_phase: 0, source: NSE / BSE, file: [snapshot]}
   - {id: isin, label: ISIN, type: text, formula: "ISIN of the share", inputs: [equity_list], provided_in_phase: 1, source: NSE, file: [stocks]}
-  - {id: series, label: Series, type: text, formula: "NSE series: EQ normal, BE / BZ trade-for-trade, RR REIT", inputs: [equity_list], provided_in_phase: 1, source: NSE, file: [stocks]}
-  - {id: listed, label: Listing date, type: date, formula: "Date of listing on NSE (from NSE's list)", inputs: [equity_list], provided_in_phase: 1, source: NSE, file: [stocks]}
-  - {id: n500, label: Nifty 500, type: boolean, formula: "Member of the Nifty 500 today", inputs: [nifty500_list], provided_in_phase: 0, source: niftyindices.com, file: [stocks, snapshot]}
-  - {id: fno, label: F&O stock, type: boolean, formula: "Has futures & options on NSE today", inputs: [fno_list], provided_in_phase: 1, source: NSE, file: [stocks]}
-  - {id: price_band, label: Price band %, type: text, formula: "Today's circuit limit: 2 / 5 / 10 / 20 % or No Band", inputs: [price_bands], provided_in_phase: 1, source: NSE, file: [stocks]}
+  - {id: series, label: Series, type: text, formula: "NSE series: EQ normal, BE / BZ trade-for-trade, RR REIT", inputs: [equity_list], provided_in_phase: 1, source: NSE, file: [screen, stocks]}
+  - {id: listed, label: Listing date, type: date, formula: "Date of listing on NSE (from NSE's list)", inputs: [equity_list], provided_in_phase: 1, source: NSE, file: [screen, stocks]}
+  - {id: n500, label: Nifty 500, type: boolean, formula: "Member of the Nifty 500 today", inputs: [nifty500_list], provided_in_phase: 0, source: niftyindices.com, file: [screen, stocks, snapshot]}
+  - {id: fno, label: F&O stock, type: boolean, formula: "Has futures & options on NSE today", inputs: [fno_list], provided_in_phase: 1, source: NSE, file: [screen, stocks]}
+  - {id: price_band, label: Price band %, type: text, formula: "Today's circuit limit: 2 / 5 / 10 / 20 % or No Band", inputs: [price_bands], provided_in_phase: 1, source: NSE, file: [screen, stocks]}
   # ------------------------------------------------------------ classification
   - {id: macro, label: Macro sector, type: text, formula: "NSE classification level 1", inputs: [nse_quote], provided_in_phase: 0, source: NSE, file: [snapshot]}
-  - {id: sector, label: Sector, type: text, formula: "NSE classification level 2 (Nifty 500 list industry when NSE gives none)", inputs: [nse_quote, nifty500_list], provided_in_phase: 0, source: NSE, file: [stocks, snapshot]}
-  - {id: industry, label: Industry, type: text, formula: "NSE classification level 3", inputs: [nse_quote], provided_in_phase: 0, source: NSE, file: [stocks, snapshot]}
-  - {id: basic_industry, label: Basic industry, type: text, formula: "NSE classification level 4", inputs: [nse_quote], provided_in_phase: 0, source: NSE, file: [stocks, snapshot]}
+  - {id: sector, label: Sector, type: text, formula: "NSE classification level 2 (Nifty 500 list industry when NSE gives none)", inputs: [nse_quote, nifty500_list], provided_in_phase: 0, source: NSE, file: [screen, stocks, snapshot]}
+  - {id: industry, label: Industry, type: text, formula: "NSE classification level 3", inputs: [nse_quote], provided_in_phase: 0, source: NSE, file: [screen, stocks, snapshot]}
+  - {id: basic_industry, label: Basic industry, type: text, formula: "NSE classification level 4", inputs: [nse_quote], provided_in_phase: 0, source: NSE, file: [screen, stocks, snapshot]}
   # ------------------------------------------------------------ history coverage
   - {id: first_date, label: History from, type: date, formula: "First stored trading day", inputs: [bhavcopy, index_history], provided_in_phase: 0, source: derived, file: [stocks, snapshot]}
   - {id: last_date, label: Last trade, type: date, formula: "Last stored trading day", inputs: [bhavcopy], provided_in_phase: 1, source: derived, file: [stocks]}
   - {id: sessions, label: Sessions stored, type: integer, formula: "Number of stored trading days", inputs: [bhavcopy], provided_in_phase: 1, source: derived, file: [stocks]}
   - {id: status, label: Status, type: text, formula: "active = traded within 10 days of the newest trading day; inactive = not since; no_history = nothing stored", inputs: [last_date], provided_in_phase: 1, source: derived, file: [stocks]}
-  - {id: date, label: Date, type: date, formula: "Trading day of the row (snapshot: the latest row)", inputs: [bhavcopy, index_history], provided_in_phase: 0, source: derived, file: [snapshot, delivery, groups]}
-  - {id: stale, label: Stale, type: boolean, formula: "Latest row more than 10 days older than the newest data date", inputs: [date], provided_in_phase: 0, source: derived, file: [snapshot]}
+  - {id: date, label: Date, type: date, formula: "Trading day of the row (snapshot: the latest row)", inputs: [bhavcopy, index_history], provided_in_phase: 0, source: derived, file: [screen, snapshot, delivery, groups]}
+  - {id: stale, label: Stale, type: boolean, formula: "Latest row more than 10 days older than the newest data date", inputs: [date], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
   # ------------------------------------------------------------ size and liquidity (phase 1)
   - {id: face_value, label: Face value, type: rupees, formula: "Face value per share", inputs: [nse_quote], provided_in_phase: 1, source: NSE, file: [stocks]}
-  - {id: shares, label: Shares issued, type: integer, formula: "Shares issued (NSE issuedSize); asked again after a split, bonus, rights or consolidation", inputs: [nse_quote, corporate_actions], provided_in_phase: 1, source: NSE, file: [stocks]}
+  - {id: shares, label: Shares issued, type: integer, formula: "Shares issued (NSE issuedSize); asked again after a split, bonus, rights or consolidation", inputs: [nse_quote, corporate_actions], provided_in_phase: 1, source: NSE, file: [screen, stocks]}
   - {id: promoter_pct, label: Promoter holding %, type: percent, formula: "Promoter & promoter group % of the newest shareholding pattern", inputs: [shareholding], provided_in_phase: 1, source: NSE, file: [stocks]}
-  - {id: float_pct, label: Free float %, type: percent, formula: "100 - promoter_pct (NSE's own free-float % when no shareholding pattern)", inputs: [promoter_pct, nse_quote], provided_in_phase: 1, source: derived, file: [stocks]}
-  - {id: raw_close, label: Close (as traded), type: rupees, formula: "Last close as traded, not adjusted", inputs: [bhavcopy], provided_in_phase: 0, source: NSE, file: [stocks, snapshot]}
-  - {id: mcap_cr, label: Market cap (Rs Cr), type: crore, formula: "shares x raw_close / 1e7", inputs: [shares, raw_close], provided_in_phase: 1, source: derived, file: [stocks]}
-  - {id: float_mcap_cr, label: Float market cap (Rs Cr), type: crore, formula: "mcap_cr x float_pct / 100", inputs: [mcap_cr, float_pct], provided_in_phase: 1, source: derived, file: [stocks]}
+  - {id: float_pct, label: Free float %, type: percent, formula: "100 - promoter_pct (NSE's own free-float % when no shareholding pattern)", inputs: [promoter_pct, nse_quote], provided_in_phase: 1, source: derived, file: [screen, stocks]}
+  - {id: raw_close, label: Close (as traded), type: rupees, formula: "Last close as traded, not adjusted", inputs: [bhavcopy], provided_in_phase: 0, source: NSE, file: [screen, stocks, snapshot]}
+  - {id: mcap_cr, label: Market cap (Rs Cr), type: crore, formula: "shares x raw_close / 1e7", inputs: [shares, raw_close], provided_in_phase: 1, source: derived, file: [screen, stocks]}
+  - {id: float_mcap_cr, label: Float market cap (Rs Cr), type: crore, formula: "mcap_cr x float_pct / 100", inputs: [mcap_cr, float_pct], provided_in_phase: 1, source: derived, file: [screen, stocks]}
   - {id: turnover_med30_cr, label: Median turnover 30D (Rs Cr), type: crore, formula: "Median of daily turnover over the last 30 sessions / 1e7", inputs: [bhavcopy], provided_in_phase: 1, source: derived, file: [stocks]}
   - {id: turnover_avg30_cr, label: Avg turnover 30D (Rs Cr), type: crore, formula: "Average of daily turnover over the last 30 sessions / 1e7", inputs: [bhavcopy], provided_in_phase: 1, source: derived, file: [stocks]}
-  - {id: liquid, label: Liquid, type: boolean, formula: "status = active AND turnover_med30_cr >= 1 AND raw_close >= 5 (numbers in settings.yaml -> liquid)", inputs: [status, turnover_med30_cr, raw_close, settings], provided_in_phase: 1, source: derived, file: [stocks]}
+  - {id: liquid, label: Liquid, type: boolean, formula: "status = active AND turnover_med30_cr >= 1 AND raw_close >= 5 (numbers in settings.yaml -> liquid)", inputs: [status, turnover_med30_cr, raw_close, settings], provided_in_phase: 1, source: derived, file: [screen, stocks]}
   - {id: shares_fetched, label: Share count date, type: date, formula: "Day the share count was asked from NSE", inputs: [nse_quote], provided_in_phase: 1, source: derived, file: [stocks]}
   # ------------------------------------------------------------ price fields of the existing dashboard (phase 0; redone per date in phase 4)
-  - {id: close, label: Close, type: rupees, formula: "Last close ADJUSTED for splits, bonus, rights, demergers", inputs: [bhavcopy, corporate_actions], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: chg_1d, label: 1D %, type: percent, formula: "close / close 1 session ago - 1", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
+  - {id: close, label: Close, type: rupees, formula: "Last close ADJUSTED for splits, bonus, rights, demergers", inputs: [bhavcopy, corporate_actions], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
+  - {id: chg_1d, label: 1D %, type: percent, formula: "close / close 1 session ago - 1", inputs: [close], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
   - {id: chg_1w, label: 1W %, type: percent, formula: "close / close 5 sessions ago - 1", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
   - {id: chg_1m, label: 1M %, type: percent, formula: "close / close 21 sessions ago - 1", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
   - {id: chg_3m, label: 3M %, type: percent, formula: "close / close 63 sessions ago - 1", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
@@ -78,27 +80,27 @@ fields:
   - {id: chg_1y, label: 1Y %, type: percent, formula: "close / close 252 sessions ago - 1", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
   - {id: chg_3y, label: 3Y %, type: percent, formula: "close / close 756 sessions ago - 1", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
   - {id: chg_5y, label: 5Y %, type: percent, formula: "close / close 1260 sessions ago - 1", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: hi52, label: 52W high, type: rupees, formula: "Highest adjusted high of the last 252 sessions", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: lo52, label: 52W low, type: rupees, formula: "Lowest adjusted low of the last 252 sessions", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: from_hi52, label: From 52W high %, type: percent, formula: "close / hi52 - 1", inputs: [close, hi52], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: from_lo52, label: From 52W low %, type: percent, formula: "close / lo52 - 1", inputs: [close, lo52], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: volume, label: Volume, type: integer, formula: "Shares traded today (adjusted for splits / bonus)", inputs: [bhavcopy, corporate_actions], provided_in_phase: 0, source: NSE, file: [snapshot]}
-  - {id: avg_vol20, label: Avg volume 20D, type: integer, formula: "Average volume of the last 20 sessions", inputs: [volume], provided_in_phase: 0, source: derived, file: [snapshot]}
+  - {id: hi52, label: 52W high, type: rupees, formula: "Highest adjusted high of the last 252 sessions", inputs: [close], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
+  - {id: lo52, label: 52W low, type: rupees, formula: "Lowest adjusted low of the last 252 sessions", inputs: [close], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
+  - {id: from_hi52, label: From 52W high %, type: percent, formula: "close / hi52 - 1", inputs: [close, hi52], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
+  - {id: from_lo52, label: From 52W low %, type: percent, formula: "close / lo52 - 1", inputs: [close, lo52], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
+  - {id: volume, label: Volume, type: integer, formula: "Shares traded today (adjusted for splits / bonus)", inputs: [bhavcopy, corporate_actions], provided_in_phase: 0, source: NSE, file: [screen, snapshot]}
+  - {id: avg_vol20, label: Avg volume 20D, type: integer, formula: "Average volume of the last 20 sessions", inputs: [volume], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
   - {id: vol_ratio, label: Volume / 20D avg, type: number, formula: "volume / avg_vol20", inputs: [volume, avg_vol20], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: ema10, label: EMA 10, type: rupees, formula: "Exponential average of close, alpha = 2/(10+1)", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: ema20, label: EMA 20, type: rupees, formula: "Exponential average of close, alpha = 2/(20+1)", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: ema50, label: EMA 50, type: rupees, formula: "Exponential average of close, alpha = 2/(50+1)", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: ema200, label: EMA 200, type: rupees, formula: "Exponential average of close, alpha = 2/(200+1)", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: rsi14, label: RSI 14, type: number, formula: "Wilder RSI over 14 sessions", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: macd, label: MACD, type: number, formula: "EMA12(close) - EMA26(close)", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: macd_signal, label: MACD signal, type: number, formula: "EMA9 of macd", inputs: [macd], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: macd_hist, label: MACD histogram, type: number, formula: "macd - macd_signal", inputs: [macd, macd_signal], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: atr14, label: ATR 14, type: rupees, formula: "Wilder average of true range over 14 sessions", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: atr_pct, label: ATR %, type: percent, formula: "atr14 / close", inputs: [atr14, close], provided_in_phase: 0, source: derived, file: [snapshot]}
+  - {id: ema10, label: EMA 10, type: rupees, formula: "Exponential average of close, alpha = 2/(10+1)", inputs: [close], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
+  - {id: ema20, label: EMA 20, type: rupees, formula: "Exponential average of close, alpha = 2/(20+1)", inputs: [close], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
+  - {id: ema50, label: EMA 50, type: rupees, formula: "Exponential average of close, alpha = 2/(50+1)", inputs: [close], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
+  - {id: ema200, label: EMA 200, type: rupees, formula: "Exponential average of close, alpha = 2/(200+1)", inputs: [close], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
+  - {id: rsi14, label: RSI 14, type: number, formula: "Wilder RSI over 14 sessions", inputs: [close], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
+  - {id: macd, label: MACD, type: number, formula: "EMA12(close) - EMA26(close)", inputs: [close], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
+  - {id: macd_signal, label: MACD signal, type: number, formula: "EMA9 of macd", inputs: [macd], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
+  - {id: macd_hist, label: MACD histogram, type: number, formula: "macd - macd_signal", inputs: [macd, macd_signal], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
+  - {id: atr14, label: ATR 14, type: rupees, formula: "Wilder average of true range over 14 sessions", inputs: [close], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
+  - {id: atr_pct, label: ATR %, type: percent, formula: "atr14 / close", inputs: [atr14, close], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
   - {id: trend, label: Trend, type: text, formula: "From close vs EMA20 / EMA50 / EMA200 (up, down, sideways)", inputs: [close, ema20, ema50, ema200], provided_in_phase: 0, source: derived, file: [snapshot]}
   - {id: rs_3m, label: RS vs index 3M %, type: percent, formula: "Stock 63-session return minus benchmark's (Nifty 50 / Sensex)", inputs: [close, index_history], provided_in_phase: 0, source: derived, file: [snapshot]}
   - {id: rs_6m, label: RS vs index 6M %, type: percent, formula: "Stock 126-session return minus benchmark's", inputs: [close, index_history], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: rs_rating, label: RS rating, type: integer, formula: "Percentile 1-99 of 0.4 x 3M + 0.2 x 6M + 0.2 x 9M + 0.2 x 12M return among stocks", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
+  - {id: rs_rating, label: RS rating, type: integer, formula: "Percentile 1-99 of 0.4 x 3M + 0.2 x 6M + 0.2 x 9M + 0.2 x 12M return among stocks", inputs: [close], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
   - {id: flags, label: Flags, type: list, formula: "Simple signals: 52W / 20D breakout or breakdown, above EMA50 & 200, RSI 50-70, near 52W high, volume spike, strong RS", inputs: [close, hi52, ema50, ema200, rsi14, vol_ratio, rs_rating], provided_in_phase: 0, source: derived, file: [snapshot]}
   # ------------------------------------------------------------ delivery (phase 2)
   - {id: deliv_qty, label: Delivery qty, type: integer, formula: "Deliverable quantity of the day as traded (not split-adjusted)", inputs: [mto], provided_in_phase: 2, source: NSE, file: [delivery]}
@@ -108,3 +110,78 @@ fields:
   - {id: group_ret_median, label: Group median return, type: percent, formula: "Median one-day return of the same members", inputs: [close, liquid, sector, basic_industry, theme_rules], provided_in_phase: 3, source: derived, file: [groups]}
   - {id: group_index, label: Group index, type: number, formula: "1000 x cumulative product of (1 + group_ret_mean) from the first day with >= 3 counted members", inputs: [group_ret_mean], provided_in_phase: 3, source: derived, file: [groups]}
   - {id: group_members, label: Members counted, type: integer, formula: "Members that counted that day", inputs: [liquid], provided_in_phase: 3, source: derived, file: [groups]}
+  # ------------------------------------------------------------ indicator engine (phase 4), all in screen.json
+  - {id: open, label: "Open", type: rupees, formula: "Day's open, adjusted", inputs: [bhavcopy, corporate_actions], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: high, label: "Day high", type: rupees, formula: "Day's high, adjusted", inputs: [bhavcopy, corporate_actions], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: low, label: "Day low", type: rupees, formula: "Day's low, adjusted", inputs: [bhavcopy, corporate_actions], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: prev_close, label: "Previous close", type: rupees, formula: "Adjusted close of the previous session", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: chg_1d_rs, label: "1D change Rs", type: rupees, formula: "close - prev_close", inputs: [close, prev_close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: gap_up, label: "Gap up %", type: percent, formula: "(open / prev_close - 1) x 100", inputs: [open, prev_close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: ret_1w, label: "1W change %", type: percent, formula: "(close / close 5 sessions ago - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: ret_10d, label: "10D change %", type: percent, formula: "(close / close 10 sessions ago - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: ret_1m, label: "1M change %", type: percent, formula: "(close / close 21 sessions ago - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: ret_3m, label: "3M change %", type: percent, formula: "(close / close 63 sessions ago - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: ret_6m, label: "6M change %", type: percent, formula: "(close / close 126 sessions ago - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: ret_1y, label: "1Y change %", type: percent, formula: "(close / close 251 sessions ago - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: ret_ytd, label: "YTD %", type: percent, formula: "(close / last close of the previous calendar year - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: sma10, label: "SMA 10", type: rupees, formula: "Average of the last 10 closes", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: sma20, label: "SMA 20", type: rupees, formula: "Average of the last 20 closes", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: sma50, label: "SMA 50", type: rupees, formula: "Average of the last 50 closes", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: sma150, label: "SMA 150", type: rupees, formula: "Average of the last 150 closes", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: sma200, label: "SMA 200", type: rupees, formula: "Average of the last 200 closes", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: ema21, label: "EMA 21", type: rupees, formula: "Exponential average of close, alpha = 2/(21+1)", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: from_sma10, label: "From 10 SMA %", type: percent, formula: "(close / sma10 - 1) x 100", inputs: [close, sma10], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: from_sma20, label: "From 20 SMA %", type: percent, formula: "(close / sma20 - 1) x 100", inputs: [close, sma20], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: from_sma50, label: "From 50 SMA %", type: percent, formula: "(close / sma50 - 1) x 100", inputs: [close, sma50], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: from_sma200, label: "From 200 SMA %", type: percent, formula: "(close / sma200 - 1) x 100", inputs: [close, sma200], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: from_ema50, label: "From 50 EMA %", type: percent, formula: "(close / ema50 - 1) x 100", inputs: [close, ema50], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: high_20d, label: "20D high", type: rupees, formula: "Highest high of the last 20 sessions (incl. today)", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: low_20d, label: "20D low", type: rupees, formula: "Lowest low of the last 20 sessions (incl. today)", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: ath, label: "All-time high", type: rupees, formula: "Highest adjusted high since 2007 (or listing)", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: from_ath, label: "From ATH %", type: percent, formula: "(close / ath - 1) x 100", inputs: [close, ath], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: days_since_hi52, label: "Days since 52W high", type: integer, formula: "Calendar days since the day of the highest high of the last 252 sessions", inputs: [hi52], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: avg_vol50, label: "Avg volume 50D", type: integer, formula: "Average volume of the last 50 sessions incl. today", inputs: [volume], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: rvol, label: "Relative volume", type: number, formula: "volume / avg_vol20 (avg_vol20 = previous 20 sessions)", inputs: [volume, avg_vol20], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: vol_vs_avg50, label: "Volume / 50D avg", type: number, formula: "volume / avg_vol50", inputs: [volume, avg_vol50], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: vol_chg_1d, label: "Volume change vs prev day %", type: percent, formula: "(volume / previous volume - 1) x 100", inputs: [volume], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: high_volume, label: "High-volume day", type: boolean, formula: "volume >= 1.5 x avg_vol20 (settings: volume.high_volume_x)", inputs: [volume, avg_vol20, indicator_settings], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: hve, label: "HVE", type: boolean, formula: "Highest volume ever (since 2007)", inputs: [volume], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: hvy, label: "HVY", type: boolean, formula: "Highest volume of the last 252 sessions", inputs: [volume], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: hvq, label: "HVQ", type: boolean, formula: "Highest volume of the last 63 sessions", inputs: [volume], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: lvy, label: "Lowest volume of the year", type: boolean, formula: "Lowest volume of the last 252 sessions", inputs: [volume], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: lvq, label: "Lowest volume of the quarter", type: boolean, formula: "Lowest volume of the last 63 sessions", inputs: [volume], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: pocket_pivot, label: "Pocket pivot", type: boolean, formula: "Up day whose volume beats the volume of every down day of the previous 10 sessions", inputs: [close, volume, indicator_settings], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: dry_up, label: "Volume dry-up", type: boolean, formula: "Lowest volume of the last 10 sessions and below 0.5 x avg_vol50", inputs: [volume, avg_vol50, indicator_settings], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: turnover_cr, label: "Turnover (Rs Cr)", type: crore, formula: "NSE traded value of the day / 1e7", inputs: [bhavcopy], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: turnover_avg20_cr, label: "Avg turnover 20D (Rs Cr)", type: crore, formula: "Average turnover_cr of the last 20 sessions incl. today", inputs: [turnover_cr], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: turnover_avg50_cr, label: "Avg turnover 50D (Rs Cr)", type: crore, formula: "Average turnover_cr of the last 50 sessions incl. today", inputs: [turnover_cr], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: mfi14, label: "MFI 14", type: number, formula: "Money Flow Index: TP = (H+L+C)/3, flow = TP x volume; 100 - 100 / (1 + sum of up-flows / sum of down-flows over 14)", inputs: [close, volume], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: adr_pct, label: "ADR % (20)", type: percent, formula: "100 x (average of high/low over 20 sessions - 1)", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: bb_mid, label: "Bollinger middle", type: rupees, formula: "SMA 20 of close", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: bb_upper, label: "Bollinger upper", type: rupees, formula: "bb_mid + 2 x population standard deviation of the last 20 closes", inputs: [bb_mid], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: bb_lower, label: "Bollinger lower", type: rupees, formula: "bb_mid - 2 x population standard deviation of the last 20 closes", inputs: [bb_mid], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: supertrend, label: "Supertrend", type: rupees, formula: "ATR(10, Wilder) trailing band 3 x ATR from (H+L)/2 that only tightens; flips on a close through it", inputs: [close, indicator_settings], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: supertrend_dir, label: "Supertrend direction", type: integer, formula: "+1 = band below price (up), -1 = above (down)", inputs: [supertrend], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: swing_fast, label: "Swing band fast (T3 8)", type: rupees, formula: "Tillson T3 of close, length 8, volume factor 0.65 (six EMAs combined)", inputs: [close, indicator_settings], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: swing_slow, label: "Swing band slow (T3 14)", type: rupees, formula: "Tillson T3 of close, length 14, volume factor 0.65", inputs: [close, indicator_settings], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: swing_up, label: "Swing bands up", type: boolean, formula: "swing_fast > swing_slow (green band)", inputs: [swing_fast, swing_slow], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: rel_ext, label: "Relative extension", type: number, formula: "ext = (close / SMA50 - 1) x 100, scaled by the largest ext on the same side in the last 250 sessions: +100 = as stretched above as ever, -100 = as far below", inputs: [close, indicator_settings], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: trend_intensity, label: "Trend intensity", type: number, formula: "SMA7 / SMA65 x 100 (>105 strong up, <95 strong down)", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: rs_line_nifty_50, label: "RS line vs Nifty 50", type: number, formula: "close / Nifty 50 close (same day)", inputs: [close, index_history], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: rs_line_nifty_500, label: "RS line vs Nifty 500", type: number, formula: "close / Nifty 500 close (same day)", inputs: [close, index_history], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: rs_line_nifty_midcap_150, label: "RS line vs Nifty Midcap 150", type: number, formula: "close / Nifty Midcap 150 close (same day)", inputs: [close, index_history], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: rs_line_nifty_smallcap_250, label: "RS line vs Nifty Smallcap 250", type: number, formula: "close / Nifty Smallcap 250 close (same day)", inputs: [close, index_history], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: rs_line, label: "RS line", type: number, formula: "close / benchmark close; benchmark = Nifty Smallcap 250 (settings: benchmark)", inputs: [close, index_history, indicator_settings], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: rs_line_52w_high, label: "RS line at 52W high", type: boolean, formula: "rs_line >= its highest value of the last 252 sessions", inputs: [rs_line], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: rs_new_high_before_price, label: "RS new high before price", type: boolean, formula: "rs_line_52w_high and today's high below hi52 (price not at a new high)", inputs: [rs_line_52w_high, hi52], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: mansfield_rs, label: "Mansfield RS", type: number, formula: "(rs_line / its 52-week (260-session) average - 1) x 100", inputs: [rs_line], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: beta_1y, label: "Beta 1Y vs Nifty 50", type: number, formula: "Covariance / variance of daily returns vs Nifty 50 over 252 sessions", inputs: [close, index_history], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: stage, label: "Stage", type: text, formula: "1 Basing, 2A Early uptrend, 2 Uptrend, 3 Topping, 4 Downtrend, 4A Improving: close vs SMA200 and SMA50, slope of SMA200 (config/stage.yaml)", inputs: [close, indicator_settings], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: rs_score, label: "RS score", type: number, formula: "0.4 x 3M + 0.2 x 6M + 0.2 x 9M + 0.2 x 12M return (63/126/189/252 sessions; younger stocks: the periods they have)", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: liquid_day, label: "Liquid that day", type: boolean, formula: "Median turnover of the last 30 sessions >= Rs 1 Cr and raw close >= Rs 5 (same day)", inputs: [turnover_cr, raw_close, settings], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: rs_rating_1w, label: "RS rating 1 week", type: integer, formula: "Percentile rank 1-99 of ret_1w among all stocks that day", inputs: [ret_1w], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: rs_rating_1m, label: "RS rating 1 month", type: integer, formula: "Percentile rank 1-99 of ret_1m among all stocks that day", inputs: [ret_1m], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: rs_rating_3m, label: "RS rating 3 months", type: integer, formula: "Percentile rank 1-99 of ret_3m among all stocks that day", inputs: [ret_3m], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: rs_chg_1w, label: "RS rating change 1W", type: integer, formula: "rs_rating - rs_rating 5 sessions ago", inputs: [rs_rating], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: rs_chg_1m, label: "RS rating change 1M", type: integer, formula: "rs_rating - rs_rating 21 sessions ago", inputs: [rs_rating], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: rs_rating_1m_ago, label: "RS rating 1M ago", type: integer, formula: "rs_rating 21 sessions ago", inputs: [rs_rating], provided_in_phase: 4, source: derived, file: [screen]}

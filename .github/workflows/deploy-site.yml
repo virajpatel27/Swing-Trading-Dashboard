@@ -7,7 +7,8 @@ name: Deploy website
 on:
   push:
     branches: [main]
-    paths: ["site/**", "data/snapshot/**", "swingdash/site_build.py", "scripts/build_site.py", ".github/workflows/deploy-site.yml"]
+    paths: ["site/**", "data/snapshot/**", "swingdash/site_build.py", "scripts/build_site.py", "swingdash/engine.py",
+            "swingdash/screen.py", "config/indicators.yaml", "config/stage.yaml", ".github/workflows/deploy-site.yml"]
   workflow_dispatch:
   workflow_call:
 
@@ -23,7 +24,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v5
         with:
@@ -34,6 +35,8 @@ jobs:
           cache: pip
       - name: Install
         run: pip install -r requirements.txt
+      - name: Screen snapshot (every indicator field per stock; not kept in git)
+        run: python scripts/build_screen.py
       - name: Build site
         run: python scripts/build_site.py
       - uses: actions/upload-pages-artifact@v4

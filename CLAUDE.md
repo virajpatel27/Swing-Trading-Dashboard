@@ -94,6 +94,12 @@ industry (~190; = the reference's "industry") + themes from `config/theme_rules.
 `swingdash/groups.py`: equal-weight index of members LIQUID the day before (all members: IT 42x since 2007, nonsense;
 liquid: 9x vs NIFTY IT 5.8x). Daily step 4c; `scripts/build_groups.py [--review]` on the PC. Membership = today's
 (survivorship: the past is "today's members back then").
+S4 done: `swingdash/engine.py` (all price/volume fields per day; settings config/indicators.yaml + stage.yaml),
+`swingdash/screen.py` + `scripts/build_screen.py [--as-of DAY]` -> data/snapshot/screen.json (git-ignored; built in
+deploy-site.yml, ~5-7 min, 4 processes). Calibrated on 03-Nov (docs/calibration.md): stage = SMA200/SMA50 rule (90.5 %),
+RS rating ranked among ALL stocks, RS benchmark Smallcap 250, 1Y = 251 sessions, avg vol 50 incl. today, days since 52W
+high in calendar days. Registry `config/fields.yaml` (current_phase 4, 144 fields) -> `scripts/make_formulas_doc.py` ->
+docs/formulas.md (a test fails when it is stale). Golden tests vs TA-Lib (requirements-dev).
 Repo folder on the PC: `C:\Users\hello\OneDrive\Documents\Swing Trading\Swing Trading` (nested). Manual steps: `docs/MANUAL_CHECKLIST.md`.
 Read GitHub run results without a token via the public API (`api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/runs`,
 then `.../actions/runs/<id>/jobs` and `.../check-runs/<job id>/annotations`). Logs, Summary page and artifacts need a signed-in user,

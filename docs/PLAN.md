@@ -24,7 +24,8 @@ Status: **draft, waiting for Viraj's OK** ("continue"). Nothing is built yet.
 | S1 | Stock master `data/meta/stocks.csv` (shares, float, F&O, band, market cap, liquid), audit `reports/stock_audit.md`, renames by ISIN, field registry | done 2026-11-03 (waiting for Viraj's OK) |
 | S2 | Price foundation: delivery % 2007 -> (`data/stocks/delivery/`), SME-board corporate actions, EPS factor table `data/meta/share_factors.csv`, data-quality report `reports/data_quality.md` | done 2026-11-04 (waiting for Viraj's OK) |
 | S3 | Groups: classification gaps filled (BSE / marked guesses, `config/classification_overrides.csv`), themes (`config/theme_rules.yaml` -> `data/meta/themes.csv`, review `reports/themes_review.md`), equal-weight + median indices for 22 sectors, ~190 industries, 31 themes (`data/groups/`) | done 2026-11-04, themes approved by Viraj |
-| S4-S12 | indicator engine, table + chart, scanners, patterns, fundamentals, earnings + groups, breadth, optional, hardening | open |
+| S4 | Indicator engine (`swingdash/engine.py`, every field for every day), screen snapshot (`swingdash/screen.py` -> `data/snapshot/screen.json`, built by the website workflow, not in git), registry 144 fields, `docs/formulas.md`, golden tests vs TA-Lib, `docs/calibration.md` | done 2026-11-04 (waiting for Viraj's OK) |
+| S5-S12 | table + chart, scanners, patterns, fundamentals, earnings + groups, breadth, optional, hardening | open |
 
 ## 2. Decisions that differ from the original spec (and why)
 

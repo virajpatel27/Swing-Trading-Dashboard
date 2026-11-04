@@ -1,0 +1,13 @@
+# Stage analysis - Phase S4. Tuned on 03-Nov-2026 against the reference app's stages (docs/calibration.md: 90.5 % equal).
+#   Uptrend (2)   close above the long AND the fast average
+#   Topping (3)   close above the long average but below the fast one (momentum fading)
+#   Downtrend (4) close at / below the long average
+#   Basing (1)    below the long average, back above the fast one, and the long average flat (|slope| < flat)
+#   Early uptrend (2A)  the first early_days sessions of an Uptrend that came from Basing / Downtrend
+#   Improving (4A)      a Downtrend whose close is back above the fast average (long average still sloping)
+long_ma: 200            # sessions (young stocks: what they have, from min_sessions on)
+fast_ma: 50
+min_sessions: 64        # fewer sessions: no stage
+slope_days: 20          # slope of the long average = today / 20 sessions ago - 1
+flat: 0.01
+early_days: 30

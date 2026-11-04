@@ -377,3 +377,26 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - NEXT: Viraj reviews reports/themes_review.md (edit config/theme_rules.yaml), commits + pushes; check Backfill #10
   (delivery); quality report again; then S4 (indicator engine + field registry for all price fields).
 - Viraj approved the theme list (reports/themes_review.md) as it is ("Themes OK chhe").
+
+### 2026-11-04 (night): Scanner Phase S4 - indicator engine (done, waiting for Viraj's OK)
+- `swingdash/engine.py`: every field for every trading day of a stock (adjusted prices): price/day, returns 1W-1Y + YTD,
+  SMA 10/20/50/150/200, EMA 10/20/21/50/200 + distances, 20D / 52W / all-time highs-lows, days since 52W high, volume
+  (avg 20/50, RVol, HVE/HVY/HVQ, lowest of year/quarter, pocket pivot, dry-up, high-volume day), turnover, delivery %,
+  RSI, MACD, MFI, ATR, ADR %, Bollinger, Supertrend, Swing bands (T3), Relative extension, Trend intensity, RS lines vs
+  4 NSE indices, RS at 52W high, RS new high before price, Mansfield RS, beta, stage. 0.2 s per stock (TITAN 4,896 days).
+- `swingdash/screen.py`: all stocks in 4 processes + per-day cross-stock fields (RS rating, RS rating 1W/1M/3M, changes)
+  -> `data/snapshot/screen.json` (2,623 stocks x 112 fields, 2.3 MB). NOT in git (changes completely daily, ~100 MB a
+  year): deploy-site.yml builds it before the site and copies it to _site/data/. PC: ~5-7 min (OneDrive disk).
+- Calibration vs the reference export of 03-Nov (`--as-of 2026-11-03`), details in docs/calibration.md: 98-100 % for
+  RSI, ADR, RVol, SMAs/EMAs, returns, gap, 20D high/low. Definitions changed after the check: 1Y = 251 sessions,
+  avg vol 50 incl. today, days since 52W high = calendar days, RS line benchmark = Nifty Smallcap 250 (their default),
+  RS rating ranked among ALL stocks (77 % within 3 points, corr 0.98). Stage: their Weinstein-like chip follows
+  SMA200 + SMA50 (above both = Uptrend, above 200 below 50 = Topping, below 200 = Downtrend): 90.5 % equal; our Basing
+  (flat SMA200, back above SMA50), 2A and 4A are our own refinements (config/stage.yaml). Their ATH uses ~5 years of
+  history; ours (2007 ->) is kept.
+- Registry: 74 new fields (144 total, current_phase 4); `scripts/make_formulas_doc.py` -> docs/formulas.md (a test fails
+  when it is stale). Golden tests on RELIANCE / TITAN / TRENT (tests/fixtures/golden_*.csv, last 800 adjusted days):
+  SMA, EMA, WMA, RSI, MACD, ATR, MFI, Bollinger, T3 equal to TA-Lib to 6 decimals; Supertrend = TradingView's logic.
+  TA-Lib 0.6.8 in requirements-dev.txt (tests only). 150 Python tests green.
+- NEXT: Viraj commits + pushes; check Backfill #10 (delivery) and the first website build with screen.json; then S5
+  (results table with column settings + chart with the indicator menu).

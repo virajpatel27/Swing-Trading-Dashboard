@@ -1,0 +1,27 @@
+# Indicator engine settings (Phase S4). Change this file, not the code. Every formula: docs/formulas.md.
+benchmark: NIFTY_SMALLCAP_250     # default RS line benchmark (NSE index folder id) - the reference's default; its
+                                  # "RS line at 52W high" matches 99.3 % with it (03-Nov). Others: NIFTY_50, NIFTY_500, NIFTY_MIDCAP_150
+beta_benchmark: NIFTY_50
+rs_lines: [NIFTY_50, NIFTY_500, NIFTY_MIDCAP_150, NIFTY_SMALLCAP_250]
+
+mansfield_weeks: 52               # Mansfield RS = (RS line / its 52-week average - 1) x 100 (52 weeks = 260 sessions)
+relative_extension: {ma: 50, lookback: 250}
+trend_intensity: {fast: 7, slow: 65}
+bollinger: {length: 20, std: 2}
+supertrend: {length: 10, multiplier: 3}
+swing_bands: {fast: 8, slow: 14, volume_factor: 0.65}
+adr_length: 20
+
+volume:
+  high_volume_x: 1.5              # "high volume" day = volume >= 1.5 x its 20-day average (chart colour default)
+  pocket_pivot_days: 10           # pocket pivot: up day whose volume beats every DOWN day's volume of the last 10 days
+  dry_up_days: 10                 # dry-up: lowest volume of the last 10 days AND below dry_up_x of the 50-day average
+  dry_up_x: 0.5
+  quarter: 63                     # HVQ / LVQ window (sessions)
+  year: 252                       # HVY / LVY window
+
+rs_rating:
+  weights: {63: 0.4, 126: 0.2, 189: 0.2, 252: 0.2}   # IBD-style: recent quarter counts double
+  min_sessions: 63                # fewer sessions: no RS rating; between 63 and 252 the available periods are used
+  universe: all                   # percentile rank among ALL stocks with a score that day (calibrated: 77 % within 3
+                                  # points of the reference, correlation 0.98; "liquid" only: 57 %)

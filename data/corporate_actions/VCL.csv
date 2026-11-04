@@ -1,3 +1,5 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
+2021-12-27,bonus,2:3,0.6,,ratio from NSE text,applied,BONUS 2:3,NSE
+2022-03-28,split,FV 10->2,0.2,,ratio from NSE text,applied,FACE VALUE SPLIT (SUB-DIVISION) - FROM RS 10/- PER SHARE TO RS 2/- PER SHARE,NSE
 2023-02-15,split,FV 2->1,0.5,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 2/- Per Share To Re 1/- Per Share,NSE
 2023-07-24,rights,1:2,1,2.5,rights above market price: no change,no change,Rights 1:2 @ Premium Re 1.50/-,NSE

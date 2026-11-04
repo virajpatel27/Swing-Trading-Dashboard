@@ -1,4 +1,5 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
+2019-10-03,bonus,6:10,0.625,,ratio from NSE text,applied,BONUS 6:10,NSE
 2021-08-12,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 0.10 Per Share,NSE
 2021-10-07,bonus,3:4,0.57142857,,ratio from NSE text,applied,Bonus 3:4,NSE
 2021-10-07,split,FV 10->2,0.2,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share,NSE

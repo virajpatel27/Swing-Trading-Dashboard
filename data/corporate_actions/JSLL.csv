@@ -1,3 +1,5 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
-2025-09-22,dividend,,1.0,1.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 1.10 Per Share,NSE
-2026-09-21,dividend,,1.0,4.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 4.50 Per Share,NSE
+2023-11-02,bonus,4:5,0.55555556,,ratio from NSE text,applied,BONUS 4:5,NSE
+2024-08-20,dividend,,1,4.18,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,ANNUAL GENERAL MEETING/DIVIDEND - RS 4.18 PER SHARE,NSE
+2025-09-22,dividend,,1,1.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 1.10 Per Share,NSE
+2026-09-21,dividend,,1,4.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 4.50 Per Share,NSE

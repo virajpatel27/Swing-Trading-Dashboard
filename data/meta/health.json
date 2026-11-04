@@ -1,14 +1,14 @@
 {
- "checked_at": "2026-11-03 20:16",
- "instruments": 5532,
+ "checked_at": "2026-11-04 12:42",
+ "instruments": 5542,
  "by_group": {
   "index BSE": 139,
   "index NSE": 139,
-  "stock NSE": 2627,
-  "stock-adjusted NSE": 2627
+  "stock NSE": 2632,
+  "stock-adjusted NSE": 2632
  },
- "rows": 13705280,
- "newest_date": "2026-11-03",
+ "rows": 13710651,
+ "newest_date": "2026-11-04",
  "errors": 0,
- "warnings": 3561
+ "warnings": 3486
 }

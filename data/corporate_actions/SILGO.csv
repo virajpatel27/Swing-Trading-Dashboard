@@ -1,3 +1,4 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
-2024-02-22,rights,1:1,0.8571428571,25,"TERP, issue price 25, close before 35",applied,Rights 1:1 @ Premium Rs 15/-,NSE
-2026-01-05,rights,3:10,0.9402976564,60,"TERP, issue price 60, close before 80.94",applied,Rights 3:10 @ Premium Rs 50/-,NSE
+2021-01-07,bonus,1:4,0.8,,ratio from NSE text,applied,BONUS 1:4,NSE
+2024-02-22,rights,1:1,0.85714286,25,"TERP, issue price 25, close before 35",applied,Rights 1:1 @ Premium Rs 15/-,NSE
+2026-01-05,rights,3:10,0.94029766,60,"TERP, issue price 60, close before 80.94",applied,Rights 3:10 @ Premium Rs 50/-,NSE

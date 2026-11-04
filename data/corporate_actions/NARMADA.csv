@@ -1,3 +1,5 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
+2019-09-18,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,ANNUAL GENERAL MEETING/DIVIDEND - RS 0.10 PER SHARE,NSE
+2020-02-25,bonus,8:10,0.55555556,,ratio from NSE text,applied,BONUS 8:10,NSE
 2024-09-13,rights,9:5,0.62411011,10,"TERP, issue price 10, close before 24.08",applied,Rights 9:5 @ Premium Rs 5/-,NSE
 2026-07-31,split,FV 10->5,0.5,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 5/- Per Share,NSE

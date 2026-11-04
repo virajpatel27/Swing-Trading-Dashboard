@@ -1,0 +1,5 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2021-03-18,bonus,1:4,0.8,,ratio from NSE text,applied,BONUS 1:4,NSE
+2022-10-12,bonus,1:1,0.5,,ratio from NSE text,applied,BONUS 1:1,NSE
+2023-09-22,dividend,,1,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,DIVIDEND - RE 0.25 PER SHARE,NSE
+2023-09-22,rights,6:25,0.98186716,44.5,"TERP, issue price 44.5, close before 49.1",applied,RIGHTS 6:25 @ PREMIUM RS 39.50 /-,NSE

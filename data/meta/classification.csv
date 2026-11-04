@@ -847,7 +847,7 @@ GMRAIRPORT,Services,Services,Transport Infrastructure,Airport & Airport services
 GMRP&UI,Utilities,Power,Power,Power Generation,NIFTY MICROCAP 250;NIFTY POWER;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,781017529,37.05,5,,,NSE,2026-11-04
 GNA,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,,42930800,34.08,10,58.47,2026-09-30,NSE,2026-11-04
 GNFC,Commodities,Chemicals,Chemicals & Petrochemicals,Commodity Chemicals,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,146940683,56.31,10,41.3,2026-09-30,NSE,2026-11-04
-GNRL,Energy,Oil Gas & Consumable Fuels,Oil,Oil Exploration & Production,,128402632,81.12,10,,,NSE,2026-11-04
+GNRL,Energy,Oil Gas & Consumable Fuels,Oil,Oil Exploration & Production,,128402632,80.86,10,,,NSE,2026-11-05
 GOACARBON,Commodities,Metals & Mining,Minerals & Mining,Industrial Minerals,,9151052,38.55,10,59.72,2026-09-30,NSE,2026-11-04
 GOCLCORP,Commodities,Chemicals,Chemicals & Petrochemicals,Explosives,,49572490,31.15,2,67.82,2026-09-30,NSE,2026-11-04
 GOCOLORS,Consumer Discretionary,Consumer Services,Retailing,Speciality Retail,,52595984,45.18,10,55.45,2026-09-30,NSE,2026-11-04
@@ -2021,80 +2021,80 @@ SAYAJIHOTL,SERVICES,SERVICES,HOTELS/ RESORTS AND OTHER RECREATIONAL ACTIVITIES,H
 SAYAJIIND,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Agricultural Food & other Products,Other Agricultural Products,,25280000,19.1,5,,,NSE,2026-11-04
 SBC,Consumer Discretionary,Textiles,Textiles & Apparels,Garments & Apparels,,476190000,49.48,1,50.97,2026-09-30,NSE,2026-11-04
 SBCL,Industrials,Capital Goods,Industrial Products,Iron & Steel Products,,57604200,65.15,2,33.61,2026-09-30,NSE,2026-11-04
-SBFC,Financial Services,Financial Services,Finance,Non Banking Financial Company (NBFC),NIFTY MICROCAP 250;NIFTY NBFC;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,,,,,,NSE,2026-11-03
-SBGLP,Consumer Discretionary,Realty,Realty,Residential Commercial Projects,,,,,,,NSE,2026-11-03
-SBICARD,Financial Services,Financial Services,Finance,Non Banking Financial Company (NBFC),NIFTY FINANCIAL SERVICES;NIFTY 200;NIFTY 500;NIFTY FINANCIAL SERVICES 25/50;NIFTY FINANCIAL SERVICES EX-BANK;NIFTY LARGEMIDCAP 250;NIFTY LOW VOLATILITY 50;NIFTY MIDCAP 100;NIFTY MIDCAP 150;NIFTY MIDSMALL FINANCIAL SERVICES;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY NBFC;NIFTY RURAL;NIFTY TOTAL MARKET;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 LOW VOLATILITY 50;NIFTY500 MULTICAP 50:25:25,,,,,,NSE,2026-11-01
-SBIFUNDS,Financial Services,Financial Services,Capital Markets,Asset Management Company,NIFTY IPO,,,,,,NSE,2026-11-03
-SBILIFE,Financial Services,Financial Services,Insurance,Life Insurance,NIFTY 50;NIFTY FINANCIAL SERVICES;NIFTY 100;NIFTY 200;NIFTY 500;NIFTY ALPHA LOW-VOLATILITY 30;NIFTY FINANCIAL SERVICES 25/50;NIFTY FINANCIAL SERVICES EX-BANK;NIFTY INDIA FPI 150;NIFTY INSURANCE;NIFTY LARGEMIDCAP 250;NIFTY LOW VOLATILITY 50;NIFTY RURAL;NIFTY SERVICES SECTOR;NIFTY TOTAL MARKET;NIFTY100 ENHANCED ESG;NIFTY100 EQUAL WEIGHT;NIFTY100 ESG;NIFTY100 ESG SECTOR LEADERS;NIFTY100 LOW VOLATILITY 30;NIFTY50 EQUAL WEIGHT;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25,,,,,,NSE,2026-11-01
-SBIN,Financial Services,Financial Services,Banks,Public Sector Bank,NIFTY 50;NIFTY BANK;NIFTY FINANCIAL SERVICES;NIFTY 100;NIFTY 200;NIFTY 500;NIFTY ALPHA 50;NIFTY ALPHA LOW-VOLATILITY 30;NIFTY ALPHA QUALITY VALUE LOW-VOLATILITY 30;NIFTY DIVIDEND OPPORTUNITIES 50;NIFTY FINANCIAL SERVICES 25/50;NIFTY HOUSING;NIFTY INDIA FPI 150;NIFTY LARGEMIDCAP 250;NIFTY LOW VOLATILITY 50;NIFTY PSU BANK;NIFTY RURAL;NIFTY SERVICES SECTOR;NIFTY TOP 10 EQUAL WEIGHT;NIFTY TOP 15 EQUAL WEIGHT;NIFTY TOP 20 EQUAL WEIGHT;NIFTY TOTAL MARKET;NIFTY100 ALPHA 30;NIFTY100 ENHANCED ESG;NIFTY100 EQUAL WEIGHT;NIFTY100 ESG;NIFTY100 LIQUID 15;NIFTY100 LOW VOLATILITY 30;NIFTY200 VALUE 30;NIFTY50 EQUAL WEIGHT;NIFTY50 VALUE 20;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 LOW VOLATILITY 50;NIFTY500 MULTICAP 50:25:25;NIFTY500 MULTIFACTOR MQVLV 50;NIFTY500 VALUE 50,,,,,,NSE,2026-11-01
-SCANSTL,Commodities,Metals & Mining,Ferrous Metals,Iron & Steel,,,,,,,NSE,2026-11-03
-SCHAEFFLER,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,NIFTY 500;NIFTY EV & NEW AGE AUTOMOTIVE;NIFTY LARGEMIDCAP 250;NIFTY MIDCAP 150;NIFTY MIDCAP150 QUALITY 50;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY MNC;NIFTY TOTAL MARKET;NIFTY TRANSPORTATION & LOGISTICS;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25;NIFTY500 SHARIAH,,,,,,NSE,2026-11-01
-SCHAND,Consumer Discretionary,Media Entertainment & Publication,Printing & Publication,Printing & Publication,,,,,,,NSE,2026-11-03
-SCHNEIDER,Industrials,Capital Goods,Electrical Equipment,Heavy Electrical Equipment,NIFTY 500;NIFTY INDIA INFRASTRUCTURE & LOGISTICS;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY MIDSMALLCAP400 MOMENTUM QUALITY 100;NIFTY SMALLCAP 250;NIFTY SMALLCAP 500;NIFTY SMALLCAP250 MOMENTUM QUALITY 100;NIFTY TOTAL MARKET;NIFTY TOTAL MARKET MOMENTUM QUALITY 50;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 GROWTH 50;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MOMENTUM 50;NIFTY500 MULTICAP 50:25:25;NIFTY500 MULTICAP MOMENTUM QUALITY 50;NIFTY500 QUALITY 50;NIFTY500 SHARIAH,,,,,,NSE,2026-11-01
-SCI,Services,Services,Transport Services,Shipping,NIFTY 500;NIFTY COMMERCIAL & TRANSPORT SERVICES;NIFTY INDIA INFRASTRUCTURE & LOGISTICS;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY SMALLCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25;NIFTY500 SHARIAH,,,,,,NSE,2026-11-01
-SCILAL,Financial Services,Financial Services,Finance,Investment Company,,,,,,,NSE,2026-11-03
-SCODATUBES,Industrials,Capital Goods,Industrial Products,Iron & Steel Products,,,,,,,NSE,2026-11-03
-SCPL,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Food Products,Dairy Products,,,,,,,NSE,2026-11-03
-SDBL,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Beverages,Breweries & Distilleries,,,,,,,NSE,2026-11-03
-SEAMECLTD,Services,Services,Transport Services,Shipping,,,,,,,NSE,2026-11-03
-SECMARK,Information Technology,Information Technology,IT - Software,Computers - Software & Consulting,,,,,,,NSE,2026-11-03
-SECURKLOUD,Information Technology,Information Technology,IT - Services,IT Enabled Services,,,,,,,NSE,2026-11-03
-SEDEMAC,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,NIFTY IPO;NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,,,,,,NSE,2026-11-03
-SEIL,Consumer Discretionary,Consumer Services,Other Consumer Services,Education,,,,,,,NSE,2026-11-03
-SEJALLTD,Industrials,Capital Goods,Industrial Products,Glass - Industrial,,,,,,,NSE,2026-11-03
-SEKURITIND,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,,,,,,,NSE,2026-11-03
-SEMAC,Industrials,Construction,Construction,Civil Construction,,,,,,,NSE,2026-11-03
-SENCO,Consumer Discretionary,Consumer Durables,Consumer Durables,Gems Jewellery And Watches,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,,,,,,NSE,2026-11-03
-SENORES,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,,,,,,NSE,2026-11-03
-SEPC,Industrials,Construction,Construction,Civil Construction,,,,,,,NSE,2026-11-03
-SERVOTECH,Industrials,Capital Goods,Electrical Equipment,Other Electrical Equipment,,,,,,,NSE,2026-11-03
-SESHAPAPER,Commodities,Forest Materials,Paper Forest & Jute Products,Paper & Paper Products,,,,,,,NSE,2026-11-03
-SETCO,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,,,,,,,NSE,2026-11-03
-SETL,Industrials,Capital Goods,Industrial Manufacturing,Industrial Products,,,,,,,NSE,2026-11-03
-SETUINFRA,Industrials,Construction,Construction,Civil Construction,,,,,,,NSE,2026-11-03
-SEYAIND,Commodities,Chemicals,Chemicals & Petrochemicals,Specialty Chemicals,,,,,,,NSE,2026-11-03
-SFCTECH,Utilities,Utilities,Other Utilities,Waste Management,,,,,,,NSE,2026-11-03
-SFL,Consumer Discretionary,Consumer Durables,Consumer Durables,Furniture Home Furnishing,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,,,,,,NSE,2026-11-03
-SGFIN,Financial Services,Financial Services,Finance,Non Banking Financial Company (NBFC),,,,,,,NSE,2026-11-03
-SGIL,Industrials,Capital Goods,Industrial Products,Castings & Forgings,,,,,,,NSE,2026-11-03
-SGL,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,,,,,,NSE,2026-11-03
-SGLRES,Information Technology,Information Technology,IT - Services,IT Enabled Services,,,,,,,NSE,2026-11-03
-SGMART,Commodities,Metals & Mining,Metals & Minerals Trading,Trading - Metals,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,,,,,,NSE,2026-11-03
-SGRL,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,,,,,,,NSE,2026-11-03
-SHADOWFAX,Services,Services,Transport Services,Logistics Solution Provider,NIFTY COMMERCIAL & TRANSPORT SERVICES;NIFTY IPO;NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,,,,,,NSE,2026-11-03
-SHAH,Industrials,Capital Goods,Industrial Products,Iron & Steel Products,,,,,,,NSE,2026-11-03
-SHAHALLOYS,Industrials,Capital Goods,Industrial Products,Iron & Steel Products,,,,,,,NSE,2026-11-03
-SHAHINVEST,Financial Services,Financial Services,Capital Markets,Stockbroking & Allied,,,,,,,NSE,2026-11-03
-SHAILY,Consumer Discretionary,Consumer Durables,Consumer Durables,Plastic Products - Consumer,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,,,,,,NSE,2026-11-03
-SHAKTIPUMP,Industrials,Capital Goods,Industrial Products,Compressors Pumps & Diesel Engines,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,,,,,,NSE,2026-11-03
-SHALBY,Healthcare,Healthcare,Healthcare Services,Hospital,,,,,,,NSE,2026-11-03
-SHALPAINTS,Consumer Discretionary,Consumer Durables,Consumer Durables,Paints,,,,,,,NSE,2026-11-03
-SHANKARA,Consumer Discretionary,Consumer Services,Retailing,Speciality Retail,,,,,,,NSE,2026-11-03
-SHANKESH,Consumer Discretionary,Consumer Durables,Consumer Durables,Gems Jewellery And Watches,NIFTY IPO,,,,,,NSE,2026-11-03
-SHANTI,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Agricultural Food & other Products,Other Agricultural Products,,,,,,,NSE,2026-11-03
-SHANTIGEAR,Industrials,Capital Goods,Industrial Manufacturing,Industrial Products,,,,,,,NSE,2026-11-03
-SHANTIGOLD,Consumer Discretionary,Consumer Durables,Consumer Durables,Gems Jewellery And Watches,,,,,,,NSE,2026-11-03
-SHARDACROP,Commodities,Chemicals,Fertilizers & Agrochemicals,Pesticides & Agrochemicals,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,,,,,,NSE,2026-11-03
-SHARDAMOTR,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,,,,,,,NSE,2026-11-03
-SHARDUL,Financial Services,Financial Services,Capital Markets,Stockbroking & Allied,,,,,,,NSE,2026-11-03
-SHAREINDIA,Financial Services,Financial Services,Capital Markets,Stockbroking & Allied,NIFTY MICROCAP 250;NIFTY TOTAL MARKET,,,,,,NSE,2026-11-03
-SHBAJRG,Industrials,Capital Goods,Industrial Products,Iron & Steel Products,,,,,,,NSE,2026-11-03
-SHEKHAWATI,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,,,,,,NSE,2026-11-03
-SHEMAROO,Consumer Discretionary,Media Entertainment & Publication,Entertainment,Media & Entertainment,NIFTY WAVES,,,,,,NSE,2026-11-03
-SHERVANI,Consumer Discretionary,Realty,Realty,Residential Commercial Projects,,,,,,,NSE,2026-11-03
-SHILCTECH,Industrials,Capital Goods,Electrical Equipment,Heavy Electrical Equipment,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,,,,,,NSE,2026-11-03
-SHILGRAVQ,Industrials,Capital Goods,Industrial Products,Aluminium Copper & Zinc Products,,,,,,,NSE,2026-11-03
-SHILPAMED,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,,,,,,NSE,2026-11-03
-SHINDL,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Food Products,Seafood,,,,,,,NSE,2026-11-03
-SHIPROCKET,Services,Services,Transport Services,Logistics Solution Provider,NIFTY IPO,,,,,,NSE,2026-11-03
-SHIVAAGRO,Commodities,Chemicals,Fertilizers & Agrochemicals,Fertilizers,,,,,,,NSE,2026-11-03
-SHIVACEM,Commodities,Construction Materials,Cement & Cement Products,Cement & Cement Products,,,,,,,NSE,2026-11-03
-SHIVALIK,Commodities,Chemicals,Fertilizers & Agrochemicals,Pesticides & Agrochemicals,,,,,,,NSE,2026-11-03
-SHIVAM-RE1,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,,,,,,,NSE,2026-11-03
-SHIVAMAUTO,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,,,,,,,NSE,2026-11-03
-SHIVAMILLS,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,,,,,,NSE,2026-11-03
-SHIVATEX,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,,,,,,NSE,2026-11-03
-SHIVAUM,Services,Services,Commercial Services & Supplies,Trading & Distributors,,,,,,,NSE,2026-11-03
+SBFC,Financial Services,Financial Services,Finance,Non Banking Financial Company (NBFC),NIFTY MICROCAP 250;NIFTY NBFC;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,1111912070,37.53,10,52.23,2026-09-30,NSE,2026-11-05
+SBGLP,Consumer Discretionary,Realty,Realty,Residential Commercial Projects,,173416440,26.61,1,73.39,2026-09-30,NSE,2026-11-05
+SBICARD,Financial Services,Financial Services,Finance,Non Banking Financial Company (NBFC),NIFTY FINANCIAL SERVICES;NIFTY 200;NIFTY 500;NIFTY FINANCIAL SERVICES 25/50;NIFTY FINANCIAL SERVICES EX-BANK;NIFTY LARGEMIDCAP 250;NIFTY LOW VOLATILITY 50;NIFTY MIDCAP 100;NIFTY MIDCAP 150;NIFTY MIDSMALL FINANCIAL SERVICES;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY NBFC;NIFTY RURAL;NIFTY TOTAL MARKET;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 LOW VOLATILITY 50;NIFTY500 MULTICAP 50:25:25,951643783,31.14,10,68.86,2026-09-30,NSE,2026-11-05
+SBIFUNDS,Financial Services,Financial Services,Capital Markets,Asset Management Company,NIFTY IPO,2036827612,7.03,1,88.19,2026-09-30,NSE,2026-11-05
+SBILIFE,Financial Services,Financial Services,Insurance,Life Insurance,NIFTY 50;NIFTY FINANCIAL SERVICES;NIFTY 100;NIFTY 200;NIFTY 500;NIFTY ALPHA LOW-VOLATILITY 30;NIFTY FINANCIAL SERVICES 25/50;NIFTY FINANCIAL SERVICES EX-BANK;NIFTY INDIA FPI 150;NIFTY INSURANCE;NIFTY LARGEMIDCAP 250;NIFTY LOW VOLATILITY 50;NIFTY RURAL;NIFTY SERVICES SECTOR;NIFTY TOTAL MARKET;NIFTY100 ENHANCED ESG;NIFTY100 EQUAL WEIGHT;NIFTY100 ESG;NIFTY100 ESG SECTOR LEADERS;NIFTY100 LOW VOLATILITY 30;NIFTY50 EQUAL WEIGHT;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25,1003409233,44.67,10,55.31,2026-09-30,NSE,2026-11-05
+SBIN,Financial Services,Financial Services,Banks,Public Sector Bank,NIFTY 50;NIFTY BANK;NIFTY FINANCIAL SERVICES;NIFTY 100;NIFTY 200;NIFTY 500;NIFTY ALPHA 50;NIFTY ALPHA LOW-VOLATILITY 30;NIFTY ALPHA QUALITY VALUE LOW-VOLATILITY 30;NIFTY DIVIDEND OPPORTUNITIES 50;NIFTY FINANCIAL SERVICES 25/50;NIFTY HOUSING;NIFTY INDIA FPI 150;NIFTY LARGEMIDCAP 250;NIFTY LOW VOLATILITY 50;NIFTY PSU BANK;NIFTY RURAL;NIFTY SERVICES SECTOR;NIFTY TOP 10 EQUAL WEIGHT;NIFTY TOP 15 EQUAL WEIGHT;NIFTY TOP 20 EQUAL WEIGHT;NIFTY TOTAL MARKET;NIFTY100 ALPHA 30;NIFTY100 ENHANCED ESG;NIFTY100 EQUAL WEIGHT;NIFTY100 ESG;NIFTY100 LIQUID 15;NIFTY100 LOW VOLATILITY 30;NIFTY200 VALUE 30;NIFTY50 EQUAL WEIGHT;NIFTY50 VALUE 20;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 LOW VOLATILITY 50;NIFTY500 MULTICAP 50:25:25;NIFTY500 MULTIFACTOR MQVLV 50;NIFTY500 VALUE 50,9230766786,44.65,1,55.45,2026-09-30,NSE,2026-11-05
+SCANSTL,Commodities,Metals & Mining,Ferrous Metals,Iron & Steel,,58602295,40.76,10,,,NSE,2026-11-05
+SCHAEFFLER,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,NIFTY 500;NIFTY EV & NEW AGE AUTOMOTIVE;NIFTY LARGEMIDCAP 250;NIFTY MIDCAP 150;NIFTY MIDCAP150 QUALITY 50;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY MNC;NIFTY TOTAL MARKET;NIFTY TRANSPORTATION & LOGISTICS;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25;NIFTY500 SHARIAH,156303670,25.69,2,74.13,2026-09-30,NSE,2026-11-05
+SCHAND,Consumer Discretionary,Media Entertainment & Publication,Printing & Publication,Printing & Publication,,35272192,52.76,5,46.99,2026-09-30,NSE,2026-11-05
+SCHNEIDER,Industrials,Capital Goods,Electrical Equipment,Heavy Electrical Equipment,NIFTY 500;NIFTY INDIA INFRASTRUCTURE & LOGISTICS;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY MIDSMALLCAP400 MOMENTUM QUALITY 100;NIFTY SMALLCAP 250;NIFTY SMALLCAP 500;NIFTY SMALLCAP250 MOMENTUM QUALITY 100;NIFTY TOTAL MARKET;NIFTY TOTAL MARKET MOMENTUM QUALITY 50;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 GROWTH 50;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MOMENTUM 50;NIFTY500 MULTICAP 50:25:25;NIFTY500 MULTICAP MOMENTUM QUALITY 50;NIFTY500 QUALITY 50;NIFTY500 SHARIAH,239104035,24.41,2,75,2026-09-30,NSE,2026-11-05
+SCI,Services,Services,Transport Services,Shipping,NIFTY 500;NIFTY COMMERCIAL & TRANSPORT SERVICES;NIFTY INDIA INFRASTRUCTURE & LOGISTICS;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY SMALLCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25,465799010,36.21,10,63.75,2026-09-30,NSE,2026-11-05
+SCILAL,Financial Services,Financial Services,Finance,Investment Company,,465799010,36.2,10,63.75,2026-09-30,NSE,2026-11-05
+SCODATUBES,Industrials,Capital Goods,Industrial Products,Iron & Steel Products,,59908900,33.57,10,66.43,2026-09-30,NSE,2026-11-05
+SCPL,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Food Products,Dairy Products,,10500000,29.92,10,70.18,2026-09-30,NSE,2026-11-05
+SDBL,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Beverages,Breweries & Distilleries,,207901312,60.5,2,39.44,2026-09-30,NSE,2026-11-05
+SEAMECLTD,Services,Services,Transport Services,Shipping,,25425000,26.1,10,72.72,2026-09-30,NSE,2026-11-05
+SECMARK,Information Technology,Information Technology,IT - Software,Computers - Software & Consulting,,10447000,24.88,10,75,2026-09-30,NSE,2026-11-05
+SECURKLOUD,Information Technology,Information Technology,IT - Services,IT Enabled Services,,33410605,56.62,5,43.35,2026-09-30,NSE,2026-11-05
+SEDEMAC,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,NIFTY IPO;NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,44215110,31.78,10,26.23,2026-09-30,NSE,2026-11-05
+SEIL,Consumer Discretionary,Consumer Services,Other Consumer Services,Education,,161000000,50.11,1,,,NSE,2026-11-05
+SEJALLTD,Industrials,Capital Goods,Industrial Products,Glass - Industrial,,11400000,22.12,10,69.08,2026-09-30,NSE,2026-11-05
+SEKURITIND,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,,91105700,25.0,10,,,NSE,2026-11-05
+SEMAC,Industrials,Construction,Construction,Civil Construction,,3117308,37.13,10,62.85,2026-09-30,NSE,2026-11-05
+SENCO,Consumer Discretionary,Consumer Durables,Consumer Durables,Gems Jewellery And Watches,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,163900959,35.49,5,64.46,2026-09-30,NSE,2026-11-05
+SENORES,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,46053588,48.43,10,45.82,2026-09-30,NSE,2026-11-05
+SEPC,Industrials,Construction,Construction,Civil Construction,,1920373759,88.18,10,9.39,2026-09-30,NSE,2026-11-05
+SERVOTECH,Industrials,Capital Goods,Electrical Equipment,Other Electrical Equipment,,225845348,41.37,1,58.61,2026-09-30,NSE,2026-11-05
+SESHAPAPER,Commodities,Forest Materials,Paper Forest & Jute Products,Paper & Paper Products,,63068140,36.28,2,43.3,2026-09-30,NSE,2026-11-05
+SETCO,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,,133767275,39.38,2,59.25,2026-09-30,NSE,2026-11-05
+SETL,Industrials,Capital Goods,Industrial Manufacturing,Industrial Products,,199491662,25.42,10,60.47,2026-09-30,NSE,2026-11-05
+SETUINFRA,Industrials,Construction,Construction,Civil Construction,,125678260,72.58,1,27.42,2024-12-31,NSE,2026-11-05
+SEYAIND,Commodities,Chemicals,Chemicals & Petrochemicals,Specialty Chemicals,,26570540,35.48,10,64.5,2026-09-30,NSE,2026-11-05
+SFCTECH,Utilities,Utilities,Other Utilities,Waste Management,,97956724,15.88,2,,,NSE,2026-11-05
+SFL,Consumer Discretionary,Consumer Durables,Consumer Durables,Furniture Home Furnishing,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,109203314,34.6,5,65.39,2026-09-30,NSE,2026-11-05
+SGFIN,Financial Services,Financial Services,Finance,Non Banking Financial Company (NBFC),,65895000,35.58,10,56.95,2026-09-30,NSE,2026-11-05
+SGIL,Industrials,Capital Goods,Industrial Products,Castings & Forgings,,15543000,30.45,10,69.55,2026-09-30,NSE,2026-11-05
+SGL,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,26990914,33.11,10,65.76,2026-09-30,NSE,2026-11-05
+SGLRES,Information Technology,Information Technology,IT - Services,IT Enabled Services,,250479800,92.95,2,,,NSE,2026-11-05
+SGMART,Commodities,Metals & Mining,Metals & Minerals Trading,Trading - Metals,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,126074400,41.96,1,57.88,2026-09-30,NSE,2026-11-05
+SGRL,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,,12834922,27.13,10,,,NSE,2026-11-05
+SHADOWFAX,Services,Services,Transport Services,Logistics Solution Provider,NIFTY COMMERCIAL & TRANSPORT SERVICES;NIFTY IPO;NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,586992088,34.04,10,16.46,2026-09-30,NSE,2026-11-05
+SHAH,Industrials,Capital Goods,Industrial Products,Iron & Steel Products,,982374228,67.49,1,32.51,2026-09-30,NSE,2026-11-05
+SHAHALLOYS,Industrials,Capital Goods,Industrial Products,Iron & Steel Products,,19797540,46.25,10,53.75,2026-09-30,NSE,2026-11-05
+SHAHINVEST,Financial Services,Financial Services,Capital Markets,Stockbroking & Allied,,21153200,17.87,10,62.81,2026-10-05,NSE,2026-11-05
+SHAILY,Consumer Discretionary,Consumer Durables,Consumer Durables,Plastic Products - Consumer,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,45995248,58.84,2,41.09,2026-09-30,NSE,2026-11-05
+SHAKTIPUMP,Industrials,Capital Goods,Industrial Products,Compressors Pumps & Diesel Engines,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,123397965,49.06,10,50.4,2026-09-30,NSE,2026-11-05
+SHALBY,Healthcare,Healthcare,Healthcare Services,Hospital,,108009770,25.02,10,74.33,2026-09-30,NSE,2026-11-05
+SHALPAINTS,Consumer Discretionary,Consumer Durables,Consumer Durables,Paints,,83711178,24.86,2,74.96,2026-09-30,NSE,2026-11-05
+SHANKARA,Consumer Discretionary,Consumer Services,Retailing,Speciality Retail,,24249326,46.44,10,49.52,2026-09-30,NSE,2026-11-05
+SHANKESH,Consumer Discretionary,Consumer Durables,Consumer Durables,Gems Jewellery And Watches,NIFTY IPO,147031420,18.7,5,69.53,2026-09-30,NSE,2026-11-05
+SHANTI,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Agricultural Food & other Products,Other Agricultural Products,,11106000,100.0,10,0,2026-09-30,NSE,2026-11-05
+SHANTIGEAR,Industrials,Capital Goods,Industrial Manufacturing,Industrial Products,,76715853,28.99,1,73.16,2026-09-30,NSE,2026-11-05
+SHANTIGOLD,Consumer Discretionary,Consumer Durables,Consumer Durables,Gems Jewellery And Watches,,76739471,29.65,10,70.35,2026-09-30,NSE,2026-11-05
+SHARDACROP,Commodities,Chemicals,Fertilizers & Agrochemicals,Pesticides & Agrochemicals,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,90220495,25.18,10,74.82,2026-09-30,NSE,2026-11-05
+SHARDAMOTR,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,,57407706,34.87,2,64.31,2026-09-30,NSE,2026-11-05
+SHARDUL,Financial Services,Financial Services,Capital Markets,Stockbroking & Allied,,87492165,20.49,2,,,NSE,2026-11-05
+SHAREINDIA,Financial Services,Financial Services,Capital Markets,Stockbroking & Allied,NIFTY MICROCAP 250;NIFTY TOTAL MARKET,217492050,34.26,2,48.62,2026-09-30,NSE,2026-11-05
+SHBAJRG,Industrials,Capital Goods,Industrial Products,Iron & Steel Products,,9000000,36.03,10,,,NSE,2026-11-05
+SHEKHAWATI,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,34470000,35.92,10,65.55,2026-09-30,NSE,2026-11-05
+SHEMAROO,Consumer Discretionary,Media Entertainment & Publication,Entertainment,Media & Entertainment,NIFTY WAVES,28730299,32.74,10,67.24,2026-09-30,NSE,2026-11-05
+SHERVANI,Consumer Discretionary,Realty,Realty,Residential Commercial Projects,,2572973,35.1,10,,,NSE,2026-11-05
+SHILCTECH,Industrials,Capital Goods,Electrical Equipment,Heavy Electrical Equipment,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,11440200,37.36,10,62.12,2026-09-30,NSE,2026-11-05
+SHILGRAVQ,Industrials,Capital Goods,Industrial Products,Aluminium Copper & Zinc Products,,6149800,37.38,10,,,NSE,2026-11-05
+SHILPAMED,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,195581816,59.57,1,40.13,2026-09-30,NSE,2026-11-05
+SHINDL,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Food Products,Seafood,,39214451,53.11,10,,,NSE,2026-11-05
+SHIPROCKET,Services,Services,Transport Services,Logistics Solution Provider,NIFTY IPO,727577587,16.94,10,0,2026-09-30,NSE,2026-11-05
+SHIVAAGRO,Commodities,Chemicals,Fertilizers & Agrochemicals,Fertilizers,,9993000,39.62,10,,,NSE,2026-11-05
+SHIVACEM,Commodities,Construction Materials,Cement & Cement Products,Cement & Cement Products,,295000000,33.5,2,,,NSE,2026-11-05
+SHIVALIK,Commodities,Chemicals,Fertilizers & Agrochemicals,Pesticides & Agrochemicals,,16032365,46.22,5,46.54,2026-09-30,NSE,2026-11-05
+SHIVAM-RE1,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,,99936366,30.05,2,,,NSE,2026-11-05
+SHIVAMAUTO,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,,231431585,30.05,2,69.52,2026-09-30,NSE,2026-11-05
+SHIVAMILLS,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,8641808,23.58,10,74.94,2026-09-30,NSE,2026-11-05
+SHIVATEX,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,12962713,24.33,10,74.04,2026-09-30,NSE,2026-11-05
+SHIVAUM,Services,Services,Commercial Services & Supplies,Trading & Distributors,,13600400,26.47,10,73.53,2026-09-30,NSE,2026-11-05
 SHK,Commodities,Chemicals,Chemicals & Petrochemicals,Specialty Chemicals,,,,,,,NSE,2026-11-03
 SHOPERSTOP,Consumer Discretionary,Consumer Services,Retailing,Diversified Retail,,,,,,,NSE,2026-11-03
 SHRADDHA,Consumer Discretionary,Realty,Realty,Residential Commercial Projects,,,,,,,NSE,2026-11-03

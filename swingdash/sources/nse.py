@@ -339,3 +339,26 @@ def parse_mto(content: bytes) -> pd.DataFrame:
         df[c] = pd.to_numeric(df[c], errors="coerce")
     df.insert(0, "date", day)
     return df.dropna(subset=["deliv_pct"])
+
+
+# ---------------------------------------------------------------- IPOs (checked 2026-11-05)
+MAIN_BOARD = {"EQ", "BE", "BZ", "RR", "IV"}
+
+
+def past_issues(http) -> pd.DataFrame:
+    """NSE's list of public issues (IPOs) with listing date and issue price; main board only (no SME, no debt)."""
+    rows = api_json(http, "api/public-past-issues")
+    return parse_past_issues(rows if isinstance(rows, list) else [])
+
+
+def parse_past_issues(rows: list[dict]) -> pd.DataFrame:
+    df = pd.DataFrame(rows)
+    if df.empty:
+        return pd.DataFrame(columns=["symbol", "ipo_date", "ipo_price"])
+    df = df[df["securityType"].astype(str).str.strip().isin(MAIN_BOARD)]
+    out = pd.DataFrame({"symbol": df["symbol"].astype(str).str.strip(),
+                        "ipo_date": pd.to_datetime(df["listingDate"].astype(str).str.strip(), format="%d-%b-%Y", errors="coerce"),
+                        "ipo_price": pd.to_numeric(df["issuePrice"].astype(str).str.replace(",", "").str.strip(), errors="coerce")})
+    out = out.dropna(subset=["ipo_date"]).sort_values("ipo_date").drop_duplicates("symbol", keep="last")
+    out["ipo_date"] = out["ipo_date"].dt.strftime("%Y-%m-%d")
+    return out.reset_index(drop=True)

@@ -37,9 +37,13 @@ def test_build_writes_site_snapshot_and_one_chart_per_instrument(tmp_path):
     snapshot.write(data, latest, sectors)
     (data / "meta" / "health.json").write_text('{"errors": 0, "warnings": 3}')
     shutil.copytree(ROOT / "site", tmp_path / "site")
+    shutil.copytree(ROOT / "config", tmp_path / "config")
     res = site_build.build(tmp_path, tmp_path / "_site", log=lambda m: None)
     out = tmp_path / "_site"
     assert res["charts"] == 5
+    assert (out / "data/scanners.json").exists()
+    flds = json.loads((out / "data/fields.json").read_text())["fields"]
+    assert any(f["id"] == "rs_rating" and f["screen"] for f in flds)
     assert (out / "index.html").exists() and (out / "data/latest.json").exists() and (out / "data/health.json").exists()
     assert "__BUILD__" not in (out / "sw.js").read_text() and res["build"] in (out / "sw.js").read_text()
     c = json.loads((out / "data/c/s/UPCO.json").read_text())

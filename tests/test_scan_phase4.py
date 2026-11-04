@@ -168,3 +168,21 @@ def test_site_table_columns_are_registered_fields():
     for i in ids:
         assert i in reg, f"table column {i} is not in config/fields.yaml"
         assert "screen" in (reg[i].get("file") or []) or i == "days_listed", f"{i} is not a screen.json field"
+
+
+def test_scanners_use_registered_fields_and_evaluate():
+    from swingdash import scanners
+    spec = scanners.load()
+    assert scanners.check(spec, registry.load()) == []
+    df = pd.DataFrame([{"close": 110, "sma50": 100, "rs_rating": 95, "stage": "2A", "hvq": True, "stale": False, "liquid_day": True},
+                       {"close": 90, "sma50": 100, "rs_rating": None, "stage": "4", "hvq": False, "stale": False, "liquid_day": False},
+                       {"close": 120, "sma50": 100, "rs_rating": 99, "stage": "2", "hvq": True, "stale": True, "liquid_day": True}])
+    sc = {"universe": "liquid", "rule": {"all": [{"field": "close", "op": ">", "field2": "sma50", "mult": 1.05},
+                                                 {"any": [{"field": "rs_rating", "op": ">=", "value": 90},
+                                                          {"field": "stage", "op": "in", "value": ["2", "2A"]}]},
+                                                 {"field": "hvq", "op": "is", "value": True}]}}
+    assert scanners.evaluate(df, sc).tolist() == [True, False, False]          # 2nd fails, 3rd is stale
+    assert scanners.describe(sc["rule"], {"close": "Price", "sma50": "SMA 50"}).startswith("Price above SMA 50 x 1.05 AND (")
+    bad = {"folders": ["X"], "scanners": [{"id": "a", "folder": "Y", "rule": {"all": [{"field": "nope", "op": "~", "value": 1}]}}]}
+    errs = scanners.check(bad, registry.load())
+    assert any("unknown folder" in e for e in errs) and any("unknown field nope" in e for e in errs) and any("operator" in e for e in errs)

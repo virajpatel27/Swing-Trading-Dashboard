@@ -104,6 +104,12 @@ S5 (website): `site/ind.js` (SDI) = engine formulas in JS, tests/js/ind.test.js 
 (made by `python tests/js/make_expected.py` - run it after changing a formula). `site/chart.js` (SDChart, Lightweight
 Charts 5.0.8 from unpkg, panes) and the "Stocks" page in `site/app.js` (#/stocks; table columns = SD.COLUMN_GROUPS in
 logic.js, each must be a registered screen field - test). Settings / drawings live in the browser (localStorage).
+S6: scanners = JSON rules in `config/scanners.json` ({all|any:[...]}, conditions field op value | field2 x mult | between | in
+| is). `swingdash/scanners.py` (evaluate, describe, check vs registry) = `site/scan.js` (SDS); tests/js/scan.test.js compares
+both on tests/js/fixtures/scan_*.json (regenerate with `python tests/js/make_expected.py` after changing scanners.json).
+Website: #/scanners/<id> (same table + chart as Stocks, Formula editor; user edits in localStorage "sd-scans"), #/fields.
+site_build copies scanners.json and writes data/fields.json from the registry. IPOs: `stock_master.download_ipos` ->
+data/meta/ipos.csv (NSE api/public-past-issues, main board, renames followed). Calibration: `--as-of 2026-10-30`.
 Repo folder on the PC: `C:\Users\hello\OneDrive\Documents\Swing Trading\Swing Trading` (nested). Manual steps: `docs/MANUAL_CHECKLIST.md`.
 Read GitHub run results without a token via the public API (`api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/runs`,
 then `.../actions/runs/<id>/jobs` and `.../check-runs/<job id>/annotations`). Logs, Summary page and artifacts need a signed-in user,

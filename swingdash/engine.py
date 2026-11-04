@@ -188,6 +188,10 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
         f[f"ema{n}"] = ema(c, n)
     for col in ("sma10", "sma20", "sma50", "sma200", "ema50"):
         f[f"from_{col}"] = (c / f[col] - 1) * 100
+    # slopes of the averages (%): scanners ask "is the average rising?"
+    f["sma20_chg_1w"] = (f["sma20"] / f["sma20"].shift(5) - 1) * 100
+    for col in ("sma50", "sma150", "sma200", "ema50"):
+        f[f"{col}_chg_1m"] = (f[col] / f[col].shift(21) - 1) * 100
     # highs / lows
     f["high_20d"], f["low_20d"] = h.rolling(20, min_periods=1).max(), l.rolling(20, min_periods=1).min()
     f["hi52"], f["lo52"] = h.rolling(YEAR, min_periods=1).max(), l.rolling(YEAR, min_periods=1).min()
@@ -196,6 +200,9 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
     back = days_since_max(h, YEAR)                       # sessions back to the 52W high -> calendar days (calibrated)
     pos = np.arange(len(f)) - back.fillna(0).to_numpy().astype(int)
     f["days_since_hi52"] = (d - d.iloc[pos].reset_index(drop=True)).dt.days.where(back.notna())
+    f["high_50d_prev"] = h.shift(1).rolling(50, min_periods=50).max()       # breakout level: highest high of the 50 days before
+    f["close_pos"] = ((c - l) / (h - l) * 100).where(h > l, 50.0)           # where the close sits in the day's range, 0-100
+    f["range_20d_pct"] = (f["high_20d"] / f["low_20d"] - 1) * 100            # how wide the last 20 days were
     # volume
     vc = cfg.get("volume", {})
     avg20 = v.shift(1).rolling(20, min_periods=20).mean()          # previous 20 sessions (RVol)
@@ -257,6 +264,8 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
             hi = line.rolling(YEAR, min_periods=YEAR // 2).max()
             f["rs_line_52w_high"] = line >= hi
             f["rs_new_high_before_price"] = f["rs_line_52w_high"] & (h < f["hi52"])
+            last_hit = pd.Series(np.where(f["rs_line_52w_high"], np.arange(len(f)), np.nan)).ffill()
+            f["rs_high_days"] = np.arange(len(f)) - last_hit          # sessions since the RS line was at its 52W high
             f["mansfield_rs"] = (line / line.rolling(weeks * 5, min_periods=weeks * 5).mean() - 1) * 100
         if bid == cfg.get("beta_benchmark", "NIFTY_50"):
             rs, rb = c.pct_change(), b.pct_change()

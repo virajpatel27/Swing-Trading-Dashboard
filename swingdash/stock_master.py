@@ -3,7 +3,7 @@
     data/meta/stocks.csv
       symbol, id, name, isin, series, listed, first_date, last_date, sessions, status, n500, fno, price_band,
       face_value, shares, promoter_pct, float_pct, raw_close, mcap_cr, float_mcap_cr, turnover_med30_cr, turnover_avg30_cr,
-      liquid, sector, industry, basic_industry, shares_fetched
+      liquid, sector, industry, basic_industry, shares_fetched, ipo_date, ipo_price
 
 Sources: universe_stocks.csv (NSE EQUITY_L + Nifty 500 REITs), classification.csv (NSE GetQuoteApi: sector levels, share
 count, promoter holding), NSE fo_mktlots.csv (F&O), NSE sec_list.csv (price band), our raw bhavcopy history (dates, close,
@@ -27,7 +27,8 @@ from .sources import nse
 
 COLS = ["symbol", "id", "name", "isin", "series", "listed", "first_date", "last_date", "sessions", "status", "n500", "fno",
         "price_band", "face_value", "shares", "promoter_pct", "float_pct", "raw_close", "mcap_cr", "float_mcap_cr",
-        "turnover_med30_cr", "turnover_avg30_cr", "liquid", "sector", "industry", "basic_industry", "shares_fetched"]
+        "turnover_med30_cr", "turnover_avg30_cr", "liquid", "sector", "industry", "basic_industry", "shares_fetched",
+        "ipo_date", "ipo_price"]
 STALE_DAYS = 10
 CR = 1e7
 DEFAULT_LIQUID = {"sessions": 30, "min_turnover_cr": 1.0, "min_price": 5.0}
@@ -77,6 +78,8 @@ def build(data: Path, fno: set[str] | None, bands: pd.DataFrame | None, liquid_r
     cls = classification.load(meta / "classification.csv")
     old_path = meta / "stocks.csv"
     old = pd.read_csv(old_path, dtype=str).fillna("").set_index("symbol") if old_path.exists() else pd.DataFrame()
+    ipo_path = meta / "ipos.csv"
+    ipos = pd.read_csv(ipo_path, dtype=str).fillna("").set_index("symbol") if ipo_path.exists() else pd.DataFrame()
     band_of = None if bands is None else {(s, se): b for s, se, b in zip(bands["symbol"], bands["series"], bands["band"])}
     band_any = None if bands is None else dict(zip(bands["symbol"], bands["band"]))
 
@@ -114,7 +117,9 @@ def build(data: Path, fno: set[str] | None, bands: pd.DataFrame | None, liquid_r
                      "liquid": is_liquid(status, close, st["turnover_med30_cr"], rule),
                      "sector": c.get("sector", ""), "industry": c.get("industry", ""),
                      "basic_industry": c.get("basic_industry", ""),
-                     "shares_fetched": c.get("fetched", "") if shares else ""})
+                     "shares_fetched": c.get("fetched", "") if shares else "",
+                     "ipo_date": ipos.at[r.symbol, "ipo_date"] if r.symbol in ipos.index else "",
+                     "ipo_price": _num(ipos.at[r.symbol, "ipo_price"]) if r.symbol in ipos.index else None})
     out = pd.DataFrame(rows, columns=COLS).sort_values("symbol").reset_index(drop=True)
     out["shares"] = out["shares"].astype("Int64")
     out["sessions"] = out["sessions"].astype(int)
@@ -170,3 +175,22 @@ def share_count_changed(data: Path, today) -> set[str]:
         if len(hit):
             out.add(sym)
     return out
+
+
+def download_ipos(data: Path, http, log=print) -> int:
+    """data/meta/ipos.csv: main-board IPOs (NSE past issues) under today's symbols (renames followed). Kept when NSE fails."""
+    try:
+        ipos = nse.past_issues(http)
+        changes = nse.symbol_changes(http)
+    except Exception as exc:  # noqa: BLE001
+        log(f"  IPO list not available ({type(exc).__name__}); keeping the saved one")
+        return 0
+    new_of = dict(zip(changes.sort_values("date")["old"], changes.sort_values("date")["new"]))
+    for _ in range(5):                                   # follow chains A -> B -> C
+        ipos["symbol"] = ipos["symbol"].map(lambda s: new_of.get(s, s))
+    ipos = ipos.sort_values("ipo_date").drop_duplicates("symbol", keep="last").sort_values("symbol")
+    path = data / "meta" / "ipos.csv"
+    text = ipos.to_csv(index=False, lineterminator="\n")
+    if not path.exists() or path.read_text(encoding="utf-8") != text:
+        path.write_text(text, encoding="utf-8", newline="\n")
+    return len(ipos)

@@ -1,0 +1,418 @@
+{
+ "version": 1,
+ "note": "Scanner rules (Phase S6). Every number is a parameter: edit here (or in the website's Formula editor, which saves in your browser). Rules run on data/snapshot/screen.json fields (docs/formulas.md). Calibration against the reference app's counts: docs/calibration.md.",
+ "folders": [
+  "My Scans",
+  "Classic",
+  "Patterns"
+ ],
+ "scanners": [
+  {
+   "id": "all-stocks",
+   "folder": "My Scans",
+   "name": "All Stocks",
+   "description": "Every stock, no test. Start here and add your own conditions with Formula.",
+   "universe": "all",
+   "rule": {
+    "all": []
+   },
+   "sort": {
+    "field": "rs_rating",
+    "dir": "desc"
+   }
+  },
+  {
+   "id": "trend-template",
+   "folder": "Classic",
+   "name": "Trend Template",
+   "description": "A healthy uptrend: above rising long averages, the averages stacked in order, well off the lows, near the highs and stronger than most stocks (Minervini's checklist).",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "close",
+      "op": ">",
+      "field2": "sma150"
+     },
+     {
+      "field": "close",
+      "op": ">",
+      "field2": "sma200"
+     },
+     {
+      "field": "sma150",
+      "op": ">",
+      "field2": "sma200"
+     },
+     {
+      "field": "sma200_chg_1m",
+      "op": ">",
+      "value": 0
+     },
+     {
+      "field": "sma50",
+      "op": ">",
+      "field2": "sma150"
+     },
+     {
+      "field": "sma50",
+      "op": ">",
+      "field2": "sma200"
+     },
+     {
+      "field": "close",
+      "op": ">",
+      "field2": "sma50"
+     },
+     {
+      "field": "from_lo52",
+      "op": ">=",
+      "value": 30
+     },
+     {
+      "field": "from_hi52",
+      "op": ">=",
+      "value": -25
+     },
+     {
+      "field": "rs_rating",
+      "op": ">=",
+      "value": 70
+     }
+    ]
+   },
+   "sort": {
+    "field": "rs_rating",
+    "dir": "desc"
+   }
+  },
+  {
+   "id": "stage2-breakout",
+   "folder": "Classic",
+   "name": "Stage 2 Breakout",
+   "description": "Traded above the highest high of the 50 days before, on at least 1.5 times the usual volume, while basing or in an uptrend.",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "high",
+      "op": ">",
+      "field2": "high_50d_prev"
+     },
+     {
+      "field": "rvol",
+      "op": ">=",
+      "value": 1.5
+     },
+     {
+      "field": "stage",
+      "op": "in",
+      "value": [
+       "1",
+       "2",
+       "2A"
+      ]
+     }
+    ]
+   },
+   "sort": {
+    "field": "rvol",
+    "dir": "desc"
+   }
+  },
+  {
+   "id": "4pct-breakout",
+   "folder": "Classic",
+   "name": "4% Breakout",
+   "description": "A strong up day (+4 % or more) on volume above yesterday's and well above the 20-day average. Liquid stocks only.",
+   "universe": "liquid",
+   "rule": {
+    "all": [
+     {
+      "field": "chg_1d",
+      "op": ">=",
+      "value": 4
+     },
+     {
+      "field": "vol_chg_1d",
+      "op": ">",
+      "value": 0
+     },
+     {
+      "field": "rvol",
+      "op": ">=",
+      "value": 1.5
+     }
+    ]
+   },
+   "sort": {
+    "field": "chg_1d",
+    "dir": "desc"
+   }
+  },
+  {
+   "id": "20sma-pullback",
+   "folder": "Classic",
+   "name": "20-SMA Pullback",
+   "description": "A leader (RS 90+, up over 3 months) back within 1 % of its rising 20-day average. Liquid stocks only.",
+   "universe": "liquid",
+   "rule": {
+    "all": [
+     {
+      "field": "rs_rating",
+      "op": ">=",
+      "value": 90
+     },
+     {
+      "field": "ret_3m",
+      "op": ">",
+      "value": 0
+     },
+     {
+      "field": "from_sma20",
+      "op": "between",
+      "value": [
+       -1,
+       1
+      ]
+     },
+     {
+      "field": "sma20_chg_1w",
+      "op": ">",
+      "value": 0
+     },
+     {
+      "field": "sma50_chg_1m",
+      "op": ">",
+      "value": 0
+     }
+    ]
+   },
+   "sort": {
+    "field": "rs_rating",
+    "dir": "desc"
+   }
+  },
+  {
+   "id": "high-volume",
+   "folder": "Classic",
+   "name": "High Volume",
+   "description": "The highest volume of the quarter, the year or ever, on an up day.",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "any": [
+       {
+        "field": "hvq",
+        "op": "is",
+        "value": true
+       },
+       {
+        "field": "hvy",
+        "op": "is",
+        "value": true
+       },
+       {
+        "field": "hve",
+        "op": "is",
+        "value": true
+       }
+      ]
+     },
+     {
+      "field": "chg_1d",
+      "op": ">",
+      "value": 0
+     }
+    ]
+   },
+   "sort": {
+    "field": "rvol",
+    "dir": "desc"
+   }
+  },
+  {
+   "id": "1m-gainers",
+   "folder": "Classic",
+   "name": "1M Gainers",
+   "description": "Up 23 % or more in the last month (21 sessions). Liquid stocks only.",
+   "universe": "liquid",
+   "rule": {
+    "all": [
+     {
+      "field": "ret_1m",
+      "op": ">=",
+      "value": 23
+     }
+    ]
+   },
+   "sort": {
+    "field": "ret_1m",
+    "dir": "desc"
+   }
+  },
+  {
+   "id": "3m-gainers",
+   "folder": "Classic",
+   "name": "3M Gainers",
+   "description": "Up 38 % or more in the last 3 months (63 sessions). Liquid stocks only.",
+   "universe": "liquid",
+   "rule": {
+    "all": [
+     {
+      "field": "ret_3m",
+      "op": ">=",
+      "value": 38
+     }
+    ]
+   },
+   "sort": {
+    "field": "ret_3m",
+    "dir": "desc"
+   }
+  },
+  {
+   "id": "outperformers",
+   "folder": "Classic",
+   "name": "Outperformers",
+   "description": "Strong against all other stocks over 1 week, 1 month and 3 months at the same time. Liquid stocks only.",
+   "universe": "liquid",
+   "rule": {
+    "all": [
+     {
+      "field": "rs_rating_1w",
+      "op": ">",
+      "value": 90
+     },
+     {
+      "field": "rs_rating_1m",
+      "op": ">",
+      "value": 85
+     },
+     {
+      "field": "rs_rating_3m",
+      "op": ">",
+      "value": 80
+     }
+    ]
+   },
+   "sort": {
+    "field": "rs_rating",
+    "dir": "desc"
+   }
+  },
+  {
+   "id": "doublers",
+   "folder": "Classic",
+   "name": "Doublers",
+   "description": "At least doubled in the last 6 months (126 sessions).",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "ret_6m",
+      "op": ">=",
+      "value": 100
+     }
+    ]
+   },
+   "sort": {
+    "field": "ret_6m",
+    "dir": "desc"
+   }
+  },
+  {
+   "id": "new-listing",
+   "folder": "Classic",
+   "name": "New Listing",
+   "description": "Came to NSE's main board through an IPO within the last year (NSE's IPO list).",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "days_since_ipo",
+      "op": "<=",
+      "value": 365
+     }
+    ]
+   },
+   "sort": {
+    "field": "days_since_ipo",
+    "dir": "asc"
+   }
+  },
+  {
+   "id": "50ema-pullback",
+   "folder": "Patterns",
+   "name": "50-EMA Pullback",
+   "description": "A strong stock (RS 80+, in an uptrend) resting near its rising 50-day average after a quiet month (20-day range at most 20 %). Liquid stocks only.",
+   "universe": "liquid",
+   "rule": {
+    "all": [
+     {
+      "field": "rs_rating",
+      "op": ">=",
+      "value": 80
+     },
+     {
+      "field": "stage",
+      "op": "in",
+      "value": [
+       "2",
+       "2A",
+       "3"
+      ]
+     },
+     {
+      "field": "from_ema50",
+      "op": "between",
+      "value": [
+       -2,
+       3
+      ]
+     },
+     {
+      "field": "ema50_chg_1m",
+      "op": ">",
+      "value": 0
+     },
+     {
+      "field": "range_20d_pct",
+      "op": "<=",
+      "value": 20
+     }
+    ]
+   },
+   "sort": {
+    "field": "rs_rating",
+    "dir": "desc"
+   }
+  },
+  {
+   "id": "new-rs-before-price",
+   "folder": "Patterns",
+   "name": "New RS before Price",
+   "description": "The RS line (vs Nifty Smallcap 250) reached a new 52-week high in the last 7 sessions while the price is not at its 52-week high: strength showing before a breakout.",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "rs_high_days",
+      "op": "<=",
+      "value": 7
+     },
+     {
+      "field": "days_since_hi52",
+      "op": ">",
+      "value": 0
+     }
+    ]
+   },
+   "sort": {
+    "field": "rs_rating",
+    "dir": "desc"
+   }
+  }
+ ]
+}

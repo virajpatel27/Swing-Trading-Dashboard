@@ -425,3 +425,23 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   panes, volume axis in L / Cr.
 - NEXT: Viraj commits + pushes and looks at the live Stocks page; then S6 (scanner engine + formula editor + price
   scanners, calibrated to the reference counts).
+
+### 2026-11-05: Scanner Phase S6 - scanner engine, formula editor, price scanners (built, waiting for Viraj's look)
+- Engine fields for scanners: SMA 20 change 1W, SMA 50 / 150 / 200 and EMA 50 change 1M, high_50d_prev, close_pos,
+  range_20d_pct, rs_high_days, days_listed and days_since_ipo in the screen.
+- NSE IPO list (api/public-past-issues, main board only, symbols renamed to today's) -> data/meta/ipos.csv -> stock master
+  ipo_date / ipo_price (daily step 4b + audit script). EQUITY_L's listing date counts SME migrations (437 "new" stocks).
+- `config/scanners.json`: All Stocks + 12 scanners (Trend Template, Stage 2 Breakout, 4% Breakout, 20-SMA Pullback, High
+  Volume, 1M / 3M Gainers, Outperformers, Doublers, New Listing, 50-EMA Pullback, New RS before Price). Calibrated with
+  a screen built as of 30-Oct against the reference's counts: 4 exact (4%, 20-SMA, 1M, Outperformers), the rest within
+  2-8 % (docs/calibration.md). Doublers' rule is our choice (the app states none).
+- `swingdash/scanners.py` (evaluate / describe / check: unknown field, later phase, not in screen, bad operator, folder) and
+  `site/scan.js` give identical stocks and identical plain-English text on 400 random rows (tests/js/scan.test.js).
+- Website: "Scanners" tab replaces the old Screener tab (#/screener still works). #/scanners/<id>: scanner list with live
+  counts, description + rule in plain English, same table / chart as Stocks; Formula editor: ALL / ANY, OR groups,
+  field vs number or field x multiple, between, is, one of; Test (live count), Save, Reset to default, Duplicate as My
+  Scan, Delete, Export / Import (localStorage "sd-scans"). #/fields lists all 157 fields with formulas (data/fields.json
+  built from config/fields.yaml). Browser-checked on desktop + phone; fixed: add / remove in the editor.
+- 152 Python + 20 JS tests green. Live counts on 04-Nov: Trend Template 251, Stage 2 Breakout 39, 4% Breakout 117, ...
+- NEXT: Viraj commits + pushes and looks at Scanners; then S7 (patterns: bases, pivots, VCP, tight range, flag, IPO base,
+  big reversal, shakeout, recent breakout + chart overlays).

@@ -1,7 +1,7 @@
 /* Service worker: the app works offline with the last data it saw.
    App files: cache first. Data (data/...): network first, cached copy when offline. Chart library: cached after first use. */
 const CACHE = "sd-__BUILD__";
-const SHELL = ["./", "index.html", "styles.css", "logic.js", "ind.js", "chart.js", "app.js", "manifest.webmanifest", "icons/icon-192.png", "icons/favicon-32.png"];
+const SHELL = ["./", "index.html", "styles.css", "logic.js", "ind.js", "scan.js", "chart.js", "app.js", "manifest.webmanifest", "icons/icon-192.png", "icons/favicon-32.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

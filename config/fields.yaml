@@ -14,7 +14,7 @@
 #                      delivery = data/stocks/delivery/<ID>/, groups = data/groups/<level>/<id>/,
 #                      screen = data/snapshot/screen.json (every engine field, latest day; Phase S4)
 
-current_phase: 5
+current_phase: 6
 
 sources:
   equity_list: NSE EQUITY_L.csv - every main-board equity (symbol, name, ISIN, series, listing date)
@@ -27,6 +27,7 @@ sources:
   shareholding: NSE shareholding pattern (promoter & promoter group %, quarter)
   fno_list: NSE fo_mktlots.csv - stocks with futures & options
   price_bands: NSE sec_list.csv - today's price band (circuit limit)
+  ipo_list: NSE api/public-past-issues - main-board IPOs with listing date and issue price
   theme_rules: config/theme_rules.yaml - our theme lists (NSE thematic indices, NSE industries, hand-picked)
   mto: NSE MTO_ddmmyyyy.DAT - security-wise delivery position, every trading day from 2007
   settings: config/settings.yaml (parameters such as the liquid rule)
@@ -186,4 +187,17 @@ fields:
   - {id: rs_chg_1m, label: "RS rating change 1M", type: integer, formula: "rs_rating - rs_rating 21 sessions ago", inputs: [rs_rating], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: rs_rating_1m_ago, label: "RS rating 1M ago", type: integer, formula: "rs_rating 21 sessions ago", inputs: [rs_rating], provided_in_phase: 4, source: derived, file: [screen]}
   # ------------------------------------------------------------ website (phase 5): computed in the browser
-  - {id: days_listed, label: "Days Since Listing", type: integer, formula: "Calendar days from the NSE listing date to the data date", inputs: [listed], provided_in_phase: 5, source: derived, file: [site]}
+  - {id: days_listed, label: "Days Since Listing", type: integer, formula: "Calendar days from the NSE listing date to the data date", inputs: [listed], provided_in_phase: 5, source: derived, file: [site, screen]}
+  # ------------------------------------------------------------ scanner helper fields (phase 6)
+  - {id: ipo_date, label: "IPO Listing Date", type: date, formula: "Listing day of the stock's IPO on NSE's main board (NSE past issues; renames followed)", inputs: [ipo_list], provided_in_phase: 6, source: NSE, file: [stocks, screen]}
+  - {id: ipo_price, label: "IPO Price", type: rupees, formula: "Issue price of the IPO (as issued, not adjusted)", inputs: [ipo_list], provided_in_phase: 6, source: NSE, file: [stocks, screen]}
+  - {id: days_since_ipo, label: "Days Since IPO", type: integer, formula: "Calendar days from the IPO listing date to the data date", inputs: [ipo_date], provided_in_phase: 6, source: derived, file: [screen]}
+  - {id: rs_high_days, label: "Sessions since RS high", type: integer, formula: "Sessions since the RS line was last at its 52-week high (0 = today)", inputs: [rs_line_52w_high], provided_in_phase: 6, source: derived, file: [screen]}
+  - {id: sma20_chg_1w, label: "20 SMA change 1W %", type: percent, formula: "(sma20 / sma20 5 sessions ago - 1) x 100 (> 0 = rising)", inputs: [sma20], provided_in_phase: 6, source: derived, file: [screen]}
+  - {id: sma50_chg_1m, label: "50 SMA change 1M %", type: percent, formula: "(sma50 / sma50 21 sessions ago - 1) x 100", inputs: [sma50], provided_in_phase: 6, source: derived, file: [screen]}
+  - {id: sma150_chg_1m, label: "150 SMA change 1M %", type: percent, formula: "(sma150 / sma150 21 sessions ago - 1) x 100", inputs: [sma150], provided_in_phase: 6, source: derived, file: [screen]}
+  - {id: sma200_chg_1m, label: "200 SMA change 1M %", type: percent, formula: "(sma200 / sma200 21 sessions ago - 1) x 100", inputs: [sma200], provided_in_phase: 6, source: derived, file: [screen]}
+  - {id: ema50_chg_1m, label: "50 EMA change 1M %", type: percent, formula: "(ema50 / ema50 21 sessions ago - 1) x 100", inputs: [ema50], provided_in_phase: 6, source: derived, file: [screen]}
+  - {id: high_50d_prev, label: "50D high (before today)", type: rupees, formula: "Highest high of the 50 sessions before today (breakout level)", inputs: [high], provided_in_phase: 6, source: derived, file: [screen]}
+  - {id: close_pos, label: "Close in day's range %", type: percent, formula: "(close - low) / (high - low) x 100; 100 = closed at the high (50 when high = low)", inputs: [close, high, low], provided_in_phase: 6, source: derived, file: [screen]}
+  - {id: range_20d_pct, label: "20D range %", type: percent, formula: "(high_20d / low_20d - 1) x 100", inputs: [high_20d, low_20d], provided_in_phase: 6, source: derived, file: [screen]}

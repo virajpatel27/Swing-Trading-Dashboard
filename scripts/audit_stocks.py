@@ -30,6 +30,7 @@ def main(argv=None) -> int:
                          gaps={"nsearchives.nseindia.com": gaps["nse_archives"], "www.nseindia.com": gaps["nse_api"]})
     data = ROOT / "data"
     fno, bands = stock_master.download_lists(http)
+    stock_master.download_ipos(data, http)
     master = stock_master.build(data, fno, bands, settings.get("liquid"))
     print("stocks.csv", "written" if stock_master.write(data, master) else "unchanged")
     if a.master_only:

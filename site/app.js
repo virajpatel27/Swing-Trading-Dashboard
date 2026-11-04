@@ -1,6 +1,7 @@
 /* Swing Trading Dashboard - page logic (pure helpers are in logic.js as SD, indicators in ind.js as SDI, the chart in chart.js
    as SDChart). Hash routes:
-   #/  market   #/stocks  results table + chart   #/screener   #/sectors[/<sector>[/<industry>]]   #/watchlist
+   #/  market   #/stocks  results table + chart   #/scanners/<id>  scanner results + formula editor   #/fields  all formulas
+   #/screener (old simple screener)   #/sectors[/<sector>[/<industry>]]   #/watchlist
    #/i/<s|n|b>/<id>  detail with chart */
 (function () {
   "use strict";
@@ -266,14 +267,30 @@
 
   async function renderStocks() {
     const st = state.stocks;
+    const mode = routeName();                                  // "stocks" or "scanners"
     if (!state.screen) view.innerHTML = `<p class="empty">Loading all stocks…</p>`;
-    try { await loadScreen(); } catch (e) { view.innerHTML = `<p class="empty">Could not load the stock table (${esc(e.message)}).</p>`; return; }
-    if (routeName() !== "stocks") return;
+    try { await loadScreen(); if (mode === "scanners") await loadScans(); }
+    catch (e) { view.innerHTML = `<p class="empty">Could not load the stock table (${esc(e.message)}).</p>`; return; }
+    if (routeName() !== mode) return;
+    let scan = null, base = state.screen;
+    if (mode === "scanners") {
+      const id = decodeURIComponent(location.hash.replace(/^#\/?/, "").split("/")[1] || "") || store.get("sd-scan", "trend-template");
+      scan = allScans().find((x) => x.id === id) || allScans()[0];
+      if (state.lastScan !== scan.id) { state.lastScan = scan.id; if (scan.sort) { st.sort = scan.sort.field; st.dir = scan.sort.dir; } st.limit = PAGE; }
+      store.set("sd-scan", scan.id);
+      base = SDS.run(state.screen, scan);
+    }
     const sectors = [...new Set(state.screen.map((r) => r.sector).filter(Boolean))].sort();
     const sortItem = SD.SORTS.find((x) => x[0] === st.sort);
     const sortName = sortItem ? sortItem[1] : SD.COLUMNS[st.sort] ? SD.COLUMNS[st.sort].label : st.sort;
-    view.innerHTML = `<h1>Stocks</h1><p class="sub">Every NSE main-board stock with all indicator fields of ${SD.fmtDate(state.screenDate)}.
-      Pick columns with ⚙, sort with the menu or a column title, tick rows to copy or export.${wide() ? " Click a row for its chart, ↑ / ↓ to move." : " Tap a row for its chart."}</p>
+    const head = scan ? `<div class="scan-head"><div class="menu-wrap"><button class="btn" id="scanBtn" type="button">☰ Scanners ▾</button>
+        <div class="menu tree" id="scanMenu" hidden>${scanTree(scan.id)}<div class="tree-act"><button type="button" data-exp>Export my scans</button>
+        <label class="btn sm">Import <input type="file" id="impScans" accept=".json" hidden></label></div></div></div>
+        <h1>${esc(scan.name)}${scan.edited ? ' <span class="tag">edited</span>' : ""}</h1><button class="btn" id="formulaBtn" type="button">ƒ Formula</button></div>
+        <p class="sub">${esc(scan.description || "")}<br><span class="rule-en">${esc(SDS.describe(scan.rule || { all: [] }, state.labels))}${scan.universe === "liquid" ? " · liquid stocks only" : ""}</span></p>`
+      : `<h1>Stocks</h1><p class="sub">Every NSE main-board stock with all indicator fields of ${SD.fmtDate(state.screenDate)}.
+      Pick columns with ⚙, sort with the menu or a column title, tick rows to copy or export.${wide() ? " Click a row for its chart, ↑ / ↓ to move." : " Tap a row for its chart."}</p>`;
+    view.innerHTML = `${head}
       <div class="controls">${seg("uni", [["all", "All"], ["liquid", "Liquid"], ["n500", "Nifty 500"], ["fno", "F&O"]], st.universe)}
         <select id="sector" aria-label="Sector"><option value="">All sectors</option>${sectors.map((x) => `<option ${x === st.sector ? "selected" : ""}>${esc(x)}</option>`).join("")}</select>
         <input id="q" type="search" placeholder="Search symbol, name, industry" value="${esc(st.text)}" aria-label="Search">
@@ -289,7 +306,7 @@
     const footer = () => { $("#fbar").textContent = `${rows.length.toLocaleString("en-IN")} stocks · ${state.screen.length.toLocaleString("en-IN")} scanned · `
       + `${state.selected.size} selected · data ${SD.fmtDate(state.screenDate)} · Not investment advice`; };
     const draw = () => {
-      rows = SD.sortRows(SD.filterStocks(state.screen, st), st.sort, st.dir);
+      rows = SD.sortRows(SD.filterStocks(base, st), st.sort, st.dir);
       const cols = st.cols;
       const mark = (c) => (st.sort === c ? (st.dir === "asc" ? " ▲" : " ▼") : "");
       const head = `<th class="l"><input type="checkbox" id="selAll" aria-label="Select all shown"></th><th class="l sticky ${st.sort === "symbol" ? "sorted" : ""}" data-col="symbol">Stock${mark("symbol")}</th>`
@@ -351,13 +368,187 @@
     $("#csv").onclick = () => {
       const cols = ["symbol", "name", "close", ...st.cols];
       const blob = new Blob([SD.toCSV(picked(), cols)], { type: "text/csv" });
-      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `stocks-${state.screenDate}.csv`; a.click();
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${scan ? scan.id : "stocks"}-${state.screenDate}.csv`; a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 2000);
     };
+    if (scan) {
+      $("#scanBtn").onclick = () => { $("#scanMenu").hidden = !$("#scanMenu").hidden; };
+      $("#scanMenu").onclick = (e) => { if (e.target.closest("[data-exp]")) exportScans(); if (e.target.closest("a")) $("#scanMenu").hidden = true; };
+      $("#impScans").onchange = (e) => { if (e.target.files[0]) importScans(e.target.files[0], () => renderStocks()); };
+      $("#formulaBtn").onclick = () => formulaEditor(scan, (id) => { state.lastScan = null; if (id === scan.id) renderStocks(); else location.hash = "#/scanners/" + encodeURIComponent(id); });
+    }
     if (wide()) {
       const first = state.current && rows.some((r) => r.key === state.current) ? state.current : rows[0] && rows[0].key;
       if (first) openRow(first, false);
     }
+  }
+
+  /* ------------------------------------------------------------------ scanners (Phase S6): rules in data/scanners.json,
+     user edits and own scans in this browser (localStorage "sd-scans"), the formula editor */
+  async function loadScans() {
+    if (state.scanSpec) return;
+    const [spec, fields] = await Promise.all([getJSON("data/scanners.json"), getJSON("data/fields.json")]);
+    state.scanSpec = spec;
+    state.fields = fields.fields.filter((f) => f.screen);
+    state.labels = Object.fromEntries(fields.fields.map((f) => [f.id, f.label]));
+  }
+  const userScans = () => store.get("sd-scans", { edits: {}, mine: [] });
+  const saveUserScans = (u) => store.set("sd-scans", u);
+  function allScans() {
+    const u = userScans();
+    const base = state.scanSpec.scanners.map((d) => (u.edits[d.id] ? { ...d, ...u.edits[d.id], edited: true } : d));
+    return [...base, ...u.mine.map((m) => ({ ...m, folder: "My Scans", mine: true }))];
+  }
+  const clone = (x) => JSON.parse(JSON.stringify(x));
+
+  function scanTree(current) {
+    const list = allScans();
+    return state.scanSpec.folders.map((f) => {
+      const items = list.filter((s) => s.folder === f);
+      return `<div class="tree-f"><b>${esc(f)}</b>${items.map((s) => `<a href="#/scanners/${encodeURIComponent(s.id)}" class="${s.id === current ? "on" : ""}"
+        title="${esc(s.description || "")}"><span>${esc(s.name)}${s.edited ? " *" : ""}</span><small>${SDS.run(state.screen, s).length.toLocaleString("en-IN")}</small></a>`).join("")}</div>`;
+    }).join("");
+  }
+
+  function formulaEditor(sc, onDone) {
+    const work = clone({ universe: sc.universe || "all", rule: sc.rule && (sc.rule.all || sc.rule.any) ? sc.rule : { all: [] } });
+    const fieldOpts = (sel) => state.fields.slice().sort((a, b) => a.label.localeCompare(b.label))
+      .map((f) => `<option value="${f.id}" ${f.id === sel ? "selected" : ""}>${esc(f.label)}</option>`).join("");
+    const OPS = [">", ">=", "<", "<=", "==", "!=", "between", "is", "in"];
+    const condHTML = (c, path) => {
+      const op = c.op || ">";
+      let rhs;
+      if (op === "is") rhs = `<select name="val"><option value="true" ${c.value !== false ? "selected" : ""}>yes</option><option value="false" ${c.value === false ? "selected" : ""}>no</option></select>`;
+      else if (op === "between") rhs = `<input name="v1" type="number" step="any" value="${esc((c.value || [0, 0])[0])}"> and <input name="v2" type="number" step="any" value="${esc((c.value || [0, 0])[1])}">`;
+      else if (op === "in") rhs = `<input name="vlist" type="text" value="${esc((c.value || []).join(", "))}" placeholder="2, 2A">`;
+      else rhs = `<select name="rhs"><option value="num" ${c.field2 ? "" : "selected"}>number</option><option value="field" ${c.field2 ? "selected" : ""}>field</option></select>`
+        + (c.field2 ? `<select name="field2">${fieldOpts(c.field2)}</select> × <input name="mult" type="number" step="any" value="${esc(c.mult == null ? 1 : c.mult)}">`
+          : `<input name="val" type="number" step="any" value="${esc(c.value == null ? 0 : c.value)}">`);
+      return `<div class="cond" data-path="${path}"><select name="field">${fieldOpts(c.field)}</select>
+        <select name="op">${OPS.map((o) => `<option ${o === op ? "selected" : ""}>${o}</option>`).join("")}</select>${rhs}
+        <button class="btn sm" data-del="${path}" type="button" aria-label="Remove">✕</button></div>`;
+    };
+    const groupKind = (g) => (g.any ? "any" : "all");
+    const itemsOf = (g) => g.all || g.any;
+    const body = () => {
+      const top = work.rule;
+      return `<p class="rule-en" id="ruleEn"></p>
+        <div class="f-row">Stocks: <select name="universe"><option value="all" ${work.universe === "all" ? "selected" : ""}>all</option><option value="liquid" ${work.universe === "liquid" ? "selected" : ""}>liquid only (median 30-day turnover ≥ ₹1 Cr, price ≥ ₹5)</option></select></div>
+        <div class="grp" data-g="top">Match <select name="kind" data-g="top"><option value="all" ${groupKind(top) === "all" ? "selected" : ""}>ALL (AND)</option><option value="any" ${groupKind(top) === "any" ? "selected" : ""}>ANY (OR)</option></select> of these:
+        ${itemsOf(top).map((it, i) => (it.all || it.any)
+          ? `<div class="grp sub" data-g="${i}">Group: <select name="kind" data-g="${i}"><option value="all" ${groupKind(it) === "all" ? "selected" : ""}>ALL</option><option value="any" ${groupKind(it) === "any" ? "selected" : ""}>ANY</option></select> of
+             ${itemsOf(it).map((c, j) => condHTML(c, `${i}.${j}`)).join("")}<button class="btn sm" data-addc="${i}" type="button">+ condition</button>
+             <button class="btn sm" data-del="${i}" type="button">remove group</button></div>`
+          : condHTML(it, String(i))).join("")}
+        <button class="btn sm" data-addc="top" type="button">+ condition</button> <button class="btn sm" data-addg type="button">+ group (OR)</button></div>
+        <p class="muted small">Compare a field with a number or with another field × a multiple (e.g. close &gt; SMA 50 × 1, volume ≥ Avg volume 20D × 2).
+        Field meanings: <a href="#/fields" target="_blank">all fields and formulas</a>.</p>`;
+    };
+    const m = document.createElement("div");
+    m.className = "modal-bg";
+    const isDefault = !sc.mine;
+    m.innerHTML = `<div class="modal wide" role="dialog" aria-label="Formula"><div class="modal-h"><b>Formula · ${esc(sc.name)}</b>
+      <button class="icon-btn" data-x type="button" aria-label="Close">✕</button></div><div class="modal-b" id="fBody"></div>
+      <div class="modal-f"><button class="btn" data-test type="button">Test</button><b id="fCount"></b><span></span>
+      ${isDefault ? `<button class="btn" data-reset type="button">Reset to default</button>` : `<button class="btn" data-delete type="button">Delete</button>`}
+      <button class="btn" data-dup type="button">Duplicate as My Scan</button><button class="btn primary" data-save type="button">Save</button></div></div>`;
+    document.body.appendChild(m);
+    const read = () => {
+      const fb = m.querySelector("#fBody");
+      work.universe = fb.querySelector("[name=universe]").value;
+      const readCond = (el) => {
+        const c = { field: el.querySelector("[name=field]").value, op: el.querySelector("[name=op]").value };
+        if (c.op === "is") c.value = el.querySelector("[name=val]") ? el.querySelector("[name=val]").value !== "false" : true;
+        else if (c.op === "between") { const a = el.querySelector("[name=v1]"), b = el.querySelector("[name=v2]"); c.value = [Number(a ? a.value : 0), Number(b ? b.value : 0)]; }
+        else if (c.op === "in") { const v = el.querySelector("[name=vlist]"); c.value = (v ? v.value : "").split(",").map((x) => x.trim()).filter(Boolean); }
+        else {
+          const rhs = el.querySelector("[name=rhs]");
+          if (rhs && rhs.value === "field") { const f2 = el.querySelector("[name=field2]"); c.field2 = f2 ? f2.value : c.field; const mu = el.querySelector("[name=mult]"); c.mult = mu ? Number(mu.value) : 1; }
+          else { const v = el.querySelector("[name=val]"); c.value = v ? Number(v.value) : 0; }
+        }
+        return c;
+      };
+      const topKind = fb.querySelector('[name=kind][data-g="top"]').value;
+      const items = [];
+      fb.querySelectorAll('[data-g="top"] > .cond, [data-g="top"] > .grp.sub').forEach((el) => {
+        if (el.classList.contains("cond")) items.push(readCond(el));
+        else items.push({ [el.querySelector("[name=kind]").value]: [...el.querySelectorAll(":scope > .cond")].map(readCond) });
+      });
+      work.rule = { [topKind]: items };
+    };
+    const draw = () => {
+      m.querySelector("#fBody").innerHTML = body();
+      m.querySelector("#ruleEn").textContent = SDS.describe(work.rule, state.labels);
+      m.querySelector("#fCount").textContent = `${SDS.run(state.screen, { ...sc, ...work }).length} stocks`;
+    };
+    draw();
+    const close = () => { m.remove(); document.removeEventListener("keydown", onKey); };
+    const onKey = (e) => { if (e.key === "Escape") close(); };
+    document.addEventListener("keydown", onKey);
+    m.addEventListener("change", () => { read(); draw(); });
+    m.addEventListener("click", (e) => {
+      if (e.target === m || e.target.closest("[data-x]")) return close();
+      const t = e.target.closest("button"); if (!t) return;
+      if (t.dataset.addc != null || t.dataset.addg != null || t.dataset.del != null) read();
+      const top = itemsOf(work.rule);                 // after read(): read() builds a new rule object
+      if (t.dataset.addc != null) { const blank = { field: "rs_rating", op: ">=", value: 80 }; (t.dataset.addc === "top" ? top : itemsOf(top[Number(t.dataset.addc)])).push(blank); return draw(); }
+      if (t.dataset.addg != null) { top.push({ any: [{ field: "rs_rating", op: ">=", value: 90 }] }); return draw(); }
+      if (t.dataset.del != null) {
+        const [i, j] = t.dataset.del.split(".").map(Number);
+        if (j == null || Number.isNaN(j)) top.splice(i, 1); else itemsOf(top[i]).splice(j, 1);
+        return draw();
+      }
+      if (t.dataset.test != null) { read(); return draw(); }
+      const u = userScans();
+      if (t.dataset.save != null) {
+        read();
+        if (sc.mine) u.mine = u.mine.map((x) => (x.id === sc.id ? { ...x, ...work } : x));
+        else u.edits[sc.id] = clone(work);
+        saveUserScans(u); close(); return onDone(sc.id);
+      }
+      if (t.dataset.reset != null) { delete u.edits[sc.id]; saveUserScans(u); close(); return onDone(sc.id); }
+      if (t.dataset.delete != null) { if (!confirm(`Delete "${sc.name}"?`)) return; u.mine = u.mine.filter((x) => x.id !== sc.id); saveUserScans(u); close(); return onDone("all-stocks"); }
+      if (t.dataset.dup != null) {
+        read();
+        const name = prompt("Name of your scan:", `${sc.name} (mine)`); if (!name) return;
+        const id = "my-" + Date.now().toString(36);
+        u.mine.push({ id, name: name.slice(0, 60), description: `My scan (from ${sc.name})`, universe: work.universe, rule: clone(work.rule), sort: sc.sort });
+        saveUserScans(u); close(); return onDone(id);
+      }
+    });
+  }
+
+  function exportScans() {
+    const u = userScans();
+    const blob = new Blob([JSON.stringify({ exported: new Date().toISOString(), ...u }, null, 1)], { type: "application/json" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "my-scans.json"; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+  function importScans(file, done) {
+    file.text().then((txt) => {
+      const x = JSON.parse(txt), u = userScans();
+      Object.assign(u.edits, x.edits || {});
+      const ids = new Set(u.mine.map((m) => m.id));
+      (x.mine || []).forEach((m) => { if (m && m.rule && !ids.has(m.id)) u.mine.push(m); });
+      saveUserScans(u); done();
+    }).catch((e) => alert("Could not read that file: " + e.message));
+  }
+
+  /* ------------------------------------------------------------------ fields and formulas page */
+  async function renderFields() {
+    let data;
+    try { data = await getJSON("data/fields.json"); } catch (e) { view.innerHTML = `<p class="empty">Not available.</p>`; return; }
+    view.innerHTML = `<h1>Fields and formulas</h1><p class="sub">Every value the dashboard shows or a scanner can use, with its formula in plain words.
+      Prices are adjusted for splits, bonus, rights and demergers. ${data.fields.length} fields.</p>
+      <div class="controls"><input id="fq" type="search" placeholder="Search fields" aria-label="Search fields"></div><div id="ftbl"></div>`;
+    const draw = (q) => {
+      const rows = data.fields.filter((f) => !q || (f.id + " " + f.label + " " + f.formula).toLowerCase().includes(q));
+      $("#ftbl").innerHTML = `<div class="table-wrap"><table><thead><tr><th class="l">Field</th><th class="l">Name in scanners</th><th class="l">Formula</th><th class="l">Source</th></tr></thead><tbody>`
+        + rows.map((f) => `<tr><td class="l"><b>${esc(f.label)}</b></td><td class="l"><code>${esc(f.id)}</code></td><td class="l wrap">${esc(f.formula)}</td><td class="l">${esc(f.source)}</td></tr>`).join("")
+        + "</tbody></table></div>";
+    };
+    draw("");
+    $("#fq").oninput = (e) => draw(e.target.value.trim().toLowerCase());
   }
 
   function columnSettings(done) {
@@ -447,11 +638,12 @@
   function route() {
     if (!state.rows.length) return;
     const parts = location.hash.replace(/^#\/?/, "").split("/").map(decodeURIComponent);
-    const tab = { "": "market", stocks: "stocks", screener: "screener", sectors: "sectors", watchlist: "watchlist", i: "" }[parts[0]] ?? "market";
+    const tab = { "": "market", stocks: "stocks", scanners: "scanners", screener: "scanners", sectors: "sectors", watchlist: "watchlist", fields: "", i: "" }[parts[0]] ?? "market";
     document.querySelectorAll(".tabs a").forEach((a) => a.classList.toggle("active", a.dataset.tab === tab));
     SDChart.close();
     view.onkeydown = null;
-    if (parts[0] === "stocks") renderStocks();
+    if (parts[0] === "stocks" || parts[0] === "scanners") renderStocks();
+    else if (parts[0] === "fields") renderFields();
     else if (parts[0] === "screener") renderScreener();
     else if (parts[0] === "sectors") renderSectors(parts[1], parts[2]);
     else if (parts[0] === "watchlist") renderWatchlist();
@@ -466,7 +658,7 @@
     const next = dark ? "light" : "dark";
     document.documentElement.dataset.theme = next;
     try { localStorage.setItem("sd-theme", next); } catch (e) { /* ignore */ }
-    if (location.hash.startsWith("#/i/") || location.hash.startsWith("#/stocks")) route();
+    if (/^#\/(i|stocks|scanners)/.test(location.hash)) route();
   };
   window.addEventListener("hashchange", route);
   if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});

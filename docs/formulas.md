@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S5**. Fields: **145**.
+Current phase: **S6**. Fields: **157**.
 
 ## Sources
 
@@ -16,6 +16,7 @@ Current phase: **S5**. Fields: **145**.
 - **shareholding**: NSE shareholding pattern (promoter & promoter group %, quarter)
 - **fno_list**: NSE fo_mktlots.csv - stocks with futures & options
 - **price_bands**: NSE sec_list.csv - today's price band (circuit limit)
+- **ipo_list**: NSE api/public-past-issues - main-board IPOs with listing date and issue price
 - **theme_rules**: config/theme_rules.yaml - our theme lists (NSE thematic indices, NSE industries, hand-picked)
 - **mto**: NSE MTO_ddmmyyyy.DAT - security-wise delivery position, every trading day from 2007
 - **settings**: config/settings.yaml (parameters such as the liquid rule)
@@ -194,4 +195,21 @@ Current phase: **S5**. Fields: **145**.
 
 | field | label | type | formula | inputs | files |
 |---|---|---|---|---|---|
-| `days_listed` | Days Since Listing | integer | Calendar days from the NSE listing date to the data date | listed | site |
+| `days_listed` | Days Since Listing | integer | Calendar days from the NSE listing date to the data date | listed | site, data/snapshot/screen.json |
+
+## Fields of phase S6
+
+| field | label | type | formula | inputs | files |
+|---|---|---|---|---|---|
+| `ipo_date` | IPO Listing Date | date | Listing day of the stock's IPO on NSE's main board (NSE past issues; renames followed) | ipo_list | data/meta/stocks.csv, data/snapshot/screen.json |
+| `ipo_price` | IPO Price | rupees | Issue price of the IPO (as issued, not adjusted) | ipo_list | data/meta/stocks.csv, data/snapshot/screen.json |
+| `days_since_ipo` | Days Since IPO | integer | Calendar days from the IPO listing date to the data date | ipo_date | data/snapshot/screen.json |
+| `rs_high_days` | Sessions since RS high | integer | Sessions since the RS line was last at its 52-week high (0 = today) | rs_line_52w_high | data/snapshot/screen.json |
+| `sma20_chg_1w` | 20 SMA change 1W % | percent | (sma20 / sma20 5 sessions ago - 1) x 100 (> 0 = rising) | sma20 | data/snapshot/screen.json |
+| `sma50_chg_1m` | 50 SMA change 1M % | percent | (sma50 / sma50 21 sessions ago - 1) x 100 | sma50 | data/snapshot/screen.json |
+| `sma150_chg_1m` | 150 SMA change 1M % | percent | (sma150 / sma150 21 sessions ago - 1) x 100 | sma150 | data/snapshot/screen.json |
+| `sma200_chg_1m` | 200 SMA change 1M % | percent | (sma200 / sma200 21 sessions ago - 1) x 100 | sma200 | data/snapshot/screen.json |
+| `ema50_chg_1m` | 50 EMA change 1M % | percent | (ema50 / ema50 21 sessions ago - 1) x 100 | ema50 | data/snapshot/screen.json |
+| `high_50d_prev` | 50D high (before today) | rupees | Highest high of the 50 sessions before today (breakout level) | high | data/snapshot/screen.json |
+| `close_pos` | Close in day's range % | percent | (close - low) / (high - low) x 100; 100 = closed at the high (50 when high = low) | close, high, low | data/snapshot/screen.json |
+| `range_20d_pct` | 20D range % | percent | (high_20d / low_20d - 1) x 100 | high_20d, low_20d | data/snapshot/screen.json |

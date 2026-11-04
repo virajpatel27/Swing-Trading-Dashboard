@@ -26,7 +26,7 @@ from .config import ROOT
 
 DISCLAIMER = "Educational purpose only, not investment advice."
 MASTER_COLS = ["symbol", "name", "series", "listed", "n500", "fno", "price_band", "mcap_cr", "float_mcap_cr", "float_pct",
-               "shares", "liquid", "sector", "industry", "basic_industry"]
+               "shares", "liquid", "sector", "industry", "basic_industry", "ipo_date", "ipo_price"]
 HIST_COLS = ["close", "ret_1w", "ret_1m", "ret_3m"]
 CROSS_COLS = ["rs_rating", "rs_rating_1w", "rs_rating_1m", "rs_rating_3m", "rs_chg_1w", "rs_chg_1m", "rs_rating_1m_ago"]
 DROP = ["sessions"]
@@ -134,13 +134,17 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
         row = {"id": sid, **{c: info.get(c, "") for c in MASTER_COLS}, **last,
                **(cross.loc[sid].to_dict() if sid in cross.index else {})}
         row["stale"] = (newest - pd.Timestamp(last["date"])).days > 10
+        listed = pd.to_datetime(row.get("listed") or None, errors="coerce")
+        row["days_listed"] = None if pd.isna(listed) else int((pd.Timestamp(last["date"]) - listed).days)
+        ipo = pd.to_datetime(row.get("ipo_date") or None, errors="coerce")
+        row["days_since_ipo"] = None if pd.isna(ipo) else int((pd.Timestamp(last["date"]) - ipo).days)
         rows.append(row)
     cols = list(rows[0].keys())
     for r in rows[1:]:
         cols += [c for c in r if c not in cols]
     typed = {"n500", "fno", "liquid"}
     table = [[_clean(r.get(c)) if c not in typed else str(r.get(c)) == "True" for c in cols] for r in rows]
-    for c in ("mcap_cr", "float_mcap_cr", "float_pct", "shares"):
+    for c in ("mcap_cr", "float_mcap_cr", "float_pct", "shares", "ipo_price"):
         i = cols.index(c)
         for t in table:
             t[i] = None if t[i] in ("", None) else float(t[i])

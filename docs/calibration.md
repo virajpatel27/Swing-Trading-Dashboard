@@ -40,3 +40,24 @@ Where a definition was chosen because it matched, the setting is in `config/indi
 
 Standard indicators are also checked against TA-Lib on 3 real stocks (tests/test_scan_phase4.py): SMA, EMA, WMA, RSI,
 MACD, ATR, MFI, Bollinger, T3 equal to 6 decimals; Supertrend equal to TradingView's published logic.
+
+## Phase S6 - price scanners (counts on 30-Oct-2026, `python scripts/build_screen.py --as-of 2026-10-30`)
+
+Rules: `config/scanners.json` (every number is a parameter; the website's Formula editor can change them per browser).
+
+| scanner | our rule (short) | ours | reference |
+|---|---|---|---|
+| Trend Template | Minervini's 8 points, RS rating >= 70 (75 would give 164; the textbook 70 is kept) | 172 | 165 |
+| Stage 2 Breakout | day high above the 50-day high before, RVol >= 1.5, stage 1 / 2 / 2A | 27 | 30 |
+| 4% Breakout | +4 %, volume above yesterday's, RVol >= 1.5, liquid | 31 | 31 |
+| 20-SMA Pullback | RS >= 90, 3M up, within 1 % of a rising SMA 20, SMA 50 rising, liquid | 4 | 4 |
+| High Volume | HVQ / HVY / HVE on an up day | 26 | 24 |
+| 1M Gainers | liquid, 1M >= +23 % | 22 | 22 |
+| 3M Gainers | liquid, 3M >= +38 % | 63 | 64 |
+| Outperformers | RS 1W > 90, 1M > 85, 3M > 80, liquid (the app's own stated rule) | 31 | 31 |
+| Doublers | 6M >= +100 % (the app gives no rule; 1Y >= +100 % would be 97) | 53 | 50 |
+| New Listing | IPO on NSE's main board within 365 days (NSE's IPO list; EQUITY_L listing dates also count SME migrations: 437) | 125 | 130 |
+| 50-EMA Pullback | RS >= 80, stage 2 / 2A / 3, -2 % .. +3 % from a rising EMA 50, 20-day range <= 20 %, liquid | 22 | 21 |
+| New RS before Price | RS line (vs Smallcap 250) at a 52-week high within 7 sessions, price not at its 52-week high today | 111 | 105 |
+
+Recent Breakout needs bases / pivots: Phase S7.

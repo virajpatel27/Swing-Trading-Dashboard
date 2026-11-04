@@ -3,6 +3,7 @@
   _site/index.html, app.js, styles.css, sw.js, manifest.webmanifest, icons/    copied from site/
   _site/data/latest.json, sectors.json, health.json                            the daily snapshot (loaded first, small)
   _site/data/screen.json                                                       every engine field per stock (Phase S4)
+  _site/data/scanners.json, fields.json                                        scanner rules, field registry (Phase S6)
   _site/data/c/<s|n|b>/<id>.json                                                one chart file per stock / NSE index / BSE index,
                                                                                 loaded only when that chart is opened
 Chart file (column-wise): d = dates as yyyymmdd, o h l c = ADJUSTED prices, v = volume, f = adjustment factor (raw = adjusted / f),
@@ -18,7 +19,7 @@ from pathlib import Path
 import pandas as pd
 
 from . import corporate_actions as ca
-from . import store
+from . import registry, store
 from .adjust import ADJ_COLS
 
 FOLDER = {("stock", "NSE"): "s", ("index", "NSE"): "n", ("index", "BSE"): "b"}
@@ -55,6 +56,14 @@ def markers_for(actions: pd.DataFrame) -> list[dict]:
     return out
 
 
+def fields_payload(root: Path) -> dict:
+    """The Field Registry for the website (formula editor drop-downs, the fields page)."""
+    reg = registry.load(root / "config" / "fields.yaml")
+    return {"phase": reg.get("current_phase"), "fields": [
+        {"id": f["id"], "label": f["label"], "type": f["type"], "formula": f["formula"], "source": f["source"],
+         "screen": "screen" in (f.get("file") or [])} for f in reg["fields"]]}
+
+
 def build(root: Path, out: Path, log=print) -> dict:
     data = root / "data"
     if out.exists():
@@ -66,6 +75,8 @@ def build(root: Path, out: Path, log=print) -> dict:
     shutil.copy2(data / "meta" / "health.json", out / "data" / "health.json")
     if (data / "snapshot" / "screen.json").exists():      # all engine fields per stock (built by scripts/build_screen.py)
         shutil.copy2(data / "snapshot" / "screen.json", out / "data" / "screen.json")
+    shutil.copy2(root / "config" / "scanners.json", out / "data" / "scanners.json")
+    (out / "data" / "fields.json").write_text(json.dumps(fields_payload(root)), encoding="utf-8")
 
     snap = json.loads((data / "snapshot" / "latest.json").read_text(encoding="utf-8"))
     cols = snap["columns"]

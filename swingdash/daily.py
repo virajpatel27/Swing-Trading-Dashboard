@@ -127,6 +127,7 @@ def run(ctx: backfill.Ctx, log=print) -> dict:
 
     # 4b. stock master (F&O flag, price band, market cap, liquid flag)
     fno, bands = stock_master.download_lists(ctx.http, log)
+    stock_master.download_ipos(data, ctx.http, log)
     master = stock_master.build(data, fno, bands, ctx.settings.get("liquid"), log=log)
     res["stock_master_written"] = stock_master.write(data, master)
     res["liquid_stocks"] = int(master["liquid"].sum())

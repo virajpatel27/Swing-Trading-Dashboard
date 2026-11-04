@@ -54,6 +54,20 @@ def check_series(name: str, df: pd.DataFrame, trading_days: pd.DatetimeIndex | N
     return out
 
 
+def check_delivery(name: str, df: pd.DataFrame) -> list[dict]:
+    """Delivery rows: one per date, delivery % between 0 and 100, deliverable quantity not negative."""
+    if df.empty:
+        return [issue(name, "error", "empty", "no rows")]
+    out = []
+    d = df["date"]
+    if d.duplicated().any():
+        out.append(issue(name, "error", "duplicate dates", f"{int(d.duplicated().sum())} duplicates", d[d.duplicated()].iloc[0]))
+    bad = (df["deliv_pct"] < 0) | (df["deliv_pct"] > 100) | (df["deliv_qty"] < 0)
+    if bad.any():
+        out.append(issue(name, "warn", "delivery out of range", f"{int(bad.sum())} rows", d[bad].iloc[0]))
+    return out
+
+
 def check_row_drop(name: str, before: int, after: int, max_drop_pct: float) -> list[dict]:
     if before and after < before * (1 - max_drop_pct / 100):
         return [issue(name, "error", "row drop", f"rows went from {before} to {after}")]

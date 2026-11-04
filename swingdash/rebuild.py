@@ -1,6 +1,7 @@
 """Rebuild corporate-action files and adjusted prices for every stock from raw prices + NSE corporate actions.
 Cheap enough to run every day for all stocks: only files whose content changed are written (store.write), so a stock's
-adjusted history is rewritten exactly when a new corporate action appears. Raw data is only read."""
+adjusted history is rewritten exactly when a new corporate action appears. Raw data is only read.
+Also writes data/meta/share_factors.csv (EPS / per-share factors, see share_factors.py)."""
 from __future__ import annotations
 
 from datetime import date
@@ -8,7 +9,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import adjust, store
+from . import adjust, share_factors, store
 from . import corporate_actions as ca
 from .sources import nse
 
@@ -60,6 +61,7 @@ def rebuild_adjusted(root: Path, http, settings: dict, universe: dict, today: da
         all_issues += issues
     pd.DataFrame(all_issues, columns=["instrument", "level", "check", "date", "detail"]).to_csv(
         data / "meta" / "adjust_issues.csv", index=False, lineterminator="\n")
+    share_factors.write(data, share_factors.build(data, uni))
     res = {"stocks": len(symbols), "adjusted_files_changed": changed, "issues": len(all_issues), "actions_source": source,
            "actions": dict(sorted(counts.items()))}
     log(f"adjusted: {res}")

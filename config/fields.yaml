@@ -10,9 +10,10 @@
 #   inputs             other field ids or source ids (below)
 #   provided_in_phase  0 = built before the scanner plan (existing dashboard), 1..12 = scanner plan phase
 #   source             where the raw data comes from
-#   file               stocks = data/meta/stocks.csv, snapshot = data/snapshot/latest.json
+#   file               stocks = data/meta/stocks.csv, snapshot = data/snapshot/latest.json,
+#                      delivery = data/stocks/delivery/<ID>/
 
-current_phase: 1
+current_phase: 2
 
 sources:
   equity_list: NSE EQUITY_L.csv - every main-board equity (symbol, name, ISIN, series, listing date)
@@ -25,6 +26,7 @@ sources:
   shareholding: NSE shareholding pattern (promoter & promoter group %, quarter)
   fno_list: NSE fo_mktlots.csv - stocks with futures & options
   price_bands: NSE sec_list.csv - today's price band (circuit limit)
+  mto: NSE MTO_ddmmyyyy.DAT - security-wise delivery position, every trading day from 2007
   settings: config/settings.yaml (parameters such as the liquid rule)
 
 fields:
@@ -51,7 +53,7 @@ fields:
   - {id: last_date, label: Last trade, type: date, formula: "Last stored trading day", inputs: [bhavcopy], provided_in_phase: 1, source: derived, file: [stocks]}
   - {id: sessions, label: Sessions stored, type: integer, formula: "Number of stored trading days", inputs: [bhavcopy], provided_in_phase: 1, source: derived, file: [stocks]}
   - {id: status, label: Status, type: text, formula: "active = traded within 10 days of the newest trading day; inactive = not since; no_history = nothing stored", inputs: [last_date], provided_in_phase: 1, source: derived, file: [stocks]}
-  - {id: date, label: Date, type: date, formula: "Date of the latest row", inputs: [bhavcopy, index_history], provided_in_phase: 0, source: derived, file: [snapshot]}
+  - {id: date, label: Date, type: date, formula: "Trading day of the row (snapshot: the latest row)", inputs: [bhavcopy, index_history], provided_in_phase: 0, source: derived, file: [snapshot, delivery]}
   - {id: stale, label: Stale, type: boolean, formula: "Latest row more than 10 days older than the newest data date", inputs: [date], provided_in_phase: 0, source: derived, file: [snapshot]}
   # ------------------------------------------------------------ size and liquidity (phase 1)
   - {id: face_value, label: Face value, type: rupees, formula: "Face value per share", inputs: [nse_quote], provided_in_phase: 1, source: NSE, file: [stocks]}
@@ -97,3 +99,6 @@ fields:
   - {id: rs_6m, label: RS vs index 6M %, type: percent, formula: "Stock 126-session return minus benchmark's", inputs: [close, index_history], provided_in_phase: 0, source: derived, file: [snapshot]}
   - {id: rs_rating, label: RS rating, type: integer, formula: "Percentile 1-99 of 0.4 x 3M + 0.2 x 6M + 0.2 x 9M + 0.2 x 12M return among stocks", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
   - {id: flags, label: Flags, type: list, formula: "Simple signals: 52W / 20D breakout or breakdown, above EMA50 & 200, RSI 50-70, near 52W high, volume spike, strong RS", inputs: [close, hi52, ema50, ema200, rsi14, vol_ratio, rs_rating], provided_in_phase: 0, source: derived, file: [snapshot]}
+  # ------------------------------------------------------------ delivery (phase 2)
+  - {id: deliv_qty, label: Delivery qty, type: integer, formula: "Deliverable quantity of the day as traded (not split-adjusted)", inputs: [mto], provided_in_phase: 2, source: NSE, file: [delivery]}
+  - {id: deliv_pct, label: Delivery %, type: percent, formula: "Deliverable quantity / traded quantity x 100 (NSE's figure)", inputs: [mto], provided_in_phase: 2, source: NSE, file: [delivery]}

@@ -146,7 +146,7 @@ def test_carry_over_renames(tmp_path):
 
 def test_registry_dependencies():
     reg = registry.load()
-    files = {"stocks": stock_master.COLS, "snapshot": snapshot.COLUMNS}
+    files = {"stocks": stock_master.COLS, "snapshot": snapshot.COLUMNS, "delivery": store.DELIVERY_COLS}
     assert registry.check(reg, files) == []
 
 

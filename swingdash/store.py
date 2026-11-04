@@ -18,6 +18,7 @@ CURRENT = "current.csv"
 PRICE_COLS = ["open", "high", "low", "close"]
 STOCK_COLS = ["date", "open", "high", "low", "close", "prev_close", "volume", "value", "series"]
 INDEX_COLS = ["date", "open", "high", "low", "close"]
+DELIVERY_COLS = ["date", "deliv_qty", "deliv_pct"]          # raw deliverable quantity (not split-adjusted) and its %
 
 
 def folder_name(symbol: str) -> str:
@@ -37,8 +38,9 @@ def _normalise(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
         if c in ("date", "series"):
             continue
         df[c] = pd.to_numeric(df[c], errors="coerce")
-    if "volume" in df.columns:
-        df["volume"] = df["volume"].round().astype("Int64")
+    for c in ("volume", "deliv_qty"):
+        if c in df.columns:
+            df[c] = df[c].round().astype("Int64")
     if "series" in df.columns:
         df["series"] = df["series"].astype("string")
     return df

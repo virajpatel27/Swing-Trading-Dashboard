@@ -5,6 +5,7 @@ Jobs:
   stocks       NSE daily bhavcopy, one file per trading day = all stocks at once -> data/stocks/raw/<SYMBOL>/
   nse-indices  NSE historicalOR API, walking back 90 days at a time until the index did not exist -> data/indices/nse/<ID>/
   bse-indices  BSE CSV, whole history in one call per index (PC only: BSE refuses GitHub) -> data/indices/bse/<CODE>/
+  delivery     NSE MTO delivery file, one per trading day = all stocks at once -> data/stocks/delivery/<SYMBOL>/
 """
 from __future__ import annotations
 
@@ -212,6 +213,70 @@ def backfill_stocks(ctx: Ctx, until: date | None = None, only: list[str] | None 
     flush()
     res = {"job": "stocks", "files": files, "last_day": str(done_until or cp.get("last_day")), "stopped": stopped}
     ctx.log(f"stocks: {res}")
+    return res
+
+
+# ---------------------------------------------------------------- delivery % (NSE MTO files)
+def backfill_delivery(ctx: Ctx, until: date | None = None, restart_from: date | None = None) -> dict:
+    """Deliverable quantity and delivery % per stock and day -> data/stocks/delivery/<ID>/ (date, deliv_qty, deliv_pct).
+    Only known trading days are fetched (trading_days.csv, written by the stocks job). A day whose file is not out yet
+    (it comes ~16:50 IST) stops the run without moving the checkpoint, so the next run asks again."""
+    until = until or ctx.today
+    uni = stock_universe(ctx)
+    symbols = uni["symbol"].tolist()
+    ids = dict(zip(uni["symbol"], uni["id"]))
+    history = nse.symbol_history(nse.symbol_changes(ctx.http), symbols)
+    prio = ctx.universe["stocks"]["series_priority"]
+    cp_path = checkpoint(ctx, "nse_delivery")
+    cp = load_json(cp_path, {})
+    first = as_date(cp["last_day"]) + timedelta(days=1) if cp.get("last_day") else ctx.start
+    if restart_from and restart_from < first:
+        first = restart_from
+    days = sorted(d for d in read_trading_days(ctx) if first <= d <= until)
+    flush_every = int(ctx.settings.get("flush_every_days", 500))
+    buffer: dict[str, list[pd.DataFrame]] = {}
+    done_until, files, missing, since_flush, stopped = None, 0, [], 0, ""
+
+    def flush():
+        nonlocal buffer, since_flush
+        for sym, parts in buffer.items():
+            new = pd.concat(parts, ignore_index=True)
+            merge_write(ctx.data / "stocks" / "delivery" / ids[sym], new, store.DELIVERY_COLS, ctx.today)
+        if done_until:
+            save_json(cp_path, {"last_day": done_until.isoformat()})
+        ctx.log(f"  delivery saved up to {done_until}: {len(buffer)} stocks touched")
+        buffer, since_flush = {}, 0
+
+    for d in days:
+        if ctx.out_of_time():
+            stopped = "time limit"
+            break
+        try:
+            day = nse.fetch_mto(ctx.http, d)
+        except Exception as exc:  # noqa: BLE001 - stop cleanly; the next run continues from the last saved day
+            stopped = f"{d}: {type(exc).__name__}: {str(exc)[:120]}"
+            break
+        if day is None:
+            if (until - d).days <= 3:
+                break                                    # not published yet: try again next run
+            missing.append(str(d))                       # an old day without a file: skip it
+        else:
+            rows = nse.pick_rows(day, nse.names_on(pd.Timestamp(d), symbols, history), prio)
+            rows = rows.assign(date=pd.Timestamp(d))[["symbol", *store.DELIVERY_COLS]]
+            for sym, g in rows.groupby("symbol"):
+                buffer.setdefault(sym, []).append(g.drop(columns="symbol"))
+            files += 1
+            since_flush += 1
+        done_until = d
+        if since_flush >= flush_every:
+            flush()
+    flush()
+    if missing:
+        ctx.log(f"  ::warning title=Delivery files missing::{len(missing)} trading days without an NSE file: "
+                f"{', '.join(missing[:10])}")
+    res = {"job": "delivery", "files": files, "last_day": str(done_until or cp.get("last_day")), "missing_days": len(missing),
+           "stopped": stopped}
+    ctx.log(f"delivery: {res}")
     return res
 
 
@@ -517,4 +582,4 @@ def update_bse_indices(ctx: Ctx, until: date | None = None) -> dict:
 
 
 JOBS = {"stocks": backfill_stocks, "nse-indices": backfill_nse_indices, "bse-indices": backfill_bse_indices,
-        "bse-update": update_bse_indices}
+        "bse-update": update_bse_indices, "delivery": backfill_delivery}

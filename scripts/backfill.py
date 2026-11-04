@@ -3,6 +3,7 @@
     python scripts/backfill.py --job stocks --max-minutes 300
     python scripts/backfill.py --job nse-indices
     python scripts/backfill.py --job bse-indices          # PC only: BSE refuses GitHub's servers
+    python scripts/backfill.py --job delivery             # delivery % 2007 -> (needs the stocks job's trading days)
     python scripts/backfill.py --job all
 
 Afterwards run scripts/validate_data.py (the workflow does it) before committing.
@@ -37,7 +38,8 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     if a.job == "compact":
         n = 0
-        for sub, cols in (("stocks/raw", store.STOCK_COLS), ("indices/nse", store.INDEX_COLS), ("indices/bse", store.INDEX_COLS)):
+        for sub, cols in (("stocks/raw", store.STOCK_COLS), ("stocks/delivery", store.DELIVERY_COLS),
+                          ("indices/nse", store.INDEX_COLS), ("indices/bse", store.INDEX_COLS)):
             base = ROOT / "data" / sub
             n += sum(store.compact(f, cols) for f in (base.iterdir() if base.exists() else []) if f.is_dir())
         print(f"compacted {n} instruments")

@@ -306,3 +306,36 @@ def parse_promoter_holding(rows: list[dict]) -> tuple[float, str] | None:
         if 0 <= pct <= 100 and (best is None or day > best[1]):
             best = (pct, day)
     return None if best is None else (best[0], best[1].strftime("%Y-%m-%d"))
+
+
+# ---------------------------------------------------------------- delivery (checked 2026-11-04)
+def mto_url(d: date) -> str:
+    """Security-wise delivery position, one file per trading day from 2007 to today (out ~16:50 IST)."""
+    return f"{ARCH}/archives/equities/mto/MTO_{d:%d%m%Y}.DAT"
+
+
+def fetch_mto(http, d: date) -> pd.DataFrame | None:
+    """The day's delivery file, or None when NSE has none (holiday, or not published yet)."""
+    r = http.get(mto_url(d))
+    if r.status_code == 404:
+        return None
+    if r.status_code != 200:
+        raise SourceError(f"NSE delivery file {d}: HTTP {r.status_code}")
+    df = parse_mto(r.content)
+    return df if len(df) else None
+
+
+def parse_mto(content: bytes) -> pd.DataFrame:
+    """Rows of record type 20: symbol, series, traded qty, deliverable qty, delivery %. The trade date from the header."""
+    day, rows = None, []
+    for line in content.decode("latin-1").splitlines():
+        p = [x.strip() for x in line.split(",")]
+        if p[0] == "10" and len(p) >= 3 and day is None:
+            day = pd.to_datetime(p[2], format="%d%m%Y", errors="coerce")
+        elif p[0] == "20" and len(p) >= 7:
+            rows.append(p[2:7])
+    df = pd.DataFrame(rows, columns=["symbol", "series", "traded_qty", "deliv_qty", "deliv_pct"])
+    for c in ("traded_qty", "deliv_qty", "deliv_pct"):
+        df[c] = pd.to_numeric(df[c], errors="coerce")
+    df.insert(0, "date", day)
+    return df.dropna(subset=["deliv_pct"])

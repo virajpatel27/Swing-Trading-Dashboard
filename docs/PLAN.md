@@ -22,7 +22,8 @@ Status: **draft, waiting for Viraj's OK** ("continue"). Nothing is built yet.
 |---|---|---|
 | S0 | Study + feasibility | done 2026-11-03 |
 | S1 | Stock master `data/meta/stocks.csv` (shares, float, F&O, band, market cap, liquid), audit `reports/stock_audit.md`, renames by ISIN, field registry | done 2026-11-03 (waiting for Viraj's OK) |
-| S2-S12 | price foundation, groups, indicator engine, table + chart, scanners, patterns, fundamentals, earnings + groups, breadth, optional, hardening | open |
+| S2 | Price foundation: delivery % 2007 -> (`data/stocks/delivery/`), SME-board corporate actions, EPS factor table `data/meta/share_factors.csv`, data-quality report `reports/data_quality.md` | done 2026-11-04 (waiting for Viraj's OK) |
+| S3-S12 | groups, indicator engine, table + chart, scanners, patterns, fundamentals, earnings + groups, breadth, optional, hardening | open |
 
 ## 2. Decisions that differ from the original spec (and why)
 

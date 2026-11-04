@@ -323,3 +323,28 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   the new audit step rewrote reports/stock_audit.md (outside data/, not committed by the bot) and `git pull --rebase`
   refuses to run with unstaged changes -> nothing saved. Fix: workflows run `audit_stocks.py --master-only` (stocks.csv
   only) and all data workflows use `git pull --rebase --autostash`. Re-run Backfill after the push.
+
+### 2026-11-04: Scanner Phase S2 - price foundation (done, waiting for Viraj's OK)
+- Backfill #8 (stocks, 6 renamed symbols) OK: PCBL 2007 ->, ZFCVINDIA / SEPC 2008, PDSL 2014, RBA 2020, PATANJALI 2020
+  (Ruchi Soya relisted Jan-2020: genuine). ABCIND got ABCOTS's days via carry_over_renames. Backfill #9 (classification)
+  started 05:35 IST.
+- **Delivery %**: NSE MTO file exists for every trading day 2007 -> today (checked 2007, 2010, 2015, 2019-2022, 2026;
+  out ~16:50 IST). Traded qty = bhavcopy volume; TITAN 03-Nov 47.79 % = NSE quote. The reference export's delivery column
+  is the PREVIOUS day's file (02-Nov: 100 % equal). New store `data/stocks/delivery/<ID>/` (date, deliv_qty raw,
+  deliv_pct), job `backfill.py --job delivery` (known trading days only, checkpoint nse_delivery, a day not published yet
+  stops without moving the checkpoint), daily step 1b (only when the checkpoint exists; 17:20 run brings the day),
+  validation `check_delivery`, workflow option "delivery". Local 4-day trial: 2,415 stocks (BE/BZ have no MTO rows).
+- **Corporate actions of the SME board were missing**: NSE's API was asked with index=equities only; stocks that started
+  on NSE's SME board (series SM/ST in our history) lost their bonuses/splits of that time (THEJO 2:1 bonus 12-Oct-2021
+  showed as a -66 % crash). load_raw now asks index=sme too (cache ca_nse_sme_YYYY.json). 84 stocks gain actions; THEJO
+  adjusted 1225 -> 1233 on that day. Applied by the next daily rebuild after the push.
+- `data/meta/share_factors.csv` (rebuild writes it): applied splits / bonuses / consolidations / rights with the day the
+  price changed; `share_factors.eps_factor()` (RELIANCE Sep-2024 EPS x 0.5 for the 28-Oct-2024 bonus). 1,523 lines.
+- `scripts/quality_report.py` -> `reports/data_quality.md` / .csv: 2,626 stocks, 6.5 M rows, 0 errors; data-check
+  warnings by type; one-day moves 20-30 % = 2,809 (circuit-size, normal); > 30 % without action = 491, sorted into
+  long gap 47, re-based 3 (NSE changed the base price: KAUSHALYA 1:100 consolidation, SHEKHAWATI, CCAVENUE),
+  split-like 95 (many are the SME actions above -> fixed by the push), reverted 93 (bad ticks), unexplained 253.
+  Report made from local data BEFORE the SME fix: run it again after the next daily run.
+- Field registry: current_phase 2, fields deliv_qty / deliv_pct (file delivery). 132 Python + 11 JS tests green.
+- NEXT: Viraj commits + pushes; after Backfill #9 ends: Backfill history -> job delivery (~1.5-2 h); then quality report
+  again on the PC, and "continue" for S3 (groups: sector / industry / theme indices, themes.csv).

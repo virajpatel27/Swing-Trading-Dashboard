@@ -78,26 +78,32 @@ def parse_subject(subject: str, face_value: float | None = None) -> list[dict]:
     return out
 
 
-def fetch_year(http, year: int, today: date) -> list[dict]:
+INDEXES = {"equities": "ca_nse", "sme": "ca_nse_sme"}      # NSE list -> cache file prefix
+
+
+def fetch_year(http, year: int, today: date, index: str = "equities") -> list[dict]:
     end = f"31-12-{year}" if year < today.year else f"31-12-{today.year}"
-    data = nse.api_json(http, f"api/corporates-corporateActions?index=equities&from_date=01-01-{year}&to_date={end}")
+    data = nse.api_json(http, f"api/corporates-corporateActions?index={index}&from_date=01-01-{year}&to_date={end}")
     return data if isinstance(data, list) else data.get("data", [])
 
 
 def load_raw(http, years: list[int], today: date, cache: Path | None = None, refresh_years: int = 2) -> list[dict]:
-    """All NSE corporate action records of these years. A local cache (not in git) keeps old years; the last
+    """All NSE corporate action records of these years, main board AND SME board: many main-board stocks started on the
+    SME board (series SM / ST in our history), and their bonuses / splits of that time are only in the SME list
+    (THEJO 2:1 bonus 12-Oct-2021, KSOLVES, AIRAN ...). A local cache (not in git) keeps old years; the last
     `refresh_years` are always downloaded again (new announcements)."""
     rows: list[dict] = []
-    for y in years:
-        p = cache / f"ca_nse_{y}.json" if cache else None
-        if p and p.exists() and y < today.year - refresh_years + 1:
-            rows += json.loads(p.read_text())
-            continue
-        got = fetch_year(http, y, today)
-        if p:
-            p.parent.mkdir(parents=True, exist_ok=True)
-            p.write_text(json.dumps(got))
-        rows += got
+    for index, prefix in INDEXES.items():
+        for y in years:
+            p = cache / f"{prefix}_{y}.json" if cache else None
+            if p and p.exists() and y < today.year - refresh_years + 1:
+                rows += json.loads(p.read_text())
+                continue
+            got = fetch_year(http, y, today, index)
+            if p:
+                p.parent.mkdir(parents=True, exist_ok=True)
+                p.write_text(json.dumps(got))
+            rows += got
     return rows
 
 

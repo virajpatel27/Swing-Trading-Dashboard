@@ -1,6 +1,7 @@
-"""The daily update (GitHub Actions, Mon-Fri 20:15 IST and 23:50 IST; also by hand). Every step is safe to run again:
+"""The daily update (GitHub Actions, Mon-Fri 16:40 / 17:20 / 18:30 / 23:50 IST + 08:00 next morning; also by hand). Every step is safe to run again:
 
   1. stocks       NSE bhavcopy from the last saved day (missed days are caught up), re-reading the last N trading days
+     1b. delivery % from NSE's MTO file (out ~16:50 IST, so the 17:20 run brings the day), last N days re-read too
   2. NSE indices  NSE daily all-indices file the same way (it appears ~23:20 IST, so the 23:50 run brings the day's indices),
                   new indices get their history, gaps are filled
   3. corporate actions + adjusted prices (rebuilt for every stock; only changed files are written)
@@ -93,6 +94,13 @@ def run(ctx: backfill.Ctx, log=print) -> dict:
     after_days = backfill.read_trading_days(ctx)
     res["new_trading_days"] = sorted(str(d) for d in after_days if last_before is None or d > last_before)
 
+    # 1b. delivery %: only after the one-time backfill (Actions -> Backfill history -> job delivery) made a checkpoint
+    if backfill.checkpoint(ctx, "nse_delivery").exists():
+        dl = backfill.backfill_delivery(ctx, until=ctx.today, restart_from=recheck_start(after_days, n, ctx.start))
+        res["delivery"] = {k: dl[k] for k in ("files", "last_day", "stopped")}
+    else:
+        res["delivery"] = "not started: run Backfill history with job delivery once"
+
     # 2. NSE indices: re-read the daily files of the last n trading days too
     cp_path = backfill.checkpoint(ctx, "nse_indices")
     cp = backfill.load_json(cp_path, {})
@@ -135,6 +143,8 @@ def run(ctx: backfill.Ctx, log=print) -> dict:
         problems.append(f"stocks: {s['stopped']}")
     if i["stopped"]:
         problems.append(f"NSE indices: {i['stopped']}")
+    if isinstance(res["delivery"], dict) and res["delivery"]["stopped"]:
+        problems.append(f"delivery: {res['delivery']['stopped']}")
     res["problems"] = problems
     log(f"daily: {res}")
     return res

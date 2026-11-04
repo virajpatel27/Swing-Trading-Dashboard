@@ -14,6 +14,7 @@ from .adjust import ADJ_COLS
 GROUPS = [  # (kind, exchange, folder under data/, columns, list file in data/meta, id column, name column, source)
     ("stock", "NSE", "stocks/raw", store.STOCK_COLS, "universe_stocks.csv", "id", "symbol", "NSE bhavcopy"),
     ("stock-adjusted", "NSE", "stocks/adjusted", ADJ_COLS, "universe_stocks.csv", "id", "symbol", "NSE bhavcopy + NSE corporate actions"),
+    ("delivery", "NSE", "stocks/delivery", store.DELIVERY_COLS, "universe_stocks.csv", "id", "symbol", "NSE MTO delivery file"),
     ("index", "NSE", "indices/nse", store.INDEX_COLS, "indices_nse.csv", "id", "name", "NSE historicalOR"),
     ("index", "BSE", "indices/bse", store.INDEX_COLS, "indices_bse.csv", "id", "name", "BSE ProduceCSVForDate"),
 ]
@@ -39,10 +40,15 @@ def scan(data: Path, trading_days: pd.DatetimeIndex | None, jump_pct: float, old
         for folder in sorted((p for p in base.iterdir() if p.is_dir()), key=lambda p: p.name):
             rel = f"{sub}/{folder.name}"
             df = store.read(folder, cols)
-            label = f"{exch} {names.get(folder.name, folder.name)}" + (" (adjusted)" if kind == "stock-adjusted" else "")
+            label = f"{exch} {names.get(folder.name, folder.name)}" + {"stock-adjusted": " (adjusted)",
+                                                                      "delivery": " (delivery)"}.get(kind, "")
             # big moves are judged on the ADJUSTED series (raw prices jump at every split/bonus by design)
             jump = float("inf") if kind == "stock" and has_adjusted else jump_pct
-            issues += validate.check_series(label, df, trading_days if exch == "NSE" and kind != "stock-adjusted" else None, jump)
+            if kind == "delivery":
+                issues += validate.check_delivery(label, df)
+            else:
+                issues += validate.check_series(label, df, trading_days if exch == "NSE" and kind != "stock-adjusted" else None,
+                                                jump)
             issues += validate.check_row_drop(label, int(old_rows.get(rel, 0)), len(df), max_drop_pct)
             if kind == "stock-adjusted":
                 issues += check_adjusted_vs_raw(label, df, store.read(data / "stocks" / "raw" / folder.name, store.STOCK_COLS))

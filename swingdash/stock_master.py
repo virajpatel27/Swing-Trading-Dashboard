@@ -22,7 +22,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import store
+from . import classification, store
 from .sources import nse
 
 COLS = ["symbol", "id", "name", "isin", "series", "listed", "first_date", "last_date", "sessions", "status", "n500", "fno",
@@ -74,9 +74,7 @@ def build(data: Path, fno: set[str] | None, bands: pd.DataFrame | None, liquid_r
     rule = {**DEFAULT_LIQUID, **(liquid_rule or {})}
     meta = data / "meta"
     uni = pd.read_csv(meta / "universe_stocks.csv", dtype=str).fillna("")
-    cls_path = meta / "classification.csv"
-    cls = (pd.read_csv(cls_path, dtype=str).fillna("").set_index("symbol") if cls_path.exists()
-           else pd.DataFrame().rename_axis("symbol"))
+    cls = classification.load(meta / "classification.csv")
     old_path = meta / "stocks.csv"
     old = pd.read_csv(old_path, dtype=str).fillna("").set_index("symbol") if old_path.exists() else pd.DataFrame()
     band_of = None if bands is None else {(s, se): b for s, se, b in zip(bands["symbol"], bands["series"], bands["band"])}

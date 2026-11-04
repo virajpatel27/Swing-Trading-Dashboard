@@ -9,7 +9,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from swingdash import audit, backfill, registry, renames, snapshot, stock_master, store  # noqa: E402
+from swingdash import audit, backfill, groups, registry, renames, snapshot, stock_master, store  # noqa: E402
 from swingdash.sources import nse  # noqa: E402
 
 TODAY = date(2026, 11, 3)
@@ -146,7 +146,8 @@ def test_carry_over_renames(tmp_path):
 
 def test_registry_dependencies():
     reg = registry.load()
-    files = {"stocks": stock_master.COLS, "snapshot": snapshot.COLUMNS, "delivery": store.DELIVERY_COLS}
+    files = {"stocks": stock_master.COLS, "snapshot": snapshot.COLUMNS, "delivery": store.DELIVERY_COLS,
+             "groups": groups.COLS}
     assert registry.check(reg, files) == []
 
 

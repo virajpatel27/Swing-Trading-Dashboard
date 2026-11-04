@@ -7,6 +7,7 @@
   3. corporate actions + adjusted prices (rebuilt for every stock; only changed files are written)
   4. sector/industry + share count for new stocks, entries older than 30 days, or after a split / bonus
      4b. stock master data/meta/stocks.csv (F&O flag, price band, market cap, free float, liquid flag)
+     4c. themes (data/meta/themes.csv) + equal-weight sector / industry / theme indices (data/groups/)
   5. snapshot (latest.json, sectors.json) - written only when its content changed
 The data check and the commit are separate workflow steps. BSE indices are NOT here: BSE refuses GitHub (weekly PC job).
 Nothing new (holiday, weekend, second run of the day) -> no file changes -> nothing to commit.
@@ -19,7 +20,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import backfill, classification, rebuild, snapshot, stock_master, store
+from . import backfill, classification, config, groups, rebuild, snapshot, stock_master, store, themes
 
 
 def recheck_start(days: set[date], n: int, fallback: date) -> date:
@@ -129,6 +130,10 @@ def run(ctx: backfill.Ctx, log=print) -> dict:
     master = stock_master.build(data, fno, bands, ctx.settings.get("liquid"), log=log)
     res["stock_master_written"] = stock_master.write(data, master)
     res["liquid_stocks"] = int(master["liquid"].sum())
+
+    # 4c. themes (config/theme_rules.yaml) and the sector / industry / theme indices
+    themes.run(ctx.root, log=log)
+    res["groups"] = len(groups.build(ctx.root, config.load("groups", ctx.root), ctx.today, ctx.settings.get("liquid"), log=log))
 
     # 5. snapshot
     latest, sectors = snapshot.build(data, log=log)

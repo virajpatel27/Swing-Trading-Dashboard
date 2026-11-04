@@ -78,6 +78,7 @@ jobs:
               python scripts/backfill.py --job delivery --max-minutes "$MAX" ;;
           esac
           python scripts/audit_stocks.py --master-only     # stocks.csv only; the audit report is made on the PC
+          python scripts/build_groups.py                   # themes + sector / industry / theme indices
           python scripts/build_snapshot.py
       - name: Data check
         run: |

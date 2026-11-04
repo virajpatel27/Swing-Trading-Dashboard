@@ -15,6 +15,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from . import classification
 from . import indicators as ind
 from . import store
 from .adjust import ADJ_COLS
@@ -71,8 +72,7 @@ def instrument_row(df: pd.DataFrame, info: dict, bench: pd.DataFrame | None, has
 def build(data: Path, log=print) -> tuple[dict, dict]:
     meta = data / "meta"
     uni = pd.read_csv(meta / "universe_stocks.csv")
-    cls_path = meta / "classification.csv"
-    cls = pd.read_csv(cls_path, dtype=str).fillna("").set_index("symbol") if cls_path.exists() else pd.DataFrame()
+    cls = classification.load(meta / "classification.csv")
     nifty = store.read(data / "indices" / "nse" / "NIFTY_50", store.INDEX_COLS)
     sensex = store.read(data / "indices" / "bse" / "SENSEX", store.INDEX_COLS)
     rows, scores = [], []

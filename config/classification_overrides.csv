@@ -1,0 +1,28 @@
+symbol,macro,sector,industry,basic_industry,source,note
+ABMINTLLTD,Services,Services,Commercial Services & Supplies,Trading & Distributors,manual,not on BSE and NSE gives nothing: a GUESS from what the company is known for - please check
+ARIHANT,Consumer Discretionary,Realty,Realty,"Residential, Commercial Projects",BSE,BSE scrip 531381 (NSE gave the old classification CONSTRUCTION)
+BAFNAPH,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,BSE,BSE scrip 532989 (NSE gave nothing)
+BIMETAL,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,BSE,BSE scrip 505681 (NSE gave the old classification AUTOMOBILE)
+CAPTRUST,Financial Services,Financial Services,Finance,Non Banking Financial Company (NBFC),BSE,BSE scrip 511505 (NSE gave nothing)
+CUBEXTUB,Industrials,Capital Goods,Industrial Products,"Aluminium, Copper & Zinc Products",BSE,BSE scrip 526027 (NSE gave nothing)
+DCMFINSERV,Financial Services,Financial Services,Finance,Investment Company,BSE,BSE scrip 511611 (NSE gave nothing)
+ELCIDIN,Financial Services,Financial Services,Finance,Investment Company,BSE,BSE scrip 503681 (NSE gave nothing)
+ICDSLTD,Services,Services,Commercial Services & Supplies,Diversified Commercial Services,BSE,BSE scrip 511194 (NSE gave nothing)
+IPRINGLTD,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,BSE,BSE scrip 523638 (NSE gave the old classification AUTOMOBILE)
+KICL,Financial Services,Financial Services,Finance,Investment Company,BSE,BSE scrip 533302 (NSE gave nothing)
+KOVAI,Healthcare,Healthcare,Healthcare Services,Hospital,BSE,BSE scrip 523323 (NSE gave the old classification HEALTHCARE SERVICES)
+KSE,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Food Products,Animal Feed,BSE,BSE scrip 519421 (NSE gave the old classification CONSUMER GOODS)
+LAKSHMIMIL,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,BSE,BSE scrip 502958 (NSE gave the old classification TEXTILES)
+LYKALABS,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,BSE,BSE scrip 500259 (NSE gave nothing)
+PANACHE,Information Technology,Information Technology,IT - Hardware,Computers Hardware & Equipments,manual,not on BSE and NSE gives nothing: a GUESS from what the company is known for - please check
+QUINTEGRA,Information Technology,Information Technology,IT - Software,Computers - Software & Consulting,BSE,BSE scrip 532866 (NSE gave nothing)
+SAMBANDAM,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,BSE,BSE scrip 521240 (NSE gave the old classification TEXTILES)
+SAYAJIHOTL,Consumer Discretionary,Consumer Services,Leisure Services,Hotels & Resorts,BSE,BSE scrip 523710 (NSE gave the old classification SERVICES)
+SICAGEN,Services,Services,Commercial Services & Supplies,Trading & Distributors,BSE,BSE scrip 533014 (NSE gave the old classification SERVICES)
+SILINV,Financial Services,Financial Services,Finance,Investment Company,BSE,BSE scrip 521194 (NSE gave nothing)
+SUPREMEENG,Commodities,Metals & Mining,Ferrous Metals,Iron & Steel Products,manual,not on BSE and NSE gives nothing: a GUESS from what the company is known for - please check
+TIKONA,Telecommunication,Telecommunication,Telecom - Services,Other Telecom Services,BSE,BSE scrip 513343 (NSE gave nothing)
+VALIANTLAB,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,BSE,BSE scrip 543998 (NSE gave nothing)
+VELJAN,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,BSE,BSE scrip 505232 (NSE gave nothing)
+VIJIFIN,Financial Services,Financial Services,Finance,Non Banking Financial Company (NBFC),BSE,BSE scrip 537820 (NSE gave nothing)
+WILLAMAGOR,Financial Services,Financial Services,Finance,Investment Company,BSE,BSE scrip 519224 (NSE gave nothing)

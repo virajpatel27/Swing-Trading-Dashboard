@@ -1,0 +1,9 @@
+# Group indices (Phase S3). Change this file, not the code.
+# Levels: sector = NSE sector (22), industry = NSE basic industry (~190; the level other scanners call "industry"),
+# theme = data/meta/themes.csv (our own lists, made every day from config/theme_rules.yaml).
+levels: [sector, industry, theme]
+start_value: 1000              # index value on the first day the group has enough members
+min_members: 3                 # a day with fewer members that traded gets no index value
+max_daily_move: 0.5            # a member's one-day move beyond +-50 % is left out of that day (bad prices, re-based
+                               # prices, relistings after years); see reports/data_quality.md
+small_group: 5                 # groups with fewer stocks are "small" (hidden by default on the Groups page)

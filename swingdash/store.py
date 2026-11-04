@@ -38,7 +38,7 @@ def _normalise(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
         if c in ("date", "series"):
             continue
         df[c] = pd.to_numeric(df[c], errors="coerce")
-    for c in ("volume", "deliv_qty"):
+    for c in ("volume", "deliv_qty", "group_members"):
         if c in df.columns:
             df[c] = df[c].round().astype("Int64")
     if "series" in df.columns:

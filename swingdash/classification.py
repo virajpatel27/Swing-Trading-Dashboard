@@ -83,6 +83,36 @@ def fetch_one(http, symbol: str, series: str = "EQ") -> dict | None:
     return info
 
 
+LEVELS = ["macro", "sector", "industry", "basic_industry"]
+OVERRIDES = Path(__file__).resolve().parents[1] / "config" / "classification_overrides.csv"
+
+
+def old_style(sector: str) -> bool:
+    """NSE still answers a few stocks with its pre-2021 classification, written in capitals ("AUTOMOBILE", "TEXTILES")."""
+    return bool(sector) and sector.isupper()
+
+
+def load(path: Path, overrides: Path | None = OVERRIDES) -> pd.DataFrame:
+    """classification.csv with config/classification_overrides.csv on top (BSE's identical 4-level classification, fetched
+    from the PC, or a marked guess) for stocks where NSE gave nothing or only its old classification. Indexed by symbol;
+    column class_source says where the four levels come from."""
+    cls = pd.read_csv(path, dtype=str).fillna("") if path.exists() else pd.DataFrame(columns=COLS)
+    cls = cls.set_index("symbol")
+    cls["class_source"] = cls["source"] if "source" in cls.columns else ""
+    if overrides is None or not overrides.exists():
+        return cls
+    ov = pd.read_csv(overrides, dtype=str).fillna("").set_index("symbol")
+    for sym, r in ov.iterrows():
+        cur = cls.loc[sym] if sym in cls.index else None
+        if cur is not None and cur.get("source") == "NSE" and cur.get("industry") and not old_style(cur.get("sector", "")):
+            continue                                       # NSE has a proper answer now: it wins
+        if cur is None:
+            cls.loc[sym] = ""
+        cls.loc[sym, LEVELS] = [r[c] for c in LEVELS]
+        cls.loc[sym, "class_source"] = r["source"]
+    return cls
+
+
 def update(path: Path, universe: pd.DataFrame, http, today: date, refresh_days: int = 30, deadline: float = float("inf"),
            log=print, clock=time.monotonic, force: set[str] | None = None) -> dict:
     """Ask NSE for stocks with no entry, an entry older than refresh_days, no share count yet, or in `force` (e.g. a split

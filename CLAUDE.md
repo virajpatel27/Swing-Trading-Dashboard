@@ -88,6 +88,12 @@ S2 done: delivery % from NSE MTO files (`backfill.py --job delivery`, daily step
 corporate actions from BOTH NSE lists (index=equities and index=sme: SME-era bonuses/splits of 84 stocks were missing),
 `data/meta/share_factors.csv` (EPS factors, written by rebuild), `scripts/quality_report.py` -> `reports/data_quality.md`.
 Workflows commit only data/: never write tracked files outside data/ in a workflow (git pull --rebase --autostash).
+S3 done: `classification.load()` = NSE classification + `config/classification_overrides.csv` (BSE's identical 4 levels for
+stocks NSE leaves empty or answers in its old CAPITALS taxonomy; 3 marked guesses). Groups = NSE sector (22) and NSE BASIC
+industry (~190; = the reference's "industry") + themes from `config/theme_rules.yaml` (NSE thematic indices first).
+`swingdash/groups.py`: equal-weight index of members LIQUID the day before (all members: IT 42x since 2007, nonsense;
+liquid: 9x vs NIFTY IT 5.8x). Daily step 4c; `scripts/build_groups.py [--review]` on the PC. Membership = today's
+(survivorship: the past is "today's members back then").
 Repo folder on the PC: `C:\Users\hello\OneDrive\Documents\Swing Trading\Swing Trading` (nested). Manual steps: `docs/MANUAL_CHECKLIST.md`.
 Read GitHub run results without a token via the public API (`api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/runs`,
 then `.../actions/runs/<id>/jobs` and `.../check-runs/<job id>/annotations`). Logs, Summary page and artifacts need a signed-in user,

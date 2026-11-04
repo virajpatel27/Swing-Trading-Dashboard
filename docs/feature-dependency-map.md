@@ -51,7 +51,7 @@ global news, intraday, past circuit bands, 10-year (vs ~8-year) annual history.
 |---|---|---|---|
 | Stock master, liquid flag (median 30-day turnover >= 1 Cr, price >= 5) | 1-5 | **BUILT (S1)**: `data/meta/stocks.csv`; share counts fill in over the next runs | 1 |
 | Adjusted prices, delivery %, EPS factor table | 4-7 | **BUILT (S2)**: delivery % store + job (backfill to run), SME corporate actions, share_factors.csv, quality report | 2 |
-| Sector / Industry pages, group indices, themes | 10-12 | READY / themes PARTIAL | 3 |
+| Sector / Industry pages, group indices, themes | 10-12 | **BUILT (S3)**: 100 % classified (2 brand-new listings wait for NSE), 31 themes, group indices per date | 3 |
 | ~60 price indicators (MA presets, RSI, MACD, MFI, ATR, ADR%, BB, Supertrend, Swing bands, RS line, Mansfield, Relative extension, Trend intensity, volume labels, returns, highs/lows, RS rating, Stage, Beta) | 4, 8 | READY (formulas known; 4 already checked vs the reference export) | 4 |
 | Results table + column settings (7 groups price-side) + chart + indicator menu | Phase 4 | READY | 5 |
 | Scanner engine + formula editor + price scanners | Phase 4-5 | READY | 6 |

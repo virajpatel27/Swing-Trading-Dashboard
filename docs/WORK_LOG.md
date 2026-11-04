@@ -348,3 +348,32 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Field registry: current_phase 2, fields deliv_qty / deliv_pct (file delivery). 132 Python + 11 JS tests green.
 - NEXT: Viraj commits + pushes; after Backfill #9 ends: Backfill history -> job delivery (~1.5-2 h); then quality report
   again on the PC, and "continue" for S3 (groups: sector / industry / theme indices, themes.csv).
+- 04-Nov 17:50 IST: data still 03-Nov although NSE published 04-Nov at 16:38 (bhavcopy) / 16:48 (MTO): GitHub had not
+  started the 16:40 / 17:20 schedules yet (Daily #7 was a schedule started ~7 h late, at 15:13). Fix agreed: cron-job.org
+  triggers workflow_dispatch at 16:45 + 17:05 IST. Part 1 done (Viraj's fine-grained token, Actions read+write, this repo
+  only). Part 2 (cron-job.org jobs) AFTER all scanner phases, Viraj's wish: steps in docs/MANUAL_CHECKLIST.md; remind him.
+
+### 2026-11-04 (evening): Scanner Phase S3 - groups (done, waiting for Viraj's theme review)
+- Daily update #8 (manual) brought 04-Nov (scheduled 16:40 / 17:20 runs had not started). Backfill #10 (delivery)
+  started 18:17 IST.
+- Coverage: NSE gives sector + industry for 2,601 stocks. 18 had nothing (mostly BE series) and 9 got NSE's OLD taxonomy
+  in capitals ("AUTOMOBILE", "TEXTILES"). BSE's ComHeadernew API (PC only) has the same 4 levels (Sector = macro,
+  IndustryNew = sector, IGroup = industry, ISubGroup = basic industry): 24 filled from BSE, 3 not on BSE (ABMINTLLTD,
+  PANACHE, SUPREMEENG) are marked guesses -> `config/classification_overrides.csv`; `classification.load()` applies them
+  only where NSE has no proper answer (used by stock master, snapshot, groups, themes). Left: EVONILE, MKJEWELS (listed
+  this week, NSE asked again daily).
+- Group levels: sector (NSE, 22) and industry = NSE BASIC industry (189 incl. 69 small < 5 stocks); the reference's
+  "industry" is NSE's basic industry. Names grouped by a slug (BSE writes "Aluminium, Copper & Zinc", NSE without comma).
+- `swingdash/groups.py` -> `data/groups/<level>/<id>/` (date, group_index, group_ret_mean, group_ret_median,
+  group_members) + `data/meta/groups.csv`. Members count on a day only if liquid the day before (median 30-session
+  turnover >= 1 Cr, close >= 5, from raw data): with all stocks the IT sector rose 42x since 2007 (bid-ask bounce of
+  illiquid stocks + survivorship), with liquid ones 9.2x (NIFTY IT, cap-weighted: 5.8x). Moves beyond +-50 % left out;
+  < 3 counted members = no value. Local build 2m50s, 16 MB. 51 small industries never reach 3 liquid members (no series).
+- Themes: `config/theme_rules.yaml` (31 themes; sources: NSE thematic index membership from each stock's quote, NSE basic
+  industries, hand lists marked "manual - check") -> daily `data/meta/themes.csv` (1,317 memberships) and
+  `reports/themes_review.md` for Viraj (only 23 hand-picked). Theme lists of the reference are NOT copied.
+- Daily step 4c (themes + groups), backfill workflow runs `scripts/build_groups.py`. Registry current_phase 3 (group_*).
+  138 Python tests green.
+- NEXT: Viraj reviews reports/themes_review.md (edit config/theme_rules.yaml), commits + pushes; check Backfill #10
+  (delivery); quality report again; then S4 (indicator engine + field registry for all price fields).
+- Viraj approved the theme list (reports/themes_review.md) as it is ("Themes OK chhe").

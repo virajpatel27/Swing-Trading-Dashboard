@@ -11,9 +11,9 @@
 #   provided_in_phase  0 = built before the scanner plan (existing dashboard), 1..12 = scanner plan phase
 #   source             where the raw data comes from
 #   file               stocks = data/meta/stocks.csv, snapshot = data/snapshot/latest.json,
-#                      delivery = data/stocks/delivery/<ID>/
+#                      delivery = data/stocks/delivery/<ID>/, groups = data/groups/<level>/<id>/
 
-current_phase: 2
+current_phase: 3
 
 sources:
   equity_list: NSE EQUITY_L.csv - every main-board equity (symbol, name, ISIN, series, listing date)
@@ -26,6 +26,7 @@ sources:
   shareholding: NSE shareholding pattern (promoter & promoter group %, quarter)
   fno_list: NSE fo_mktlots.csv - stocks with futures & options
   price_bands: NSE sec_list.csv - today's price band (circuit limit)
+  theme_rules: config/theme_rules.yaml - our theme lists (NSE thematic indices, NSE industries, hand-picked)
   mto: NSE MTO_ddmmyyyy.DAT - security-wise delivery position, every trading day from 2007
   settings: config/settings.yaml (parameters such as the liquid rule)
 
@@ -53,7 +54,7 @@ fields:
   - {id: last_date, label: Last trade, type: date, formula: "Last stored trading day", inputs: [bhavcopy], provided_in_phase: 1, source: derived, file: [stocks]}
   - {id: sessions, label: Sessions stored, type: integer, formula: "Number of stored trading days", inputs: [bhavcopy], provided_in_phase: 1, source: derived, file: [stocks]}
   - {id: status, label: Status, type: text, formula: "active = traded within 10 days of the newest trading day; inactive = not since; no_history = nothing stored", inputs: [last_date], provided_in_phase: 1, source: derived, file: [stocks]}
-  - {id: date, label: Date, type: date, formula: "Trading day of the row (snapshot: the latest row)", inputs: [bhavcopy, index_history], provided_in_phase: 0, source: derived, file: [snapshot, delivery]}
+  - {id: date, label: Date, type: date, formula: "Trading day of the row (snapshot: the latest row)", inputs: [bhavcopy, index_history], provided_in_phase: 0, source: derived, file: [snapshot, delivery, groups]}
   - {id: stale, label: Stale, type: boolean, formula: "Latest row more than 10 days older than the newest data date", inputs: [date], provided_in_phase: 0, source: derived, file: [snapshot]}
   # ------------------------------------------------------------ size and liquidity (phase 1)
   - {id: face_value, label: Face value, type: rupees, formula: "Face value per share", inputs: [nse_quote], provided_in_phase: 1, source: NSE, file: [stocks]}
@@ -102,3 +103,8 @@ fields:
   # ------------------------------------------------------------ delivery (phase 2)
   - {id: deliv_qty, label: Delivery qty, type: integer, formula: "Deliverable quantity of the day as traded (not split-adjusted)", inputs: [mto], provided_in_phase: 2, source: NSE, file: [delivery]}
   - {id: deliv_pct, label: Delivery %, type: percent, formula: "Deliverable quantity / traded quantity x 100 (NSE's figure)", inputs: [mto], provided_in_phase: 2, source: NSE, file: [delivery]}
+  # ------------------------------------------------------------ groups (phase 3)
+  - {id: group_ret_mean, label: Group return (equal weight), type: percent, formula: "Average one-day return of the group's members that were liquid the day before (moves beyond +-50 % left out)", inputs: [close, liquid, sector, basic_industry, theme_rules], provided_in_phase: 3, source: derived, file: [groups]}
+  - {id: group_ret_median, label: Group median return, type: percent, formula: "Median one-day return of the same members", inputs: [close, liquid, sector, basic_industry, theme_rules], provided_in_phase: 3, source: derived, file: [groups]}
+  - {id: group_index, label: Group index, type: number, formula: "1000 x cumulative product of (1 + group_ret_mean) from the first day with >= 3 counted members", inputs: [group_ret_mean], provided_in_phase: 3, source: derived, file: [groups]}
+  - {id: group_members, label: Members counted, type: integer, formula: "Members that counted that day", inputs: [liquid], provided_in_phase: 3, source: derived, file: [groups]}

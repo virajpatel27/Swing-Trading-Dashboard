@@ -1,0 +1,89 @@
+# Themes (Phase S3): our own lists, rebuilt every day into data/meta/themes.csv by swingdash/themes.py.
+# A stock may be in several themes. Edit THIS file (not themes.csv):
+#   nse_indices      every member of these official NSE indices joins (source "NSE index ..."; highest confidence)
+#   basic_industries every stock of these NSE basic industries joins (source "NSE industry ...")
+#   symbols          stocks added by hand (source "manual - check"; please review them)
+#   exclude          stocks never in this theme
+# The NSE index members come from each stock's NSE quote (classification.csv -> indices), so index rebalances flow in.
+
+themes:
+  Defence:
+    nse_indices: [NIFTY INDIA DEFENCE]
+    basic_industries: [Aerospace & Defense]
+  Railways:
+    nse_indices: [NIFTY INDIA RAILWAYS PSU]
+    basic_industries: [Railway Wagons]
+    symbols: [TITAGARH, TEXRAIL, JWL, KERNEX, HBLENGINE, BEML, RKFORGE]
+  EV & New-age Auto:
+    nse_indices: [NIFTY EV & NEW AGE AUTOMOTIVE]
+  Internet & New-age Tech:
+    nse_indices: [NIFTY INDIA INTERNET]
+    basic_industries: [E-Retail/ E-Commerce, Internet & Catalogue Retail, Web based media and service, Financial Technology (Fintech)]
+  AI & Data:
+    nse_indices: [NIFTY AI CATALYSTS]
+  Capital Markets:
+    nse_indices: [NIFTY CAPITAL MARKETS]
+    basic_industries: [Stockbroking & Allied, Exchange and Data Platform, Asset Management Company,
+                       Depositories Clearing Houses and Other Intermediaries, Other Capital Market related Services,
+                       Financial Products Distributor, Ratings]
+  PSU:
+    nse_indices: [NIFTY PSE, NIFTY CPSE, NIFTY PSU BANK, NIFTY INDIA RAILWAYS PSU]
+    basic_industries: [Public Sector Bank]
+  Housing & Real Estate:
+    nse_indices: [NIFTY HOUSING, NIFTY CORE HOUSING, NIFTY REITS & REALTY]
+  Housing Finance:
+    basic_industries: [Housing Finance Company]
+  Tourism & Travel:
+    nse_indices: [NIFTY INDIA TOURISM]
+    basic_industries: [Hotels & Resorts, Airline, Airport & Airport services, Tour Travel Related Services, Amusement Parks/ Other Recreation]
+  Sugar & Ethanol:
+    nse_indices: [NIFTY SUGAR & ETHANOL]
+    basic_industries: [Sugar]
+  Small Finance & Microfinance:
+    nse_indices: [NIFTY SMALL FINANCE BANKS & MICROFINANCE INSTITUTIONS]
+    basic_industries: [Microfinance Institutions]
+  Insurance:
+    nse_indices: [NIFTY INSURANCE]
+    basic_industries: [Life Insurance, General Insurance, Insurance Distributors]
+  Rural:
+    nse_indices: [NIFTY RURAL]
+  New-age Consumption:
+    nse_indices: [NIFTY INDIA NEW AGE CONSUMPTION]
+  Infrastructure:
+    nse_indices: [NIFTY INFRASTRUCTURE, NIFTY CONSTRUCTION]
+    basic_industries: [Civil Construction, Road Assets - Toll Annuity Hybrid-Annuity, Dredging]
+  Logistics & Shipping:
+    nse_indices: [NIFTY TRANSPORTATION & LOGISTICS]
+    basic_industries: [Logistics Solution Provider, Shipping, Port & Port services, Road Transport, Transport Related Services]
+  Ship Building:
+    basic_industries: [Ship Building & Allied Services]
+  Power Transmission & Equipment:
+    basic_industries: [Power - Transmission, Heavy Electrical Equipment, Cables - Electricals, Other Electrical Equipment]
+  Solar & Renewables:
+    symbols: [WAAREEENER, PREMIERENE, BORORENEW, INOXWIND, SUZLON, KPIGREEN, NTPCGREEN, ACMESOLAR, ADANIGREEN,
+              WEBELSOLAR, SWSOLAR, INOXGREEN]
+  EMS & Electronics:
+    basic_industries: [Consumer Electronics]
+    symbols: [DIXON, KAYNES, SYRMA, AVALON, AMBER, PGEL, CENTUM, ELIN, DCXINDIA, IKIO, CYIENTDLM]
+  Gold & Jewellery:
+    basic_industries: [Gems Jewellery And Watches, Precious Metals]
+  Water:
+    basic_industries: [Water Supply & Management]
+  Waste & Environment:
+    basic_industries: [Waste Management]
+  Media & Entertainment:
+    nse_indices: [NIFTY WAVES, NIFTY MEDIA]
+  MNC:
+    nse_indices: [NIFTY MNC]
+  Tata Group:
+    nse_indices: [NIFTY INDIA CORPORATE GROUP INDEX - TATA GROUP]
+  Aditya Birla Group:
+    nse_indices: [NIFTY INDIA CORPORATE GROUP INDEX - ADITYA BIRLA GROUP]
+  Mahindra Group:
+    nse_indices: [NIFTY INDIA CORPORATE GROUP INDEX - MAHINDRA GROUP]
+  Hospitals & Healthcare Services:
+    nse_indices: [NIFTY HOSPITALS]
+    basic_industries: [Hospital, Healthcare Service Provider, Healthcare Research Analytics & Technology]
+  Chemicals:
+    nse_indices: [NIFTY CHEMICALS]
+    basic_industries: [Specialty Chemicals, Dyes And Pigments, Pesticides & Agrochemicals, Fertilizers]

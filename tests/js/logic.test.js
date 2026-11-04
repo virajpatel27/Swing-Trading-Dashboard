@@ -100,3 +100,29 @@ test("Nifty 500 view shows only member stocks", () => {
   assert.deepEqual(SD.filterRows(r, { view: "n500" }).map((x) => x.id), ["A"]);
   assert.deepEqual(SD.filterRows(r, { view: "stock" }).map((x) => x.id), ["A", "B"]);
 });
+
+// ---- Phase S5: stock table helpers
+test("screenRows adds key and days since listing; fmtCell formats by type", () => {
+  const snap = { data_date: "2026-11-04", columns: ["id", "symbol", "listed", "chg_1d", "stage", "liquid"],
+    rows: [["TITAN", "TITAN", "2004-09-24", 4.2174, "2", true]] };
+  const [r] = SD.screenRows(snap);
+  assert.strictEqual(r.key, "s:TITAN");
+  assert.strictEqual(r.days_listed, Math.floor((Date.parse("2026-11-04") - Date.parse("2004-09-24")) / 86400000));
+  assert.strictEqual(SD.fmtCell(4.2174, "pct"), "+4.22%");
+  assert.strictEqual(SD.fmtCell("2A", "stage"), "2 Early uptrend");
+  assert.strictEqual(SD.fmtCell(1.6489, "x"), "1.65×");
+  assert.strictEqual(SD.fmtCell(null, "pct"), "–");
+  assert.strictEqual(SD.fmtCell(-3, "signed"), "-3");
+});
+
+test("filterStocks: universe, sector, search; default columns exist", () => {
+  const rows = [{ symbol: "A", name: "Alpha", liquid: true, n500: true, fno: false, sector: "IT", basic_industry: "Software" },
+    { symbol: "B", name: "Beta", liquid: false, n500: false, fno: true, sector: "Power", basic_industry: "Utilities", stale: false },
+    { symbol: "C", name: "Gamma", liquid: true, stale: true }];
+  assert.deepStrictEqual(SD.filterStocks(rows, { universe: "liquid" }).map((r) => r.symbol), ["A"]);
+  assert.deepStrictEqual(SD.filterStocks(rows, { universe: "fno" }).map((r) => r.symbol), ["B"]);
+  assert.deepStrictEqual(SD.filterStocks(rows, { text: "soft" }).map((r) => r.symbol), ["A"]);
+  assert.deepStrictEqual(SD.filterStocks(rows, { sector: "Power" }).map((r) => r.symbol), ["B"]);
+  SD.DEFAULT_COLUMNS.forEach((c) => assert.ok(SD.COLUMNS[c], c));
+  assert.strictEqual(SD.SORTS[0][0], "symbol");
+});

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Swing Trading Dashboard</title>
-  <meta name="description" content="NSE and BSE indices and Nifty 500 stocks for swing traders: adjusted prices since 2007, indicators, screener, sectors.">
+  <meta name="description" content="NSE and BSE indices and every NSE main-board stock for swing traders: adjusted prices since 2007, indicators, charts, screener, sectors.">
   <meta name="theme-color" content="#0f172a">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/favicon-32.png" sizes="32x32">
@@ -22,6 +22,7 @@
     <a class="brand" href="#/"><img src="icons/favicon-32.png" alt="" width="22" height="22"><span>Swing Trading Dashboard</span></a>
     <nav class="tabs" aria-label="Main">
       <a href="#/" data-tab="market">Market</a>
+      <a href="#/stocks" data-tab="stocks">Stocks</a>
       <a href="#/screener" data-tab="screener">Screener</a>
       <a href="#/sectors" data-tab="sectors">Sectors</a>
       <a href="#/watchlist" data-tab="watchlist">Watchlist</a>
@@ -37,6 +38,8 @@
       <a href="https://www.tradingview.com/" target="_blank" rel="noopener">TradingView</a> Lightweight Charts™.</p>
   </footer>
   <script src="logic.js"></script>
+  <script src="ind.js"></script>
+  <script src="chart.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

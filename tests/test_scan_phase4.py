@@ -155,3 +155,16 @@ def test_formulas_doc_is_up_to_date():
     import make_formulas_doc
     assert (ROOT / "docs" / "formulas.md").read_text(encoding="utf-8") == make_formulas_doc.render(registry.load()), \
         "run scripts/make_formulas_doc.py"
+
+
+def test_site_table_columns_are_registered_fields():
+    """Every column of the website's stock table (site/logic.js COLUMN_GROUPS) is a field of screen.json in the registry."""
+    import re
+    js = (ROOT / "site" / "logic.js").read_text(encoding="utf-8")
+    block = js[js.index("const COLUMN_GROUPS"):js.index("const COLUMNS = {}")]
+    ids = re.findall(r'\["([a-z0-9_]+)", "[^"]+", "[a-z0-9]+"\]', block)
+    assert len(ids) > 60
+    reg = {f["id"]: f for f in registry.load()["fields"]}
+    for i in ids:
+        assert i in reg, f"table column {i} is not in config/fields.yaml"
+        assert "screen" in (reg[i].get("file") or []) or i == "days_listed", f"{i} is not a screen.json field"

@@ -400,3 +400,28 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   TA-Lib 0.6.8 in requirements-dev.txt (tests only). 150 Python tests green.
 - NEXT: Viraj commits + pushes; check Backfill #10 (delivery) and the first website build with screen.json; then S5
   (results table with column settings + chart with the indicator menu).
+
+### 2026-11-04 (night): Scanner Phase S5 - results table + chart (built, waiting for Viraj's look)
+- Deploy website #4 (after the S4 push) published screen.json: 2,625 stocks x 113 fields, data 04-Nov.
+- New "Stocks" page (#/stocks, site/app.js): every stock with the screen fields; column settings (7 groups, ~70 columns
+  from SD.COLUMN_GROUPS; default = 1D %, Volume, Turnover, 1W %, RVol, Market cap, RS rating; saved in localStorage),
+  sort menu (A-Z, Price, Price x Volume, Market cap, RS rating, From 52W high, 1D %) + column titles, universe All /
+  Liquid / Nifty 500 / F&O, sector, search, multi-select, Copy (NSE:SYMBOL list), CSV; >= 1100 px: table + chart side by
+  side, arrow keys move. Phones: a tap opens the stock page (#/i/s/ID) with the same chart + key stats.
+- New chart (site/chart.js, Lightweight Charts 5.0.8 with panes): D / W, candles / bars, 4 styles, header (OHLC, change,
+  1M / 3M, volume, Avg 20D, RVol; chips Float mcap, RS, Stage, From 52W high), indicator menu with settings dialogs:
+  moving averages (presets Minervini / Weinstein / Qullamaggie / O'Neil / mine, custom lines), Supertrend, Bollinger,
+  Swing bands, Watermark, Volume (high-volume colours, pocket pivots, dry-ups, HVE/HVY/HVQ/Y/Q labels), RS line (4
+  benchmarks, above / below, new-high dots), Mansfield RS, Stage pane, RSI, MACD, MFI, Relative extension, ATR, ADR %,
+  Trend intensity; markers: corporate actions, 52W high/low, swing % moves, circuit band, inside bars; drawings (trend
+  line, text, measure, colour, delete; saved per stock + timeframe in localStorage).
+- site/ind.js = the engine's formulas in JS; tests/js/ind.test.js checks 27 series on RELIANCE / TITAN / TRENT against
+  the Python engine (tests/js/fixtures/expected_*.json from tests/js/make_expected.py): equal. Table columns must be
+  registered screen fields (test). days_listed registered (phase 5, computed in the browser); deliv_pct also a screen
+  field. 151 Python + 18 JS tests green.
+- Browser check (local build, 1440x900 + phone 375x812): table, sort menu, search, split chart, indicator menu, 6 panes,
+  weekly, drawings OK. Fixed while checking: sort menu always open (CSS [hidden]), pane sizes (stretch factors instead of
+  setHeight), drawings offset (pane position from its element, wait until painted), chart height on phones with many
+  panes, volume axis in L / Cr.
+- NEXT: Viraj commits + pushes and looks at the live Stocks page; then S6 (scanner engine + formula editor + price
+  scanners, calibrated to the reference counts).

@@ -134,3 +134,80 @@ tbody tr:hover .sticky { background: var(--panel-2); }
 .foot { max-width: 1400px; margin: 8px auto 0; padding: 16px 16px max(24px, env(safe-area-inset-bottom)); color: var(--muted); font-size: 12.5px; border-top: 1px solid var(--line); }
 .foot p { margin: 0 0 6px; }
 .foot strong { color: var(--text); }
+
+/* ---------------------------------------------------------------- Phase S5: stocks table, chart, menus */
+.btn.sm, .seg.sm button { padding: 3px 8px; font-size: 12.5px; }
+.btn.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.small { font-size: 12px; }
+.split { display: block; }
+.split .chart-pane { display: none; }
+.split.on { display: grid; grid-template-columns: minmax(0, 46%) minmax(0, 54%); gap: 12px; align-items: start; }
+.split.on .chart-pane { display: block; position: sticky; top: 64px; }
+.split.on .list .table-wrap { max-height: calc(100vh - 230px); overflow: auto; }
+.split.on .list th { top: 0; z-index: 2; }
+tr.cur td { background: var(--accent-soft) !important; }
+td input[type="checkbox"], th input[type="checkbox"] { accent-color: var(--accent); }
+.foot-bar { margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+.menu-wrap { position: relative; }
+.menu { position: absolute; z-index: 20; top: 100%; left: 0; margin-top: 4px; min-width: 200px; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 8px; box-shadow: 0 6px 24px rgba(0, 0, 0, .15); padding: 4px; display: flex; flex-direction: column; }
+.menu[hidden] { display: none; }
+.menu button { border: 0; background: none; text-align: left; padding: 7px 10px; border-radius: 6px; cursor: pointer; }
+.menu button:hover, .menu button.on { background: var(--accent-soft); color: var(--accent); }
+.stg { font-size: 12px; padding: 1px 6px; border-radius: 999px; background: var(--panel-2); white-space: nowrap; }
+.stg.s2, .stg.s2a { color: #089981; } .stg.s3 { color: #e68a00; } .stg.s4 { color: #f23645; } .stg.s4a { color: #e57373; } .stg.s1 { color: var(--muted); }
+
+/* dialogs */
+.modal-bg { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .35); display: flex; align-items: flex-start; justify-content: center; padding: 6vh 12px; overflow-y: auto; }
+.modal { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; width: min(460px, 100%); box-shadow: 0 10px 40px rgba(0, 0, 0, .25); }
+.modal.wide { width: min(760px, 100%); }
+.modal-h, .modal-f { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.modal-f { border-top: 1px solid var(--line); border-bottom: 0; }
+.modal-f span { flex: 1; }
+.modal-h .icon-btn { margin-left: auto; width: 30px; height: 30px; }
+.modal-b { padding: 12px 14px; max-height: 70vh; overflow-y: auto; }
+.modal h4 { margin: 12px 0 6px; font-size: 13px; color: var(--muted); }
+.f-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; flex-wrap: wrap; }
+.f-row small { color: var(--muted); width: 100%; padding-left: 24px; margin-top: -2px; }
+.f-row input[type="number"] { width: 90px; border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; background: var(--panel); }
+.f-row select { padding: 4px 6px; }
+.ind-q, #colQ { width: 100%; margin-bottom: 8px; }
+.ind-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.ind-row label { flex: 1; display: flex; flex-wrap: wrap; gap: 0 8px; cursor: pointer; }
+.ind-row small { width: 100%; color: var(--muted); padding-left: 24px; }
+.ma-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ma-row { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
+.ma-row input[type="number"] { width: 70px; border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; background: var(--panel); }
+.styles { display: flex; flex-wrap: wrap; gap: 12px; }
+.style-opt { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+.style-opt span { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
+.cols-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.cols-grid details { border-bottom: 1px solid var(--line); padding: 4px 0; }
+.cols-grid summary { cursor: pointer; font-weight: 600; padding: 4px 0; }
+.mine-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--line); gap: 6px; }
+@media (max-width: 720px) { .cols-grid, .ma-grid { grid-template-columns: 1fr; } }
+
+/* chart */
+.chart-box.big, .chart-pane { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px; }
+.ch-head { margin-bottom: 4px; }
+.ch-l1 { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.ch-sym { font-size: 16px; margin-right: 4px; }
+.chip-s { font-size: 11.5px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; white-space: nowrap; }
+.ch-l2 { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12.5px; color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+.ch-l2 b { color: var(--text); font-weight: 600; }
+.ch-desc { font-size: 12px; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ch-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0; }
+.ch-tools .legend { width: 100%; }
+.draw-tools { display: inline-flex; align-items: center; gap: 2px; border: 1px solid var(--line); border-radius: 7px; padding: 2px; }
+.draw-tools button { border: 0; background: none; width: 28px; height: 26px; border-radius: 5px; cursor: pointer; color: var(--muted); }
+.draw-tools button.on { background: var(--accent-soft); color: var(--accent); }
+.draw-tools input[type="color"] { width: 26px; height: 24px; border: 0; padding: 0; background: none; cursor: pointer; }
+.ch-wrap { position: relative; }
+.ch-canvas { height: 560px; width: 100%; }
+.chart-pane .ch-canvas { height: calc(100vh - 400px); min-height: 380px; }
+.ch-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.ch-svg g { pointer-events: visiblePainted; cursor: pointer; }
+.ch-wrap.drawing .ch-canvas { cursor: crosshair; }
+.ch-note { font-size: 12px; margin-top: 4px; }
+@media (max-width: 720px) { .ch-canvas { height: 440px; } }

@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S4**. Fields: **144**.
+Current phase: **S5**. Fields: **145**.
 
 ## Sources
 
@@ -100,7 +100,7 @@ Current phase: **S4**. Fields: **144**.
 | field | label | type | formula | inputs | files |
 |---|---|---|---|---|---|
 | `deliv_qty` | Delivery qty | integer | Deliverable quantity of the day as traded (not split-adjusted) | mto | data/stocks/delivery/<ID>/ |
-| `deliv_pct` | Delivery % | percent | Deliverable quantity / traded quantity x 100 (NSE's figure) | mto | data/stocks/delivery/<ID>/ |
+| `deliv_pct` | Delivery % | percent | Deliverable quantity / traded quantity x 100 (NSE's figure) | mto | data/stocks/delivery/<ID>/, data/snapshot/screen.json |
 
 ## Fields of phase S3
 
@@ -189,3 +189,9 @@ Current phase: **S4**. Fields: **144**.
 | `rs_chg_1w` | RS rating change 1W | integer | rs_rating - rs_rating 5 sessions ago | rs_rating | data/snapshot/screen.json |
 | `rs_chg_1m` | RS rating change 1M | integer | rs_rating - rs_rating 21 sessions ago | rs_rating | data/snapshot/screen.json |
 | `rs_rating_1m_ago` | RS rating 1M ago | integer | rs_rating 21 sessions ago | rs_rating | data/snapshot/screen.json |
+
+## Fields of phase S5
+
+| field | label | type | formula | inputs | files |
+|---|---|---|---|---|---|
+| `days_listed` | Days Since Listing | integer | Calendar days from the NSE listing date to the data date | listed | site |

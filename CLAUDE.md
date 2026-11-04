@@ -100,6 +100,10 @@ deploy-site.yml, ~5-7 min, 4 processes). Calibrated on 03-Nov (docs/calibration.
 RS rating ranked among ALL stocks, RS benchmark Smallcap 250, 1Y = 251 sessions, avg vol 50 incl. today, days since 52W
 high in calendar days. Registry `config/fields.yaml` (current_phase 4, 144 fields) -> `scripts/make_formulas_doc.py` ->
 docs/formulas.md (a test fails when it is stale). Golden tests vs TA-Lib (requirements-dev).
+S5 (website): `site/ind.js` (SDI) = engine formulas in JS, tests/js/ind.test.js compares with tests/js/fixtures/expected_*.json
+(made by `python tests/js/make_expected.py` - run it after changing a formula). `site/chart.js` (SDChart, Lightweight
+Charts 5.0.8 from unpkg, panes) and the "Stocks" page in `site/app.js` (#/stocks; table columns = SD.COLUMN_GROUPS in
+logic.js, each must be a registered screen field - test). Settings / drawings live in the browser (localStorage).
 Repo folder on the PC: `C:\Users\hello\OneDrive\Documents\Swing Trading\Swing Trading` (nested). Manual steps: `docs/MANUAL_CHECKLIST.md`.
 Read GitHub run results without a token via the public API (`api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/runs`,
 then `.../actions/runs/<id>/jobs` and `.../check-runs/<job id>/annotations`). Logs, Summary page and artifacts need a signed-in user,

@@ -156,8 +156,90 @@
     return Math.max(-4, Math.min(4, Math.round((pct / scale) * 4)));
   }
 
+  /* ---------------------------------------------------------------- results table (Phase S5)
+     Column registry: id = field in screen.json (config/fields.yaml), fmt = how it is shown. Only fields that exist. */
+  const STAGE_TXT = { 1: "Basing", "2A": "Early uptrend", 2: "Uptrend", 3: "Topping", 4: "Downtrend", "4A": "Improving" };
+  const COLUMN_GROUPS = [
+    ["General", [["mcap_cr", "Market Cap (₹ Cr)", "cr"], ["sector", "Sector", "text"], ["basic_industry", "Industry", "text"],
+      ["float_pct", "Free Float %", "num1"], ["float_mcap_cr", "Float Market Cap (₹ Cr)", "cr"], ["fno", "F&O Stock", "bool"],
+      ["listed", "Listing Date", "date"], ["days_listed", "Days Since Listing", "int"], ["price_band", "Circuit %", "text"],
+      ["n500", "Nifty 500", "bool"]]],
+    ["Price & Day", [["close", "Price", "price"], ["chg_1d", "1D Change %", "pct"], ["chg_1d_rs", "1D Change ₹", "price"], ["open", "Open", "price"],
+      ["high", "Day High", "price"], ["low", "Day Low", "price"], ["prev_close", "Previous Close", "price"], ["gap_up", "Gap Up %", "pct"]]],
+    ["Returns", [["ret_1w", "1W Change %", "pct"], ["ret_10d", "10D Change %", "pct"], ["ret_1m", "1M Change %", "pct"], ["ret_3m", "3M Change %", "pct"],
+      ["ret_6m", "6M Change %", "pct"], ["ret_1y", "1Y Change %", "pct"], ["ret_ytd", "YTD Change %", "pct"]]],
+    ["Moving Averages", [["from_sma10", "From 10 SMA %", "pct"], ["from_sma20", "From 20 SMA %", "pct"], ["from_ema50", "From 50 EMA %", "pct"],
+      ["from_sma50", "From 50 SMA %", "pct"], ["from_sma200", "From 200 SMA %", "pct"], ["sma10", "10 SMA", "price"], ["sma20", "20 SMA", "price"],
+      ["ema50", "50 EMA", "price"], ["sma150", "150 SMA", "price"], ["sma200", "200 SMA", "price"]]],
+    ["Highs, Lows", [["high_20d", "20D High", "price"], ["low_20d", "20D Low", "price"], ["hi52", "52W High", "price"], ["lo52", "52W Low", "price"],
+      ["ath", "All-Time High", "price"], ["from_hi52", "From 52W High %", "pct"], ["from_lo52", "From 52W Low %", "pct"], ["from_ath", "From ATH %", "pct"],
+      ["days_since_hi52", "Days Since 52W High", "int"]]],
+    ["Volume", [["volume", "Volume", "vol"], ["turnover_cr", "Turnover (₹ Cr)", "num2"], ["rvol", "Relative Volume", "x"], ["avg_vol20", "Avg Volume 20D", "vol"],
+      ["avg_vol50", "Avg Volume 50D", "vol"], ["vol_chg_1d", "Volume Change vs Prev Day %", "pct"], ["vol_vs_avg50", "Volume / 50D Avg", "x"],
+      ["turnover_avg20_cr", "Avg Turnover 20D (₹ Cr)", "num2"], ["turnover_avg50_cr", "Avg Turnover 50D (₹ Cr)", "num2"], ["deliv_pct", "Delivery %", "num1"]]],
+    ["Strength", [["rs_rating", "RS Rating", "int"], ["rs_chg_1w", "RS Rating Change (1W)", "signed"], ["rs_chg_1m", "RS Rating Change (1M)", "signed"],
+      ["rs_rating_1m_ago", "RS Rating 1M Ago", "int"], ["rs_rating_1w", "RS Rating 1W", "int"], ["rs_rating_1m", "RS Rating 1M", "int"],
+      ["rs_rating_3m", "RS Rating 3M", "int"], ["rs_line_52w_high", "RS Line at 52W High", "bool"], ["rs_new_high_before_price", "RS New High Before Price", "bool"],
+      ["rsi14", "RSI (14)", "num1"], ["adr_pct", "ADR % (20)", "num2"], ["atr_pct", "ATR %", "num2"], ["stage", "Stage", "stage"], ["beta_1y", "Beta (1Y vs Nifty 50)", "num2"],
+      ["mansfield_rs", "Mansfield RS", "num1"], ["trend_intensity", "Trend Intensity", "num1"], ["rel_ext", "Relative Extension", "num1"], ["mfi14", "MFI (14)", "num1"]]],
+  ];
+  const COLUMNS = {};
+  COLUMN_GROUPS.forEach(([g, cols]) => cols.forEach(([id, label, fmt]) => { COLUMNS[id] = { id, label, fmt, group: g }; }));
+  const DEFAULT_COLUMNS = ["chg_1d", "volume", "turnover_cr", "ret_1w", "rvol", "mcap_cr", "rs_rating"];
+  const SORTS = [["symbol", "A–Z", "asc"], ["close", "Price", "desc"], ["turnover_cr", "Price × Volume", "desc"], ["mcap_cr", "Market cap", "desc"],
+    ["rs_rating", "RS rating", "desc"], ["from_hi52", "From 52W high", "desc"], ["chg_1d", "Performance (1D %)", "desc"]];
+
+  /** screen.json (column-wise) -> row objects (+ days_listed, key) */
+  function screenRows(snap, today) {
+    const cols = snap.columns;
+    const t = today ? Date.parse(today) : Date.parse(snap.data_date);
+    return snap.rows.map((vals) => {
+      const o = { kind: "stock", exchange: "NSE" };
+      cols.forEach((c, i) => { o[c] = vals[i]; });
+      o.days_listed = o.listed ? Math.floor((t - Date.parse(o.listed)) / 86400000) : null;
+      o.key = "s:" + o.id;
+      return o;
+    });
+  }
+
+  /** a value shown in a table cell (text only; colours are added by the page) */
+  function fmtCell(v, fmt) {
+    if (v == null || v === "") return "–";
+    switch (fmt) {
+      case "pct": return fmtPct(v);
+      case "price": return fmtPrice(v);
+      case "vol": return fmtVol(v);
+      case "cr": return inr0.format(v);
+      case "num1": return Number(v).toFixed(1);
+      case "num2": return Number(v).toFixed(2);
+      case "int": return inr0.format(v);
+      case "signed": return (v > 0 ? "+" : "") + inr0.format(v);
+      case "x": return Number(v).toFixed(2) + "×";
+      case "bool": return v ? "Yes" : "No";
+      case "date": return fmtDate(v);
+      case "stage": return `${String(v).replace("A", "")} ${STAGE_TXT[v] || ""}`.trim();
+      default: return String(v);
+    }
+  }
+
+  /** universe filter for the stock table: all / liquid / n500 / fno, plus sector and text search */
+  function filterStocks(rows, { universe = "all", sector = "", text = "", hideStale = true } = {}) {
+    const q = text.trim().toLowerCase();
+    return rows.filter((r) => {
+      if (hideStale && r.stale) return false;
+      if (universe === "liquid" && !r.liquid) return false;
+      if (universe === "n500" && !r.n500) return false;
+      if (universe === "fno" && !r.fno) return false;
+      if (sector && r.sector !== sector) return false;
+      if (q && !(String(r.symbol).toLowerCase().includes(q) || String(r.name).toLowerCase().includes(q)
+        || String(r.basic_industry || "").toLowerCase().includes(q))) return false;
+      return true;
+    });
+  }
+
   const api = { PERIODS, SCREENS, RANGES, rowsFromSnapshot, keyOf, fmtPrice, fmtPct, fmtInt, fmtVol, fmtDate, filterRows, sortRows,
-    toCSV, candlesFromChart, toWeekly, ema, sliceRange, colorClass, heatLevel };
+    toCSV, candlesFromChart, toWeekly, ema, sliceRange, colorClass, heatLevel, STAGE_TXT, COLUMN_GROUPS, COLUMNS, DEFAULT_COLUMNS, SORTS,
+    screenRows, fmtCell, filterStocks };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.SD = api;
 })(typeof self !== "undefined" ? self : this);

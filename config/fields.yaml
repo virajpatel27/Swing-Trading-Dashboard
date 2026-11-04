@@ -14,7 +14,7 @@
 #                      delivery = data/stocks/delivery/<ID>/, groups = data/groups/<level>/<id>/,
 #                      screen = data/snapshot/screen.json (every engine field, latest day; Phase S4)
 
-current_phase: 4
+current_phase: 5
 
 sources:
   equity_list: NSE EQUITY_L.csv - every main-board equity (symbol, name, ISIN, series, listing date)
@@ -104,7 +104,7 @@ fields:
   - {id: flags, label: Flags, type: list, formula: "Simple signals: 52W / 20D breakout or breakdown, above EMA50 & 200, RSI 50-70, near 52W high, volume spike, strong RS", inputs: [close, hi52, ema50, ema200, rsi14, vol_ratio, rs_rating], provided_in_phase: 0, source: derived, file: [snapshot]}
   # ------------------------------------------------------------ delivery (phase 2)
   - {id: deliv_qty, label: Delivery qty, type: integer, formula: "Deliverable quantity of the day as traded (not split-adjusted)", inputs: [mto], provided_in_phase: 2, source: NSE, file: [delivery]}
-  - {id: deliv_pct, label: Delivery %, type: percent, formula: "Deliverable quantity / traded quantity x 100 (NSE's figure)", inputs: [mto], provided_in_phase: 2, source: NSE, file: [delivery]}
+  - {id: deliv_pct, label: Delivery %, type: percent, formula: "Deliverable quantity / traded quantity x 100 (NSE's figure)", inputs: [mto], provided_in_phase: 2, source: NSE, file: [delivery, screen]}
   # ------------------------------------------------------------ groups (phase 3)
   - {id: group_ret_mean, label: Group return (equal weight), type: percent, formula: "Average one-day return of the group's members that were liquid the day before (moves beyond +-50 % left out)", inputs: [close, liquid, sector, basic_industry, theme_rules], provided_in_phase: 3, source: derived, file: [groups]}
   - {id: group_ret_median, label: Group median return, type: percent, formula: "Median one-day return of the same members", inputs: [close, liquid, sector, basic_industry, theme_rules], provided_in_phase: 3, source: derived, file: [groups]}
@@ -185,3 +185,5 @@ fields:
   - {id: rs_chg_1w, label: "RS rating change 1W", type: integer, formula: "rs_rating - rs_rating 5 sessions ago", inputs: [rs_rating], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: rs_chg_1m, label: "RS rating change 1M", type: integer, formula: "rs_rating - rs_rating 21 sessions ago", inputs: [rs_rating], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: rs_rating_1m_ago, label: "RS rating 1M ago", type: integer, formula: "rs_rating 21 sessions ago", inputs: [rs_rating], provided_in_phase: 4, source: derived, file: [screen]}
+  # ------------------------------------------------------------ website (phase 5): computed in the browser
+  - {id: days_listed, label: "Days Since Listing", type: integer, formula: "Calendar days from the NSE listing date to the data date", inputs: [listed], provided_in_phase: 5, source: derived, file: [site]}

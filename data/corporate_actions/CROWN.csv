@@ -1,3 +1,5 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
-2022-12-16,dividend,,1.0,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 0.20 Per Share,NSE
-2023-11-17,dividend,,1.0,0.4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 0.40 Per Share,NSE
+2017-09-14,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,ANNUAL GENERAL MEETING/DIV-RE 1/- PER SHARE,NSE
+2021-10-18,bonus,4:1,0.2,,ratio from NSE text,applied,BONUS 4:1,NSE
+2022-12-16,dividend,,1,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 0.20 Per Share,NSE
+2023-11-17,dividend,,1,0.4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 0.40 Per Share,NSE

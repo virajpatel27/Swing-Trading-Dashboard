@@ -1,0 +1,4 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2018-09-05,bonus,2:1,0.33333333,,ratio from NSE text,applied,BONUS 2:1,NSE
+2019-05-02,split,FV 10->5,0.5,,ratio from NSE text,applied,FACE VALUE SPLIT (SUB-DIVISION) - FROM RS 10/- PER SHARE TO RS 5/- PER SHARE,NSE
+2019-10-22,bonus,1:1,0.5,,ratio from NSE text,applied,BONUS 1:1,NSE

@@ -1,4 +1,6 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
+2019-09-19,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,ANNUAL GENERAL MEETING/DIVIDEND - RS 1 PER SHARE,NSE
+2020-09-22,dividend,,1.0,1.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,ANNUAL GENERAL MEETING/DIVIDEND - RS 1.20 PER SHARE,NSE
 2021-09-22,dividend,,1.0,1.4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 1.40 Per Sh,NSE
 2022-09-22,dividend,,1.0,1.4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 1.40 Per Share,NSE
 2023-09-22,dividend,,1.0,1.4,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 1.40 Per Share,NSE

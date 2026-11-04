@@ -1,4 +1,6 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
+2018-09-12,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,ANNUAL GENERAL MEETING/DIVIDEND RE 0.50 PER SHARE,NSE
+2019-04-24,bonus,1:2,0.66666667,,ratio from NSE text,applied,BONUS 1:2,NSE
 2019-09-12,dividend,,1,0.1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 0.10 Per Share,NSE
 2022-01-18,bonus,1:2,0.66666667,,ratio from NSE text,applied,Bonus 1:2,NSE
 2022-01-18,split,FV 10->2,0.2,,ratio from NSE text,applied,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share,NSE

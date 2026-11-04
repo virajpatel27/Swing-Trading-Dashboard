@@ -1,0 +1,5 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2016-09-16,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,ANNUAL GENERAL MEETING/DIVIDEND - RE 1/- PER SHARE,NSE
+2017-09-21,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,ANNUAL GENERAL MEETING/ DIVIDEND- RE 1 PER SHARE,NSE
+2018-09-19,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,ANNUAL GENERAL MEETING/DIVIDEND RE 1 PER SHARE,NSE
+2021-10-07,bonus,4:1,0.2,,ratio from NSE text,applied,BONUS 4:1,NSE

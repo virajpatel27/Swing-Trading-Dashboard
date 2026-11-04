@@ -1,2 +1,4 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
+2022-02-22,bonus,1:10,0.90909091,,ratio from NSE text,applied,BONUS 1:10,NSE
+2022-12-23,bonus,1:1,0.5,,ratio from NSE text,applied,BONUS 1:1,NSE
 2024-03-20,bonus,1:2,0.66666667,,ratio from NSE text,applied,Bonus 1:2,NSE

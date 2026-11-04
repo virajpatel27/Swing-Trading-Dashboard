@@ -1,4 +1,5 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
+2019-07-09,bonus,1:2,0.66666667,,ratio from NSE text,applied,BONUS 1:2,NSE
 2019-08-29,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Re 1 Per Share,NSE
 2020-03-12,dividend,,1,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1.50 Per Sh,NSE
 2021-07-29,dividend,,1,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 1.50 Per Share,NSE

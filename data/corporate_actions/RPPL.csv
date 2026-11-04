@@ -1,4 +1,8 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
+2019-03-19,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,INTERIM DIVIDEND - RE 0.50 PER SHARE,NSE
+2019-09-18,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,ANNUAL GENERAL MEETING/DIVIDEND - RS 0.50 PER SHARE,NSE
+2020-09-17,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,ANNUAL GENERAL MEETING/DIVIDEND - RE 1 PER SHARE,NSE
+2021-09-16,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,DIVIDEND - RE 1 PER SHARE,NSE
 2022-09-21,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.50 Per Share,NSE
 2023-08-24,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.50 Per Share,NSE
 2024-02-26,bonus,2:1,0.33333333,,ratio from NSE text,applied,Bonus 2:1,NSE

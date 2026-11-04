@@ -1,2 +1,2 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
-2026-11-04,rights,3:8,,1.5,,future,Rights 3:8 @ Premium Re 0.50/-,NSE
+2026-11-04,rights,3:8,0.9297929793,1.5,"TERP, issue price 1.5, close before 2.02",applied,Rights 3:8 @ Premium Re 0.50/-,NSE

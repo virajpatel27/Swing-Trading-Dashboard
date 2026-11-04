@@ -1,0 +1,5 @@
+ex_date,type,ratio,factor,amount,method,status,subject,source
+2019-06-03,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,INTERIM DIVIDEND - RE 1 PER SHARE,NSE
+2020-07-09,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,INTERIM DIVIDEND - RS 0.50 PER SHARE,NSE
+2020-09-08,bonus,3:2,0.4,,ratio from NSE text,applied,BONUS 3:2 /DIVIDEND - RS 0.50 PER SHARE,NSE
+2020-09-08,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,BONUS 3:2 /DIVIDEND - RS 0.50 PER SHARE,NSE

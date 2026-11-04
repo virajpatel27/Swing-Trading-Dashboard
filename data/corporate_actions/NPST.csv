@@ -1,3 +1,4 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
-2025-09-12,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 2 Per Share,NSE
-2026-09-18,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 2 Per Share,NSE
+2024-02-02,bonus,2:1,0.33333333,,ratio from NSE text,applied,BONUS 2:1,NSE
+2025-09-12,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 2 Per Share,NSE
+2026-09-18,dividend,,1,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 2 Per Share,NSE

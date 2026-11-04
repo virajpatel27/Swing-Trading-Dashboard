@@ -1,4 +1,5 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
+2021-07-15,dividend,,1.0,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,DIVIDEND - RS 0.50 PER SHARE,NSE
 2022-01-27,dividend,,1.0,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 0.50 Per Share,NSE
 2022-06-20,dividend,,1.0,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 0.50 Per Sh,NSE
 2024-07-09,dividend,,1.0,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.50 Per Share,NSE

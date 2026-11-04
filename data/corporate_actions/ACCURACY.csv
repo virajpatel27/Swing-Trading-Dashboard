@@ -1,4 +1,5 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
+2018-08-02,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,INTERIM DIVIDEND- RE 1 PER SHARE,NSE
 2022-02-25,dividend,,1,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 0.25 Per Share,NSE
 2022-08-22,dividend,,1,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 0.25 Per Share,NSE
 2022-09-22,dividend,,1,0.25,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.25 Per Share,NSE

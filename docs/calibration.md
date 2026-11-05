@@ -80,3 +80,29 @@ one (ICICIBANK 1480, HAL 5149.9, TRENT 3244.5 ...); most others use a level that
 | IPO Base | IPO within a year, base 25+ sessions, pivot = high since listing, within 10 % | 2 | 1 |
 | Big Reversal | new 20-day low, close in the top 30 % of a day 1.5 x ADR wide | 15 | 16 |
 | Shakeout | 4 %+ below a rising SMA 50 in the last 5 sessions, back above it | 40 | 41 |
+
+## S9 - earnings scanners and group ranks (2026-11-05)
+
+Reference: sector table of 03-Nov (rank, rank change, tag) and the stock export (sector / industry rank 1M, vs sector /
+industry 1M). Earnings scanner counts of 30-Oct.
+
+| Finding | Result |
+|---|---|
+| Group return in the stock export (sector_ret, vs_sector_1m) | = plain AVERAGE of all member stocks' returns (median error 0.002 pt); median, liquid-only and market-cap weighted are all wrong |
+| Per-stock "sector rank 1M" / "industry rank 1M" | = rank of that average 1-month return (perfectly monotone for all 23 sectors) |
+| Sector table rank + tag | NOT a return rank. Best open fit: strength = 100 x RS / SMA(RS, 63), RS = group index / equal-weight market; momentum = 100 + strength change over 10 sessions; rank by strength. Rank correlation 0.88 (Spearman), tags 13 of 20 equal, rank change vs 5 sessions correlation 0.70. Tried: z-score JdK variants, 10-30 session windows, relative performance over N sessions (all <= 0.77) |
+
+Earnings scanners on 30-Oct (fundamentals for 570 of 2,621 stocks at that time: Nifty 500 + 70; the reference counts
+cover all stocks, so ours must be lower until the nightly fundamentals run finishes, ~10-Nov):
+
+| Scanner | Ours (Nifty 500) | Reference | Rule |
+|---|---|---|---|
+| Earnings Gap | 7 (4) | 14 | gap >= 4 %, closed >= open that day, gap not filled, <= 30 sessions |
+| Episodic Pivot | 8 (8) | 23 | day change >= 8 % after opening higher, volume >= 3x avg 50, close in top 25 %, <= 30 sessions (gap >= 8 % alone found 0) |
+| EPS Doublers | 21 (19) | 41 | EPS YoY >= 100, sales YoY >= 25, profit YoY >= 100, results <= 42 days ago |
+| Code 33 | 21 (20) | 21 | sales growth and EPS growth accelerating 2 quarters running (3 quarters in a row) + net margin rising 2 quarters; sales a year ago >= Rs 10 Cr; profit now > 0 |
+| EPS Accelerators | 70 (68) | 96 | EPS growth accelerating 2 quarters running + sales up YoY 3 quarters + profit now > 0 |
+| Turnarounds | 7 (6) | 26 | loss a year ago, profit now, profit and sales up on the quarter before |
+
+TODO when every stock has fundamentals: re-count; Code 33 and EPS Accelerators will likely be too many (raise to 3
+accelerating quarters if so).

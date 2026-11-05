@@ -1,0 +1,20 @@
+# Group rank and tag (Phase S9) - swingdash/group_rank.py. Calibrated 2026-11-05 against the reference's sector table of
+# 03-Nov (docs/calibration.md S9): rank correlation 0.88, 13 of 20 tags equal, rank change (vs 5 sessions) correlation 0.7.
+#
+# Open approximation of a Relative Rotation Graph (the original JdK formula is not public):
+#   group index   = average daily return of all member stocks (each day), compounded
+#   market        = average daily return of all stocks (equal weight)
+#   RS            = 100 x group index / market
+#   strength      = 100 x RS / average RS of the last `ratio_window` sessions        (> 100 = stronger than usual)
+#   momentum      = 100 + (strength today - strength `momentum_lag` sessions ago)    (> 100 = getting stronger)
+#   tag           = Leading (strength >= 100, momentum >= 100), Weakening (>= 100, < 100), Lagging (< 100, < 100),
+#                   Improving (< 100, >= 100)
+#   rank          = 1 = highest strength, among groups with at least `min_members` stocks
+#   rank change   = rank `rank_change_sessions` sessions ago minus rank now (+ = moved up)
+ratio_window: 63
+momentum_lag: 10
+rank_change_sessions: 5
+history_sessions: 160          # sessions of prices used (must be > ratio_window + momentum_lag)
+max_daily_move: 0.25           # a one-day move above 25 % (bad tick / missed corporate action) is left out
+min_members: 5                 # smaller industries / themes get no rank (greyed, "Show small groups")
+tail_points: 10                # strength / momentum points kept per group for a later RRG chart

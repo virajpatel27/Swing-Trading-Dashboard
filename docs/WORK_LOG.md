@@ -504,3 +504,21 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   rewrites the coverage file only when a number changes (no empty nightly commits). Backfill no longer needs an n500
   column (test).
 - NEXT: Viraj commits + pushes (the schedule starts with the push); then S9.
+
+### 2026-11-05: Scanner Phase S9 - earnings scanners, groups page, theme status (built, waiting for Viraj's look)
+- `swingdash/earnings.py`: results-day reaction per stock (reaction session = results day or the next, the bigger gap;
+  gap, change, volume x, close position, held, gap filled, run since). `fundamentals.quarter_trends`: accelerating
+  sales / EPS growth, rising net margin, QoQ profit / sales streaks, year-ago numbers.
+- 6 Earnings scanners (folder "Earnings"); counts and rules in docs/calibration.md S9 (partial: fundamentals for 570
+  stocks until the nightly run finishes).
+- `swingdash/group_rank.py` + config/group_rank.yaml: per sector / industry / theme median + average returns 1D-YTD,
+  20-day highs / lows, % above 50 SMA, rank (strength vs equal-weight market, open RRG approximation calibrated on the
+  reference: rank correlation 0.88), rank change, tag Leading / Weakening / Lagging / Improving, tail for a later RRG chart.
+  Written to data/snapshot/group_ranks.json with screen.json (git-ignored, deploy builds it).
+- Stock fields: sector / industry rank, tag, rank 1M (= rank of the group's AVERAGE 1M return, exact match with the
+  reference), 1W group return, vs sector / industry 1M, themes, top theme, theme status (= tag of the best-ranked theme).
+- Website: "Groups" tab replaces "Sectors" (#/groups/<level>/<name>; tabs, periods, search, small groups, sort; sector
+  -> industries + all stocks with 20H / 20L badges), Theme chip "T <tag>" on the chart (settings), column group
+  "Groups & Results Day". 33 fields registered (phase 9). tests/test_scan_phase9.py.
+- NEXT: Viraj commits + pushes; recount the earnings scanners after the nightly fundamentals run (~10-Nov); S10 = market
+  breadth (ask him first).

@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S8**. Fields: **241**.
+Current phase: **S9**. Fields: **273**.
 
 ## Sources
 
@@ -311,3 +311,40 @@ Current phase: **S8**. Fields: **241**.
 | `dii_chg_1y` | DII change 1Y | number | dii_hold minus 4 quarters before | dii_hold | data/snapshot/screen.json |
 | `shareholders` | No. of shareholders | integer | Total shareholders in the latest pattern | shareholding_xbrl | data/snapshot/screen.json |
 | `shareholders_chg_1q` | Shareholders change 1Q % | percent | Change of the shareholder count vs the quarter before | shareholders | data/snapshot/screen.json |
+
+## Fields of phase S9
+
+| field | label | type | formula | inputs | files |
+|---|---|---|---|---|---|
+| `earn_date` | Results reaction day | date | The results day or the next session, whichever opened with the bigger gap (latest results on or before the data day) | results_filings, open, close | data/snapshot/screen.json |
+| `earn_sessions` | Sessions since results reaction | integer | Sessions from earn_date to the data day (0 = today) | earn_date | data/snapshot/screen.json |
+| `earn_gap_pct` | Results gap % | percent | Open of the reaction session vs the close before x 100 - 100 | earn_date, open, close | data/snapshot/screen.json |
+| `earn_chg_pct` | Results day change % | percent | Close of the reaction session vs the close before | earn_date, close | data/snapshot/screen.json |
+| `earn_vol_x` | Results day volume x | number | Volume of the reaction session / 50-day average volume the day before | earn_date, volume, avg_vol50 | data/snapshot/screen.json |
+| `earn_close_pos` | Results day close position | percent | Where the reaction session closed in its range: 0 = low, 100 = high | earn_date, high, low, close | data/snapshot/screen.json |
+| `earn_held` | Results gap held that day | boolean | Reaction session closed at or above its open | earn_date, open, close | data/snapshot/screen.json |
+| `earn_gap_filled` | Results gap filled | boolean | Any low since the reaction session (incl.) at or below the close before the gap | earn_date, low | data/snapshot/screen.json |
+| `earn_run_pct` | Run since results % | percent | Close now vs close of the reaction session | earn_date, close | data/snapshot/screen.json |
+| `eps_g_accel_qtrs` | EPS growth accelerating quarters | integer | Latest quarters in a row whose EPS growth YoY beat the previous quarter's EPS growth YoY | results_filings | data/snapshot/screen.json |
+| `sales_g_accel_qtrs` | Sales growth accelerating quarters | integer | Latest quarters in a row whose sales growth YoY beat the previous quarter's | results_filings | data/snapshot/screen.json |
+| `npm_up_qtrs` | Net margin rising quarters | integer | Latest quarters in a row with a higher net margin (profit / sales) than the quarter before | results_filings | data/snapshot/screen.json |
+| `np_qoq_up_qtrs` | Profit rising quarters (QoQ) | integer | Latest quarters in a row with higher profit than the quarter before | results_filings | data/snapshot/screen.json |
+| `sales_qoq_up_qtrs` | Sales rising quarters (QoQ) | integer | Latest quarters in a row with higher sales than the quarter before | results_filings | data/snapshot/screen.json |
+| `np_last_q` | Profit latest quarter (Cr) | crore | Profit to owners of the latest quarter | results_filings | data/snapshot/screen.json |
+| `np_year_ago_q` | Profit same quarter last year (Cr) | crore | Profit to owners of the same quarter a year before | results_filings | data/snapshot/screen.json |
+| `sales_last_q` | Sales latest quarter (Cr) | crore | Sales of the latest quarter | results_filings | data/snapshot/screen.json |
+| `sales_year_ago_q` | Sales same quarter last year (Cr) | crore | Sales of the same quarter a year before | results_filings | data/snapshot/screen.json |
+| `npm_last_q` | Net margin latest quarter % | percent | np_last_q / sales_last_q x 100 | np_last_q, sales_last_q | data/snapshot/screen.json |
+| `sector_rank` | Sector rank | integer | Rank of the stock's sector by strength (config/group_rank.yaml: group vs equal-weight market, vs its 63-day average) | close, sector, basic_industry, theme_rules | data/snapshot/screen.json |
+| `sector_tag` | Sector tag | text | Leading / Weakening / Lagging / Improving (strength >= 100?, momentum >= 100?) | sector_rank | data/snapshot/screen.json |
+| `industry_rank` | Industry rank | integer | Same as sector_rank among industries with >= 5 stocks | close, sector, basic_industry, theme_rules | data/snapshot/screen.json |
+| `industry_tag` | Industry tag | text | Leading / Weakening / Lagging / Improving of the stock's industry | industry_rank | data/snapshot/screen.json |
+| `sector_rank_1m` | Sector rank 1M | integer | Rank of the sector's average 1-month member return among sectors | ret_1m, sector | data/snapshot/screen.json |
+| `industry_rank_1m` | Industry rank 1M | integer | Rank of the industry's average 1-month member return among industries with >= 5 stocks | ret_1m, basic_industry | data/snapshot/screen.json |
+| `sector_ret_1w` | Sector 1W % | percent | Average 1-week return of the sector's stocks | ret_1w, sector | data/snapshot/screen.json |
+| `industry_ret_1w` | Industry 1W % | percent | Average 1-week return of the industry's stocks | ret_1w, basic_industry | data/snapshot/screen.json |
+| `vs_sector_1m` | vs Sector 1M % | percent | Stock 1M return minus the sector's average 1M return (points) | ret_1m, sector | data/snapshot/screen.json |
+| `vs_industry_1m` | vs Industry 1M % | percent | Stock 1M return minus the industry's average 1M return (points) | ret_1m, basic_industry | data/snapshot/screen.json |
+| `themes` | Themes | text | Our themes the stock belongs to (config/theme_rules.yaml) | theme_rules | data/snapshot/screen.json |
+| `theme` | Top theme | text | The stock's best-ranked theme | themes | data/snapshot/screen.json |
+| `theme_status` | Theme status | text | Tag (Leading / Weakening / Lagging / Improving) of the stock's best-ranked theme - the chart's Theme chip | theme | data/snapshot/screen.json |

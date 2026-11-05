@@ -5,6 +5,7 @@
   "My Scans",
   "Classic",
   "Patterns",
+  "Earnings",
   "Fundamentals"
  ],
  "scanners": [
@@ -866,6 +867,227 @@
     "dir": "desc"
    },
    "phase": 8
+  },
+  {
+   "id": "earnings-gap",
+   "folder": "Earnings",
+   "name": "Earnings Gap",
+   "description": "Gapped up 4 %+ on its latest results, closed at or above that day's open, and the gap has not been filled since (results within the last 30 sessions).",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "earn_gap_pct",
+      "op": ">=",
+      "value": 4
+     },
+     {
+      "field": "earn_held",
+      "op": "is",
+      "value": true
+     },
+     {
+      "field": "earn_gap_filled",
+      "op": "is",
+      "value": false
+     },
+     {
+      "field": "earn_sessions",
+      "op": "<=",
+      "value": 30
+     }
+    ]
+   },
+   "sort": {
+    "field": "earn_sessions",
+    "dir": "asc"
+   },
+   "phase": 9
+  },
+  {
+   "id": "episodic-pivot",
+   "folder": "Earnings",
+   "name": "Episodic Pivot",
+   "description": "A big results day: up 8 %+ on the day after opening higher, volume 3x the 50-day average or more, close in the top quarter of the day's range (within the last 30 sessions).",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "earn_chg_pct",
+      "op": ">=",
+      "value": 8
+     },
+     {
+      "field": "earn_gap_pct",
+      "op": ">",
+      "value": 0
+     },
+     {
+      "field": "earn_vol_x",
+      "op": ">=",
+      "value": 3
+     },
+     {
+      "field": "earn_close_pos",
+      "op": ">=",
+      "value": 75
+     },
+     {
+      "field": "earn_sessions",
+      "op": "<=",
+      "value": 30
+     }
+    ]
+   },
+   "sort": {
+    "field": "earn_sessions",
+    "dir": "asc"
+   },
+   "phase": 9
+  },
+  {
+   "id": "eps-doublers",
+   "folder": "Earnings",
+   "name": "EPS Doublers",
+   "description": "Latest quarter vs the same quarter last year: EPS +100 % or more, sales +25 %+, profit +100 %+; results in the last 6 weeks.",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "eps_g_yoy",
+      "op": ">=",
+      "value": 100
+     },
+     {
+      "field": "sales_g_yoy",
+      "op": ">=",
+      "value": 25
+     },
+     {
+      "field": "np_g_yoy",
+      "op": ">=",
+      "value": 100
+     },
+     {
+      "field": "days_since_result",
+      "op": "<=",
+      "value": 42
+     }
+    ]
+   },
+   "sort": {
+    "field": "eps_g_yoy",
+    "dir": "desc"
+   },
+   "phase": 9
+  },
+  {
+   "id": "code-33",
+   "folder": "Earnings",
+   "name": "Code 33",
+   "description": "Sales growth YoY and EPS growth YoY rising and net margin rising, 3 quarters in a row; no tiny base (sales a year ago >= Rs 10 Cr) and profitable now.",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "sales_g_accel_qtrs",
+      "op": ">=",
+      "value": 2
+     },
+     {
+      "field": "eps_g_accel_qtrs",
+      "op": ">=",
+      "value": 2
+     },
+     {
+      "field": "npm_up_qtrs",
+      "op": ">=",
+      "value": 2
+     },
+     {
+      "field": "sales_year_ago_q",
+      "op": ">=",
+      "value": 10
+     },
+     {
+      "field": "np_last_q",
+      "op": ">",
+      "value": 0
+     }
+    ]
+   },
+   "sort": {
+    "field": "eps_g_yoy",
+    "dir": "desc"
+   },
+   "phase": 9
+  },
+  {
+   "id": "eps-accelerators",
+   "folder": "Earnings",
+   "name": "EPS Accelerators",
+   "description": "EPS growth YoY rising 3 quarters in a row while sales grew YoY in each of them (wider than Code 33).",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "eps_g_accel_qtrs",
+      "op": ">=",
+      "value": 2
+     },
+     {
+      "field": "sales_up_qtrs",
+      "op": ">=",
+      "value": 3
+     },
+     {
+      "field": "np_last_q",
+      "op": ">",
+      "value": 0
+     }
+    ]
+   },
+   "sort": {
+    "field": "eps_g_yoy",
+    "dir": "desc"
+   },
+   "phase": 9
+  },
+  {
+   "id": "turnarounds",
+   "folder": "Earnings",
+   "name": "Turnarounds",
+   "description": "A loss in the same quarter last year, a profit now, with sales and profit higher than the quarter before.",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "np_year_ago_q",
+      "op": "<",
+      "value": 0
+     },
+     {
+      "field": "np_last_q",
+      "op": ">",
+      "value": 0
+     },
+     {
+      "field": "np_qoq_up_qtrs",
+      "op": ">=",
+      "value": 1
+     },
+     {
+      "field": "sales_qoq_up_qtrs",
+      "op": ">=",
+      "value": 1
+     }
+    ]
+   },
+   "sort": {
+    "field": "np_last_q",
+    "dir": "desc"
+   },
+   "phase": 9
   }
  ]
 }

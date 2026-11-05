@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from . import engine, fundamentals, store
+from . import earnings, engine, fundamentals, group_rank, groups, store
 from .adjust import ADJ_COLS
 from .config import ROOT
 
@@ -48,7 +48,7 @@ def _benchmarks(data: Path, ids: list[str]) -> dict[str, pd.Series]:
 
 def one_stock(args) -> tuple[str, dict, pd.DataFrame] | None:
     """(id, fields of the as_of day, per-day series for the cross-stock fields) - runs in a worker process."""
-    sid, data, bench, cfg, stage_cfg, liquid_rule, as_of, pattern_cfg = args
+    sid, data, bench, cfg, stage_cfg, liquid_rule, as_of, pattern_cfg, result_days = args
     adj = store.read(data / "stocks" / "adjusted" / sid, ADJ_COLS)
     if as_of is not None:
         adj = adj[adj["date"] <= as_of]
@@ -67,6 +67,7 @@ def one_stock(args) -> tuple[str, dict, pd.DataFrame] | None:
         & (rc >= float(liquid_rule.get("min_price", 5.0)))
     hist = f.set_index("date")[HIST_COLS + ["rs_score", "liquid_day", "stage"]]
     last = f.iloc[-1].drop(labels=DROP, errors="ignore").to_dict()
+    last.update(earnings.reaction(f, result_days))          # Phase S9: price reaction to the latest results
     return sid, last, hist
 
 
@@ -116,7 +117,8 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
     master = pd.read_csv(data / "meta" / "stocks.csv", dtype=str).fillna("")
     bench = _benchmarks(data, sorted(set(cfg.get("rs_lines", [])) | {cfg.get("beta_benchmark", "NIFTY_50")}))
     as_of = pd.Timestamp(as_of) if as_of is not None else None
-    jobs = [(sid, data, bench, cfg, stage_cfg, liquid_rule, as_of, pattern_cfg) for sid in master["id"]]
+    days = {sid: earnings.result_days(data, sym) for sid, sym in zip(master["id"], master["symbol"])}
+    jobs = [(sid, data, bench, cfg, stage_cfg, liquid_rule, as_of, pattern_cfg, days[sid]) for sid in master["id"]]
     workers = workers or max(1, min(4, os.cpu_count() or 1))
     if workers > 1:
         with ProcessPoolExecutor(max_workers=workers) as ex:
@@ -139,6 +141,16 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
         ipo = pd.to_datetime(row.get("ipo_date") or None, errors="coerce")
         row["days_since_ipo"] = None if pd.isna(ipo) else int((pd.Timestamp(last["date"]) - ipo).days)
         rows.append(row)
+    # groups (Phase S9): rank / tag / returns per sector, industry, theme + each stock's group fields
+    gcfg = yaml.safe_load(open(root / "config" / "group_rank.yaml", encoding="utf-8"))
+    n_hist = int(gcfg.get("history_sessions", 160))
+    closes = pd.DataFrame({sid: h["close"].iloc[-n_hist - 5:] for sid, h in hists.items()}).sort_index().iloc[-n_hist:]
+    mem = groups.membership(data, root)
+    rdf = pd.DataFrame(rows).set_index("id")
+    table = group_rank.group_table(rdf, closes, mem, gcfg)
+    gfields = group_rank.stock_fields(rdf, table, mem)
+    for row in rows:
+        row.update(gfields.get(row["id"], {}))
     # fundamentals (Phase S8): only what was announced by the data day
     fin = fundamentals.screen_fields(data, rows, as_of.strftime("%Y-%m-%d") if as_of is not None else None)
     for row in rows:
@@ -147,13 +159,15 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
     for r in rows[1:]:
         cols += [c for c in r if c not in cols]
     typed = {"n500", "fno", "liquid"}
+    table_groups = table
     table = [[_clean(r.get(c)) if c not in typed else str(r.get(c)) == "True" for c in cols] for r in rows]
     for c in ("mcap_cr", "float_mcap_cr", "float_pct", "shares", "ipo_price"):
         i = cols.index(c)
         for t in table:
             t[i] = None if t[i] in ("", None) else float(t[i])
     snap = {"generated_at": datetime.now().strftime("%Y-%m-%d %H:%M"), "data_date": newest.strftime("%Y-%m-%d"),
-            "disclaimer": DISCLAIMER, "prices": "adjusted for splits, bonus, rights, demergers", "columns": cols, "rows": table}
+            "disclaimer": DISCLAIMER, "prices": "adjusted for splits, bonus, rights, demergers", "columns": cols, "rows": table,
+            "groups": {"data_date": newest.strftime("%Y-%m-%d"), "config": gcfg, "levels": table_groups}}
     log(f"screen: {len(table)} stocks x {len(cols)} fields, data date {snap['data_date']}")
     return snap
 
@@ -161,11 +175,20 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
 def write(data: Path, snap: dict, name: str = "screen.json") -> Path:
     out = data / "snapshot"
     out.mkdir(parents=True, exist_ok=True)
-    head = {k: v for k, v in snap.items() if k != "rows"}
+    head = {k: v for k, v in snap.items() if k not in ("rows", "groups")}
     lines = [json.dumps(r, separators=(",", ":"), ensure_ascii=False, allow_nan=False) for r in snap["rows"]]
     text = json.dumps(head, ensure_ascii=False, allow_nan=False)[:-1] + ',\n"rows":[\n' + ",\n".join(lines) + "\n]}\n"
     (out / name).write_text(text, encoding="utf-8", newline="\n")
     return out / name
+
+
+def write_groups(data: Path, snap: dict, name: str = "group_ranks.json") -> Path | None:
+    """data/snapshot/group_ranks.json (git-ignored, built with screen.json): the Groups page."""
+    if "groups" not in snap:
+        return None
+    out = data / "snapshot" / name
+    out.write_text(json.dumps(snap["groups"], separators=(",", ":"), ensure_ascii=False, allow_nan=False), encoding="utf-8")
+    return out
 
 
 def as_frame(snap: dict) -> pd.DataFrame:

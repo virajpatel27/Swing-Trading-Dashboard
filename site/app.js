@@ -232,6 +232,72 @@
     }
   }
 
+  /* ------------------------------------------------------------------ groups (Phase S9): data/group_ranks.json */
+  const TAG_CLS = { Leading: "t-up", Improving: "t-info", Weakening: "t-warn", Lagging: "t-down" };
+  const tagHTML = (t) => (t ? `<span class="tag ${TAG_CLS[t] || ""}">${esc(t)}</span>` : "");
+  async function renderGroups(level, name) {
+    level = ["sector", "industry", "theme"].includes(level) ? level : "sector";
+    if (!state.groups) view.innerHTML = `<p class="empty">Loading groups…</p>`;
+    try {
+      if (!state.groups) state.groups = await getJSON("data/group_ranks.json");
+      await loadScreen();
+    } catch (e) { view.innerHTML = `<p class="empty">Groups are not built yet (${esc(e.message)}).</p>`; return; }
+    if (routeName() !== "groups") return;
+    const gs = state.gstate || (state.gstate = { period: store.get("sd-gperiod", "1w"), small: false, q: "", sort: "rank" });
+    const p = gs.period, enc = encodeURIComponent;
+    const all = state.groups.levels[level] || [];
+    const cfgG = state.groups.config || {};
+    const rankCell = (g) => (g.rank == null ? "–" : `${g.rank}${g.rank_chg ? ` <small class="${g.rank_chg > 0 ? "up" : "down"}">${g.rank_chg > 0 ? "+" : ""}${g.rank_chg}</small>` : ""}`);
+    const gRow = (g, lvl) => `<tr data-href="#/groups/${lvl}/${enc(g.name)}" class="${g.small ? "muted" : ""}"><td class="l">${rankCell(g)}</td><td class="l"><b>${esc(g.name)}</b></td>`
+      + `<td class="l">${tagHTML(g.tag)}</td><td class="num">${pct(g["med_" + p])}</td><td class="num"><span class="up">${g.hi20}</span> / <span class="down">${g.lo20}</span></td>`
+      + `<td class="num">${g.small ? "–" : (g.above50 ?? "–") + "%"}</td><td class="num">${g.n}</td></tr>`;
+    const gTable = (items, lvl, label) => `<div class="table-wrap"><table><thead><tr><th class="l">Rank</th><th class="l">${label}</th><th class="l">Tag</th>`
+      + `<th>Med ${p.toUpperCase()}</th><th title="members at a 20-day high / low today">20D H/L</th><th>&gt; 50 SMA</th><th>Stocks</th></tr></thead><tbody>`
+      + items.map((g) => gRow(g, lvl)).join("") + "</tbody></table></div>";
+    const periodSeg = seg("gperiod", [["1d", "1D"], ["1w", "1W"], ["1m", "1M"], ["3m", "3M"], ["1y", "1Y"], ["ytd", "YTD"]], p);
+    const lvlSeg = `<div class="seg" data-seg="glevel">${[["sector", "Sector"], ["industry", "Industry"], ["theme", "Theme"]].map(([k, l]) =>
+      `<a class="btn-seg ${k === level ? "on" : ""}" href="#/groups/${k}">${l} (${(state.groups.levels[k] || []).length})</a>`).join("")}</div>`;
+    const how = `Rank = strength of the group's average stock vs the equal-weight market, compared with its own ${cfgG.ratio_window || 63}-session average;
+      tag = Leading / Weakening / Lagging / Improving from strength and its ${cfgG.momentum_lag || 10}-session change (an open approximation of a
+      Relative Rotation Graph; config/group_rank.yaml). Small groups (&lt; ${cfgG.min_members || 5} stocks) get no rank.`;
+    if (!name) {
+      const q = gs.q.trim().toLowerCase();
+      let items = all.filter((g) => (gs.small || !g.small || level === "sector") && (!q || g.name.toLowerCase().includes(q)));
+      if (gs.sort === "med") items = [...items].sort((a, b) => (b["med_" + p] ?? -1e9) - (a["med_" + p] ?? -1e9));
+      view.innerHTML = `<h1>Groups</h1><p class="sub">${how}</p>
+        <div class="controls">${lvlSeg}${periodSeg}<input id="gq" type="search" placeholder="Search groups" value="${esc(gs.q)}" aria-label="Search groups">
+          ${level !== "sector" ? `<label class="chk"><input type="checkbox" id="gsmall" ${gs.small ? "checked" : ""}> Show small groups</label>` : ""}
+          <select id="gsort" aria-label="Sort"><option value="rank" ${gs.sort === "rank" ? "selected" : ""}>Sort: Rank</option><option value="med" ${gs.sort === "med" ? "selected" : ""}>Sort: Median ${p.toUpperCase()}</option></select></div>
+        ${gTable(items, level, level === "sector" ? "Sector" : level === "industry" ? "Industry" : "Theme")}
+        <div class="foot-bar">${items.length} of ${all.length} ${level === "industry" ? "industries" : level + "s"} · data ${SD.fmtDate(state.groups.data_date)} · Not investment advice</div>`;
+      const qi = $("#gq"); qi.oninput = () => { gs.q = qi.value; const pos = qi.selectionStart; renderGroups(level); const n = $("#gq"); n.focus(); n.setSelectionRange(pos, pos); };
+      if ($("#gsmall")) $("#gsmall").onchange = (e) => { gs.small = e.target.checked; renderGroups(level); };
+      $("#gsort").onchange = (e) => { gs.sort = e.target.value; renderGroups(level); };
+    } else {
+      const g = all.find((x) => x.name === name);
+      if (!g) { view.innerHTML = `<p class="empty">Group not found. <a href="#/groups/${level}">Back</a></p>`; return; }
+      const ids = new Set(g.ids);
+      const stocks = state.screen.filter((r) => ids.has(r.id)).sort((a, b) => (b["ret_" + p] ?? b.chg_1d ?? -1e9) - (a["ret_" + p] ?? a.chg_1d ?? -1e9));
+      const retKey = p === "1d" ? "chg_1d" : "ret_" + p;
+      const inds = level === "sector" ? (state.groups.levels.industry || []).filter((x) => x.parent === name) : [];
+      view.innerHTML = `<div class="crumbs"><a href="#/groups/${level}">Groups · ${level}</a> › ${esc(name)}</div>
+        <div class="d-head"><h1>${esc(name)}</h1>${tagHTML(g.tag)}<span class="muted">${g.rank != null ? `rank ${g.rank} of ${all.filter((x) => x.rank != null).length}` : "small group (no rank)"}
+          ${g.strength != null ? ` · strength ${g.strength} · momentum ${g.momentum}` : ""}</span></div>
+        <div class="controls">${periodSeg}</div>
+        <div class="stats">${["1d", "1w", "1m", "3m", "1y", "ytd"].map((k) => `<div class="stat"><small>Median ${k.toUpperCase()} / average</small><b>${pct(g["med_" + k])} / ${pct(g["avg_" + k])}</b></div>`).join("")}
+          <div class="stat"><small>20-day highs / lows today</small><b>${g.hi20} / ${g.lo20}</b></div><div class="stat"><small>Above 50 SMA</small><b>${g.above50 ?? "–"}%</b></div></div>
+        ${inds.length ? `<h2>Industries</h2>${gTable(inds, "industry", "Industry")}` : ""}
+        <h2>${level === "sector" ? `All ${esc(name)} stocks` : "Stocks"} (${stocks.length})</h2>
+        <div class="table-wrap"><table><thead><tr><th class="l">Stock</th><th>LTP</th><th>1D %</th><th>${p.toUpperCase()} %</th><th>RS</th><th>From 50 SMA</th><th class="l">Themes</th></tr></thead><tbody>
+        ${stocks.map((r) => `<tr data-href="#/i/s/${enc(r.id)}"><td class="l name"><b>${esc(r.symbol)}</b>${r.high >= r.high_20d ? ' <span class="tag t-up">20H</span>' : ""}${r.low <= r.low_20d ? ' <span class="tag t-down">20L</span>' : ""}<span>${esc(r.name)}</span></td>`
+          + `<td class="num">${SD.fmtPrice(r.close)}</td><td class="num">${pct(r.chg_1d)}</td><td class="num">${pct(r[retKey])}</td><td class="num">${r.rs_rating ?? "–"}</td>`
+          + `<td class="num">${pct(r.from_sma50)}</td><td class="l small">${esc(r.themes || "")}</td></tr>`).join("")}</tbody></table></div>`;
+    }
+    const ps = $("[data-seg=gperiod]");
+    if (ps) ps.onclick = (e) => { const b = e.target.closest("button"); if (!b) return; gs.period = b.dataset.v; store.set("sd-gperiod", gs.period); renderGroups(level, name); };
+    view.querySelectorAll("tr[data-href]").forEach((tr) => { tr.onclick = () => { location.hash = tr.dataset.href; }; });
+  }
+
   /* ------------------------------------------------------------------ watchlist */
   function renderWatchlist() {
     const st = state.watchSort || (state.watchSort = { sort: "chg_1d", dir: "desc", limit: 1000 });
@@ -710,13 +776,14 @@
   function route() {
     if (!state.rows.length) return;
     const parts = location.hash.replace(/^#\/?/, "").split("/").map(decodeURIComponent);
-    const tab = { "": "market", stocks: "stocks", scanners: "scanners", screener: "scanners", sectors: "sectors", watchlist: "watchlist", fields: "", i: "" }[parts[0]] ?? "market";
+    const tab = { "": "market", stocks: "stocks", scanners: "scanners", screener: "scanners", sectors: "groups", groups: "groups", watchlist: "watchlist", fields: "", i: "" }[parts[0]] ?? "market";
     document.querySelectorAll(".tabs a").forEach((a) => a.classList.toggle("active", a.dataset.tab === tab));
     SDChart.close();
     view.onkeydown = null;
     if (parts[0] === "stocks" || parts[0] === "scanners") renderStocks();
     else if (parts[0] === "fields") renderFields();
     else if (parts[0] === "screener") renderScreener();
+    else if (parts[0] === "groups") renderGroups(parts[1], parts.slice(2).join("/"));
     else if (parts[0] === "sectors") renderSectors(parts[1], parts[2]);
     else if (parts[0] === "watchlist") renderWatchlist();
     else if (parts[0] === "i") renderDetail(parts[1], parts.slice(2).join("/"));

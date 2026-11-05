@@ -14,7 +14,7 @@
 #                      delivery = data/stocks/delivery/<ID>/, groups = data/groups/<level>/<id>/,
 #                      screen = data/snapshot/screen.json (every engine field, latest day; Phase S4)
 
-current_phase: 8
+current_phase: 9
 
 sources:
   equity_list: NSE EQUITY_L.csv - every main-board equity (symbol, name, ISIN, series, listing date)
@@ -291,3 +291,36 @@ fields:
   - {id: dii_chg_1y, label: "DII change 1Y", type: number, formula: "dii_hold minus 4 quarters before", inputs: [dii_hold], provided_in_phase: 8, source: NSE, file: [screen]}
   - {id: shareholders, label: "No. of shareholders", type: integer, formula: "Total shareholders in the latest pattern", inputs: [shareholding_xbrl], provided_in_phase: 8, source: NSE, file: [screen]}
   - {id: shareholders_chg_1q, label: "Shareholders change 1Q %", type: percent, formula: "Change of the shareholder count vs the quarter before", inputs: [shareholders], provided_in_phase: 8, source: NSE, file: [screen]}
+  # ------------------------------------------------------------ earnings + groups (phase 9), swingdash/earnings.py, group_rank.py
+  - {id: earn_date, label: "Results reaction day", type: date, formula: "The results day or the next session, whichever opened with the bigger gap (latest results on or before the data day)", inputs: [results_filings, open, close], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: earn_sessions, label: "Sessions since results reaction", type: integer, formula: "Sessions from earn_date to the data day (0 = today)", inputs: [earn_date], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: earn_gap_pct, label: "Results gap %", type: percent, formula: "Open of the reaction session vs the close before x 100 - 100", inputs: [earn_date, open, close], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: earn_chg_pct, label: "Results day change %", type: percent, formula: "Close of the reaction session vs the close before", inputs: [earn_date, close], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: earn_vol_x, label: "Results day volume x", type: number, formula: "Volume of the reaction session / 50-day average volume the day before", inputs: [earn_date, volume, avg_vol50], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: earn_close_pos, label: "Results day close position", type: percent, formula: "Where the reaction session closed in its range: 0 = low, 100 = high", inputs: [earn_date, high, low, close], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: earn_held, label: "Results gap held that day", type: boolean, formula: "Reaction session closed at or above its open", inputs: [earn_date, open, close], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: earn_gap_filled, label: "Results gap filled", type: boolean, formula: "Any low since the reaction session (incl.) at or below the close before the gap", inputs: [earn_date, low], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: earn_run_pct, label: "Run since results %", type: percent, formula: "Close now vs close of the reaction session", inputs: [earn_date, close], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: eps_g_accel_qtrs, label: "EPS growth accelerating quarters", type: integer, formula: "Latest quarters in a row whose EPS growth YoY beat the previous quarter's EPS growth YoY", inputs: [results_filings], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: sales_g_accel_qtrs, label: "Sales growth accelerating quarters", type: integer, formula: "Latest quarters in a row whose sales growth YoY beat the previous quarter's", inputs: [results_filings], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: npm_up_qtrs, label: "Net margin rising quarters", type: integer, formula: "Latest quarters in a row with a higher net margin (profit / sales) than the quarter before", inputs: [results_filings], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: np_qoq_up_qtrs, label: "Profit rising quarters (QoQ)", type: integer, formula: "Latest quarters in a row with higher profit than the quarter before", inputs: [results_filings], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: sales_qoq_up_qtrs, label: "Sales rising quarters (QoQ)", type: integer, formula: "Latest quarters in a row with higher sales than the quarter before", inputs: [results_filings], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: np_last_q, label: "Profit latest quarter (Cr)", type: crore, formula: "Profit to owners of the latest quarter", inputs: [results_filings], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: np_year_ago_q, label: "Profit same quarter last year (Cr)", type: crore, formula: "Profit to owners of the same quarter a year before", inputs: [results_filings], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: sales_last_q, label: "Sales latest quarter (Cr)", type: crore, formula: "Sales of the latest quarter", inputs: [results_filings], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: sales_year_ago_q, label: "Sales same quarter last year (Cr)", type: crore, formula: "Sales of the same quarter a year before", inputs: [results_filings], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: npm_last_q, label: "Net margin latest quarter %", type: percent, formula: "np_last_q / sales_last_q x 100", inputs: [np_last_q, sales_last_q], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: sector_rank, label: "Sector rank", type: integer, formula: "Rank of the stock's sector by strength (config/group_rank.yaml: group vs equal-weight market, vs its 63-day average)", inputs: [close, sector, basic_industry, theme_rules], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: sector_tag, label: "Sector tag", type: text, formula: "Leading / Weakening / Lagging / Improving (strength >= 100?, momentum >= 100?)", inputs: [sector_rank], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: industry_rank, label: "Industry rank", type: integer, formula: "Same as sector_rank among industries with >= 5 stocks", inputs: [close, sector, basic_industry, theme_rules], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: industry_tag, label: "Industry tag", type: text, formula: "Leading / Weakening / Lagging / Improving of the stock's industry", inputs: [industry_rank], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: sector_rank_1m, label: "Sector rank 1M", type: integer, formula: "Rank of the sector's average 1-month member return among sectors", inputs: [ret_1m, sector], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: industry_rank_1m, label: "Industry rank 1M", type: integer, formula: "Rank of the industry's average 1-month member return among industries with >= 5 stocks", inputs: [ret_1m, basic_industry], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: sector_ret_1w, label: "Sector 1W %", type: percent, formula: "Average 1-week return of the sector's stocks", inputs: [ret_1w, sector], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: industry_ret_1w, label: "Industry 1W %", type: percent, formula: "Average 1-week return of the industry's stocks", inputs: [ret_1w, basic_industry], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: vs_sector_1m, label: "vs Sector 1M %", type: percent, formula: "Stock 1M return minus the sector's average 1M return (points)", inputs: [ret_1m, sector], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: vs_industry_1m, label: "vs Industry 1M %", type: percent, formula: "Stock 1M return minus the industry's average 1M return (points)", inputs: [ret_1m, basic_industry], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: themes, label: "Themes", type: text, formula: "Our themes the stock belongs to (config/theme_rules.yaml)", inputs: [theme_rules], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: theme, label: "Top theme", type: text, formula: "The stock's best-ranked theme", inputs: [themes], provided_in_phase: 9, source: derived, file: [screen]}
+  - {id: theme_status, label: "Theme status", type: text, formula: "Tag (Leading / Weakening / Lagging / Improving) of the stock's best-ranked theme - the chart's Theme chip", inputs: [theme], provided_in_phase: 9, source: derived, file: [screen]}

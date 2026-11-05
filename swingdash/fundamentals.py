@@ -750,6 +750,45 @@ def year_roe(b: dict, years: list[str], i: int) -> float | None:
     return None if np_ is None or not avg or avg <= 0 else np_ / avg * 100
 
 
+def _streak(values: list) -> int:
+    """How many of the latest values in a row are higher than the value before them (None breaks the run)."""
+    n = 0
+    for i in range(len(values) - 1, 0, -1):
+        if values[i] is None or values[i - 1] is None or not values[i] > values[i - 1]:
+            break
+        n += 1
+    return n
+
+
+def quarter_trends(q: dict, qe: list[str], eps, npo) -> dict:
+    """Phase S9 earnings-scanner inputs from the quarters in a row (no gaps) ending with the latest:
+    *_g_accel_qtrs = latest quarters in a row whose YoY growth beat the previous quarter's YoY growth,
+    npm_up_qtrs = latest quarters in a row with a higher net margin than the quarter before,
+    np_qoq_up_qtrs / sales_qoq_up_qtrs = latest quarters in a row higher than the quarter before."""
+    run = [qe[-1]] if qe else []
+    for e in reversed(qe[:-1]):
+        if _months(e, run[0]) != 3:
+            break
+        run.insert(0, e)
+    ago = lambda e: next((x for x in qe if _months(x, e) == 12), None)
+    yoy = lambda f: [(_growth(f(e, q[e]), f(a, q[a])) if (a := ago(e)) else None) for e in run]
+    sales = lambda e, v: v.get("sales")
+    npm = [(npo(q[e]) / q[e]["sales"] * 100) if q[e].get("sales") and q[e]["sales"] > 0 and npo(q[e]) is not None else None
+           for e in run]
+    out = {"eps_g_accel_qtrs": _streak(yoy(eps)), "sales_g_accel_qtrs": _streak(yoy(sales)), "npm_up_qtrs": _streak(npm),
+           "np_qoq_up_qtrs": _streak([npo(q[e]) for e in run]), "sales_qoq_up_qtrs": _streak([sales(e, q[e]) for e in run])}
+    if run:
+        last, a = run[-1], ago(run[-1])
+        out["np_last_q"] = npo(q[last])
+        out["sales_last_q"] = q[last].get("sales")
+        if npm[-1] is not None:
+            out["npm_last_q"] = _r(npm[-1])
+        if a:
+            out["np_year_ago_q"] = npo(q[a])
+            out["sales_year_ago_q"] = q[a].get("sales")
+    return out
+
+
 def metrics(doc: dict, close: float | None, mcap_cr: float | None, as_of: str | None = None,
             factor=lambda end: 1.0, dividends: list[tuple[str, float]] | None = None,
             next_result: str | None = None) -> dict:
@@ -823,6 +862,7 @@ def metrics(doc: dict, close: float | None, mcap_cr: float | None, as_of: str | 
                 n += 1
             out[f"{k}_up_qtrs"] = n
         out["eps_last_q"] = _r(eps(e0, v0))
+        out.update(quarter_trends(q, qe, eps, npo))
     ye = list(y)
     if ye:
         last = ye[-1]

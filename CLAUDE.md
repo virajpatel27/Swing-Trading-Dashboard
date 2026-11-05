@@ -121,6 +121,10 @@ factors), site/fin.js (SDF) Financials tab, E markers. Local sample docs in data
 Nightly (Viraj 05-Nov): `.github/workflows/fundamentals-nightly.yml` 23:40 IST every day = backfill fundamentals --new-only (stocks never read)
 until all are done, then a 1-minute no-op. Shares the data-write lock: the 23:50 daily run waits for it. MCX, ABBOTINDIA etc. are BSE-listed
 (only traded on NSE): NSE has no filings for them (BSE from the PC would be needed).
+S9: `swingdash/earnings.py` (results-day reaction, needs fundamentals 'ann' days), `fundamentals.quarter_trends`, 6 Earnings
+scanners; `swingdash/group_rank.py` + config/group_rank.yaml (group rank = strength vs equal-weight market / its 63-day average,
+tag = RRG quadrant; group return = AVERAGE of members, as the reference) -> data/snapshot/group_ranks.json (git-ignored) and
+per-stock group fields; website #/groups, Theme chip. Recount earnings scanners when all fundamentals exist.
 Repo folder on the PC: `C:\Users\hello\OneDrive\Documents\Swing Trading\Swing Trading` (nested). Manual steps: `docs/MANUAL_CHECKLIST.md`.
 Read GitHub run results without a token via the public API (`api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/runs`,
 then `.../actions/runs/<id>/jobs` and `.../check-runs/<job id>/annotations`). Logs, Summary page and artifacts need a signed-in user,

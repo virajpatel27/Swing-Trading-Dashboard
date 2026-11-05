@@ -24,6 +24,7 @@ def main(argv=None) -> int:
     t = time.time()
     snap = screen.build(ROOT, a.as_of, a.workers)
     path = screen.write(ROOT / "data", snap, a.out)
+    screen.write_groups(ROOT / "data", snap, a.out.replace("screen", "group_ranks"))
     print(f"{path.relative_to(ROOT)} written in {time.time() - t:.0f} s")
     return 0
 

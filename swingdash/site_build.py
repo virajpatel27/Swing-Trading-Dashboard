@@ -97,6 +97,8 @@ def build(root: Path, out: Path, log=print) -> dict:
     shutil.copy2(data / "meta" / "health.json", out / "data" / "health.json")
     if (data / "snapshot" / "screen.json").exists():      # all engine fields per stock (built by scripts/build_screen.py)
         shutil.copy2(data / "snapshot" / "screen.json", out / "data" / "screen.json")
+    if (data / "snapshot" / "group_ranks.json").exists():   # Groups page (Phase S9, built with screen.json)
+        shutil.copy2(data / "snapshot" / "group_ranks.json", out / "data" / "group_ranks.json")
     shutil.copy2(root / "config" / "scanners.json", out / "data" / "scanners.json")
     (out / "data" / "fields.json").write_text(json.dumps(fields_payload(root)), encoding="utf-8")
 

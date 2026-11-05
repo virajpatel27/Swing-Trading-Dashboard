@@ -33,7 +33,7 @@
   const DEFAULTS = {
     style: "classic", type: "candle", tf: "D",
     marks: { hilo52: false, swings: false, swingPct: 10, circuit: false, inside: false, actions: true, pivot: true, vcp: true, tight: false, earnings: true },
-    chips: { float: true, rs: true, stage: true, from: true },
+    chips: { float: true, rs: true, stage: true, from: true, theme: true },
     ind: {
       ma: { on: true, preset: "mine", d: null, w: null },
       supertrend: { on: false, len: 10, mult: 3, up: "#089981", down: "#f23645" },
@@ -415,6 +415,10 @@
     if (cfg.chips.float && r.float_mcap_cr != null) chips.push(`<span class="chip-s" title="Free-float market cap">F ₹${fmt(r.float_mcap_cr, 0)} Cr</span>`);
     if (cfg.chips.rs && r.rs_rating != null) chips.push(`<span class="chip-s" title="RS rating 1-99">RS ${r.rs_rating}</span>`);
     if (cfg.chips.stage && r.stage) chips.push(`<span class="chip-s" style="border-color:${STAGE_COL[r.stage]};color:${STAGE_COL[r.stage]}">${esc(String(r.stage).replace("A", ""))} ${STAGE_TXT[r.stage]}</span>`);
+    if (cfg.chips.theme !== false && r.theme_status) {
+      const tc = { Leading: "#089981", Improving: "#2962ff", Weakening: "#ff9800", Lagging: "#f23645" }[r.theme_status] || css("--muted");
+      chips.push(`<span class="chip-s" style="border-color:${tc};color:${tc}" title="Theme ${esc(r.theme || "")}: ${esc(r.theme_status)}">T ${esc(r.theme_status)}</span>`);
+    }
     if (cfg.chips.from && r.from_hi52 != null) chips.push(`<span class="chip-s" title="From 52-week high">D ${S.fmtPct(r.from_hi52)}</span>`);
     const f = vflags ? vflags[i] : null;
     cur.box.querySelector("#chHead").innerHTML = `<div class="ch-l1"><b class="ch-sym">${esc(r.symbol)}</b>${chips.join("")}</div>
@@ -567,7 +571,7 @@
       ${cb("circuit", "Circuit limits", mk.circuit, "today's price band around the last close (dotted orange)")}
       ${cb("hilo52", "52-week high & low", mk.hilo52, "dashed lines")}
       ${cb("swings", "Swing % moves", mk.swings, "triangles with the % of each swing")} <label class="f-row">Swing size % <input type="number" name="swingPct" value="${mk.swingPct}"></label>
-      <h4>Header chips</h4>${cb("c_float", "Float market cap", ch.float)}${cb("c_rs", "RS rating", ch.rs)}${cb("c_stage", "Stage", ch.stage)}${cb("c_from", "From 52-week high", ch.from)}
+      <h4>Header chips</h4>${cb("c_float", "Float market cap", ch.float)}${cb("c_rs", "RS rating", ch.rs)}${cb("c_stage", "Stage", ch.stage)}${cb("c_from", "From 52-week high", ch.from)}${cb("c_theme", "Theme status", ch.theme !== false)}
       <p class="muted small">News markers come in a later phase.</p></form>`;
     modal("Chart settings", body, (m, reset) => {
       if (reset) { cfg.style = DEFAULTS.style; cfg.marks = { ...DEFAULTS.marks }; cfg.chips = { ...DEFAULTS.chips }; }
@@ -576,7 +580,7 @@
         cfg.style = f.style.value;
         for (const k of ["inside", "actions", "circuit", "hilo52", "swings", "pivot", "vcp", "tight", "earnings"]) cfg.marks[k] = f[k].checked;
         cfg.marks.swingPct = Number(f.swingPct.value) || 10;
-        cfg.chips = { float: f.c_float.checked, rs: f.c_rs.checked, stage: f.c_stage.checked, from: f.c_from.checked };
+        cfg.chips = { float: f.c_float.checked, rs: f.c_rs.checked, stage: f.c_stage.checked, from: f.c_from.checked, theme: f.c_theme.checked };
       }
       save(); draw(true);
     }, true);

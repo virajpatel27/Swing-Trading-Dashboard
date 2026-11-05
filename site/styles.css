@@ -255,3 +255,12 @@ code { font-size: 12px; background: var(--panel-2); padding: 1px 5px; border-rad
 .grow h4 { margin: 0 0 6px; font-size: 13px; }
 .grow div { display: flex; justify-content: space-between; }
 @media (max-width: 640px) { .pros-cons { grid-template-columns: 1fr; } }
+
+/* Groups page (Phase S9) */
+.tag.t-info { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); }
+.tag.t-warn { background: color-mix(in srgb, var(--warn) 15%, transparent); color: var(--warn); }
+.seg a.btn-seg { padding: 6px 11px; color: var(--muted); text-decoration: none; white-space: nowrap; }
+.seg a.btn-seg.on { background: var(--accent); color: #fff; }
+label.chk { display: inline-flex; align-items: center; gap: 5px; font-size: 13.5px; color: var(--muted); }
+tr.muted td { opacity: .6; }
+td.small { font-size: 12px; white-space: normal; min-width: 140px; }

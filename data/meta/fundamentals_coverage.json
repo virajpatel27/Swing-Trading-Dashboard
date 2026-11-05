@@ -1,0 +1,39 @@
+{
+ "date": "2026-11-05",
+ "universe": 2633,
+ "nifty500": {
+  "stocks": 500,
+  "with_doc": 500
+ },
+ "all": {
+  "stocks": 2633,
+  "with_doc": 570
+ },
+ "kinds": {
+  "company": 470,
+  "nbfc": 53,
+  "?": 12,
+  "bank": 26,
+  "insurance": 9
+ },
+ "with_8_quarters": 493,
+ "with_5_years": 423,
+ "with_balance_sheet": 548,
+ "with_cash_flow": 549,
+ "with_shareholding": 556,
+ "latest_quarter_older_than_150_days": 13,
+ "no_results": [
+  "3BBLACKBIO",
+  "ABBOTINDIA",
+  "ABMKNO",
+  "ACGL",
+  "ACSTECH",
+  "ADDIND",
+  "ADVIKCA",
+  "AGOL",
+  "BAGMANE",
+  "BIRET",
+  "EMBASSY",
+  "MCX"
+ ]
+}

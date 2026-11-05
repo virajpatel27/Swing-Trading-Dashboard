@@ -536,7 +536,8 @@ def backfill(data: Path, http, universe: pd.DataFrame, today: date, deadline: fl
     again after refresh_days (catches anything the daily step missed)."""
     cp = json.loads(cp_path.read_text(encoding="utf-8")) if cp_path.exists() else {}
     uni = universe.copy()
-    uni["_n5"] = uni.get("n500", False).astype(str).str.lower().isin(["true", "1", "yes"])
+    n5 = uni["n500"] if "n500" in uni else pd.Series(False, index=uni.index)
+    uni["_n5"] = n5.astype(str).str.lower().isin(["true", "1", "yes"])
     uni = uni.sort_values(["_n5", "symbol"], ascending=[False, True])
     todo = [s for s in uni["symbol"] if (only is None or s in only) and
             (s not in cp or (today - date.fromisoformat(cp[s])).days >= refresh_days)]
@@ -591,7 +592,6 @@ def daily(data: Path, http, universe: pd.DataFrame, today: date, cp_path: Path, 
     have = {p.stem for p in (data / "fundamentals").glob("*.json")}
     syms = set(universe["symbol"]) & have
     since = cp.get("_since", (pd.Timestamp(today) - pd.Timedelta(days=3)).strftime("%Y-%m-%d %H:%M:%S"))
-    started = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     res = {"results_files": 0, "shp_files": 0, "calendar": 0, "stopped": ""}
     try:
         recent = recent_results(http, since)
@@ -603,6 +603,7 @@ def daily(data: Path, http, universe: pd.DataFrame, today: date, cp_path: Path, 
         if r["symbol"] in syms:
             by_sym.setdefault(r["symbol"], []).append(r)
     complete = not res["stopped"]
+    missed: list[str] = []                    # broadcast times of files NSE did not serve yet (just published)
     for sym, refs in sorted(by_sym.items()):
         if clock() > deadline:
             res["stopped"], complete = "time limit", False
@@ -615,7 +616,7 @@ def daily(data: Path, http, universe: pd.DataFrame, today: date, cp_path: Path, 
                 merge_filing(doc, filing(fetch_file(http, ref["url"])), ref)
             except Exception as exc:  # noqa: BLE001
                 log(f"  {sym} {name_of(ref['url'])}: {type(exc).__name__}")
-                complete = False
+                missed.append(ref["at"])
                 continue
             doc["files"][name_of(ref["url"])] = ref["at"][:10]
             res["results_files"] += 1
@@ -648,9 +649,10 @@ def daily(data: Path, http, universe: pd.DataFrame, today: date, cp_path: Path, 
         res["calendar"] = write_calendar(data, cal, today)
     except Exception as exc:  # noqa: BLE001
         log(f"results calendar: {type(exc).__name__}")
-    if complete:
-        cp["_since"] = min(started, max([r["at"] for r in recent], default=since)) if recent else since
-        cp["_since"] = max(cp["_since"], since)
+    if complete:      # next run starts at the oldest file still missing, else at the newest filing seen
+        new = min(missed) if missed else max([r["at"] for r in recent], default=since)
+        cp["_since"] = max(new, since)
+        res["missing_files"] = len(missed)
     cp_path.parent.mkdir(parents=True, exist_ok=True)
     cp_path.write_text(json.dumps(cp, indent=0, sort_keys=True) + "\n", encoding="utf-8")
     log(f"fundamentals daily: {res}")

@@ -492,3 +492,15 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   category in Mar-2026 (its 1Y FII change looks big); insurers: P&L lines only.
 - NEXT: Viraj commits + pushes, runs Backfill history -> fundamentals (2 runs for Nifty 500, then ~6 more for all),
   checks 3-4 companies by hand; then S9.
+
+### 2026-11-05: S8 follow-up - first fundamentals run, nightly schedule
+- Backfill history -> fundamentals (07:43-13:14 IST): Nifty 500 500/500, 570 of 2,633 stocks; 493 with 8+ quarters,
+  423 with 5+ years, 548 balance sheet, 556 shareholding. No results: REITs (other format) and BSE-listed companies that
+  only trade on NSE (MCX, ABBOTINDIA ...): NSE has no filings for them.
+- Daily step 4d checked on a copy of GitHub's data: 9 new files in 70 s. Fix: a filing whose XBRL file NSE has not put
+  online yet no longer blocks the "since" marker; the marker waits at the oldest missing file (test added).
+- Viraj: run the rest every night at 23:40 IST until done -> .github/workflows/fundamentals-nightly.yml
+  (backfill.py --job fundamentals --new-only, 300 min, ~450 stocks per night, ~5 nights). fundamentals_report.py
+  rewrites the coverage file only when a number changes (no empty nightly commits). Backfill no longer needs an n500
+  column (test).
+- NEXT: Viraj commits + pushes (the schedule starts with the push); then S9.

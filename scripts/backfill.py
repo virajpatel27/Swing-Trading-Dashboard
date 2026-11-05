@@ -4,6 +4,7 @@
     python scripts/backfill.py --job nse-indices
     python scripts/backfill.py --job bse-indices          # PC only: BSE refuses GitHub's servers
     python scripts/backfill.py --job delivery             # delivery % 2007 -> (needs the stocks job's trading days)
+    python scripts/backfill.py --job fundamentals [--new-only]   # NSE XBRL results / shareholding (Nifty 500 first)
     python scripts/backfill.py --job all
 
 Afterwards run scripts/validate_data.py (the workflow does it) before committing.
@@ -32,6 +33,8 @@ def main(argv=None) -> int:
     ap.add_argument("--restart-from", type=date.fromisoformat, default=None,
                     help="stocks job: read again from this day for ALL stocks (e.g. 2007-01-01 after adding stocks to the list)")
     ap.add_argument("--max-minutes", type=float, default=330)
+    ap.add_argument("--new-only", action="store_true",
+                    help="fundamentals only: read stocks that were never read (no 120-day refresh) - the nightly run")
     ap.add_argument("--until", type=date.fromisoformat, default=None, help="last day to fetch (default: today)")
     ap.add_argument("--attempts", type=int, default=5, help="restarts after a network stop (each continues from the checkpoint)")
     ap.add_argument("--pause", type=int, default=120, help="seconds to wait before such a restart")
@@ -45,6 +48,8 @@ def main(argv=None) -> int:
         print(f"compacted {n} instruments")
         return 0
     settings, universe = config.load("settings"), config.load("universe")
+    if a.new_only:
+        settings["fundamentals_refresh_days"] = 10 ** 6
     gaps = settings["polite"]
     http = PoliteSession(min_gap=1.0, retries=4, backoff=3.0, timeout=60, gaps={
         "nsearchives.nseindia.com": gaps["nse_archives"], "www.nseindia.com": gaps["nse_api"], "api.bseindia.com": gaps["bse_api"]})

@@ -1,0 +1,65 @@
+name: Fundamentals nightly
+
+# Viraj, 05-Nov-2026: every night at 23:40 IST read the stocks whose fundamentals were never read (NSE XBRL results,
+# balance sheet, cash flow, shareholding; ~40 s per stock, ~450 stocks per night) until every stock is done. When nothing
+# is left the run ends in a minute and saves nothing. New results of stocks already read come with the daily update.
+# Shares the "data-write" lock with the daily update: the 23:50 IST daily run waits until this one ends (~05:15 IST).
+# Run by hand: Actions -> Fundamentals nightly -> Run workflow.
+on:
+  schedule:
+    - cron: "10 18 * * *"           # 23:40 IST, every day (GitHub may start it up to ~1 h late)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-write                 # never together with the daily update or a backfill
+  cancel-in-progress: false
+
+jobs:
+  fundamentals:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 345
+    outputs:
+      changed: ${{ steps.save.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Read stocks not read yet
+        run: |
+          python scripts/backfill.py --job fundamentals --new-only --max-minutes 300
+          python scripts/fundamentals_report.py
+      - name: Data check
+        run: python scripts/validate_data.py
+      - name: Save data
+        id: save
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "Nothing new to save."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "data: fundamentals nightly $(date -u +%F)"
+            git pull --rebase --autostash
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy:
+    needs: fundamentals
+    if: needs.fundamentals.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy-site.yml

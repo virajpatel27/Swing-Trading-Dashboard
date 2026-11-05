@@ -234,3 +234,33 @@ def test_daily_step_adds_new_filings_shareholding_and_calendar(tmp_path):
     assert list(cal["symbol"]) == ["ABC"]
     again = F.daily(data, FakeNSE(routes), uni, date(2026, 11, 5), cp)  # second run: nothing new
     assert again["results_files"] == 0 and again["shp_files"] == 0
+
+
+def test_daily_marker_waits_for_files_not_online_yet(tmp_path):
+    import json
+    from datetime import date
+    import pandas as pd
+    data = tmp_path / "data"
+    F.save(data, F.empty("ABC"))
+    filing_row = lambda at, name: {"symbol": "ABC", "qe_Date": "30-SEP-2026", "consolidated": "Standalone", "broadcast_Date": at,
+                                   "xbrl": f"https://nsearchives.nseindia.com/corporate/xbrl/{name}.xml"}
+    routes = {"integrated-filing-results": {"data": [filing_row("05-Nov-2026 18:00:00", "late"),
+                                                     filing_row("04-Nov-2026 10:00:00", "ok")]},
+              "corporate-share-holdings-master": [], "event-calendar": [], "ok.xml": company_file()}
+    cp = data / "meta" / "checkpoints" / "fundamentals_daily.json"
+    res = F.daily(data, FakeNSE(routes), pd.DataFrame({"symbol": ["ABC"]}), date(2026, 11, 5), cp)
+    assert res["results_files"] == 1 and res["missing_files"] == 1
+    assert json.loads(cp.read_text())["_since"] == "2026-11-05 18:00:00"   # "late.xml" is asked for again next run
+
+
+def test_nightly_new_only_run_with_nothing_left_asks_nse_nothing(tmp_path):
+    import json
+    import time
+    from datetime import date
+    import pandas as pd
+    cp = tmp_path / "fundamentals.json"
+    cp.write_text(json.dumps({"ABC": "2026-01-01", "XYZ": "2026-11-05"}))       # both read once, ABC long ago
+    http = FakeNSE({})
+    res = F.backfill(tmp_path / "data", http, pd.DataFrame({"symbol": ["ABC", "XYZ"]}), date(2026, 11, 5),
+                     time.monotonic() + 60, cp, refresh_days=10 ** 6)
+    assert res["stocks"] == 0 and res["left"] == 0 and http.asked == []

@@ -118,6 +118,9 @@ S8: `swingdash/fundamentals.py` (NSE XBRL results / balance sheet / cash flow / 
 Backfill job `fundamentals`, daily step 4d after its checkpoint exists, `scripts/fundamentals_report.py`). screener.in is NOT used
 (terms forbid copying). Ratios = fundamentals.metrics (screen fields, phase 8). Website: data/f/<id>.json (site_build adds EPS
 factors), site/fin.js (SDF) Financials tab, E markers. Local sample docs in data/fundamentals must not be committed (the bot makes them).
+Nightly (Viraj 05-Nov): `.github/workflows/fundamentals-nightly.yml` 23:40 IST every day = backfill fundamentals --new-only (stocks never read)
+until all are done, then a 1-minute no-op. Shares the data-write lock: the 23:50 daily run waits for it. MCX, ABBOTINDIA etc. are BSE-listed
+(only traded on NSE): NSE has no filings for them (BSE from the PC would be needed).
 Repo folder on the PC: `C:\Users\hello\OneDrive\Documents\Swing Trading\Swing Trading` (nested). Manual steps: `docs/MANUAL_CHECKLIST.md`.
 Read GitHub run results without a token via the public API (`api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/runs`,
 then `.../actions/runs/<id>/jobs` and `.../check-runs/<job id>/annotations`). Logs, Summary page and artifacts need a signed-in user,

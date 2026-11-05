@@ -62,7 +62,13 @@ def main(argv=None) -> int:
     data = ROOT / "data"
     c = coverage(data, date.today())
     (data / "meta").mkdir(parents=True, exist_ok=True)
-    (data / "meta" / "fundamentals_coverage.json").write_text(json.dumps(c, indent=1) + "\n", encoding="utf-8")
+    out = data / "meta" / "fundamentals_coverage.json"
+    try:
+        old = json.loads(out.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        old = {}
+    if {k: v for k, v in old.items() if k != "date"} != {k: v for k, v in c.items() if k != "date"}:
+        out.write_text(json.dumps(c, indent=1) + "\n", encoding="utf-8")     # only when a number changed (no empty commits)
     msg = (f"Nifty 500: {c['nifty500']['with_doc']}/{c['nifty500']['stocks']} stocks, all: {c['all']['with_doc']}/{c['all']['stocks']}; "
            f"8+ quarters {c.get('with_8_quarters', 0)}, 5+ years {c.get('with_5_years', 0)}, balance sheet {c.get('with_balance_sheet', 0)}, "
            f"shareholding {c.get('with_shareholding', 0)}")

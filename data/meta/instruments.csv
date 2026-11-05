@@ -279,6 +279,7 @@ stock,NSE,AZADIND,AZADIND,,stocks/raw/AZADIND,2026-08-17,2026-11-04,55,NSE bhavc
 stock,NSE,BAFNAPH,BAFNAPH,,stocks/raw/BAFNAPH,2020-03-02,2026-11-04,1483,NSE bhavcopy
 stock,NSE,BAGFILMS,BAGFILMS,,stocks/raw/BAGFILMS,2007-01-02,2026-11-04,4896,NSE bhavcopy
 stock,NSE,BAGMANE,BAGMANE,Realty,stocks/raw/BAGMANE,2026-05-14,2026-11-04,120,NSE bhavcopy
+stock,NSE,BAHETI,BAHETI,,stocks/raw/BAHETI,2026-10-29,2026-11-04,5,NSE bhavcopy
 stock,NSE,BAIDFIN,BAIDFIN,,stocks/raw/BAIDFIN,2023-01-20,2026-11-04,932,NSE bhavcopy
 stock,NSE,BAJAJ-AUTO,BAJAJ-AUTO,Automobile and Auto Components,stocks/raw/BAJAJ-AUTO,2008-05-26,2026-11-04,4550,NSE bhavcopy
 stock,NSE,BAJAJCON,BAJAJCON,,stocks/raw/BAJAJCON,2010-08-18,2026-11-04,4003,NSE bhavcopy
@@ -730,7 +731,7 @@ stock,NSE,EUROPRATIK,EUROPRATIK,,stocks/raw/EUROPRATIK,2025-09-23,2026-11-04,275
 stock,NSE,EUROTEXIND,EUROTEXIND,,stocks/raw/EUROTEXIND,2007-01-02,2026-11-04,4022,NSE bhavcopy
 stock,NSE,EVEREADY,EVEREADY,,stocks/raw/EVEREADY,2007-01-02,2026-11-04,4896,NSE bhavcopy
 stock,NSE,EVERESTIND,EVERESTIND,,stocks/raw/EVERESTIND,2007-01-02,2026-11-04,4888,NSE bhavcopy
-stock,NSE,EVONILE,EVONILE,,stocks/raw/EVONILE,2026-11-04,2026-11-04,1,NSE bhavcopy
+stock,NSE,EVONILE,EVONILE,,stocks/raw/EVONILE,2020-10-05,2026-11-04,895,NSE bhavcopy
 stock,NSE,EXCELINDUS,EXCELINDUS,,stocks/raw/EXCELINDUS,2007-01-02,2026-11-04,4840,NSE bhavcopy
 stock,NSE,EXCELSOFT,EXCELSOFT,,stocks/raw/EXCELSOFT,2025-11-26,2026-11-04,232,NSE bhavcopy
 stock,NSE,EXICOM,EXICOM,,stocks/raw/EXICOM,2024-03-05,2026-11-04,657,NSE bhavcopy
@@ -2911,6 +2912,7 @@ stock-adjusted,NSE,AZADIND,AZADIND,,stocks/adjusted/AZADIND,2026-08-17,2026-11-0
 stock-adjusted,NSE,BAFNAPH,BAFNAPH,,stocks/adjusted/BAFNAPH,2020-03-02,2026-11-04,1483,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,BAGFILMS,BAGFILMS,,stocks/adjusted/BAGFILMS,2007-01-02,2026-11-04,4896,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,BAGMANE,BAGMANE,Realty,stocks/adjusted/BAGMANE,2026-05-14,2026-11-04,120,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BAHETI,BAHETI,,stocks/adjusted/BAHETI,2026-10-29,2026-11-04,5,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,BAIDFIN,BAIDFIN,,stocks/adjusted/BAIDFIN,2023-01-20,2026-11-04,932,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,BAJAJ-AUTO,BAJAJ-AUTO,Automobile and Auto Components,stocks/adjusted/BAJAJ-AUTO,2008-05-26,2026-11-04,4550,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,BAJAJCON,BAJAJCON,,stocks/adjusted/BAJAJCON,2010-08-18,2026-11-04,4003,NSE bhavcopy + NSE corporate actions
@@ -3362,7 +3364,7 @@ stock-adjusted,NSE,EUROPRATIK,EUROPRATIK,,stocks/adjusted/EUROPRATIK,2025-09-23,
 stock-adjusted,NSE,EUROTEXIND,EUROTEXIND,,stocks/adjusted/EUROTEXIND,2007-01-02,2026-11-04,4022,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,EVEREADY,EVEREADY,,stocks/adjusted/EVEREADY,2007-01-02,2026-11-04,4896,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,EVERESTIND,EVERESTIND,,stocks/adjusted/EVERESTIND,2007-01-02,2026-11-04,4888,NSE bhavcopy + NSE corporate actions
-stock-adjusted,NSE,EVONILE,EVONILE,,stocks/adjusted/EVONILE,2026-11-04,2026-11-04,1,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,EVONILE,EVONILE,,stocks/adjusted/EVONILE,2020-10-05,2026-11-04,895,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,EXCELINDUS,EXCELINDUS,,stocks/adjusted/EXCELINDUS,2007-01-02,2026-11-04,4840,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,EXCELSOFT,EXCELSOFT,,stocks/adjusted/EXCELSOFT,2025-11-26,2026-11-04,232,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,EXICOM,EXICOM,,stocks/adjusted/EXICOM,2024-03-05,2026-11-04,657,NSE bhavcopy + NSE corporate actions
@@ -5542,6 +5544,7 @@ delivery,NSE,AZADIND,AZADIND,,stocks/delivery/AZADIND,2026-08-17,2026-11-04,55,N
 delivery,NSE,BAFNAPH,BAFNAPH,,stocks/delivery/BAFNAPH,2020-03-17,2026-06-09,437,NSE MTO delivery file
 delivery,NSE,BAGFILMS,BAGFILMS,,stocks/delivery/BAGFILMS,2007-01-02,2026-11-04,3651,NSE MTO delivery file
 delivery,NSE,BAGMANE,BAGMANE,Realty,stocks/delivery/BAGMANE,2026-05-14,2026-11-04,120,NSE MTO delivery file
+delivery,NSE,BAHETI,BAHETI,,stocks/delivery/BAHETI,2026-10-29,2026-11-04,5,NSE MTO delivery file
 delivery,NSE,BAIDFIN,BAIDFIN,,stocks/delivery/BAIDFIN,2023-01-20,2026-11-04,781,NSE MTO delivery file
 delivery,NSE,BAJAJ-AUTO,BAJAJ-AUTO,Automobile and Auto Components,stocks/delivery/BAJAJ-AUTO,2008-05-26,2026-11-04,4550,NSE MTO delivery file
 delivery,NSE,BAJAJCON,BAJAJCON,,stocks/delivery/BAJAJCON,2010-08-18,2026-11-04,4003,NSE MTO delivery file
@@ -5992,7 +5995,7 @@ delivery,NSE,EUROPRATIK,EUROPRATIK,,stocks/delivery/EUROPRATIK,2025-09-23,2026-1
 delivery,NSE,EUROTEXIND,EUROTEXIND,,stocks/delivery/EUROTEXIND,2007-01-02,2026-10-14,3351,NSE MTO delivery file
 delivery,NSE,EVEREADY,EVEREADY,,stocks/delivery/EVEREADY,2007-01-02,2026-11-04,4693,NSE MTO delivery file
 delivery,NSE,EVERESTIND,EVERESTIND,,stocks/delivery/EVERESTIND,2007-01-02,2026-11-04,4617,NSE MTO delivery file
-delivery,NSE,EVONILE,EVONILE,,stocks/delivery/EVONILE,2026-11-04,2026-11-04,1,NSE MTO delivery file
+delivery,NSE,EVONILE,EVONILE,,stocks/delivery/EVONILE,2026-10-29,2026-11-04,5,NSE MTO delivery file
 delivery,NSE,EXCELINDUS,EXCELINDUS,,stocks/delivery/EXCELINDUS,2007-03-02,2026-11-04,4742,NSE MTO delivery file
 delivery,NSE,EXCELSOFT,EXCELSOFT,,stocks/delivery/EXCELSOFT,2025-11-26,2026-11-04,232,NSE MTO delivery file
 delivery,NSE,EXICOM,EXICOM,,stocks/delivery/EXICOM,2024-03-05,2026-11-04,600,NSE MTO delivery file

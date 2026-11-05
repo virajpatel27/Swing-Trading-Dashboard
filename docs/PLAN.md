@@ -27,7 +27,8 @@ Status: **draft, waiting for Viraj's OK** ("continue"). Nothing is built yet.
 | S4 | Indicator engine (`swingdash/engine.py`, every field for every day), screen snapshot (`swingdash/screen.py` -> `data/snapshot/screen.json`, built by the website workflow, not in git), registry 144 fields, `docs/formulas.md`, golden tests vs TA-Lib, `docs/calibration.md` | done 2026-11-04 (waiting for Viraj's OK) |
 | S5 | Website: "Stocks" page (all screen fields, column settings, sort menu, select / copy / CSV, split chart on wide screens), new chart (Lightweight Charts 5 panes, D/W, candle/bar, 4 styles, header chips, indicator menu with settings, MA presets, markers, drawings) - `site/ind.js` = the pipeline's formulas, tested equal | built 2026-11-04 (waiting for Viraj's look) |
 | S6 | Scanner engine (`swingdash/scanners.py` + `site/scan.js`, same results - test), 12 price scanners in `config/scanners.json` calibrated to the reference's 30-Oct counts (docs/calibration.md), Scanners page (#/scanners/<id>) with Formula editor (edit / test / save / reset / duplicate / export / import in the browser), Fields page (#/fields), NSE IPO list (ipo_date, ipo_price) | built 2026-11-05 (waiting for Viraj's look) |
-| S7-S12 | patterns, fundamentals, earnings + groups, breadth, optional, hardening | open |
+| S7 | Pattern detector `swingdash/patterns.py` (pivot, bases, breakouts, VCP, tight, flag, reversal, shakeout; `config/patterns.yaml`), 10 pattern scanners calibrated (docs/calibration.md), chart overlays (pivot line, base low, VCP pullbacks, tight areas), table columns pivot / base / breakout / IPO | built 2026-11-05 (waiting for Viraj's look) |
+| S8-S12 | fundamentals, earnings + groups, breadth, optional, hardening | open |
 
 ## 2. Decisions that differ from the original spec (and why)
 

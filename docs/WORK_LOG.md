@@ -445,3 +445,24 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - 152 Python + 20 JS tests green. Live counts on 04-Nov: Trend Template 251, Stage 2 Breakout 39, 4% Breakout 117, ...
 - NEXT: Viraj commits + pushes and looks at Scanners; then S7 (patterns: bases, pivots, VCP, tight range, flag, IPO base,
   big reversal, shakeout, recent breakout + chart overlays).
+
+### 2026-11-05: Scanner Phase S7 - patterns (built, waiting for Viraj's look)
+- Reference's resistance level (export 03-Nov, 231 stocks): always a past day's high, median 39 sessions back; 74 % are the
+  highest high since. Our pivot rule (`swingdash/patterns.py`, config/patterns.yaml): most recent swing high >= 15
+  sessions old, >= the 20 highs before it, still the highest since, above the close -> exact match for 52 %.
+- Per day (last 300 sessions): pivot / age / distance / base depth / base low / gain before; long-base pivot (85-390
+  sessions); breakouts (days since, level, run, RVol, base length); tight closes, inside day, range %, new 20-day low,
+  lowest from SMA 50 over 5 days, pivot vs 52W high. Latest day: VCP contractions (zigzag of closes, 5 % turns inside the
+  base) and flag (pole, depth, days). 28 new registry fields (current_phase 7).
+- 10 pattern scanners calibrated on 30-Oct (docs/calibration.md): exact or within 1-2 for Recent Breakout 7/7, Near Pivot
+  23/22, VCP 2/2, Tight Range 8/8, Flag 1/0, IPO Base 2/1, Big Reversal 15/16, Shakeout 40/41; Daily Base 143/153,
+  Weekly Base 75/70.
+- Chart: settings "Setups" -> Pivot / breakout line (blue, + dotted base low), Base pullbacks (orange -x% arrows),
+  Tight areas (green band); site/ind.js pivots + contractions equal Python on the golden stocks (tests/js/ind.test.js).
+  Table: Pivot Price, Distance from Pivot %, Base length, Base depth, Days since breakout, Run since breakout, IPO
+  date / days / price. tests/test_scan_phase7.py.
+- NEXT: Viraj commits + pushes; then S8 (fundamentals: NSE XBRL results, shareholding, ratios, Financials tab).
+- Browser check (local build): VCP scanner -> HAL chart shows Pivot 5,149.90 (-1.37 %), base low, two pullback arrows.
+  Found while checking: a browser can keep an old ind.js next to a new chart.js. Fix: index.html loads every file with
+  ?v=<build> (site_build replaces __BUILD__) and the service worker matches files exactly (no ignoreSearch).
+- GitHub's daily run already wrote data/meta/ipos.csv and the ipo columns of stocks.csv (S6 code), so New Listing works.

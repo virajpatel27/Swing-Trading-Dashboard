@@ -34,7 +34,7 @@ DROP = ["sessions"]
 
 def _settings(root: Path) -> tuple[dict, dict, dict]:
     load = lambda n: yaml.safe_load(open(root / "config" / f"{n}.yaml", encoding="utf-8"))
-    return load("indicators"), load("stage"), load("settings").get("liquid", {})
+    return load("indicators"), load("stage"), load("settings").get("liquid", {}), load("patterns")
 
 
 def _benchmarks(data: Path, ids: list[str]) -> dict[str, pd.Series]:
@@ -48,7 +48,7 @@ def _benchmarks(data: Path, ids: list[str]) -> dict[str, pd.Series]:
 
 def one_stock(args) -> tuple[str, dict, pd.DataFrame] | None:
     """(id, fields of the as_of day, per-day series for the cross-stock fields) - runs in a worker process."""
-    sid, data, bench, cfg, stage_cfg, liquid_rule, as_of = args
+    sid, data, bench, cfg, stage_cfg, liquid_rule, as_of, pattern_cfg = args
     adj = store.read(data / "stocks" / "adjusted" / sid, ADJ_COLS)
     if as_of is not None:
         adj = adj[adj["date"] <= as_of]
@@ -56,7 +56,7 @@ def one_stock(args) -> tuple[str, dict, pd.DataFrame] | None:
         return None
     raw = store.read(data / "stocks" / "raw" / sid, store.STOCK_COLS)
     deliv = store.read(data / "stocks" / "delivery" / sid, store.DELIVERY_COLS)
-    f = engine.stock_fields(adj, raw, deliv if len(deliv) else None, bench, cfg, stage_cfg)
+    f = engine.stock_fields(adj, raw, deliv if len(deliv) else None, bench, cfg, stage_cfg, pattern_cfg)
     rs = cfg.get("rs_rating", {})
     weights = {int(k): float(v) for k, v in (rs.get("weights") or {63: .4, 126: .2, 189: .2, 252: .2}).items()}
     f["rs_score"] = engine.rs_score(f["close"], weights, int(rs.get("min_sessions", 63)))
@@ -112,11 +112,11 @@ def _clean(v, nd=4):
 
 def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) -> dict:
     data = root / "data"
-    cfg, stage_cfg, liquid_rule = _settings(root)
+    cfg, stage_cfg, liquid_rule, pattern_cfg = _settings(root)
     master = pd.read_csv(data / "meta" / "stocks.csv", dtype=str).fillna("")
     bench = _benchmarks(data, sorted(set(cfg.get("rs_lines", [])) | {cfg.get("beta_benchmark", "NIFTY_50")}))
     as_of = pd.Timestamp(as_of) if as_of is not None else None
-    jobs = [(sid, data, bench, cfg, stage_cfg, liquid_rule, as_of) for sid in master["id"]]
+    jobs = [(sid, data, bench, cfg, stage_cfg, liquid_rule, as_of, pattern_cfg) for sid in master["id"]]
     workers = workers or max(1, min(4, os.cpu_count() or 1))
     if workers > 1:
         with ProcessPoolExecutor(max_workers=workers) as ex:

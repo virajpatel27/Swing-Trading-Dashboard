@@ -18,7 +18,8 @@ from swingdash import engine, registry, scanners  # noqa: E402
 
 FIELDS = ["sma50", "ema21", "rsi14", "macd", "macd_signal", "macd_hist", "mfi14", "atr14", "adr_pct", "bb_mid", "bb_upper",
           "bb_lower", "supertrend", "supertrend_dir", "swing_fast", "swing_slow", "rel_ext", "trend_intensity", "stage",
-          "avg_vol20", "rvol", "high_volume", "hvy", "hvq", "lvq", "pocket_pivot", "dry_up"]
+          "avg_vol20", "rvol", "high_volume", "hvy", "hvq", "lvq", "pocket_pivot", "dry_up", "pivot", "pivot_age",
+          "vcp_contractions", "vcp_last_pct"]
 
 
 def clean(v):
@@ -36,7 +37,8 @@ def main():
     out_dir.mkdir(exist_ok=True)
     for p in sorted((ROOT / "tests" / "fixtures").glob("golden_*.csv")):
         df = pd.read_csv(p, parse_dates=["date"])
-        f = engine.stock_fields(df, cfg=cfg, stage_cfg=stage_cfg)
+        f = engine.stock_fields(df, cfg=cfg, stage_cfg=stage_cfg,
+                                pattern_cfg=yaml.safe_load(open(ROOT / "config" / "patterns.yaml")))
         exp = {k: [clean(v) for v in f[k].tolist()] for k in FIELDS}
         (out_dir / f"expected_{p.stem.split('_', 1)[1]}.json").write_text(json.dumps(exp), encoding="utf-8")
         print(p.name, len(f))

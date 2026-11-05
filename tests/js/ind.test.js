@@ -56,6 +56,17 @@ for (const sym of STOCKS) {
     for (const [k, e] of [["high", "high_volume"], ["hvy", "hvy"], ["hvq", "hvq"], ["lvq", "lvq"], ["pocket", "pocket_pivot"], ["dry", "dry_up"]]) {
       same(e, vf.map((x) => x[k]), exp[e].map((x) => (x === null ? false : x)));
     }
+    const pv = I.pivots(h, c, { minAge: 15, local: 20, maxAge: 260, start: c.length - 300 });
+    same("pivot", pv.piv, exp.pivot);
+    same("pivot_age", pv.idx.map((i, t) => (i < 0 ? null : t - i)), exp.pivot_age);
+    const t = c.length - 1, age = exp.pivot_age[t];
+    if (age != null) {
+      const d = I.contractions(c, h, t - age, 5).map((x) => x.depth);
+      let run = d.length ? 1 : 0;
+      for (let k = d.length - 1; k > 0 && d[k] < d[k - 1]; k--) run++;
+      assert.strictEqual(run, exp.vcp_contractions[t], "vcp_contractions");
+      if (d.length) assert.ok(Math.abs(d[d.length - 1] - exp.vcp_last_pct[t]) < 1e-9, "vcp_last_pct");
+    }
     void o;
   });
 }

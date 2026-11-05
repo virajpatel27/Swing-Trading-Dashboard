@@ -1,0 +1,19 @@
+# Pattern detector (Phase S7). Change this file, not the code. Formulas: docs/formulas.md; calibration: docs/calibration.md.
+days: 300               # pattern fields are computed for the last N sessions of every stock (older days: empty)
+
+pivot:                  # the "pivot" = top of the current base = resistance to break
+  min_age: 15           # the swing high is at least this many sessions old (younger highs are part of the move, not a base)
+  local: 20             # ... and at least as high as the 20 sessions before it (a real swing high)
+  max_age: 260          # look back at most ~1 year
+weekly_pivot:           # same idea for long (weekly) bases
+  min_age: 85           # ~4 months
+  local: 60
+  max_age: 390          # ~18 months
+breakout:
+  rvol: 1.5             # a breakout day: close above the previous day's pivot on volume >= 1.5 x the 20-day average
+vcp:
+  swing_pct: 5          # a pullback counts when the price fell at least this % from a high (zigzag on closes)
+flag:
+  pole_days: 15         # the pole: the biggest rise over at most 15 sessions, ending within the last 20
+tight:
+  days: 5               # tight closes: the last 5 closes

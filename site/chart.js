@@ -32,7 +32,7 @@
   /* ------------------------------------------------------------------ settings (with defaults) */
   const DEFAULTS = {
     style: "classic", type: "candle", tf: "D",
-    marks: { hilo52: false, swings: false, swingPct: 10, circuit: false, inside: false, actions: true },
+    marks: { hilo52: false, swings: false, swingPct: 10, circuit: false, inside: false, actions: true, pivot: true, vcp: true, tight: false },
     chips: { float: true, rs: true, stage: true, from: true },
     ind: {
       ma: { on: true, preset: "mine", d: null, w: null },
@@ -243,6 +243,42 @@
         for (let k = i - len + 1; k <= i; k++) { if (rs[k] != null) mx = Math.max(mx, rs[k]); ph = Math.max(ph, h[k]); }
         if (rs[i] != null && rs[i] >= mx && h[i] < ph) marks.push({ time: times[i], position: "belowBar", color: ind.rsline.color, shape: "circle", size: 0.5 });
       }
+    }
+    // pivot / base (same rule as the pipeline, swingdash/patterns.py): line from the base top to today + the base low
+    if ((cfg.marks.pivot || cfg.marks.vcp) && bars.length > 30) {
+      const pv = I.pivots(h, c, weekly ? { minAge: 3, local: 4, maxAge: 78, start: bars.length - 1 } : { start: bars.length - 1 });
+      const t = bars.length - 1, i = pv.idx[t];
+      if (i >= 0) {
+        const span = (v) => bars.map((b, k) => (k >= i ? { time: b.time, value: v } : { time: b.time }));
+        if (cfg.marks.pivot) {
+          line(span(pv.piv[t]), "#2962ff", pricePane, { lineWidth: 2, lastValueVisible: true, title: "Pivot" });
+          let lo = Infinity; for (let k = i; k <= t; k++) lo = Math.min(lo, l[k]);
+          line(span(lo), css("--muted"), pricePane, { lineWidth: 1, lineStyle: 2, lastValueVisible: true, title: "Base low" });
+          legend.push(`<span><i style="background:#2962ff"></i>Pivot ${fmt(pv.piv[t])} (${S.fmtPct((c[t] / pv.piv[t] - 1) * 100)})</span>`);
+        }
+        if (cfg.marks.vcp) {
+          for (const k of I.contractions(c, h, i, 5)) {
+            marks.push({ time: times[k.lo], position: "belowBar", color: "#ff6d00", shape: "arrowUp", text: `-${k.depth.toFixed(1)}%` });
+          }
+        }
+      }
+    }
+    if (cfg.marks.tight && bars.length > 5) {           // runs of 5+ closes within 2 % of each other: green band
+      const top = [], bot = [];
+      const inTight = new Array(bars.length).fill(false);
+      for (let k = 4; k < bars.length; k++) {
+        const w = c.slice(k - 4, k + 1);
+        if (Math.max(...w) / Math.min(...w) - 1 <= 0.02) for (let j = k - 4; j <= k; j++) inTight[j] = true;
+      }
+      let k = 0;
+      while (k < bars.length) {
+        if (!inTight[k]) { top.push({ time: times[k] }); bot.push({ time: times[k] }); k++; continue; }
+        let j = k; while (j + 1 < bars.length && inTight[j + 1]) j++;
+        let hi = -Infinity, lo = Infinity; for (let q = k; q <= j; q++) { hi = Math.max(hi, h[q]); lo = Math.min(lo, l[q]); }
+        for (let q = k; q <= j; q++) { top.push({ time: times[q], value: hi }); bot.push({ time: times[q], value: lo }); }
+        k = j + 1;
+      }
+      line(top, "#089981", pricePane, { lineWidth: 2 }); line(bot, "#089981", pricePane, { lineWidth: 2 });
     }
     marks.sort((a, b) => (a.time < b.time ? -1 : a.time > b.time ? 1 : 0));
     if (marks.length) L.createSeriesMarkers(price, marks);
@@ -515,19 +551,22 @@
     const cb = (name, label, on, small) => `<label class="f-row"><input type="checkbox" name="${name}" ${on ? "checked" : ""}> ${label}${small ? `<small>${small}</small>` : ""}</label>`;
     const body = `<form class="f"><h4>Chart style</h4><div class="styles">${Object.entries(STYLES).map(([k, s]) => `<label class="style-opt"><input type="radio" name="style" value="${k}" ${cfg.style === k ? "checked" : ""}>
       <span style="background:${s.up}"></span><span style="background:${s.down}"></span> ${s.label}</label>`).join("")}</div>
+      <h4>Setups</h4>${cb("pivot", "Pivot / breakout line", mk.pivot, "top of the current base (blue) and its low (dotted)")}
+      ${cb("vcp", "Base pullbacks (VCP)", mk.vcp, "depth of each pullback inside the base (orange arrows)")}
+      ${cb("tight", "Tight areas", mk.tight, "5+ closes within 2 % of each other (green band)")}
       <h4>Markers</h4>${cb("inside", "Inside bars", mk.inside, "bar inside the previous bar's range (small circle)")}
       ${cb("actions", "Corporate actions", mk.actions, "split / bonus / rights / demerger days")}
       ${cb("circuit", "Circuit limits", mk.circuit, "today's price band around the last close (dotted orange)")}
       ${cb("hilo52", "52-week high & low", mk.hilo52, "dashed lines")}
       ${cb("swings", "Swing % moves", mk.swings, "triangles with the % of each swing")} <label class="f-row">Swing size % <input type="number" name="swingPct" value="${mk.swingPct}"></label>
       <h4>Header chips</h4>${cb("c_float", "Float market cap", ch.float)}${cb("c_rs", "RS rating", ch.rs)}${cb("c_stage", "Stage", ch.stage)}${cb("c_from", "From 52-week high", ch.from)}
-      <p class="muted small">Pivot / tight areas (Phase S7), earnings and news markers (S8 / S11) come later.</p></form>`;
+      <p class="muted small">Earnings and news markers come in later phases.</p></form>`;
     modal("Chart settings", body, (m, reset) => {
       if (reset) { cfg.style = DEFAULTS.style; cfg.marks = { ...DEFAULTS.marks }; cfg.chips = { ...DEFAULTS.chips }; }
       else {
         const f = m.querySelector("form").elements;
         cfg.style = f.style.value;
-        for (const k of ["inside", "actions", "circuit", "hilo52", "swings"]) cfg.marks[k] = f[k].checked;
+        for (const k of ["inside", "actions", "circuit", "hilo52", "swings", "pivot", "vcp", "tight"]) cfg.marks[k] = f[k].checked;
         cfg.marks.swingPct = Number(f.swingPct.value) || 10;
         cfg.chips = { float: f.c_float.checked, rs: f.c_rs.checked, stage: f.c_stage.checked, from: f.c_from.checked };
       }

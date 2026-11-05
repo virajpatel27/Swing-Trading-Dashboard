@@ -110,6 +110,10 @@ both on tests/js/fixtures/scan_*.json (regenerate with `python tests/js/make_exp
 Website: #/scanners/<id> (same table + chart as Stocks, Formula editor; user edits in localStorage "sd-scans"), #/fields.
 site_build copies scanners.json and writes data/fields.json from the registry. IPOs: `stock_master.download_ipos` ->
 data/meta/ipos.csv (NSE api/public-past-issues, main board, renames followed). Calibration: `--as-of 2026-10-30`.
+S7: `swingdash/patterns.py` (called by engine.stock_fields with config/patterns.yaml; last 300 sessions per day, VCP / flag
+latest day only). Pivot = most recent swing high >= 15 sessions old, highest since, >= 20 highs before, above the close
+(stack of falling highs). `site/ind.js` pivots / contractions = same rule (tested against Python); chart overlays
+(marks.pivot / vcp / tight). 23 scanners in config/scanners.json.
 Repo folder on the PC: `C:\Users\hello\OneDrive\Documents\Swing Trading\Swing Trading` (nested). Manual steps: `docs/MANUAL_CHECKLIST.md`.
 Read GitHub run results without a token via the public API (`api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/runs`,
 then `.../actions/runs/<id>/jobs` and `.../check-runs/<job id>/annotations`). Logs, Summary page and artifacts need a signed-in user,

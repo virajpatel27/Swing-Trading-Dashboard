@@ -55,7 +55,7 @@ global news, intraday, past circuit bands, 10-year (vs ~8-year) annual history.
 | ~60 price indicators (MA presets, RSI, MACD, MFI, ATR, ADR%, BB, Supertrend, Swing bands, RS line, Mansfield, Relative extension, Trend intensity, volume labels, returns, highs/lows, RS rating, Stage, Beta) | 4, 8 | **BUILT (S4)**: engine + screen.json, golden tests, calibration (docs/calibration.md) | 4 |
 | Results table + column settings (7 groups price-side) + chart + indicator menu | Phase 4 | READY | 5 |
 | Scanner engine + formula editor + price scanners | Phase 4-5 | **BUILT (S6)**: 12 scanners calibrated, editor, fields page | 6 |
-| Pattern scanners (bases, pivot, VCP, tight range, flag, IPO base, big reversal, shakeout, recent breakout) | Phase 4 | READY (rules ours, calibrated) | 7 |
+| Pattern scanners (bases, pivot, VCP, tight range, flag, IPO base, big reversal, shakeout, recent breakout) | Phase 4 | **BUILT (S7)**: 10 pattern scanners calibrated, chart overlays | 7 |
 | Fundamentals tab, ratios, Pros & Cons, Fundamentals columns (21) | 3, 13-18 | READY / PARTIAL (history depth) | 8 |
 | Earnings scanners (6), Earnings calendar page + grade | 13, 17 | READY | 9 |
 | Groups page ranks, theme status, Heatmap, RRG | 9-12 | READY | 9 |

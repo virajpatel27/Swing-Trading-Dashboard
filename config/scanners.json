@@ -413,6 +413,338 @@
     "field": "rs_rating",
     "dir": "desc"
    }
+  },
+  {
+   "id": "recent-breakout",
+   "folder": "Classic",
+   "name": "Recent Breakout",
+   "description": "Broke out of a base that lasted at least 40 sessions, on 2x+ volume, within the last 10 sessions, and is still above the old pivot. Liquid stocks only.",
+   "universe": "liquid",
+   "rule": {
+    "all": [
+     {
+      "field": "breakout_days",
+      "op": "<=",
+      "value": 10
+     },
+     {
+      "field": "breakout_rvol",
+      "op": ">=",
+      "value": 2
+     },
+     {
+      "field": "breakout_base_age",
+      "op": ">=",
+      "value": 40
+     },
+     {
+      "field": "close",
+      "op": ">",
+      "field2": "breakout_level"
+     }
+    ]
+   },
+   "sort": {
+    "field": "breakout_days",
+    "dir": "asc"
+   },
+   "phase": 7
+  },
+  {
+   "id": "daily-base",
+   "folder": "Patterns",
+   "name": "Daily Base",
+   "description": "A young base (3 weeks to about 4 months) after a 15 %+ rise, at most 35 % deep, with the price back within 15 % of the top and no breakout yet.",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "pivot_age",
+      "op": "between",
+      "value": [
+       15,
+       90
+      ]
+     },
+     {
+      "field": "base_depth",
+      "op": "<=",
+      "value": 35
+     },
+     {
+      "field": "dist_pivot",
+      "op": ">=",
+      "value": -15
+     },
+     {
+      "field": "base_prior_gain",
+      "op": ">=",
+      "value": 15
+     }
+    ]
+   },
+   "sort": {
+    "field": "dist_pivot",
+    "dir": "desc"
+   },
+   "phase": 7
+  },
+  {
+   "id": "weekly-base",
+   "folder": "Patterns",
+   "name": "Weekly Base",
+   "description": "A long base (about 4 to 18 months), at most 55 % deep, with the price back within 16 % of its top and no breakout yet.",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "pivot_w_age",
+      "op": "between",
+      "value": [
+       85,
+       390
+      ]
+     },
+     {
+      "field": "base_w_depth",
+      "op": "<=",
+      "value": 55
+     },
+     {
+      "field": "dist_pivot_w",
+      "op": ">=",
+      "value": -16
+     }
+    ]
+   },
+   "sort": {
+    "field": "dist_pivot_w",
+    "dir": "desc"
+   },
+   "phase": 7
+  },
+  {
+   "id": "near-pivot",
+   "folder": "Patterns",
+   "name": "Near Pivot",
+   "description": "Just under the pivot of its base: closer than one usual daily range (ADR %).",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "dist_pivot",
+      "op": ">=",
+      "field2": "adr_pct",
+      "mult": -1
+     }
+    ]
+   },
+   "sort": {
+    "field": "dist_pivot",
+    "dir": "desc"
+   },
+   "phase": 7
+  },
+  {
+   "id": "vcp",
+   "folder": "Patterns",
+   "name": "VCP",
+   "description": "Volatility contraction: at least 2 pullbacks in a row inside the base, each smaller than the one before, the last one at most 8 %, in an uptrend within 5 % of the pivot.",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "vcp_contractions",
+      "op": ">=",
+      "value": 2
+     },
+     {
+      "field": "vcp_last_pct",
+      "op": "<=",
+      "value": 8
+     },
+     {
+      "field": "stage",
+      "op": "in",
+      "value": [
+       "2",
+       "2A"
+      ]
+     },
+     {
+      "field": "dist_pivot",
+      "op": ">=",
+      "value": -5
+     }
+    ]
+   },
+   "sort": {
+    "field": "dist_pivot",
+    "dir": "desc"
+   },
+   "phase": 7
+  },
+  {
+   "id": "tight-range",
+   "folder": "Patterns",
+   "name": "Tight Range",
+   "description": "Very quiet trading inside an uptrend: the last 5 closes within 1.5 % of each other.",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "stage",
+      "op": "in",
+      "value": [
+       "2",
+       "2A"
+      ]
+     },
+     {
+      "field": "tight_pct",
+      "op": "<=",
+      "value": 1.5
+     }
+    ]
+   },
+   "sort": {
+    "field": "tight_pct",
+    "dir": "asc"
+   },
+   "phase": 7
+  },
+  {
+   "id": "flag",
+   "folder": "Patterns",
+   "name": "Flag Pattern",
+   "description": "A sharp rise (the pole, 40 %+ in at most 15 sessions) followed by a short, shallow pause (the flag: 3-15 sessions, at most 15 % deep).",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "flag_pole_pct",
+      "op": ">=",
+      "value": 40
+     },
+     {
+      "field": "flag_days",
+      "op": "between",
+      "value": [
+       3,
+       15
+      ]
+     },
+     {
+      "field": "flag_depth_pct",
+      "op": "<=",
+      "value": 15
+     }
+    ]
+   },
+   "sort": {
+    "field": "flag_pole_pct",
+    "dir": "desc"
+   },
+   "phase": 7
+  },
+  {
+   "id": "ipo-base",
+   "folder": "Patterns",
+   "name": "IPO Base",
+   "description": "Listed through an IPO within the last year, in its first base (25+ sessions) just under the high since listing (within 10 %).",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "days_since_ipo",
+      "op": "<=",
+      "value": 365
+     },
+     {
+      "field": "pivot_age",
+      "op": ">=",
+      "value": 25
+     },
+     {
+      "field": "pivot_vs_hi52",
+      "op": ">=",
+      "value": -0.5
+     },
+     {
+      "field": "dist_pivot",
+      "op": ">=",
+      "value": -10
+     }
+    ]
+   },
+   "sort": {
+    "field": "dist_pivot",
+    "dir": "desc"
+   },
+   "phase": 7
+  },
+  {
+   "id": "big-reversal",
+   "folder": "Patterns",
+   "name": "Big Reversal",
+   "description": "A new 20-day low today, but a wide day (1.5 x the usual range) that closed in the top 30 % of its range.",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "new_low_20d",
+      "op": "is",
+      "value": true
+     },
+     {
+      "field": "close_pos",
+      "op": ">=",
+      "value": 70
+     },
+     {
+      "field": "range_pct",
+      "op": ">=",
+      "field2": "adr_pct",
+      "mult": 1.5
+     }
+    ]
+   },
+   "sort": {
+    "field": "range_pct",
+    "dir": "desc"
+   },
+   "phase": 7
+  },
+  {
+   "id": "shakeout",
+   "folder": "Patterns",
+   "name": "Shakeout",
+   "description": "An uptrend stock that dropped 4 %+ below its rising 50-day average in the last 5 sessions and is already back above it.",
+   "universe": "all",
+   "rule": {
+    "all": [
+     {
+      "field": "min_from_sma50_5d",
+      "op": "<=",
+      "value": -4
+     },
+     {
+      "field": "from_sma50",
+      "op": ">",
+      "value": 0
+     },
+     {
+      "field": "sma50_chg_1m",
+      "op": ">",
+      "value": 0
+     }
+    ]
+   },
+   "sort": {
+    "field": "rs_rating",
+    "dir": "desc"
+   },
+   "phase": 7
   }
  ]
 }

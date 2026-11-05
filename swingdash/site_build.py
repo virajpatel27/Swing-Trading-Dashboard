@@ -99,6 +99,8 @@ def build(root: Path, out: Path, log=print) -> dict:
     stamp = datetime.now().strftime("%Y%m%d%H%M%S")
     sw = out / "sw.js"
     sw.write_text(sw.read_text(encoding="utf-8").replace("__BUILD__", stamp), encoding="utf-8")
+    page = out / "index.html"                            # ?v=<build> on every file: a new build never mixes with cached old files
+    page.write_text(page.read_text(encoding="utf-8").replace("__BUILD__", stamp), encoding="utf-8")
     (out / ".nojekyll").write_text("")
     size = sum(p.stat().st_size for p in out.rglob("*") if p.is_file())
     res = {"charts": n, "build": stamp, "size_mb": round(size / 1e6, 1)}

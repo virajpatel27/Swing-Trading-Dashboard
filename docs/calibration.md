@@ -61,3 +61,22 @@ Rules: `config/scanners.json` (every number is a parameter; the website's Formul
 | New RS before Price | RS line (vs Smallcap 250) at a 52-week high within 7 sessions, price not at its 52-week high today | 111 | 105 |
 
 Recent Breakout needs bases / pivots: Phase S7.
+
+## Phase S7 - patterns (30-Oct-2026)
+
+Pivot = the most recent swing high at least 15 sessions old that is still the highest high since and above the close
+(`config/patterns.yaml`). On 03-Nov it equals the reference's resistance level exactly for 52 % of the stocks the app gives
+one (ICICIBANK 1480, HAL 5149.9, TRENT 3244.5 ...); most others use a level that is not the highest since.
+
+| scanner | our rule (short) | ours | reference |
+|---|---|---|---|
+| Recent Breakout | breakout within 10 sessions, base 40+ sessions, breakout RVol >= 2, still above the old pivot, liquid | 7 | 7 |
+| Daily Base | base 15-90 sessions, depth <= 35 %, within 15 % of the pivot, 15 %+ rise before | 143 | 153 |
+| Weekly Base | base 85-390 sessions, depth <= 55 %, within 16 % of its pivot | 75 | 70 |
+| Near Pivot | within one ADR % below the pivot | 23 | 22 |
+| VCP | 2+ shrinking pullbacks in the base, last <= 8 %, stage 2, within 5 % of the pivot | 2 | 2 |
+| Tight Range | stage 2, last 5 closes within 1.5 % | 8 | 8 |
+| Flag Pattern | pole 40 %+ in <= 15 sessions, flag 3-15 sessions, <= 15 % deep | 1 | 0 |
+| IPO Base | IPO within a year, base 25+ sessions, pivot = high since listing, within 10 % | 2 | 1 |
+| Big Reversal | new 20-day low, close in the top 30 % of a day 1.5 x ADR wide | 15 | 16 |
+| Shakeout | 4 %+ below a rising SMA 50 in the last 5 sessions, back above it | 40 | 41 |

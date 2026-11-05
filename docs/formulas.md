@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S6**. Fields: **157**.
+Current phase: **S7**. Fields: **185**.
 
 ## Sources
 
@@ -16,6 +16,7 @@ Current phase: **S6**. Fields: **157**.
 - **shareholding**: NSE shareholding pattern (promoter & promoter group %, quarter)
 - **fno_list**: NSE fo_mktlots.csv - stocks with futures & options
 - **price_bands**: NSE sec_list.csv - today's price band (circuit limit)
+- **pattern_settings**: config/patterns.yaml (pattern detector parameters)
 - **ipo_list**: NSE api/public-past-issues - main-board IPOs with listing date and issue price
 - **theme_rules**: config/theme_rules.yaml - our theme lists (NSE thematic indices, NSE industries, hand-picked)
 - **mto**: NSE MTO_ddmmyyyy.DAT - security-wise delivery position, every trading day from 2007
@@ -213,3 +214,36 @@ Current phase: **S6**. Fields: **157**.
 | `high_50d_prev` | 50D high (before today) | rupees | Highest high of the 50 sessions before today (breakout level) | high | data/snapshot/screen.json |
 | `close_pos` | Close in day's range % | percent | (close - low) / (high - low) x 100; 100 = closed at the high (50 when high = low) | close, high, low | data/snapshot/screen.json |
 | `range_20d_pct` | 20D range % | percent | (high_20d / low_20d - 1) x 100 | high_20d, low_20d | data/snapshot/screen.json |
+
+## Fields of phase S7
+
+| field | label | type | formula | inputs | files |
+|---|---|---|---|---|---|
+| `pivot` | Pivot Price | rupees | Top of the current base: the most recent swing high at least 15 sessions old that is still the highest high since and above today's close (config/patterns.yaml) | high, close | data/snapshot/screen.json |
+| `pivot_age` | Base length (sessions) | integer | Sessions since the pivot bar | pivot | data/snapshot/screen.json |
+| `dist_pivot` | Distance from Pivot % | percent | (close / pivot - 1) x 100 (below the pivot = negative) | close, pivot | data/snapshot/screen.json |
+| `base_depth` | Base depth % | percent | (1 - lowest low since the pivot bar / pivot) x 100 | pivot, low | data/snapshot/screen.json |
+| `base_low` | Base low | rupees | Lowest low since the pivot bar | pivot, low | data/snapshot/screen.json |
+| `base_prior_gain` | Gain before the base % | percent | (close on the pivot bar / close 63 sessions before it - 1) x 100 | pivot, close | data/snapshot/screen.json |
+| `pivot_w` | Long-base pivot | rupees | Same as pivot for long bases: swing high at least 85 sessions old (~4 months), up to 390 (~18 months) | high, close | data/snapshot/screen.json |
+| `pivot_w_age` | Long base length (sessions) | integer | Sessions since the long-base pivot bar | pivot_w | data/snapshot/screen.json |
+| `dist_pivot_w` | Distance from long-base pivot % | percent | (close / pivot_w - 1) x 100 | close, pivot_w | data/snapshot/screen.json |
+| `base_w_depth` | Long base depth % | percent | (1 - lowest low since the long-base pivot bar / pivot_w) x 100 | pivot_w, low | data/snapshot/screen.json |
+| `breakout_days` | Sessions since breakout | integer | Sessions since the last close above the previous day's pivot on volume >= 1.5 x the 20-day average | pivot, rvol | data/snapshot/screen.json |
+| `breakout_level` | Breakout level | rupees | The pivot that the last breakout closed above | pivot | data/snapshot/screen.json |
+| `breakout_run` | Run since breakout % | percent | (close / close on the breakout day - 1) x 100 | breakout_days, close | data/snapshot/screen.json |
+| `breakout_rvol` | Breakout day RVol | number | Relative volume on the last breakout day | breakout_days, rvol | data/snapshot/screen.json |
+| `breakout_base_age` | Base length at breakout | integer | Sessions the base had lasted (pivot_age) the day before the last breakout | breakout_days, pivot_age | data/snapshot/screen.json |
+| `tight_pct` | Tight closes 5D % | percent | (highest / lowest of the last 5 closes - 1) x 100 | close | data/snapshot/screen.json |
+| `inside_day` | Inside day | boolean | Today's high and low inside yesterday's range | high, low | data/snapshot/screen.json |
+| `range_pct` | Day range % | percent | (high / low - 1) x 100 | high, low | data/snapshot/screen.json |
+| `new_low_20d` | New 20D low today | boolean | Today's low at or below the lowest low of the 20 sessions before | low | data/snapshot/screen.json |
+| `new_low_20d_3d` | New 20D low (3 days) | boolean | new_low_20d on any of the last 3 sessions | new_low_20d | data/snapshot/screen.json |
+| `min_from_sma50_5d` | Lowest from 50 SMA % (5D) | percent | Lowest from_sma50 of the last 5 sessions | from_sma50 | data/snapshot/screen.json |
+| `pivot_vs_hi52` | Pivot vs 52W high % | percent | (pivot / hi52 - 1) x 100 (0 = the pivot is the 52-week high) | pivot, hi52 | data/snapshot/screen.json |
+| `vcp_contractions` | VCP contractions | integer | Latest day: number of pullbacks in a row, inside the base, each smaller than the one before (zigzag of closes, 5 % turns) | pivot, close | data/snapshot/screen.json |
+| `vcp_last_pct` | Last contraction % | percent | Latest day: depth of the latest pullback inside the base | vcp_contractions | data/snapshot/screen.json |
+| `vcp_first_pct` | First contraction % | percent | Latest day: depth of the first pullback of that run | vcp_contractions | data/snapshot/screen.json |
+| `flag_pole_pct` | Flag pole % | percent | Latest day: biggest rise over at most 15 sessions ending within the last 20 | close | data/snapshot/screen.json |
+| `flag_depth_pct` | Flag depth % | percent | Latest day: (1 - lowest low since the pole top / highest high since) x 100 | flag_pole_pct, low, high | data/snapshot/screen.json |
+| `flag_days` | Flag length (sessions) | integer | Latest day: sessions since the pole top | flag_pole_pct | data/snapshot/screen.json |

@@ -216,8 +216,53 @@
       move: k === 0 ? null : (candles[p.i].close / candles[pts[k - 1].i].close - 1) * 100 }));
   }
 
+  /** Pivot per bar = swingdash/patterns.py _pivots(): the most recent swing high >= minAge bars old, still the highest
+      high since, >= the `local` highs before it, above the close; null when there is none. {piv, idx} arrays. */
+  function pivots(h, c, { minAge = 15, local = 20, maxAge = 260, start = 0 } = {}) {
+    const n = h.length, piv = new Array(n).fill(null), idx = new Array(n).fill(-1);
+    const lm = h.map((x, i) => { let m = -Infinity; for (let k = Math.max(0, i - local); k < i; k++) m = Math.max(m, h[k]); return !(x < m); });
+    const stack = [];
+    for (let t = Math.max(0, start - maxAge - 1); t < n; t++) {
+      while (stack.length && h[stack[stack.length - 1]] <= h[t]) stack.pop();
+      stack.push(t);
+      if (t < start) continue;
+      for (let s = stack.length - 1; s >= 0; s--) {
+        const i = stack[s], age = t - i;
+        if (age < minAge) continue;
+        if (age > maxAge) break;
+        if (lm[i] && h[i] > c[t]) { piv[t] = h[i]; idx[t] = i; break; }
+      }
+    }
+    return { piv, idx };
+  }
+  /** swing points of a base (patterns.py _zigzag): [[index, "H"|"L"], ...], index 0 = the base top */
+  function baseSwings(seg, pct) {
+    const pts = [[0, "H"]];
+    let d = -1, ext = 0;
+    for (let i = 1; i < seg.length; i++) {
+      if (d === -1) {
+        if (seg[i] < seg[ext]) ext = i;
+        else if ((seg[i] / seg[ext] - 1) * 100 >= pct) { pts.push([ext, "L"]); d = 1; ext = i; }
+      } else if (seg[i] > seg[ext]) ext = i;
+      else if ((1 - seg[i] / seg[ext]) * 100 >= pct) { pts.push([ext, "H"]); d = -1; ext = i; }
+    }
+    if (ext !== pts[pts.length - 1][0]) pts.push([ext, d === -1 ? "L" : "H"]);
+    return pts;
+  }
+  /** pullbacks inside the base from bar `start` to the end: [{hi, lo, depth}] with bar indexes (patterns.contractions) */
+  function contractions(c, h, start, pct = 5) {
+    const seg = c.slice(start);
+    if (seg.length < 3) return [];
+    seg[0] = Math.max(seg[0], h[start]);
+    const pts = baseSwings(seg, pct), out = [];
+    for (let k = 0; k + 1 < pts.length; k++) {
+      if (pts[k][1] === "H" && pts[k + 1][1] === "L") out.push({ hi: start + pts[k][0], lo: start + pts[k + 1][0], depth: (1 - seg[pts[k + 1][0]] / seg[pts[k][0]]) * 100 });
+    }
+    return out;
+  }
+
   const api = { N, sma, smaMin, ema, ewm, wilder, wma, vwma, trueRange, atr, rsi, macd, mfi, bollinger, supertrend, t3,
-    relativeExtension, trendIntensity, adr, align, rsLine, mansfield, stage, volumeFlags, swings };
+    relativeExtension, trendIntensity, adr, align, rsLine, mansfield, stage, volumeFlags, swings, pivots, baseSwings, contractions };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.SDI = api;
 })(typeof self !== "undefined" ? self : this);

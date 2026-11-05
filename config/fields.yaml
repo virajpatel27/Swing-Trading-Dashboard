@@ -14,7 +14,7 @@
 #                      delivery = data/stocks/delivery/<ID>/, groups = data/groups/<level>/<id>/,
 #                      screen = data/snapshot/screen.json (every engine field, latest day; Phase S4)
 
-current_phase: 6
+current_phase: 7
 
 sources:
   equity_list: NSE EQUITY_L.csv - every main-board equity (symbol, name, ISIN, series, listing date)
@@ -27,6 +27,7 @@ sources:
   shareholding: NSE shareholding pattern (promoter & promoter group %, quarter)
   fno_list: NSE fo_mktlots.csv - stocks with futures & options
   price_bands: NSE sec_list.csv - today's price band (circuit limit)
+  pattern_settings: config/patterns.yaml (pattern detector parameters)
   ipo_list: NSE api/public-past-issues - main-board IPOs with listing date and issue price
   theme_rules: config/theme_rules.yaml - our theme lists (NSE thematic indices, NSE industries, hand-picked)
   mto: NSE MTO_ddmmyyyy.DAT - security-wise delivery position, every trading day from 2007
@@ -201,3 +202,32 @@ fields:
   - {id: high_50d_prev, label: "50D high (before today)", type: rupees, formula: "Highest high of the 50 sessions before today (breakout level)", inputs: [high], provided_in_phase: 6, source: derived, file: [screen]}
   - {id: close_pos, label: "Close in day's range %", type: percent, formula: "(close - low) / (high - low) x 100; 100 = closed at the high (50 when high = low)", inputs: [close, high, low], provided_in_phase: 6, source: derived, file: [screen]}
   - {id: range_20d_pct, label: "20D range %", type: percent, formula: "(high_20d / low_20d - 1) x 100", inputs: [high_20d, low_20d], provided_in_phase: 6, source: derived, file: [screen]}
+  # ------------------------------------------------------------ patterns (phase 7), swingdash/patterns.py
+  - {id: pivot, label: "Pivot Price", type: rupees, formula: "Top of the current base: the most recent swing high at least 15 sessions old that is still the highest high since and above today's close (config/patterns.yaml)", inputs: [high, close], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: pivot_age, label: "Base length (sessions)", type: integer, formula: "Sessions since the pivot bar", inputs: [pivot], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: dist_pivot, label: "Distance from Pivot %", type: percent, formula: "(close / pivot - 1) x 100 (below the pivot = negative)", inputs: [close, pivot], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: base_depth, label: "Base depth %", type: percent, formula: "(1 - lowest low since the pivot bar / pivot) x 100", inputs: [pivot, low], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: base_low, label: "Base low", type: rupees, formula: "Lowest low since the pivot bar", inputs: [pivot, low], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: base_prior_gain, label: "Gain before the base %", type: percent, formula: "(close on the pivot bar / close 63 sessions before it - 1) x 100", inputs: [pivot, close], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: pivot_w, label: "Long-base pivot", type: rupees, formula: "Same as pivot for long bases: swing high at least 85 sessions old (~4 months), up to 390 (~18 months)", inputs: [high, close], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: pivot_w_age, label: "Long base length (sessions)", type: integer, formula: "Sessions since the long-base pivot bar", inputs: [pivot_w], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: dist_pivot_w, label: "Distance from long-base pivot %", type: percent, formula: "(close / pivot_w - 1) x 100", inputs: [close, pivot_w], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: base_w_depth, label: "Long base depth %", type: percent, formula: "(1 - lowest low since the long-base pivot bar / pivot_w) x 100", inputs: [pivot_w, low], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: breakout_days, label: "Sessions since breakout", type: integer, formula: "Sessions since the last close above the previous day's pivot on volume >= 1.5 x the 20-day average", inputs: [pivot, rvol], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: breakout_level, label: "Breakout level", type: rupees, formula: "The pivot that the last breakout closed above", inputs: [pivot], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: breakout_run, label: "Run since breakout %", type: percent, formula: "(close / close on the breakout day - 1) x 100", inputs: [breakout_days, close], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: breakout_rvol, label: "Breakout day RVol", type: number, formula: "Relative volume on the last breakout day", inputs: [breakout_days, rvol], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: breakout_base_age, label: "Base length at breakout", type: integer, formula: "Sessions the base had lasted (pivot_age) the day before the last breakout", inputs: [breakout_days, pivot_age], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: tight_pct, label: "Tight closes 5D %", type: percent, formula: "(highest / lowest of the last 5 closes - 1) x 100", inputs: [close], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: inside_day, label: "Inside day", type: boolean, formula: "Today's high and low inside yesterday's range", inputs: [high, low], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: range_pct, label: "Day range %", type: percent, formula: "(high / low - 1) x 100", inputs: [high, low], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: new_low_20d, label: "New 20D low today", type: boolean, formula: "Today's low at or below the lowest low of the 20 sessions before", inputs: [low], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: new_low_20d_3d, label: "New 20D low (3 days)", type: boolean, formula: "new_low_20d on any of the last 3 sessions", inputs: [new_low_20d], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: min_from_sma50_5d, label: "Lowest from 50 SMA % (5D)", type: percent, formula: "Lowest from_sma50 of the last 5 sessions", inputs: [from_sma50], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: pivot_vs_hi52, label: "Pivot vs 52W high %", type: percent, formula: "(pivot / hi52 - 1) x 100 (0 = the pivot is the 52-week high)", inputs: [pivot, hi52], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: vcp_contractions, label: "VCP contractions", type: integer, formula: "Latest day: number of pullbacks in a row, inside the base, each smaller than the one before (zigzag of closes, 5 % turns)", inputs: [pivot, close], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: vcp_last_pct, label: "Last contraction %", type: percent, formula: "Latest day: depth of the latest pullback inside the base", inputs: [vcp_contractions], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: vcp_first_pct, label: "First contraction %", type: percent, formula: "Latest day: depth of the first pullback of that run", inputs: [vcp_contractions], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: flag_pole_pct, label: "Flag pole %", type: percent, formula: "Latest day: biggest rise over at most 15 sessions ending within the last 20", inputs: [close], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: flag_depth_pct, label: "Flag depth %", type: percent, formula: "Latest day: (1 - lowest low since the pole top / highest high since) x 100", inputs: [flag_pole_pct, low, high], provided_in_phase: 7, source: derived, file: [screen]}
+  - {id: flag_days, label: "Flag length (sessions)", type: integer, formula: "Latest day: sessions since the pole top", inputs: [flag_pole_pct], provided_in_phase: 7, source: derived, file: [screen]}

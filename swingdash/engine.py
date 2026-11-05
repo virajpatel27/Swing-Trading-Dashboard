@@ -9,6 +9,8 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from . import patterns
+
 YEAR, QUARTER = 252, 63
 STAGE_NAMES = {"1": "Basing", "2A": "Early uptrend", "2": "Uptrend", "3": "Topping", "4": "Downtrend", "4A": "Improving"}
 
@@ -161,8 +163,8 @@ def stage(c: pd.Series, cfg: dict) -> pd.Series:
 
 # ---------------------------------------------------------------- one stock, all days
 def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.DataFrame | None = None,
-                 bench: dict[str, pd.Series] | None = None, cfg: dict | None = None, stage_cfg: dict | None = None
-                 ) -> pd.DataFrame:
+                 bench: dict[str, pd.Series] | None = None, cfg: dict | None = None, stage_cfg: dict | None = None,
+                 pattern_cfg: dict | None = None) -> pd.DataFrame:
     """adj: date, open, high, low, close, volume (adjusted). raw: date, close, value (as traded, for turnover).
     deliv: date, deliv_pct. bench: {index id: close Series indexed by date}. Returns one row per day."""
     cfg = cfg or {}
@@ -271,8 +273,10 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
             rs, rb = c.pct_change(), b.pct_change()
             f["beta_1y"] = rs.rolling(YEAR, min_periods=YEAR // 2).cov(rb) / rb.rolling(YEAR, min_periods=YEAR // 2).var()
     f["stage"] = stage(c, stage_cfg) if stage_cfg else None
-    f["sessions"] = np.arange(1, len(f) + 1)
-    return f
+    extra = {"sessions": np.arange(1, len(f) + 1)}
+    if pattern_cfg:
+        extra.update(patterns.fields(f, pattern_cfg))
+    return pd.concat([f, pd.DataFrame(extra, index=f.index)], axis=1)
 
 
 # ---------------------------------------------------------------- all stocks of one day / of every day

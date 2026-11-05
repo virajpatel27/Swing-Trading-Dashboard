@@ -25,7 +25,8 @@ self.addEventListener("fetch", (e) => {
     }).catch(() => caches.match(req, { ignoreSearch: true })));
     return;
   }
-  e.respondWith(caches.match(req, { ignoreSearch: true }).then((hit) => hit || fetch(req).then((res) => {
+  // exact match (with ?v=<build>): an old build's file is never served for a new page
+  e.respondWith(caches.match(req).then((hit) => hit || fetch(req).then((res) => {
     if (res.ok && (url.origin === location.origin || url.hostname === "unpkg.com")) {
       const copy = res.clone();
       caches.open(CACHE).then((c) => c.put(req, copy));

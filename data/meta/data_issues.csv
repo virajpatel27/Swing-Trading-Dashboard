@@ -258,6 +258,7 @@ NSE ESTER,warn,missing dates,2014-02-03,"1 trading days without a row (first 201
 NSE EUROBOND,warn,missing dates,2022-06-06,"51 trading days without a row (first 2022-06-06, last 2025-06-09)"
 NSE EUROTEXIND,warn,missing dates,2007-03-21,"874 trading days without a row (first 2007-03-21, last 2026-10-28)"
 NSE EVERESTIND,warn,missing dates,2008-09-22,"8 trading days without a row (first 2008-09-22, last 2009-06-18)"
+NSE EVONILE,warn,missing dates,2023-10-26,"608 trading days without a row (first 2023-10-26, last 2026-04-17)"
 NSE EXCELINDUS,warn,missing dates,2008-11-11,"56 trading days without a row (first 2008-11-11, last 2013-12-19)"
 NSE EXPLEOSOL,warn,missing dates,2017-08-08,"4 trading days without a row (first 2017-08-08, last 2017-08-11)"
 NSE FCSSOFT,warn,missing dates,2009-05-18,"117 trading days without a row (first 2009-05-18, last 2018-01-31)"
@@ -1632,6 +1633,7 @@ NSE EUROTEXIND (adjusted),warn,unexplained jump,2007-12-26,close moved 20.1% (to
 NSE EUROTEXIND (adjusted),warn,unexplained jump,2011-08-22,close moved 20.1% (to 22.7)
 NSE EVERESTIND (adjusted),warn,unexplained jump,2007-04-05,close moved 20.0% (to 110.5)
 NSE EVERESTIND (adjusted),warn,unexplained jump,2008-01-23,close moved 20.0% (to 96.55)
+NSE EVONILE (adjusted),warn,unexplained jump,2026-04-20,close moved 48.1% (to 995.45)
 NSE EXCELINDUS (adjusted),warn,unexplained jump,2008-01-09,close moved 20.0% (to 90.9)
 NSE EXCELINDUS (adjusted),warn,unexplained jump,2009-08-05,close moved 20.0% (to 44.05)
 NSE EXPLEOSOL (adjusted),warn,unexplained jump,2010-12-29,close moved 20.0% (to 93.8)

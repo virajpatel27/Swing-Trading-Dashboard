@@ -114,6 +114,10 @@ S7: `swingdash/patterns.py` (called by engine.stock_fields with config/patterns.
 latest day only). Pivot = most recent swing high >= 15 sessions old, highest since, >= 20 highs before, above the close
 (stack of falling highs). `site/ind.js` pivots / contractions = same rule (tested against Python); chart overlays
 (marks.pivot / vcp / tight). 23 scanners in config/scanners.json.
+S8: `swingdash/fundamentals.py` (NSE XBRL results / balance sheet / cash flow / shareholding -> data/fundamentals/<SYMBOL>.json;
+Backfill job `fundamentals`, daily step 4d after its checkpoint exists, `scripts/fundamentals_report.py`). screener.in is NOT used
+(terms forbid copying). Ratios = fundamentals.metrics (screen fields, phase 8). Website: data/f/<id>.json (site_build adds EPS
+factors), site/fin.js (SDF) Financials tab, E markers. Local sample docs in data/fundamentals must not be committed (the bot makes them).
 Repo folder on the PC: `C:\Users\hello\OneDrive\Documents\Swing Trading\Swing Trading` (nested). Manual steps: `docs/MANUAL_CHECKLIST.md`.
 Read GitHub run results without a token via the public API (`api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/runs`,
 then `.../actions/runs/<id>/jobs` and `.../check-runs/<job id>/annotations`). Logs, Summary page and artifacts need a signed-in user,

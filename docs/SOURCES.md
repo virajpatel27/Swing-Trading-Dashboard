@@ -38,6 +38,10 @@ Script: `scripts/probe_sources.py`.
 | Delisted companies | NSE `content/equities/delisted.csv` (latin-1, ~330 rows) | - | audit only |
 | Delivery % (S2) | NSE `archives/equities/mto/MTO_ddmmyyyy.DAT` (every trading day 2007 ->, out ~16:50 IST; record type 20 = symbol, series, traded qty, deliverable qty, %) | `products/content/sec_bhavdata_full_ddmmyyyy.csv` (2020 ->, DELIV_PER) | traded qty = bhavcopy volume; reference export = previous day's MTO, 100 % equal |
 | Corporate actions of the SME board | NSE `api/corporates-corporateActions?index=sme` (2012 ->) | - | THEJO bonus 2:1 12-Oct-2021, KSOLVES bonus 3:1 04-Jun-2021, AIRAN split 14-Aug-2018 |
+| Fundamentals (S8): results | NSE XBRL on nsearchives: `api/corporates-financial-results?period=Quarterly` (to Dec-2024, XBRL ~2017 ->), `period=Annual` (balance sheet ~FY2020 ->), `api/integrated-filing-results` (2025 ->, results + balance sheet + cash flow; referer corporate-integrated-filing) | keep the last good document | hand check vs the company's published results (docs/calibration.md S8) |
+| Fundamentals (S8): shareholding | NSE `api/corporate-share-holdings-master` (per stock ~21 quarters; without symbol = latest of all companies) + its SHP XBRL | - | promoter % = the master list's pr_and_prgrp |
+| Results calendar (S8) | NSE `api/event-calendar` (upcoming board meetings, purpose 'Financial Results') | - | - |
+| Not used: screener.in | its Terms of Service (guides/terms, Aug-2018) forbid copying or mirroring its material; no public API | - | - |
 | Missing symbol renames | same ISIN in the bhavcopy of two neighbouring days (ISIN column from ~2011) -> `config/symbol_changes_extra.csv` | - | 6 found 03-Nov: RUCHI->PATANJALI, PHILIPCARB->PCBL, PDSMFL->PDSL, BURGERKING->RBA, SHRIRAMEPC->SEPC, WABCOINDIA->ZFCVINDIA |
 
 **Not used:** equitytimer.com (Terms forbid scraping + redistribution). niftyindices.com: its old history address

@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from . import engine, store
+from . import engine, fundamentals, store
 from .adjust import ADJ_COLS
 from .config import ROOT
 
@@ -139,6 +139,10 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
         ipo = pd.to_datetime(row.get("ipo_date") or None, errors="coerce")
         row["days_since_ipo"] = None if pd.isna(ipo) else int((pd.Timestamp(last["date"]) - ipo).days)
         rows.append(row)
+    # fundamentals (Phase S8): only what was announced by the data day
+    fin = fundamentals.screen_fields(data, rows, as_of.strftime("%Y-%m-%d") if as_of is not None else None)
+    for row in rows:
+        row.update(fin.get(row["id"], {}))
     cols = list(rows[0].keys())
     for r in rows[1:]:
         cols += [c for c in r if c not in cols]

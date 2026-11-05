@@ -581,5 +581,14 @@ def update_bse_indices(ctx: Ctx, until: date | None = None) -> dict:
     return res
 
 
+def backfill_fundamentals(ctx: Ctx, until: date | None = None) -> dict:
+    """Results / balance sheet / cash flow / shareholding XBRL files per stock (Nifty 500 first), see swingdash/fundamentals.py.
+    ~40 s per stock; the checkpoint lists the stocks done, so a stopped run continues with the next one."""
+    from . import fundamentals
+    uni = pd.read_csv(ctx.data / "meta" / "universe_stocks.csv")
+    return fundamentals.backfill(ctx.data, ctx.http, uni, ctx.today, ctx.deadline, checkpoint(ctx, "fundamentals"),
+                                 int(ctx.settings.get("fundamentals_refresh_days", 120)), log=ctx.log, clock=ctx.clock)
+
+
 JOBS = {"stocks": backfill_stocks, "nse-indices": backfill_nse_indices, "bse-indices": backfill_bse_indices,
-        "bse-update": update_bse_indices, "delivery": backfill_delivery}
+        "bse-update": update_bse_indices, "delivery": backfill_delivery, "fundamentals": backfill_fundamentals}

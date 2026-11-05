@@ -56,7 +56,7 @@ global news, intraday, past circuit bands, 10-year (vs ~8-year) annual history.
 | Results table + column settings (7 groups price-side) + chart + indicator menu | Phase 4 | READY | 5 |
 | Scanner engine + formula editor + price scanners | Phase 4-5 | **BUILT (S6)**: 12 scanners calibrated, editor, fields page | 6 |
 | Pattern scanners (bases, pivot, VCP, tight range, flag, IPO base, big reversal, shakeout, recent breakout) | Phase 4 | **BUILT (S7)**: 10 pattern scanners calibrated, chart overlays | 7 |
-| Fundamentals tab, ratios, Pros & Cons, Fundamentals columns (21) | 3, 13-18 | READY / PARTIAL (history depth) | 8 |
+| Fundamentals tab, ratios, Pros & Cons, Fundamentals columns (21) | 3, 13-18 | BUILT S8 (history from ~2017: NSE XBRL) | 8 |
 | Earnings scanners (6), Earnings calendar page + grade | 13, 17 | READY | 9 |
 | Groups page ranks, theme status, Heatmap, RRG | 9-12 | READY | 9 |
 | Market breadth, Warm-up page (market read, stages, highs-lows, FII/DII, indices, today's setups, events) | Phases 4-7, 21, 24 | READY / FII-DII PARTIAL | 10 |

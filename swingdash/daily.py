@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import backfill, classification, config, groups, rebuild, snapshot, stock_master, store, themes
+from . import backfill, classification, config, fundamentals, groups, rebuild, snapshot, stock_master, store, themes
 
 
 def recheck_start(days: set[date], n: int, fallback: date) -> date:
@@ -135,6 +135,17 @@ def run(ctx: backfill.Ctx, log=print) -> dict:
     # 4c. themes (config/theme_rules.yaml) and the sector / industry / theme indices
     themes.run(ctx.root, log=log)
     res["groups"] = len(groups.build(ctx.root, config.load("groups", ctx.root), ctx.today, ctx.settings.get("liquid"), log=log))
+
+    # 4d. fundamentals: new results / shareholding files since the last run + the results calendar (only after the
+    # one-time backfill, Actions -> Backfill history -> job fundamentals, made its checkpoint)
+    if backfill.checkpoint(ctx, "fundamentals").exists():
+        try:
+            res["fundamentals"] = fundamentals.daily(data, ctx.http, uni, ctx.today, backfill.checkpoint(ctx, "fundamentals_daily"),
+                                                     time.monotonic() + 15 * 60, log=log)
+        except Exception as exc:  # noqa: BLE001 - never stop the price update for this
+            res["fundamentals"] = {"stopped": f"{type(exc).__name__}: {str(exc)[:80]}"}
+    else:
+        res["fundamentals"] = "not started: run Backfill history with job fundamentals once"
 
     # 5. snapshot
     latest, sectors = snapshot.build(data, log=log)

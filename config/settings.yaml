@@ -20,3 +20,5 @@ liquid:                                 # "liquid" stock (Viraj's master prompt)
   sessions: 30                          # median daily turnover over the last N sessions ...
   min_turnover_cr: 1.0                  # ... at least this many Rs crore
   min_price: 5.0                        # last close at least Rs 5 (and the stock traded in the last 10 days)
+
+fundamentals_refresh_days: 120         # the backfill reads a stock again after this many days (the daily step adds new filings)

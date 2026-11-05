@@ -14,7 +14,7 @@
 #                      delivery = data/stocks/delivery/<ID>/, groups = data/groups/<level>/<id>/,
 #                      screen = data/snapshot/screen.json (every engine field, latest day; Phase S4)
 
-current_phase: 7
+current_phase: 8
 
 sources:
   equity_list: NSE EQUITY_L.csv - every main-board equity (symbol, name, ISIN, series, listing date)
@@ -33,6 +33,9 @@ sources:
   mto: NSE MTO_ddmmyyyy.DAT - security-wise delivery position, every trading day from 2007
   settings: config/settings.yaml (parameters such as the liquid rule)
   indicator_settings: config/indicators.yaml and config/stage.yaml (engine parameters)
+  results_filings: NSE XBRL results filings (corporates-financial-results Quarterly + Annual lists, integrated filings from 2025) -> data/fundamentals/<SYMBOL>.json
+  shareholding_xbrl: NSE shareholding pattern XBRL (corporate-share-holdings-master) -> data/fundamentals/<SYMBOL>.json
+  results_calendar: NSE api/event-calendar (board meetings for results) -> data/meta/results_calendar.csv
 
 fields:
   # ------------------------------------------------------------ identity (phase 0 / 1)
@@ -231,3 +234,60 @@ fields:
   - {id: flag_pole_pct, label: "Flag pole %", type: percent, formula: "Latest day: biggest rise over at most 15 sessions ending within the last 20", inputs: [close], provided_in_phase: 7, source: derived, file: [screen]}
   - {id: flag_depth_pct, label: "Flag depth %", type: percent, formula: "Latest day: (1 - lowest low since the pole top / highest high since) x 100", inputs: [flag_pole_pct, low, high], provided_in_phase: 7, source: derived, file: [screen]}
   - {id: flag_days, label: "Flag length (sessions)", type: integer, formula: "Latest day: sessions since the pole top", inputs: [flag_pole_pct], provided_in_phase: 7, source: derived, file: [screen]}
+  # ------------------------------------------------------------ fundamentals (phase 8), swingdash/fundamentals.py
+  - {id: fin_basis, label: "Results basis", type: text, formula: "Consolidated when the company files consolidated results as recent as standalone, else Standalone", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: fin_kind, label: "Results format", type: text, formula: "company / bank / nbfc / insurance (which XBRL format the company files)", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: fin_qtr, label: "Latest quarter", type: date, formula: "End of the latest quarter announced", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: last_result, label: "Last results day", type: date, formula: "Board meeting (or broadcast) day of the latest quarter's results", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: days_since_result, label: "Days since results", type: integer, formula: "Calendar days from last_result to the data day", inputs: [last_result], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: next_result, label: "Next results day", type: date, formula: "Next board meeting for results (NSE event calendar)", inputs: [results_calendar], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: days_to_result, label: "Days to results", type: integer, formula: "Calendar days from the data day to next_result", inputs: [next_result], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: sales_ttm, label: "Sales TTM (Cr)", type: crore, formula: "Sum of the last 4 quarters' revenue from operations (banks: interest earned; insurers: net premium)", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: np_ttm, label: "Net profit TTM (Cr)", type: crore, formula: "Sum of the last 4 quarters' profit attributable to the owners", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: eps_ttm, label: "EPS TTM", type: rupees, formula: "Sum of the last 4 quarters' basic EPS, each adjusted for splits / bonuses after its results day", inputs: [results_filings, corporate_actions], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: eps_last_q, label: "EPS latest quarter", type: rupees, formula: "Basic EPS of the latest quarter (adjusted like eps_ttm)", inputs: [eps_ttm], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: opm_ttm, label: "OPM TTM %", type: percent, formula: "Operating profit TTM / sales TTM x 100 (operating profit = sales - expenses without interest and depreciation; banks / NBFCs: minus interest = financing profit)", inputs: [sales_ttm], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: npm_ttm, label: "Net margin TTM %", type: percent, formula: "np_ttm / sales_ttm x 100", inputs: [np_ttm, sales_ttm], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: pe, label: "P/E", type: number, formula: "close / eps_ttm (empty when EPS <= 0)", inputs: [close, eps_ttm], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: pb, label: "P/B", type: number, formula: "Market cap / net worth (equity capital + reserves of the latest balance sheet)", inputs: [mcap_cr, results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: book_value, label: "Book value / share", type: rupees, formula: "close / pb", inputs: [pb, close], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: peg, label: "PEG", type: number, formula: "pe / 3-year EPS CAGR (profit CAGR when EPS history is missing); empty when growth <= 0", inputs: [pe, eps_cagr_3y, np_cagr_3y], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: div_yield, label: "Dividend yield %", type: percent, formula: "Dividends per share with ex-date in the last 365 days (split-adjusted) / close x 100", inputs: [corporate_actions, close], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: debt_equity, label: "Debt / Equity", type: number, formula: "Borrowings / net worth, latest balance sheet (companies and NBFCs)", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: roe, label: "ROE %", type: percent, formula: "Last financial year: profit to owners / average net worth (start and end of the year) x 100", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: roe_3y, label: "ROE 3Y avg %", type: percent, formula: "Average of the last 3 yearly ROEs", inputs: [roe], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: roe_5y, label: "ROE 5Y avg %", type: percent, formula: "Average of the last 5 yearly ROEs", inputs: [roe], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: roe_10y, label: "ROE 10Y avg %", type: percent, formula: "Average of the last 10 yearly ROEs", inputs: [roe], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: roce, label: "ROCE %", type: percent, formula: "Last financial year: (PBT + interest) / average (net worth + borrowings) x 100 (companies and NBFCs)", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: fin_year, label: "Latest financial year", type: date, formula: "End of the latest full financial year announced", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: sales_g_yoy, label: "Sales growth YoY %", type: percent, formula: "Latest quarter's sales vs the same quarter a year before", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: sales_g_qoq, label: "Sales growth QoQ %", type: percent, formula: "Latest quarter's sales vs the quarter before", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: np_g_yoy, label: "Profit growth YoY %", type: percent, formula: "Latest quarter's profit to owners vs the same quarter a year before (empty when that was <= 0)", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: np_g_qoq, label: "Profit growth QoQ %", type: percent, formula: "Latest quarter's profit to owners vs the quarter before", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: eps_g_yoy, label: "EPS growth YoY %", type: percent, formula: "Latest quarter's adjusted EPS vs the same quarter a year before", inputs: [eps_last_q], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: eps_g_qoq, label: "EPS growth QoQ %", type: percent, formula: "Latest quarter's adjusted EPS vs the quarter before", inputs: [eps_last_q], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: sales_g_ttm, label: "Sales growth TTM %", type: percent, formula: "Sales TTM vs the 4 quarters before", inputs: [sales_ttm], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: np_g_ttm, label: "Profit growth TTM %", type: percent, formula: "Profit TTM vs the 4 quarters before", inputs: [np_ttm], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: eps_up_qtrs, label: "EPS up quarters", type: integer, formula: "Latest quarters in a row whose EPS beat the same quarter a year before", inputs: [eps_g_yoy], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: sales_up_qtrs, label: "Sales up quarters", type: integer, formula: "Latest quarters in a row whose sales beat the same quarter a year before", inputs: [sales_g_yoy], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: sales_cagr_3y, label: "Sales CAGR 3Y %", type: percent, formula: "Compounded yearly sales growth over the last 3 financial years", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: sales_cagr_5y, label: "Sales CAGR 5Y %", type: percent, formula: "Compounded yearly sales growth over the last 5 financial years", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: sales_cagr_10y, label: "Sales CAGR 10Y %", type: percent, formula: "Compounded yearly sales growth over the last 10 financial years (NSE XBRL starts ~FY2017: often empty)", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: np_cagr_3y, label: "Profit CAGR 3Y %", type: percent, formula: "Compounded yearly growth of profit to owners over 3 financial years (empty when either end <= 0)", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: np_cagr_5y, label: "Profit CAGR 5Y %", type: percent, formula: "Same over 5 financial years", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: np_cagr_10y, label: "Profit CAGR 10Y %", type: percent, formula: "Same over 10 financial years", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: eps_cagr_3y, label: "EPS CAGR 3Y %", type: percent, formula: "Compounded yearly growth of adjusted annual EPS over 3 financial years", inputs: [results_filings, corporate_actions], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: shp_qtr, label: "Shareholding quarter", type: date, formula: "Quarter end of the latest shareholding pattern", inputs: [shareholding_xbrl], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: prom_hold, label: "Promoters %", type: percent, formula: "Promoter & promoter group shares / all shares x 100", inputs: [shareholding_xbrl], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: fii_hold, label: "FII %", type: percent, formula: "Foreign institutions (FPIs etc.) / all shares x 100", inputs: [shareholding_xbrl], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: dii_hold, label: "DII %", type: percent, formula: "Domestic institutions (mutual funds, insurers, banks, pension funds ...) / all shares x 100", inputs: [shareholding_xbrl], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: public_hold, label: "Public %", type: percent, formula: "Non-institutions (individuals, companies, NRIs ...) / all shares x 100", inputs: [shareholding_xbrl], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: govt_hold, label: "Government %", type: percent, formula: "Central / state governments / all shares x 100", inputs: [shareholding_xbrl], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: prom_chg_1q, label: "Promoter change 1Q", type: number, formula: "prom_hold minus the quarter before (percentage points)", inputs: [prom_hold], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: prom_chg_1y, label: "Promoter change 1Y", type: number, formula: "prom_hold minus 4 quarters before (percentage points)", inputs: [prom_hold], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: fii_chg_1q, label: "FII change 1Q", type: number, formula: "fii_hold minus the quarter before (percentage points)", inputs: [fii_hold], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: fii_chg_1y, label: "FII change 1Y", type: number, formula: "fii_hold minus 4 quarters before", inputs: [fii_hold], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: dii_chg_1q, label: "DII change 1Q", type: number, formula: "dii_hold minus the quarter before", inputs: [dii_hold], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: dii_chg_1y, label: "DII change 1Y", type: number, formula: "dii_hold minus 4 quarters before", inputs: [dii_hold], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: shareholders, label: "No. of shareholders", type: integer, formula: "Total shareholders in the latest pattern", inputs: [shareholding_xbrl], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: shareholders_chg_1q, label: "Shareholders change 1Q %", type: percent, formula: "Change of the shareholder count vs the quarter before", inputs: [shareholders], provided_in_phase: 8, source: NSE, file: [screen]}

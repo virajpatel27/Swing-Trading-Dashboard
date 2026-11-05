@@ -466,3 +466,29 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   Found while checking: a browser can keep an old ind.js next to a new chart.js. Fix: index.html loads every file with
   ?v=<build> (site_build replaces __BUILD__) and the service worker matches files exactly (no ignoreSearch).
 - GitHub's daily run already wrote data/meta/ipos.csv and the ipo columns of stocks.csv (S6 code), so New Listing works.
+
+### 2026-11-05: Scanner Phase S8 - fundamentals (built, waiting for Viraj's look)
+- Source: only NSE's official XBRL filings (files on nsearchives, fast). screener.in NOT used: its terms forbid copying /
+  mirroring, no public API. Lists: corporates-financial-results Quarterly + Annual (2017-2024), integrated-filing-results
+  (2025 ->: results + balance sheet + cash flow), corporate-share-holdings-master (shareholding XBRL), event-calendar.
+- `swingdash/fundamentals.py`: XBRL reader (company totals only; old files with undefined OneD/FourD contexts or only an
+  end date handled), 4 formats (company, bank, NBFC, insurance), one JSON per stock data/fundamentals/<SYMBOL>.json
+  (C / S = consolidated / standalone: q, y, bs, cf; shp; files read). Values Rs crore. NSE list labels can be wrong
+  (TITAN "31-Mar-2017" file = FY2018): periods come from inside the file. Bank files 2018-2023 repeat the quarter's EPS
+  in the year column -> fix_eps (only that exact case). EPS adjusted for splits / bonuses AFTER the results day
+  (Ind AS 33: a bonus before approval is already in the reported EPS).
+- Jobs: Backfill history -> job fundamentals (~40 s per stock, Nifty 500 first, checkpoint data/meta/checkpoints/
+  fundamentals.json, refresh after 120 days) + scripts/fundamentals_report.py (coverage notice + data/meta/
+  fundamentals_coverage.json). Daily step 4d (after the first backfill): new filings of all companies since the last
+  run, new shareholding patterns, data/meta/results_calendar.csv.
+- 56 registry fields (current_phase 8): P/E, P/B, PEG, EPS TTM, ROE (last FY, 3/5/10Y avg), ROCE, D/E, dividend yield,
+  margins, YoY / QoQ / TTM growth, 3/5/10Y CAGR, EPS-up quarters, holdings + 1Q / 1Y changes, shareholders, last / next
+  results. screen.py adds them (as_of: only what was announced by that day).
+- Website: stock page "Chart | Financials" toggle (key ratios, rule-based Pros & Cons, quarterly results 12, P&L + TTM,
+  compounded growth incl. price CAGR, balance sheet, cash flows, shareholding; Consolidated / Standalone), earnings strip
+  under the chart, purple E markers on results days (chart settings), 3 column groups (Fundamentals, Earnings Growth,
+  Ownership & Results), 4 scanners in a "Fundamentals" folder. site/fin.js + tests/js/fin.test.js.
+- Known: history starts ~FY2017 (10Y CAGR / ROE 10Y mostly empty until more years exist); ICICI Bank's ADR holder moved
+  category in Mar-2026 (its 1Y FII change looks big); insurers: P&L lines only.
+- NEXT: Viraj commits + pushes, runs Backfill history -> fundamentals (2 runs for Nifty 500, then ~6 more for all),
+  checks 3-4 companies by hand; then S9.

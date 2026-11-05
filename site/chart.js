@@ -32,7 +32,7 @@
   /* ------------------------------------------------------------------ settings (with defaults) */
   const DEFAULTS = {
     style: "classic", type: "candle", tf: "D",
-    marks: { hilo52: false, swings: false, swingPct: 10, circuit: false, inside: false, actions: true, pivot: true, vcp: true, tight: false },
+    marks: { hilo52: false, swings: false, swingPct: 10, circuit: false, inside: false, actions: true, pivot: true, vcp: true, tight: false, earnings: true },
     chips: { float: true, rs: true, stage: true, from: true },
     ind: {
       ma: { on: true, preset: "mine", d: null, w: null },
@@ -224,6 +224,13 @@
         const t = `${String(m.d).slice(0, 4)}-${String(m.d).slice(4, 6)}-${String(m.d).slice(6, 8)}`;
         const b = [...bars].reverse().find((x) => x.time <= t);
         if (b) marks.push({ time: b.time, position: "aboveBar", color: css("--warn"), shape: "arrowDown", text: `${m.t} ${m.r}`.trim() });
+      }
+    }
+    if (cfg.marks.earnings && cur.data.e) {             // results days (Phase S8): "E" on the first bar on / after the day
+      for (const d of cur.data.e) {
+        const t = `${String(d).slice(0, 4)}-${String(d).slice(4, 6)}-${String(d).slice(6, 8)}`;
+        const b = bars.find((x) => x.time >= t);
+        if (b) marks.push({ time: b.time, position: "belowBar", color: "#7e57c2", shape: "circle", text: "E" });
       }
     }
     if (cfg.marks.swings) {
@@ -556,17 +563,18 @@
       ${cb("tight", "Tight areas", mk.tight, "5+ closes within 2 % of each other (green band)")}
       <h4>Markers</h4>${cb("inside", "Inside bars", mk.inside, "bar inside the previous bar's range (small circle)")}
       ${cb("actions", "Corporate actions", mk.actions, "split / bonus / rights / demerger days")}
+      ${cb("earnings", "Results days (E)", mk.earnings !== false, "quarterly results announcements (purple E)")}
       ${cb("circuit", "Circuit limits", mk.circuit, "today's price band around the last close (dotted orange)")}
       ${cb("hilo52", "52-week high & low", mk.hilo52, "dashed lines")}
       ${cb("swings", "Swing % moves", mk.swings, "triangles with the % of each swing")} <label class="f-row">Swing size % <input type="number" name="swingPct" value="${mk.swingPct}"></label>
       <h4>Header chips</h4>${cb("c_float", "Float market cap", ch.float)}${cb("c_rs", "RS rating", ch.rs)}${cb("c_stage", "Stage", ch.stage)}${cb("c_from", "From 52-week high", ch.from)}
-      <p class="muted small">Earnings and news markers come in later phases.</p></form>`;
+      <p class="muted small">News markers come in a later phase.</p></form>`;
     modal("Chart settings", body, (m, reset) => {
       if (reset) { cfg.style = DEFAULTS.style; cfg.marks = { ...DEFAULTS.marks }; cfg.chips = { ...DEFAULTS.chips }; }
       else {
         const f = m.querySelector("form").elements;
         cfg.style = f.style.value;
-        for (const k of ["inside", "actions", "circuit", "hilo52", "swings", "pivot", "vcp", "tight"]) cfg.marks[k] = f[k].checked;
+        for (const k of ["inside", "actions", "circuit", "hilo52", "swings", "pivot", "vcp", "tight", "earnings"]) cfg.marks[k] = f[k].checked;
         cfg.marks.swingPct = Number(f.swingPct.value) || 10;
         cfg.chips = { float: f.c_float.checked, rs: f.c_rs.checked, stage: f.c_stage.checked, from: f.c_from.checked };
       }

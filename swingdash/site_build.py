@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import corporate_actions as ca
+from . import fundamentals, corporate_actions as ca
 from . import registry, store
 from .adjust import ADJ_COLS
 
@@ -56,6 +56,28 @@ def markers_for(actions: pd.DataFrame) -> list[dict]:
     return out
 
 
+def fundamentals_payload(doc: dict, factors: pd.DataFrame | None) -> dict:
+    """data/fundamentals/<SYMBOL>.json for the website (data/f/<id>.json): without the download bookkeeping, every quarter /
+    year with "f" = factor for later splits / bonuses (counted from its results day, see fundamentals.metrics)."""
+    from . import share_factors
+    out = {"symbol": doc.get("symbol"), "kind": doc.get("kind") or "company", "shp": doc.get("shp", {})}
+    for b in ("C", "S"):
+        part = {}
+        for k, items in (doc.get(b) or {}).items():
+            rows = {}
+            for end, v in items.items():
+                v = {x: y for x, y in v.items() if not x.startswith("_")}
+                if k in ("q", "y") and v.get("eps") is not None and factors is not None and len(factors):
+                    f = share_factors.eps_factor(factors, doc.get("symbol"), v.get("ann") or end)
+                    if f != 1.0:
+                        v["f"] = float(f"{f:.6g}")
+                rows[end] = v
+            part[k] = rows
+        if part:
+            out[b] = part
+    return out
+
+
 def fields_payload(root: Path) -> dict:
     """The Field Registry for the website (formula editor drop-downs, the fields page)."""
     reg = registry.load(root / "config" / "fields.yaml")
@@ -80,7 +102,9 @@ def build(root: Path, out: Path, log=print) -> dict:
 
     snap = json.loads((data / "snapshot" / "latest.json").read_text(encoding="utf-8"))
     cols = snap["columns"]
-    n = 0
+    n = nf = 0
+    sf = data / "meta" / "share_factors.csv"
+    factors = pd.read_csv(sf, dtype=str) if sf.exists() else None
     for row in snap["rows"]:
         r = dict(zip(cols, row))
         key = FOLDER[(r["kind"], r["exchange"])]
@@ -92,6 +116,15 @@ def build(root: Path, out: Path, log=print) -> dict:
             marks = []
         payload = {"id": r["id"], "kind": r["kind"], "exchange": r["exchange"], "symbol": r["symbol"], "name": r["name"],
                    **chart_payload(df, marks)}
+        fdoc = fundamentals.path_of(data, r["symbol"]) if r["kind"] == "stock" else None
+        if fdoc is not None and fdoc.exists():           # Phase S8: Financials tab + E markers (results days)
+            fin = fundamentals_payload(fundamentals.load(data, r["symbol"]), factors)
+            fd = out / "data" / "f" / f"{r['id']}.json"
+            fd.parent.mkdir(parents=True, exist_ok=True)
+            fd.write_text(json.dumps(fin, separators=(",", ":"), ensure_ascii=False), encoding="utf-8")
+            q = (fin.get(fundamentals.basis_of(fin)) or {}).get("q", {})
+            payload["e"] = sorted({int(v["ann"].replace("-", "")) for v in q.values() if v.get("ann")})
+            nf += 1
         dest = out / "data" / "c" / key / f"{r['id']}.json"
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_text(json.dumps(payload, separators=(",", ":")), encoding="utf-8")
@@ -103,6 +136,6 @@ def build(root: Path, out: Path, log=print) -> dict:
     page.write_text(page.read_text(encoding="utf-8").replace("__BUILD__", stamp), encoding="utf-8")
     (out / ".nojekyll").write_text("")
     size = sum(p.stat().st_size for p in out.rglob("*") if p.is_file())
-    res = {"charts": n, "build": stamp, "size_mb": round(size / 1e6, 1)}
+    res = {"charts": n, "fundamentals": nf, "build": stamp, "size_mb": round(size / 1e6, 1)}
     log(f"site: {res}")
     return res

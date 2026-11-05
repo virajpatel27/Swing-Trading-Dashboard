@@ -11,7 +11,7 @@ on:
       job:
         description: "What to download"
         type: choice
-        options: [stocks, nse-indices, classification, delivery]
+        options: [stocks, nse-indices, classification, delivery, fundamentals]
         default: stocks
       max_minutes:
         description: "Stop cleanly after this many minutes (the whole job may run at most 6 hours)"
@@ -76,6 +76,9 @@ jobs:
               python scripts/fetch_classification.py --max-minutes "$MAX" ;;
             delivery)
               python scripts/backfill.py --job delivery --max-minutes "$MAX" ;;
+            fundamentals)                               # ~40 s per stock: Nifty 500 first, then the rest
+              python scripts/backfill.py --job fundamentals --max-minutes "$MAX"
+              python scripts/fundamentals_report.py ;;
           esac
           python scripts/audit_stocks.py --master-only     # stocks.csv only; the audit report is made on the PC
           python scripts/build_groups.py                   # themes + sector / industry / theme indices

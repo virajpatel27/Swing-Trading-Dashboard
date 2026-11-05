@@ -184,6 +184,21 @@
       ["rs_rating_3m", "RS Rating 3M", "int"], ["rs_line_52w_high", "RS Line at 52W High", "bool"], ["rs_new_high_before_price", "RS New High Before Price", "bool"],
       ["rsi14", "RSI (14)", "num1"], ["adr_pct", "ADR % (20)", "num2"], ["atr_pct", "ATR %", "num2"], ["stage", "Stage", "stage"], ["beta_1y", "Beta (1Y vs Nifty 50)", "num2"],
       ["mansfield_rs", "Mansfield RS", "num1"], ["trend_intensity", "Trend Intensity", "num1"], ["rel_ext", "Relative Extension", "num1"], ["mfi14", "MFI (14)", "num1"]]],
+    ["Fundamentals", [["pe", "P/E", "num1"], ["pb", "P/B", "num2"], ["peg", "PEG", "num2"], ["eps_ttm", "EPS TTM (₹)", "num2"],
+      ["roe", "ROE %", "num1"], ["roce", "ROCE %", "num1"], ["roe_3y", "ROE 3Y Avg %", "num1"], ["roe_5y", "ROE 5Y Avg %", "num1"],
+      ["debt_equity", "Debt / Equity", "num2"], ["div_yield", "Dividend Yield %", "num2"], ["opm_ttm", "OPM TTM %", "num1"],
+      ["npm_ttm", "Net Margin TTM %", "num1"], ["sales_ttm", "Sales TTM (₹ Cr)", "cr"], ["np_ttm", "Net Profit TTM (₹ Cr)", "cr"],
+      ["book_value", "Book Value (₹)", "price"]]],
+    ["Earnings Growth", [["eps_g_yoy", "EPS Growth YoY %", "pct"], ["eps_g_qoq", "EPS Growth QoQ %", "pct"], ["sales_g_yoy", "Sales Growth YoY %", "pct"],
+      ["sales_g_qoq", "Sales Growth QoQ %", "pct"], ["np_g_yoy", "Profit Growth YoY %", "pct"], ["np_g_qoq", "Profit Growth QoQ %", "pct"],
+      ["sales_g_ttm", "Sales Growth TTM %", "pct"], ["np_g_ttm", "Profit Growth TTM %", "pct"], ["sales_cagr_3y", "Sales CAGR 3Y %", "pct"],
+      ["sales_cagr_5y", "Sales CAGR 5Y %", "pct"], ["np_cagr_3y", "Profit CAGR 3Y %", "pct"], ["np_cagr_5y", "Profit CAGR 5Y %", "pct"],
+      ["eps_cagr_3y", "EPS CAGR 3Y %", "pct"], ["eps_up_qtrs", "EPS Up Quarters (YoY)", "int"], ["sales_up_qtrs", "Sales Up Quarters (YoY)", "int"]]],
+    ["Ownership & Results", [["prom_hold", "Promoters %", "num1"], ["prom_chg_1q", "Promoter Change 1Q", "num2"], ["prom_chg_1y", "Promoter Change 1Y", "num2"],
+      ["fii_hold", "FII %", "num1"], ["fii_chg_1q", "FII Change 1Q", "num2"], ["fii_chg_1y", "FII Change 1Y", "num2"], ["dii_hold", "DII %", "num1"],
+      ["dii_chg_1q", "DII Change 1Q", "num2"], ["dii_chg_1y", "DII Change 1Y", "num2"], ["public_hold", "Public %", "num1"],
+      ["shareholders", "No. of Shareholders", "int"], ["shareholders_chg_1q", "Shareholders Change 1Q %", "pct"], ["fin_qtr", "Latest Quarter", "date"],
+      ["last_result", "Last Results", "date"], ["next_result", "Next Results", "date"], ["days_to_result", "Days to Results", "int"]]],
   ];
   const COLUMNS = {};
   COLUMN_GROUPS.forEach(([g, cols]) => cols.forEach(([id, label, fmt]) => { COLUMNS[id] = { id, label, fmt, group: g }; }));

@@ -612,8 +612,9 @@
     view.innerHTML = `<div class="crumbs"><a href="${isStock ? "#/stocks" : "#/"}">${isStock ? "Stocks" : "Market"}</a> › ${esc(r.symbol)}</div>
       <div class="d-head"><h1>${esc(r.name || r.symbol)}</h1><span class="muted">${esc(r.symbol)} · ${esc(r.exchange || "NSE")}${isStock ? (r.sector ? " · " + esc(r.sector) : "") + (r.basic_industry ? " › " + esc(r.basic_industry) : "") : " index"}</span>
         <button class="star ${state.watch.has(key) ? "on" : ""}" data-star="${esc(key)}" aria-label="Watchlist" style="font-size:20px">★</button></div>
-      <div class="chart-box big" id="chartBox"></div>
-      ${isStock ? `<div class="stats">
+      ${isStock ? `<div class="seg view-tog" id="viewTog"><button type="button" data-v="chart" class="on">Chart</button><button type="button" data-v="fin">Financials</button></div>` : ""}
+      <div class="chart-box big" id="chartBox"></div><div id="finBox" hidden></div>
+      ${isStock ? `<div id="earnSnap" class="earn-snap"></div><div class="stats">
         ${stat("Market cap", r.mcap_cr != null ? "₹" + SD.fmtCell(r.mcap_cr, "cr") + " Cr" : "–")}${stat("Free float", r.float_pct != null ? Number(r.float_pct).toFixed(1) + "%" : "–")}
         ${stat("RS rating / 1W change", `${r.rs_rating ?? "–"} / ${SD.fmtCell(r.rs_chg_1w, "signed")}`)}${stat("Stage", SD.fmtCell(r.stage, "stage"))}
         ${stat("RSI (14) / ADR %", `${SD.fmtCell(r.rsi14, "num1")} / ${SD.fmtCell(r.adr_pct, "num2")}`)}${stat("52W high / from it", `${SD.fmtPrice(r.hi52)} / ${pct(r.from_hi52)}`)}
@@ -621,6 +622,18 @@
         ${stat("F&O / circuit band", `${r.fno ? "Yes" : "No"} / ${esc(r.price_band || "–")}${/^\d+$/.test(String(r.price_band || "")) ? "%" : ""}`)}${stat("Listed / history from", `${SD.fmtDate(r.listed || "")} / ${SD.fmtDate(lr.first_date || r.listed || "")}`)}
       </div><h2>Corporate actions</h2><div id="acts" class="muted">Loading…</div>` : ""}`;
     view.querySelector("[data-star]").onclick = (e) => { toggleWatch(e.target.dataset.star); e.target.classList.toggle("on"); };
+    if (isStock) {
+      $("#earnSnap").innerHTML = earningsSnapshot(r);
+      const showView = (v) => {
+        setOn($("#viewTog"), $(`#viewTog [data-v=${v}]`));
+        $("#chartBox").hidden = v !== "chart";
+        $("#finBox").hidden = v !== "fin";
+        store.set("sd-detail-view", v);
+        if (v === "fin") renderFinancials($("#finBox"), r, id);
+      };
+      $("#viewTog").onclick = (e) => { const b = e.target.closest("button"); if (b) showView(b.dataset.v); };
+      if (store.get("sd-detail-view", "chart") === "fin") showView("fin");
+    }
     await SDChart.open($("#chartBox"), r, { kind: kindKey });
     if (isStock && $("#acts")) {
       try {
@@ -631,6 +644,65 @@
           + "</tbody></table></div>" : "None since 2007 (dividends are not adjusted).";
       } catch (e) { $("#acts").textContent = "Not available."; }
     }
+  }
+  /* ------------------------------------------------------------------ financials (Phase S8): data/f/<id>.json, fin.js */
+  const finNum = (v, d = 0) => (v == null || !isFinite(v) ? "–" : Number(v).toLocaleString("en-IN", { minimumFractionDigits: d, maximumFractionDigits: d }));
+  function earningsSnapshot(r) {
+    if (!r.fin_qtr && !r.next_result) return "";
+    const g = (v) => (v == null ? "–" : `<span class="${v >= 0 ? "up" : "down"}">${SD.fmtPct(v)}</span>`);
+    return `<b>Earnings</b> · latest quarter ${r.fin_qtr ? SDF.label(r.fin_qtr) : "–"}${r.last_result ? ` (results ${SD.fmtDate(r.last_result)})` : ""}
+      · Sales YoY ${g(r.sales_g_yoy)} · Profit YoY ${g(r.np_g_yoy)} · EPS YoY ${g(r.eps_g_yoy)} · EPS TTM ₹${finNum(r.eps_ttm, 2)}
+      ${r.next_result ? ` · <b>next results ${SD.fmtDate(r.next_result)}</b>` : ""}`;
+  }
+  function finTable(t, kind) {
+    if (!t.ends.length) return `<p class="muted">Not in NSE's filings.</p>`;
+    const pctRow = (k) => ["opm", "taxp"].includes(k) || kind === "pct";
+    const cell = (k, v) => (v == null ? "–" : pctRow(k) ? finNum(v, 1) + "%" : k === "eps" ? finNum(v, 2) : k === "n" ? finNum(v) : kind === "shp" ? finNum(v, 2) + "%" : finNum(v));
+    return `<div class="table-wrap fin"><table><thead><tr><th class="l sticky"></th>${t.cols.map((c) => `<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>`
+      + t.rows.map(([l, k, vals]) => `<tr class="${["op_profit", "net_profit", "total", "fcf", "pbt"].includes(k) ? "strong" : ""}"><td class="l sticky">${esc(l)}</td>${vals.map((v) => `<td class="num">${cell(k, v)}</td>`).join("")}</tr>`).join("")
+      + "</tbody></table></div>";
+  }
+  async function renderFinancials(box, r, id) {
+    if (box.dataset.done) return;
+    box.innerHTML = `<p class="empty">Loading financials…</p>`;
+    let doc, chart;
+    try { doc = await getJSON(`data/f/${encodeURIComponent(id)}.json`); } catch (e) {
+      box.innerHTML = `<p class="empty">No results data for this stock yet (the first full download of NSE filings runs in batches).</p>`; return;
+    }
+    try { chart = await getJSON(`data/c/s/${encodeURIComponent(id)}.json`); } catch (e) { chart = null; }
+    box.dataset.done = "1";
+    let basis = store.get("sd-fin-basis", "C");
+    if (!SDF.hasBasis(doc, basis)) basis = SDF.basisOf(doc);
+    const stat = (label, val) => `<div class="stat"><small>${label}</small><b>${val}</b></div>`;
+    const pctv = (v) => (v == null ? "–" : finNum(v, 1) + "%");
+    const draw = () => {
+      const kind = doc.kind || "company";
+      const pc = SDF.prosCons(r);
+      const grow = SDF.growthTable(doc, basis, r, chart);
+      const both = SDF.hasBasis(doc, "C") && SDF.hasBasis(doc, "S");
+      box.innerHTML = `<div class="fin-head"><h2>Financials</h2>${both ? `<div class="seg" id="basisTog"><button type="button" data-v="C" class="${basis === "C" ? "on" : ""}">Consolidated</button><button type="button" data-v="S" class="${basis === "S" ? "on" : ""}">Standalone</button></div>` : `<span class="muted">${basis === "C" ? "Consolidated" : "Standalone"}</span>`}
+        <span class="muted small">₹ crore · from NSE XBRL filings${kind !== "company" ? ` · ${kind} format` : ""} · screen ratios use ${esc(r.fin_basis || "–")}</span></div>
+        <div class="stats">${stat("Market cap", r.mcap_cr != null ? "₹" + finNum(r.mcap_cr) + " Cr" : "–")}${stat("P/E", finNum(r.pe, 1))}${stat("P/B", finNum(r.pb, 2))}
+          ${stat("Book value", r.book_value != null ? "₹" + finNum(r.book_value, 1) : "–")}${stat("ROE / ROCE", `${pctv(r.roe)} / ${pctv(r.roce)}`)}
+          ${stat("EPS TTM", r.eps_ttm != null ? "₹" + finNum(r.eps_ttm, 2) : "–")}${stat("Dividend yield", pctv(r.div_yield))}
+          ${stat("Debt / equity", finNum(r.debt_equity, 2))}${stat("PEG", finNum(r.peg, 2))}${stat("OPM / net margin TTM", `${pctv(r.opm_ttm)} / ${pctv(r.npm_ttm)}`)}
+          ${stat("Promoters / FII / DII", `${pctv(r.prom_hold)} / ${pctv(r.fii_hold)} / ${pctv(r.dii_hold)}`)}${stat("Next results", r.next_result ? SD.fmtDate(r.next_result) : "–")}</div>
+        <div class="pros-cons"><div class="pros"><h3>Pros</h3>${pc.pros.length ? `<ul>${pc.pros.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : `<p class="muted">None by our rules.</p>`}</div>
+          <div class="cons"><h3>Cons</h3>${pc.cons.length ? `<ul>${pc.cons.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : `<p class="muted">None by our rules.</p>`}</div></div>
+        <p class="muted small">Pros and cons are simple automatic rules on the numbers below, not advice.</p>
+        <h3>Quarterly results</h3>${finTable(SDF.quarterTable(doc, basis, 12))}
+        <h3>Profit & loss</h3>${finTable(SDF.annualTable(doc, basis, 10))}
+        <div class="grow-grid">${grow.map(([title, items]) => `<div class="grow"><h4>${esc(title)}</h4>${items.map(([l, v]) => `<div><span>${l}:</span><b>${v == null ? "–" : finNum(v, 0) + "%"}</b></div>`).join("")}</div>`).join("")}</div>
+        <h3>Balance sheet</h3>${finTable(SDF.bsTable(doc, basis, 10))}
+        <h3>Cash flows</h3>${finTable(SDF.cfTable(doc, basis, 10))}
+        <h3>Shareholding pattern</h3>${finTable(SDF.shpTable(doc, 12), "shp")}
+        <p class="muted small">EPS adjusted for later splits / bonuses. Older years: NSE's XBRL filings start ~2017 (balance sheet ~2019, cash flow ~2020).
+        Banks: revenue = interest earned, financing profit = revenue − interest − expenses. Educational purpose only, not investment advice.</p>`;
+      box.querySelectorAll(".table-wrap.fin").forEach((w) => { w.scrollLeft = w.scrollWidth; });   // newest period in view
+      const bt = box.querySelector("#basisTog");
+      if (bt) bt.onclick = (e) => { const b = e.target.closest("button"); if (!b) return; basis = b.dataset.v; store.set("sd-fin-basis", basis); draw(); };
+    };
+    draw();
   }
   const setOn = (group, btn) => { group.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === btn)); };
 

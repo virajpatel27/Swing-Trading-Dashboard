@@ -234,3 +234,24 @@ td input[type="checkbox"], th input[type="checkbox"] { accent-color: var(--accen
 #fCount { margin-left: 6px; }
 td.wrap { white-space: normal; min-width: 280px; }
 code { font-size: 12px; background: var(--panel-2); padding: 1px 5px; border-radius: 4px; }
+
+/* Financials (Phase S8) */
+.view-tog { margin: 4px 0 8px; }
+.earn-snap { font-size: 13px; color: var(--muted); margin: 8px 0 0; line-height: 1.6; }
+.earn-snap b { color: var(--text, inherit); }
+.fin-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+.fin-head h2 { margin: 0; }
+#finBox h3 { margin: 22px 0 8px; font-size: 16px; }
+.table-wrap.fin { max-height: none; }
+.table-wrap.fin td.l.sticky { min-width: 170px; white-space: nowrap; }
+.table-wrap.fin tr.strong td { font-weight: 600; }
+.pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0 4px; }
+.pros-cons > div { border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 14px; background: var(--panel); }
+.pros-cons h3 { margin: 4px 0 !important; font-size: 14px !important; }
+.pros-cons ul { margin: 4px 0; padding-left: 18px; font-size: 13.5px; }
+.pros h3 { color: var(--up); } .cons h3 { color: var(--down); }
+.grow-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin: 14px 0; }
+.grow { border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 12px; background: var(--panel); font-size: 13px; }
+.grow h4 { margin: 0 0 6px; font-size: 13px; }
+.grow div { display: flex; justify-content: space-between; }
+@media (max-width: 640px) { .pros-cons { grid-template-columns: 1fr; } }

@@ -42,7 +42,7 @@ button, input, select { font: inherit; color: inherit; }
   padding-top: max(10px, env(safe-area-inset-top)); background: var(--panel); border-bottom: 1px solid var(--line);
 }
 .brand { display: flex; align-items: center; gap: 8px; color: var(--text); font-weight: 650; white-space: nowrap; }
-.brand img { border-radius: 5px; }
+.brand img.logo { display: block; width: 30px; height: auto; }
 .tabs { display: flex; gap: 2px; margin-left: 8px; overflow-x: auto; scrollbar-width: none; }
 .tabs a { padding: 6px 10px; border-radius: 6px; color: var(--muted); white-space: nowrap; }
 .tabs a.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; text-decoration: none; }

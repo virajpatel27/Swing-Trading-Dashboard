@@ -555,3 +555,10 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   tests/test_phase12.py.
 - ALL scanner-plan phases done. NEXT: Viraj commits + pushes; then cron-job.org part 2 (reminder); recount the earnings
   scanners once every stock has fundamentals (~10-Nov).
+### 2026-11-06: UI redesign N0 start - the "V" logo
+- Viraj chose the green bull-horn V (from 6 original designs; an exact copy of another channel's logo was declined:
+  trademark risk on a public site). Colours #4ade80 (left half) / #16a34a (right half), NO background: only the V
+  sits on the dashboard theme (light and dark checked).
+- site/icons/logo.svg (header + browser tab), scripts/make_icons.py redraws the PNGs from the same shapes
+  (favicon transparent; phone home-screen icons need a filled square -> dark theme colour #0f172a).
+- NEXT: rest of phase N0 (name, colours, font, left rail, top bar, cards, status bar, animations).

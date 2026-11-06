@@ -134,3 +134,5 @@ Repo folder on the PC: `C:\Users\hello\OneDrive\Documents\Swing Trading\Swing Tr
 Read GitHub run results without a token via the public API (`api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/runs`,
 then `.../actions/runs/<id>/jobs` and `.../check-runs/<job id>/annotations`). Logs, Summary page and artifacts need a signed-in user,
 so scripts print results as `::notice` / `::error` annotations.
+
+Logo (06-Nov, Viraj's choice): green bull-horn V, site/icons/logo.svg, no background on the site; PNG icons from scripts/make_icons.py.

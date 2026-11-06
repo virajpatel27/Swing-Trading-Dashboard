@@ -31,7 +31,8 @@ Status: **draft, waiting for Viraj's OK** ("continue"). Nothing is built yet.
 | S8 | Fundamentals from NSE XBRL filings (`swingdash/fundamentals.py`): results 12 quarters + up to 10 years, balance sheet, cash flow, shareholding -> data/fundamentals/<SYMBOL>.json (backfill job `fundamentals`, daily step 4d, results calendar); 56 ratio / growth / holding fields; Financials tab, E markers, 3 column groups, 4 scanners | built 2026-11-05 (waiting for Viraj's look) |
 | S9 | Earnings scanners (Earnings Gap, Episodic Pivot, EPS Doublers, Code 33, EPS Accelerators, Turnarounds; `swingdash/earnings.py` results-day reaction + quarter trends), Groups page (Sector / Industry / Theme, rank + tag = open RRG approximation `swingdash/group_rank.py`, config/group_rank.yaml), per-stock group fields, Theme chip | built 2026-11-05 (waiting for Viraj's look) |
 | S10 | Market breadth (`swingdash/breadth.py`, config/breadth.yaml -> data/snapshot/breadth.json): participation, A/D, large-mid-small, net highs-lows, 4 % movers, breakouts held / failed, stage mix, six-line market read; Breadth page + Major Indices tab | built 2026-11-06 (waiting for Viraj's look) |
-| S11-S12 | optional (ask first), hardening | open |
+| S11 | optional (intraday, news markers, descriptions) | skipped (Viraj, 06-Nov) |
+| S12 | Hardening: runtimes checked, data check + monthly integrity cover fundamentals, NaN-safe JSON, restore tested from the backup release, history warning only for real gaps, final README (English + Gujarati, home-screen steps) | built 2026-11-06 |
 
 ## 2. Decisions that differ from the original spec (and why)
 

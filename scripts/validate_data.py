@@ -15,7 +15,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from swingdash import config, meta  # noqa: E402
+from swingdash import config, fundamentals, meta  # noqa: E402
 
 
 def main(argv=None) -> int:
@@ -30,6 +30,7 @@ def main(argv=None) -> int:
     tdp = data / "meta" / "trading_days.csv"
     days = pd.DatetimeIndex(pd.to_datetime(pd.read_csv(tdp)["date"])) if tdp.exists() else None
     inst, issues = meta.scan(data, days, float(v["jump_pct"]), old, float(v["max_row_drop_pct"]))
+    issues += fundamentals.check_docs(data)                       # Phase S8 files (readable JSON, right symbol)
     health = meta.write_reports(data, inst, issues)
     print(f"Instruments {health['instruments']} {health['by_group']}, rows {health['rows']:,}, newest {health['newest_date']}")
     print(f"Errors {health['errors']}, warnings {health['warnings']} (details: data/meta/data_issues.csv)")

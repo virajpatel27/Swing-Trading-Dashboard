@@ -69,12 +69,28 @@ def add_index_closes_today(ctx: backfill.Ctx, log=print) -> int:
     return added
 
 
-def new_stocks_without_history(data: Path, min_rows: int = 30) -> list[str]:
-    """Stocks in the universe with (almost) no history: they joined the list; run a stocks backfill for them."""
-    uni = pd.read_csv(data / "meta" / "universe_stocks.csv")
+def new_stocks_without_history(data: Path, min_rows: int = 30, today: date | None = None, grace_days: int = 60) -> list[str]:
+    """Stocks whose saved history starts long after their listing (they joined the list later): run a stocks backfill for
+    them. Not reported: listed in the last grace_days, inactive, or rarely traded but complete since listing."""
+    uni = pd.read_csv(data / "meta" / "universe_stocks.csv", dtype=str)
+    listed = {}
+    m = data / "meta" / "stocks.csv"
+    if m.exists():
+        master = pd.read_csv(m, dtype=str).fillna("")
+        listed = dict(zip(master["symbol"], master.get("listed", pd.Series("", index=master.index))))
+    cut = (pd.Timestamp(today or date.today()) - pd.Timedelta(days=grace_days)).strftime("%Y-%m-%d")
+    status = dict(zip(master["symbol"], master.get("status", pd.Series("", index=master.index)))) if m.exists() else {}
     out = []
     for r in uni.itertuples():
-        if len(store.read(data / "stocks" / "raw" / r.id, store.STOCK_COLS)) < min_rows:
+        lst = listed.get(r.symbol) or ""
+        if lst > cut or status.get(r.symbol) == "inactive":
+            continue
+        d = store.read(data / "stocks" / "raw" / r.id, store.STOCK_COLS)
+        if len(d) >= min_rows:
+            continue
+        expected = max(lst or "2007-01-01", "2007-01-01")
+        first = d["date"].min().strftime("%Y-%m-%d") if len(d) else "9999"
+        if first > (pd.Timestamp(expected) + pd.Timedelta(days=30)).strftime("%Y-%m-%d"):   # older days are missing
             out.append(r.symbol)
     return out
 
@@ -151,7 +167,7 @@ def run(ctx: backfill.Ctx, log=print) -> dict:
     latest, sectors = snapshot.build(data, log=log)
     res["snapshot_written"] = snapshot.write(data, latest, sectors)
     res["data_date"] = latest["data_date"]
-    res["new_stocks_without_history"] = new_stocks_without_history(data)
+    res["new_stocks_without_history"] = new_stocks_without_history(data, today=ctx.today)
     if res["new_stocks_without_history"]:
         log(f"::warning title=New stocks need history::{', '.join(res['new_stocks_without_history'][:20])} - run Actions -> "
             "Backfill history with job 'stocks' and these symbols")

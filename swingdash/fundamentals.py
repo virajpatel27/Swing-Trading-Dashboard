@@ -464,7 +464,41 @@ def save(data: Path, doc: dict) -> None:
             if part in doc.get(b, {}):
                 doc[b][part] = dict(sorted(doc[b][part].items()))
     doc["shp"] = dict(sorted(doc.get("shp", {}).items()))
-    p.write_text(json.dumps(doc, separators=(",", ":"), ensure_ascii=False, sort_keys=False) + "\n", encoding="utf-8", newline="\n")
+    p.write_text(json.dumps(_finite(doc), separators=(",", ":"), ensure_ascii=False, sort_keys=False, allow_nan=False) + "\n",
+                 encoding="utf-8", newline="\n")
+
+
+def _finite(x):
+    """NaN / infinity become null (browsers cannot read NaN in JSON)."""
+    if isinstance(x, dict):
+        return {k: _finite(v) for k, v in x.items()}
+    if isinstance(x, list):
+        return [_finite(v) for v in x]
+    if isinstance(x, float) and (x != x or x in (float("inf"), float("-inf"))):
+        return None
+    return x
+
+
+def check_docs(data: Path) -> list[dict]:
+    """Data check of data/fundamentals/*.json: readable JSON, the right symbol, no NaN; a stock document of more than 1 MB
+    is suspicious (warning)."""
+    out = []
+    issue = lambda sym, level, check, detail: {"instrument": sym, "level": level, "check": check, "detail": detail, "date": ""}
+
+    def no_nan(c):
+        raise ValueError(f"{c} in the file")
+    for f in sorted((data / "fundamentals").glob("*.json")):
+        text = f.read_text(encoding="utf-8")
+        try:
+            doc = json.loads(text, parse_constant=no_nan)
+        except ValueError as exc:
+            out.append(issue(f.stem, "error", "fundamentals_json", f"not readable: {str(exc)[:80]}"))
+            continue
+        if doc.get("symbol") != f.stem:
+            out.append(issue(f.stem, "error", "fundamentals_symbol", f"file says {doc.get('symbol')}"))
+        if len(text) > 1_000_000:
+            out.append(issue(f.stem, "warn", "fundamentals_size", f"{len(text) // 1000} kB"))
+    return out
 
 
 def merge_filing(doc: dict, f: dict, ref: dict) -> None:

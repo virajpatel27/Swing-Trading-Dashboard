@@ -74,9 +74,19 @@ def run(data: Path, http, today: date, spot_days: int = 5, seed: int | None = No
     days = pd.DatetimeIndex(pd.to_datetime(pd.read_csv(data / "meta" / "trading_days.csv")["date"]))
     old = pd.read_csv(data / "meta" / "instruments.csv") if (data / "meta" / "instruments.csv").exists() else None
     inst, issues = meta.scan(data, days, float(v["jump_pct"]), old, float(v["max_row_drop_pct"]))
+    from . import fundamentals
+    issues += fundamentals.check_docs(data)
+    cov_path = data / "meta" / "fundamentals_coverage.json"
+    if cov_path.exists():
+        c = __import__("json").loads(cov_path.read_text(encoding="utf-8"))
+        cov = (f"{c['all']['with_doc']} of {c['all']['stocks']} stocks have a document; latest quarter older than 150 days: "
+               f"{c.get('latest_quarter_older_than_150_days', '?')}")
+    else:
+        cov = "not built yet"
     errors = [i for i in issues if i["level"] == "error"]
     res = {"instruments": len(inst), "rows": int(inst["rows"].sum()), "check_errors": errors,
-           "check_warnings": sum(1 for i in issues if i["level"] == "warn"), "ca_problems": ca_consistency(data)}
+           "check_warnings": sum(1 for i in issues if i["level"] == "warn"), "ca_problems": ca_consistency(data),
+           "fundamentals": cov}
     try:
         res["spot_days"], res["spot_mismatches"] = spot_check(data, http, spot_days, seed)
     except Exception as exc:  # noqa: BLE001 - NSE not reachable: a warning, not a failure
@@ -93,6 +103,7 @@ def report(res: dict) -> str:
     lines = [f"# Integrity check - {mark(res['ok'])}", "",
              f"- Instruments {res['instruments']}, rows {res['rows']:,}, newest data {res['newest']} ({mark(not res['stale'])})",
              f"- Data check: {len(res['check_errors'])} errors, {res['check_warnings']} warnings ({mark(not res['check_errors'])})",
+             f"- Fundamentals: {res.get('fundamentals', '-')}",
              f"- Corporate-action consistency: {len(res['ca_problems'])} stocks differ ({mark(not res['ca_problems'])})",
              f"- NSE spot check: days {', '.join(res['spot_days']) or 'none'}; {len(res['spot_mismatches'])} mismatches "
              f"({mark(not res['spot_mismatches'])}){' - ' + res['spot_error'] if res.get('spot_error') else ''}"]

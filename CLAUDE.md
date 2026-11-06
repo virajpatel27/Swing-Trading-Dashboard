@@ -127,6 +127,8 @@ tag = RRG quadrant; group return = AVERAGE of members, as the reference) -> data
 per-stock group fields; website #/groups, Theme chip. Recount earnings scanners when all fundamentals exist.
 S10: `swingdash/breadth.py` + config/breadth.yaml -> data/snapshot/breadth.json (git-ignored, with screen.json); per-stock day
 flags live in screen.one_stock's hist (last HIST_KEEP=420 sessions); website #/breadth (+ /indices), charts via SDChart.loadLib.
+S11 skipped (Viraj). S12 done 06-Nov: validation + integrity check fundamentals JSON, restore tested, history warning only for real
+gaps. Scanner plan complete. Open: cron-job.org part 2 (GitHub ran 16:40 jobs 5-7 h late), recount earnings scanners ~10-Nov.
 Repo folder on the PC: `C:\Users\hello\OneDrive\Documents\Swing Trading\Swing Trading` (nested). Manual steps: `docs/MANUAL_CHECKLIST.md`.
 Read GitHub run results without a token via the public API (`api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/runs`,
 then `.../actions/runs/<id>/jobs` and `.../check-runs/<job id>/annotations`). Logs, Summary page and artifacts need a signed-in user,

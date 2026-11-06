@@ -538,3 +538,20 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   that can already be judged).
 - NEXT: Viraj commits + pushes; S11 (optional: intraday, news markers, company descriptions) only if he wants; S12
   hardening. Reminder after the last phase: cron-job.org Part 2.
+
+### 2026-11-06: Scanner Phase S12 - hardening (S11 skipped by Viraj)
+- Runtimes on GitHub: daily update ~27 min (update 19, data check 2.5, website 5.5); website deploy ~7 min; fundamentals
+  nightly ~5.5 h until all stocks are read. GitHub started scheduled runs 5-7 hours late on 05-Nov (16:40 IST runs began
+  after midnight) -> cron-job.org part 2 is the fix (docs/MANUAL_CHECKLIST.md).
+- Data check (scripts/validate_data.py) and monthly integrity (swingdash/integrity.py) now also check every
+  data/fundamentals/*.json (readable, right symbol, no NaN; integrity shows fundamentals coverage). fundamentals.save
+  writes null instead of NaN (browsers cannot read NaN).
+- Daily warning "new stocks need history" fired every day for ~20 fresh IPOs: now only stocks whose saved history starts
+  > 30 days after their listing, listed > 60 days ago and not inactive (today: MELSTAR only - resumed trading after a long
+  suspension).
+- Restore tested from Release data-2026-11-01 into a temp folder: download 19 s, checksum OK, 3,004 files, data check
+  0 errors. Next automatic backup Saturday 07-Nov (all stocks: much bigger zip, well below GitHub's 2 GB limit).
+- Final README: every page, automatic jobs incl. fundamentals nightly, Gujarati quick-start with Add-to-Home-screen steps.
+  tests/test_phase12.py.
+- ALL scanner-plan phases done. NEXT: Viraj commits + pushes; then cron-job.org part 2 (reminder); recount the earnings
+  scanners once every stock has fundamentals (~10-Nov).

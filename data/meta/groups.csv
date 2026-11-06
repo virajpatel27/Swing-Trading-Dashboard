@@ -6,7 +6,7 @@ industry,aerospace-and-defense,Aerospace & Defense,Capital Goods,27,False,2010-1
 industry,airline,Airline,Services,2,True,,
 industry,airport-and-airport-services,Airport & Airport services,Services,2,True,,
 industry,aluminium,Aluminium,Metals & Mining,8,False,2018-04-26,2026-11-05
-industry,aluminium-copper-and-zinc-products,Aluminium Copper & Zinc Products,Capital Goods,12,False,2022-01-14,2026-11-05
+industry,aluminium-copper-and-zinc-products,Aluminium Copper & Zinc Products,Capital Goods,13,False,2022-01-14,2026-11-05
 industry,amusement-parks-other-recreation,Amusement Parks/ Other Recreation,Consumer Services,4,True,2015-04-21,2026-11-05
 industry,animal-feed,Animal Feed,Fast Moving Consumer Goods,7,False,2018-01-16,2026-11-05
 industry,asset-management-company,Asset Management Company,Financial Services,10,False,2018-10-08,2026-11-05
@@ -189,7 +189,7 @@ industry,web-based-media-and-service,Web based media and service,Media Entertain
 industry,wellness,Wellness,Consumer Services,2,True,,
 industry,zinc,Zinc,Metals & Mining,1,True,,
 sector,automobile-and-auto-components,Automobile and Auto Components,,131,False,2007-01-16,2026-11-05
-sector,capital-goods,Capital Goods,,414,False,2007-01-16,2026-11-05
+sector,capital-goods,Capital Goods,,415,False,2007-01-16,2026-11-05
 sector,chemicals,Chemicals,,186,False,2007-01-16,2026-11-05
 sector,construction,Construction,,88,False,2007-01-16,2026-11-05
 sector,construction-materials,Construction Materials,,38,False,2007-01-16,2026-11-05

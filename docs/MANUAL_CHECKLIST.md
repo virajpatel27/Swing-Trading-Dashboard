@@ -46,15 +46,20 @@ Angel One is used only by the Source probe (a check). The daily update does not 
       8. Delete `gdrive_token.txt` and `client_secret.json` from the PC
       9. Actions -> **Weekly backup** -> Run workflow -> in Google Drive a folder "Swing Trading Dashboard backups" appears
 - [x] 2026-11-01 Git pre-commit secret check installed on the PC (`scripts/install_hooks.py`; run again on a new PC)
-- [ ] On-time daily start (GitHub starts scheduled runs late, by 1-7 h on 03/04-Nov-2026). Viraj: do Part 2 AFTER all
-      scanner phases (his wish, 04-Nov). Claude must remind him.
+- [x] On-time daily start (GitHub starts scheduled runs late, by 1-7 h on 03/04/05-Nov-2026). Done 06-Nov-2026.
       - [x] 2026-11-04 Part 1: fine-grained token `cron-job-daily` (only this repo, Actions: Read and write, 1 year;
             renew before it expires). Kept by Viraj, never in chat or in the repo.
-      - [ ] Part 2: cron-job.org (free) -> 2 jobs, Mon-Fri 16:45 and 17:05 Asia/Kolkata, POST
+      - [x] 2026-11-06 Part 2: cron-job.org jobs "GitHub daily 16:45" and "GitHub daily 17:10" (Mon-Fri, Asia/Kolkata),
+            both TEST RUN 204; e-mail on failure is on. POST
             `https://api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/workflows/daily.yml/dispatches`,
             headers Accept `application/vnd.github+json`, Authorization `Bearer <token>`, X-GitHub-Api-Version
             `2022-11-28`, Content-Type `application/json`, body `{"ref":"main"}`; TEST RUN must answer 204.
             The GitHub schedules stay as backup. Afterwards: no backfill runs between 16:30 and 18:00 IST.
+- [ ] **Before 02-Nov-2027:** the token `cron-job-daily` expires (GitHub said so in the test answer). GitHub -> Settings ->
+      Developer settings -> Fine-grained tokens -> cron-job-daily -> Regenerate; then paste `Bearer <new token>` into BOTH
+      cron-job.org jobs (Advanced -> Headers -> Authorization) and press TEST RUN (204).
+- [ ] **Before 10-Mar-2028:** GitHub retires API version `2022-11-28` (header in the answer: Sunset 10-Mar-2028). Ask Claude
+      for the current version and change X-GitHub-Api-Version in both cron-job.org jobs.
 
 ## Weekly
 - BSE indices: tell Claude **"BSE update karo"** (runs on the PC, BSE refuses GitHub); Pull origin first, then commit what it changed.

@@ -14,7 +14,8 @@ Viraj. **Not a programmer.** Answer in Gujarati-English mix (Latin letters), sho
    **never change anything in that folder**.
 5. **Same Angel One account** as the old project. Its jobs: weekdays 17:00 IST (can start 30-90 min late, run up to 2.5 h), 23:00 and 04:00 IST daily,
    09:00 IST instrument master, Sunday 02:00 IST backup. Our daily job (Viraj 03-Nov: data by ~16:30): **16:40, 17:20, 18:30,
-   23:50 IST** Mon-Fri + **08:00 IST** next morning. It uses NO Angel One, so running near 17:00 is fine; never add Angel calls
+   23:50 IST** Mon-Fri + **08:00 IST** next morning; on-time starts come from cron-job.org (Viraj's account, jobs 16:45 and
+   17:10 IST Mon-Fri -> workflow_dispatch; token `cron-job-daily` expires 02-Nov-2027, see docs/MANUAL_CHECKLIST.md). It uses NO Angel One, so running near 17:00 is fine; never add Angel calls
    to the daily job. Stocks: bhavcopy ~16:33 IST; NSE indices same day from the allIndices API (after 15:30), replaced by the
    official ind_close_all file (~23:20). Data workflows must check out `ref: main` (a queued run otherwise gets an old commit).
    BSE indices: weekly from the PC only (Viraj's choice 2026-11-01). When he says "BSE update karo": run

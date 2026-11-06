@@ -562,3 +562,17 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - site/icons/logo.svg (header + browser tab), scripts/make_icons.py redraws the PNGs from the same shapes
   (favicon transparent; phone home-screen icons need a filled square -> dark theme colour #0f172a).
 - NEXT: rest of phase N0 (name, colours, font, left rail, top bar, cards, status bar, animations).
+
+### 2026-11-06: UI redesign N0 - app frame
+- Viraj keeps the name "Swing Trading Dashboard" for now (change later).
+- New look (our own, not the reference app's): emerald accent #059669 (dark theme #34d399), soft grey-green page, dark
+  rail #0c1a16 with the green V logo, Inter font (Google Fonts, falls back to the system font offline), own line icons.
+- Frame: left rail with the 6 pages + Formulas / Theme / About at the bottom (tooltips on hover); on phones it becomes a
+  bottom bar. Top bar: "Find a stock or index" search (`/` focuses, arrows + Enter, best match = exact symbol, then
+  symbol start, name start, contains; ties by traded value) and a data-date pill. Pages sit in one rounded card.
+  Fixed status bar at the bottom (data date, update time, data check; disclaimer + About dialog). Old footer -> About.
+- Loading skeletons (shimmer) instead of "Loading..." text; small animations (page rise, menus, dialogs, rail hover);
+  everything off with the system "reduce motion" setting. SDChart now exports its modal() helper.
+- Checked in the preview: light + dark, phone 375 px (no sideways scroll, 7 bottom items), search, About, scanners split.
+  Tests 172 Python + 24 JS green.
+- NEXT: N1 scanner workspace.

@@ -22,7 +22,10 @@ theme ranks, market breadth and company financials from NSE's official filings. 
 - **iPhone (Safari):** link kholo -> niche **Share** button (upar teer vadu chokhun ⬆️) -> niche scroll -> **Add to Home Screen** -> **Add**.
 - Have home screen par icon thi sidhu khulshe. Net na hoy to chhello joyelo data dekhay chhe.
 
-**Upar na tabs:**
+**Dabi baju nu menu** (phone par niche): icon par mouse rakho to naam dekhay. Upar **search** box (ke `/` key):
+stock / index nu naam lakho -> Enter = sidho chart.
+
+**Menu na pages:**
 - **Market** - badha NSE + BSE indices ane stocks ni ek moti list (search, sector, CSV).
 - **Stocks** - badha ~2,600 stocks: **⚙ Columns** thi 230+ columns pasand karo (price, returns, moving averages, pivot,
   volume, RS rating, stage, fundamentals, growth, holding, group rank ...). Row par click = baju ma chart; ↑ / ↓ thi aagal-paachhal.
@@ -36,7 +39,7 @@ theme ranks, market breadth and company financials from NSE's official filings. 
 - **Watchlist** - ★ dabavo; aa browser ma save rahe chhe.
 - **Stock page** - **Chart | Financials**: chart (indicators, pivot / VCP, E = results divas, drawings) ane company na results,
   P&L, balance sheet, cash flow, shareholding, ratios, Pros & Cons.
-- ◐ button = dark / light.
+- Menu ma niche: 📖 formulas, 🌙 dark / light, ⓘ About (disclaimer, sources). Niche status bar ma data ni tarikh.
 
 **Data kyare update thay:** Somvar-Shukravar sanje ~16:40 IST thi (GitHub kyarek kalako modu chalave chhe; cron-job.org thi
 samaysar chalu karvanu [docs/MANUAL_CHECKLIST.md](docs/MANUAL_CHECKLIST.md) ma chhe). Raate ~23:50 NSE ni official index file.

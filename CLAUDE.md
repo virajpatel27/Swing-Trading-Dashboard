@@ -136,3 +136,4 @@ then `.../actions/runs/<id>/jobs` and `.../check-runs/<job id>/annotations`). Lo
 so scripts print results as `::notice` / `::error` annotations.
 
 Logo (06-Nov, Viraj's choice): green bull-horn V, site/icons/logo.svg, no background on the site; PNG icons from scripts/make_icons.py.
+UI redesign phases N0-N12: docs/PLAN.md. N0 (app frame: rail, top-bar search, card, status bar, skeletons) built 06-Nov.

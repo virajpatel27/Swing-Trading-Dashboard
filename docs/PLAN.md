@@ -117,3 +117,25 @@ Weekly backup zip ~150 MB as a Release asset (does not count in repo size), keep
 - NSE / BSE / Angel One terms are for personal use; publishing end-of-day prices on a public site is common but not legally guaranteed.
 - NSE/BSE can block GitHub's servers at any time -> fallback chain + "keep last good data", and some fetches can run from the PC.
 - Dashboard shows: "Educational purpose only, not investment advice."
+
+## UI redesign (phases N0-N12, started 2026-11-06)
+Same layout, features and way of working as the reference scanner app (from Viraj's screen recordings), but our own name,
+logo, colours, font, icons and wording (the site is public: no copied branding).
+
+| Phase | Content | Status |
+|---|---|---|
+| N0 | Brand + app frame: green bull-horn V logo, colours (emerald accent, dark rail), Inter font, own line icons, left rail (bottom bar on phones), top bar with stock/index search (`/` key), card, status bar, About dialog, loading skeletons, small animations | built 2026-11-06 |
+| N1 | Scanner workspace: results list, scanner menu, column drawer, grid view 2/3/4 | open |
+| N2 | Chart: header, legend, indicator popup, settings drawer, pane resize, drawing bar, volume colours, pattern drawings, earnings table | open |
+| N3 | Custom scan window (5 tabs, ~50 filters, live count, save / load) | open |
+| N4 | Stock side panel + Financials page + Peers | open |
+| N5 | Warm-up home (incl. FII / DII cash - new data) | open |
+| N6 | Earnings calendar page with our rating rule | open |
+| N7 | Heatmap (index constituent lists) | open |
+| N8 | Groups 3-column | open |
+| N9 | RRG | open |
+| N10 | Market breadth restyle + Major Indices grid | open |
+| N11 | Leaders (our leader score) | open |
+| N12 | Polish | open |
+
+Not possible for now: live / intraday prices, news / concalls, company descriptions.

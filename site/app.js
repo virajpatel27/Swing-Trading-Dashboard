@@ -30,6 +30,8 @@
   state.screener.limit = PAGE;
 
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const SKEL = (label) => `<div class="skel-page" aria-label="${label}"><i class="skel h"></i><i class="skel s"></i><i class="skel bar"></i>`
+    + '<i class="skel row"></i>'.repeat(6) + "</div>";
   const pct = (x) => `<span class="${SD.colorClass(x)}">${SD.fmtPct(x)}</span>`;
   const TREND_TAG = { "strong uptrend": "t-up", uptrend: "t-up", "strong downtrend": "t-down", downtrend: "t-down" };
 
@@ -69,6 +71,7 @@
       const h = health ? ` · data check: ${health.errors ? `<span class="bad">${health.errors} errors</span>` : "0 errors"}, ${health.warnings} notes` : "";
       $("#status").innerHTML = `Data as of <b>${SD.fmtDate(snap.data_date)}</b> (end of day) · updated ${esc(snap.generated_at)}${h}`
         + (navigator.onLine ? "" : ' · <span class="bad">offline copy</span>');
+      $("#asof").innerHTML = `Data <b>${SD.fmtDate(snap.data_date)}</b>`;
       route();
     } catch (e) {
       $("#status").innerHTML = `<span class="bad">Could not load the data (${esc(e.message)}).</span> Check the connection and reload.`;
@@ -237,7 +240,7 @@
   const tagHTML = (t) => (t ? `<span class="tag ${TAG_CLS[t] || ""}">${esc(t)}</span>` : "");
   async function renderGroups(level, name) {
     level = ["sector", "industry", "theme"].includes(level) ? level : "sector";
-    if (!state.groups) view.innerHTML = `<p class="empty">Loading groups…</p>`;
+    if (!state.groups) view.innerHTML = SKEL("Loading groups");
     try {
       if (!state.groups) state.groups = await getJSON("data/group_ranks.json");
       await loadScreen();
@@ -307,7 +310,7 @@
     clearBreadthCharts();
     const tabs = `<div class="seg"><a class="btn-seg ${tab !== "indices" ? "on" : ""}" href="#/breadth">Market Breadth</a><a class="btn-seg ${tab === "indices" ? "on" : ""}" href="#/breadth/indices">Major Indices</a></div>`;
     if (tab === "indices") return renderMajorIndices(tabs);
-    if (!state.breadth) view.innerHTML = `<p class="empty">Loading breadth…</p>`;
+    if (!state.breadth) view.innerHTML = SKEL("Loading breadth");
     try { if (!state.breadth) state.breadth = await getJSON("data/breadth.json"); await SDChart.loadLib(); }
     catch (e) { view.innerHTML = `<p class="empty">Breadth is not built yet (${esc(e.message)}).</p>`; return; }
     if (routeName() !== "breadth") return;
@@ -420,7 +423,7 @@
   async function renderStocks() {
     const st = state.stocks;
     const mode = routeName();                                  // "stocks" or "scanners"
-    if (!state.screen) view.innerHTML = `<p class="empty">Loading all stocks…</p>`;
+    if (!state.screen) view.innerHTML = SKEL("Loading all stocks");
     try { await loadScreen(); if (mode === "scanners") await loadScans(); }
     catch (e) { view.innerHTML = `<p class="empty">Could not load the stock table (${esc(e.message)}).</p>`; return; }
     if (routeName() !== mode) return;
@@ -816,7 +819,7 @@
   }
   async function renderFinancials(box, r, id) {
     if (box.dataset.done) return;
-    box.innerHTML = `<p class="empty">Loading financials…</p>`;
+    box.innerHTML = SKEL("Loading financials");
     let doc, chart;
     try { doc = await getJSON(`data/f/${encodeURIComponent(id)}.json`); } catch (e) {
       box.innerHTML = `<p class="empty">No results data for this stock yet (the first full download of NSE filings runs in batches).</p>`; return;
@@ -862,8 +865,9 @@
   function route() {
     if (!state.rows.length) return;
     const parts = location.hash.replace(/^#\/?/, "").split("/").map(decodeURIComponent);
-    const tab = { "": "market", stocks: "stocks", scanners: "scanners", screener: "scanners", sectors: "groups", groups: "groups", breadth: "breadth", watchlist: "watchlist", fields: "", i: "" }[parts[0]] ?? "market";
-    document.querySelectorAll(".tabs a").forEach((a) => a.classList.toggle("active", a.dataset.tab === tab));
+    const tab = { "": "market", stocks: "stocks", scanners: "scanners", screener: "scanners", sectors: "groups", groups: "groups", breadth: "breadth", watchlist: "watchlist", fields: "fields", i: "" }[parts[0]] ?? "market";
+    document.querySelectorAll(".rail [data-tab]").forEach((a) => a.classList.toggle("active", a.dataset.tab === tab));
+    view.classList.remove("enter"); void view.offsetWidth; view.classList.add("enter");
     SDChart.close();
     clearBreadthCharts();
     view.onkeydown = null;
@@ -878,6 +882,49 @@
     else renderMarket();
     window.scrollTo(0, 0);
   }
+
+  /* ------------------------------------------------------------------ top bar: find a stock / index, about */
+  const gq = $("#gq"), gres = $("#gres");
+  let gHits = [], gOn = 0;
+  function gFind(q) {
+    q = q.trim().toLowerCase();
+    if (!q) return [];
+    // best first: exact symbol, symbol starts with, name starts with, contains; ties: bigger traded value first
+    const hits = [];
+    for (const r of state.rows) {
+      const sym = (r.kind === "stock" ? r.symbol || "" : "").toLowerCase(), name = (r.name || "").toLowerCase();
+      const rank = sym === q || name === q ? 0 : sym.startsWith(q) ? 1 : name.startsWith(q) ? 2 : sym.includes(q) || name.includes(q) ? 3 : -1;
+      if (rank >= 0) hits.push([rank, -((r.close || 0) * (r.volume || 0)), r]);
+    }
+    return hits.sort((a, b) => a[0] - b[0] || a[1] - b[1]).slice(0, 8).map((h) => h[2]);
+  }
+  function gDraw() {
+    gHits = gFind(gq.value);
+    gOn = Math.min(gOn, Math.max(gHits.length - 1, 0));
+    if (!gq.value.trim()) { gres.hidden = true; gq.setAttribute("aria-expanded", "false"); return; }
+    gres.innerHTML = gHits.length ? gHits.map((r, i) => `<a role="option" href="#/i/${r.key.replace(":", "/")}" class="${i === gOn ? "on" : ""}">`
+      + `<b>${esc(r.kind === "stock" ? r.symbol : r.name)}</b><span class="num">${SD.fmtPrice(r.close)}<br>${pct(r.chg_1d)}</span>`
+      + `<small>${esc(r.kind === "stock" ? r.name : r.exchange + " index")}${r.sector ? " · " + esc(r.sector) : ""}</small></a>`).join("")
+      : `<div class="empty">No stock or index matches “${esc(gq.value)}”.</div>`;
+    gres.hidden = false;
+    gq.setAttribute("aria-expanded", "true");
+  }
+  const gClose = () => { gres.hidden = true; gq.setAttribute("aria-expanded", "false"); };
+  gq.oninput = () => { gOn = 0; gDraw(); };
+  gq.onfocus = () => { if (gq.value.trim()) gDraw(); };
+  gq.onkeydown = (e) => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); gOn = (gOn + (e.key === "ArrowDown" ? 1 : -1) + gHits.length) % Math.max(gHits.length, 1); gDraw(); }
+    else if (e.key === "Enter" && gHits[gOn]) { location.hash = "#/i/" + gHits[gOn].key.replace(":", "/"); gq.value = ""; gClose(); gq.blur(); }
+    else if (e.key === "Escape") { gq.value = ""; gClose(); gq.blur(); }
+  };
+  gres.onclick = (e) => { if (e.target.closest("a")) { gq.value = ""; gClose(); } };
+  document.addEventListener("click", (e) => { if (!e.target.closest(".gsearch")) gClose(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "/" && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) && !document.activeElement.isContentEditable) { e.preventDefault(); gq.focus(); }
+  });
+  const showAbout = (e) => { if (e) e.preventDefault(); SDChart.modal("About this dashboard", `<div class="about">${$("#aboutTpl").innerHTML}</div>`); };
+  $("#about").onclick = showAbout;
+  $("#about2").onclick = showAbout;
 
   $("#theme").onclick = () => {
     const dark = document.documentElement.dataset.theme

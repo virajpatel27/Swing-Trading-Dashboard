@@ -12,6 +12,9 @@
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="styles.css?v=__BUILD__">
   <script>
     // theme before first paint (no flash): saved choice, else the system setting
@@ -19,26 +22,49 @@
   </script>
 </head>
 <body>
-  <header class="top">
-    <a class="brand" href="#/"><img class="logo" src="icons/logo.svg" alt="V logo" width="30" height="27"><span>Swing Trading Dashboard</span></a>
-    <nav class="tabs" aria-label="Main">
-      <a href="#/" data-tab="market">Market</a>
-      <a href="#/stocks" data-tab="stocks">Stocks</a>
-      <a href="#/scanners" data-tab="scanners">Scanners</a>
-      <a href="#/groups" data-tab="groups">Groups</a>
-      <a href="#/breadth" data-tab="breadth">Breadth</a>
-      <a href="#/watchlist" data-tab="watchlist">Watchlist</a>
-    </nav>
-    <button id="theme" class="icon-btn" type="button" aria-label="Switch dark / light mode" title="Dark / light mode">◐</button>
-  </header>
-  <div id="status" class="status" role="status">Loading…</div>
-  <main id="view" tabindex="-1"></main>
-  <footer class="foot">
-    <p><strong>Educational purpose only, not investment advice.</strong> End-of-day data; may contain errors.</p>
-    <p>Sources: NSE (bhavcopy, indices, corporate actions, classification), BSE (indices). Stock prices are adjusted for splits,
-      bonus, rights and demergers. Every formula: <a href="#/fields">fields and formulas</a>. Charts by
-      <a href="https://www.tradingview.com/" target="_blank" rel="noopener">TradingView</a> Lightweight Charts™.</p>
+  <nav class="rail" aria-label="Main">
+    <a class="rail-logo" href="#/" title="Home"><img class="logo" src="icons/logo.svg" alt="V logo" width="30" height="27"></a>
+    <div class="rail-main">
+      <a href="#/" data-tab="market" title="Market"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l5-6 4 3 6-8"/><path d="M14 6h4v4"/></svg><span>Market</span></a>
+      <a href="#/stocks" data-tab="stocks" title="Stocks"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Stocks</span></a>
+      <a href="#/scanners" data-tab="scanners" title="Scanners"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 12l5-5"/></svg><span>Scanners</span></a>
+      <a href="#/groups" data-tab="groups" title="Groups"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg><span>Groups</span></a>
+      <a href="#/breadth" data-tab="breadth" title="Breadth"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Breadth</span></a>
+      <a href="#/watchlist" data-tab="watchlist" title="Watchlist"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.9z"/></svg><span>Watchlist</span></a>
+    </div>
+    <div class="rail-end">
+      <a href="#/fields" data-tab="fields" title="Fields and formulas"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3z"/><path d="M5 17a3 3 0 013-3h11"/></svg><span>Formulas</span></a>
+      <button id="theme" type="button" aria-label="Switch dark / light mode" title="Dark / light mode"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"/></svg><span>Theme</span></button>
+      <button id="about" type="button" aria-label="About and disclaimer" title="About and disclaimer"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><span>About</span></button>
+    </div>
+  </nav>
+  <div class="frame">
+    <header class="top">
+      <a class="brand" href="#/"><img class="logo" src="icons/logo.svg" alt="" width="26" height="23"><span>Swing Trading Dashboard</span></a>
+      <div class="gsearch">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        <input id="gq" type="search" placeholder="Find a stock or index, e.g. INFY" autocomplete="off" aria-label="Find a stock or index"
+          role="combobox" aria-expanded="false" aria-controls="gres">
+        <kbd>/</kbd>
+        <div id="gres" class="gres" role="listbox" hidden></div>
+      </div>
+      <span id="asof" class="asof"></span>
+    </header>
+    <main id="view" class="card" tabindex="-1">
+      <div class="skel-page" aria-label="Loading"><i class="skel h"></i><i class="skel s"></i><i class="skel bar"></i>
+        <i class="skel row"></i><i class="skel row"></i><i class="skel row"></i><i class="skel row"></i><i class="skel row"></i><i class="skel row"></i></div>
+    </main>
+  </div>
+  <footer class="statusbar">
+    <div id="status" class="st-l" role="status">Loading…</div>
+    <div class="st-r">End-of-day data · <b>Educational purpose only, not investment advice</b> · <a href="#" id="about2">About</a></div>
   </footer>
+  <template id="aboutTpl">
+    <p><strong>Educational purpose only, not investment advice.</strong> End-of-day data; it may contain errors.</p>
+    <p>Sources: NSE (bhavcopy, indices, corporate actions, classification, results filings), BSE (indices). Stock prices are
+      adjusted for splits, bonus, rights and demergers. Every formula: <a href="#/fields">fields and formulas</a>.</p>
+    <p>Charts by <a href="https://www.tradingview.com/" target="_blank" rel="noopener">TradingView</a> Lightweight Charts™.</p>
+  </template>
   <script src="logic.js?v=__BUILD__"></script>
   <script src="ind.js?v=__BUILD__"></script>
   <script src="scan.js?v=__BUILD__"></script>

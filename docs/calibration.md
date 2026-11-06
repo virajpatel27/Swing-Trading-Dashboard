@@ -106,3 +106,24 @@ cover all stocks, so ours must be lower until the nightly fundamentals run finis
 
 TODO when every stock has fundamentals: re-count; Code 33 and EPS Accelerators will likely be too many (raise to 3
 accelerating quarters if so).
+
+## S10 - market breadth (2026-11-06)
+
+30-Oct, liquid stocks (ours 1,533 / reference 1,507):
+
+| Item | Ours | Reference |
+|---|---|---|
+| % above 20 / 50 / 200-day SMA | 20.4 / 17.7 / 38.7 | 20 / 18 / ~40 |
+| A/D ratio 20 sessions (avg up / down) | 0.72 (645 / 892) | 0.72 (636 / 881) |
+| Advancers / decliners that day | 263 / 1,267 | 252 / 1,252 |
+| 52-week highs / lows | 28 / 114 | 24 / 105 |
+| 20-day highs / lows | 68 / 307 | 76 / 309 |
+| 4 % movers up / down | 41 / 344 | 40 / 338 |
+| Stage mix Base / Up / Top / Down (64+ sessions) | 0.4 / 14.8 / 23.7 / 61.1 | 0.9 / 17.6 / 18.9 / 62.7 |
+| All stocks: 50-day / 20D H-L / 4 % movers | 16.7 % / 112-430 / 101-467 | 17 % / 123-450 / 97-458 |
+| Read: Momentum, Short-term, Big trend, Breakouts, Overdone, Leadership | Building, Down, Down, Mixed, Washed out, Large caps lead | Building, Down, Down, Failing, Normal, Large caps lead |
+
+Breakouts: the reference judged 14 (6 held, 8 failed) on 30-Oct, "27 % held this week". Close above the previous 10 / 20 /
+50 / 100-session high (or close high) gives 2-8 breakouts on 23-Oct and 33-53 % held, so its rule is unknown (maybe
+"held / failed" = breakouts vs breakdowns). Ours: close above the 50-session high, held = still above 5 sessions later
+(config/breadth.yaml). Verdict thresholds are our own and shown on the page.

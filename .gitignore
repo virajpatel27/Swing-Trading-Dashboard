@@ -47,3 +47,4 @@ reference/
 # so keeping it in git would add ~100 MB a year). Calibration copies: screen_YYYY-MM-DD.json
 data/snapshot/screen*.json
 data/snapshot/group_ranks*.json
+data/snapshot/breadth*.json

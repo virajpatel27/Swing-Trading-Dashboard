@@ -1,0 +1,22 @@
+# Market breadth (Phase S10) - swingdash/breadth.py. Our own rules (the reference's thresholds are unknown); every
+# verdict on the Breadth page shows the rule it used. Calibration: docs/calibration.md S10.
+days: 260                       # sessions kept per series (1Y range + a little)
+min_sessions_stage: 64          # a stock counts in the stage mix once it has this many sessions of history
+breakout:
+  rule: high50                  # close above the highest high of the 50 sessions before (engine field high_50d_prev)
+  hold_sessions: 5              # held = 5 sessions later the close is still above the breakout level
+movers_pct: 4                   # "4 % movers": day change >= +4 % / <= -4 %
+ad_window: 20                   # advance / decline ratio = advancers / decliners summed over this many sessions
+indices: [NIFTY_50, NIFTY_500, NIFTY_MIDCAP_150, NIFTY_SMALLCAP_250]
+participation_labels:           # % of stocks above an average -> word (upper bounds)
+  - [20, Very narrow]
+  - [40, Narrow]
+  - [60, Mixed]
+  - [80, Broad]
+  - [101, Very broad]
+ad_labels:                      # 20-session advance / decline ratio -> word (upper bounds)
+  - [0.67, Far more fallers]
+  - [0.9, More fallers]
+  - [1.1, Balanced]
+  - [1.5, More risers]
+  - [99, Far more risers]

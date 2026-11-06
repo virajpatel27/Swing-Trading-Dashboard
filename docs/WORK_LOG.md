@@ -522,3 +522,19 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   "Groups & Results Day". 33 fields registered (phase 9). tests/test_scan_phase9.py.
 - NEXT: Viraj commits + pushes; recount the earnings scanners after the nightly fundamentals run (~10-Nov); S10 = market
   breadth (ask him first).
+
+### 2026-11-06: Scanner Phase S10 - market breadth (built, waiting for Viraj's look)
+- `swingdash/breadth.py` + config/breadth.yaml: per stock and day flags (above 20/50/200 SMA, advance / decline, new
+  52-week and 20-day highs / lows, 4 % movers, breakout = close above the 50-session high), per universe (all / liquid
+  that day) and day counts for 260 sessions, stage mix (64+ sessions), breakouts held / failed after 5 sessions, and the
+  six-line market read (our own rules, each shown). Written to data/snapshot/breadth.json with screen.json.
+- screen.py keeps only the last 420 sessions per stock in memory (cross fields, groups and breadth need no more):
+  30-Oct build 745 s instead of 958 s.
+- Website: "Breadth" tab (#/breadth): universe Liquid / All, range 1M / 3M / 1Y, market read, stage bar with day change,
+  six charts with the grey Nifty 500 line (participation with 20 / 80 bands, A/D ratio, large-mid-small, net highs-lows
+  52W / 20D, 4 % movers, breakouts held vs failed); "Major Indices" tab (broad market + sectoral NSE indices + Sensex).
+- Calibration 30-Oct (docs/calibration.md S10): participation, A/D, highs-lows, 4 % movers within a few stocks of the
+  reference; 4 of 6 read words equal. tests/test_scan_phase10.py (found: the breakout verdict must use the last 5 days
+  that can already be judged).
+- NEXT: Viraj commits + pushes; S11 (optional: intraday, news markers, company descriptions) only if he wants; S12
+  hardening. Reminder after the last phase: cron-job.org Part 2.

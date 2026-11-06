@@ -8,7 +8,7 @@ on:
   push:
     branches: [main]
     paths: ["site/**", "data/snapshot/**", "swingdash/site_build.py", "scripts/build_site.py", "swingdash/engine.py",
-            "swingdash/screen.py", "config/indicators.yaml", "config/stage.yaml", "config/scanners.json", "config/fields.yaml", "config/patterns.yaml", "swingdash/patterns.py", "swingdash/fundamentals.py", "swingdash/earnings.py", "swingdash/group_rank.py", "config/group_rank.yaml",
+            "swingdash/screen.py", "config/indicators.yaml", "config/stage.yaml", "config/scanners.json", "config/fields.yaml", "config/patterns.yaml", "swingdash/patterns.py", "swingdash/fundamentals.py", "swingdash/earnings.py", "swingdash/group_rank.py", "config/group_rank.yaml", "swingdash/breadth.py", "config/breadth.yaml",
             ".github/workflows/deploy-site.yml"]
   workflow_dispatch:
   workflow_call:

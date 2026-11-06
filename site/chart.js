@@ -659,5 +659,5 @@
     },
   };
 
-  window.SDChart = { open, close, settings: () => cfg, _chart: () => cur && cur.chart };
+  window.SDChart = { open, close, settings: () => cfg, _chart: () => cur && cur.chart, loadLib };
 })();

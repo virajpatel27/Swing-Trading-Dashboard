@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from . import earnings, engine, fundamentals, group_rank, groups, store
+from . import breadth, earnings, engine, fundamentals, group_rank, groups, store
 from .adjust import ADJ_COLS
 from .config import ROOT
 
@@ -30,6 +30,7 @@ MASTER_COLS = ["symbol", "name", "series", "listed", "n500", "fno", "price_band"
 HIST_COLS = ["close", "ret_1w", "ret_1m", "ret_3m"]
 CROSS_COLS = ["rs_rating", "rs_rating_1w", "rs_rating_1m", "rs_rating_3m", "rs_chg_1w", "rs_chg_1m", "rs_rating_1m_ago"]
 DROP = ["sessions"]
+HIST_KEEP = 420
 
 
 def _settings(root: Path) -> tuple[dict, dict, dict]:
@@ -65,7 +66,10 @@ def one_stock(args) -> tuple[str, dict, pd.DataFrame] | None:
     rc = f["raw_close"] if "raw_close" in f else f["close"]
     f["liquid_day"] = (turnover.rolling(n, min_periods=min(10, n)).median() >= float(liquid_rule.get("min_turnover_cr", 1.0))) \
         & (rc >= float(liquid_rule.get("min_price", 5.0)))
-    hist = f.set_index("date")[HIST_COLS + ["rs_score", "liquid_day", "stage"]]
+    hist = f[HIST_COLS + ["rs_score", "liquid_day", "stage"]].join(breadth.day_flags(f).drop(columns=["chg_1d"]))
+    hist["chg_1d"] = f["chg_1d"]
+    hist.index = f["date"]
+    hist = hist.iloc[-HIST_KEEP:]                               # cross fields, groups and breadth use the last ~1.5 years
     last = f.iloc[-1].drop(labels=DROP, errors="ignore").to_dict()
     last.update(earnings.reaction(f, result_days))          # Phase S9: price reaction to the latest results
     return sid, last, hist
@@ -167,7 +171,8 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
             t[i] = None if t[i] in ("", None) else float(t[i])
     snap = {"generated_at": datetime.now().strftime("%Y-%m-%d %H:%M"), "data_date": newest.strftime("%Y-%m-%d"),
             "disclaimer": DISCLAIMER, "prices": "adjusted for splits, bonus, rights, demergers", "columns": cols, "rows": table,
-            "groups": {"data_date": newest.strftime("%Y-%m-%d"), "config": gcfg, "levels": table_groups}}
+            "groups": {"data_date": newest.strftime("%Y-%m-%d"), "config": gcfg, "levels": table_groups},
+            "breadth": breadth.build(data, hists, yaml.safe_load(open(root / "config" / "breadth.yaml", encoding="utf-8")))}
     log(f"screen: {len(table)} stocks x {len(cols)} fields, data date {snap['data_date']}")
     return snap
 
@@ -175,19 +180,19 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
 def write(data: Path, snap: dict, name: str = "screen.json") -> Path:
     out = data / "snapshot"
     out.mkdir(parents=True, exist_ok=True)
-    head = {k: v for k, v in snap.items() if k not in ("rows", "groups")}
+    head = {k: v for k, v in snap.items() if k not in ("rows", "groups", "breadth")}
     lines = [json.dumps(r, separators=(",", ":"), ensure_ascii=False, allow_nan=False) for r in snap["rows"]]
     text = json.dumps(head, ensure_ascii=False, allow_nan=False)[:-1] + ',\n"rows":[\n' + ",\n".join(lines) + "\n]}\n"
     (out / name).write_text(text, encoding="utf-8", newline="\n")
     return out / name
 
 
-def write_groups(data: Path, snap: dict, name: str = "group_ranks.json") -> Path | None:
-    """data/snapshot/group_ranks.json (git-ignored, built with screen.json): the Groups page."""
-    if "groups" not in snap:
+def write_groups(data: Path, snap: dict, name: str = "group_ranks.json", key: str = "groups") -> Path | None:
+    """data/snapshot/group_ranks.json / breadth.json (git-ignored, built with screen.json): Groups and Breadth pages."""
+    if key not in snap:
         return None
     out = data / "snapshot" / name
-    out.write_text(json.dumps(snap["groups"], separators=(",", ":"), ensure_ascii=False, allow_nan=False), encoding="utf-8")
+    out.write_text(json.dumps(snap[key], separators=(",", ":"), ensure_ascii=False, allow_nan=False), encoding="utf-8")
     return out
 
 

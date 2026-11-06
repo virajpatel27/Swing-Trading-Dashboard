@@ -592,3 +592,25 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Phones: list only (all columns, scroll sideways), tap = stock page, as before.
 - Checked in the preview at 1440 px, 746 px and 375 px. Tests 172 Python + 24 JS green.
 - NEXT: N2 chart.
+
+### 2026-11-06: UI redesign N2 - chart
+- Toolbar: D / W, candle / bar icons, MA, "ƒx Indicators", header chips on the right (float, RS, stage, theme, from high),
+  ⚙. Header: symbol, O H L C, change (₹ and %), 1M / 3M on the right, company line, "Results due <date>" (next_result).
+- Legend row: each indicator with 👁 hide (stays in the legend, faded), ⚙ settings (opens the popup on it), × remove.
+- Indicator popup: list by group on the left (✓ = on), right side name + description + live preview (same stock, only that
+  indicator, last 120 bars) + settings; colours from a 21-colour grid (+ any colour); Add to chart / Update, Remove, Reset.
+  Oscillators got a colour setting.
+- Settings: drawer from the right, tabs Markers (setups, events, price levels with small samples) and Display (chart style
+  cards, grid lines, earnings table, company line, results date, chip pills); every change shows at once; Reset / Done.
+- Panes can be resized by dragging the line between them (Lightweight Charts 5 enableResize). Volume pane shows
+  "Vol · Avg 20D · RVol" of the bar under the mouse.
+- Drawing bar: round ✏️ button at the chart's top-left opens a vertical bar (cursor, trend line, horizontal line - new,
+  text, measure, colour, delete; double-click delete = clear all).
+- Patterns (SVG layer, clipped to the price pane): blue cup curve under the current base; when the base has 2+
+  contractions a smooth wave under the base with a blue pill per pullback depth (replaces the old orange arrows).
+  C = corporate action and E = results now sit as round badges under the bars.
+- Earnings table under the chart (stocks with fundamentals): last 5 quarters "Q2 FY27" style, EPS ₹ and Sales Cr with
+  YoY / QoQ %, latest quarter highlighted; opens / closes with a slide.
+- "»" button brings the chart back to the latest bar after scrolling into the past.
+- Checked in the preview at 1440 px (light + dark) and 375 px. Tests 172 Python + 24 JS green.
+- NEXT: N3 custom scan window.

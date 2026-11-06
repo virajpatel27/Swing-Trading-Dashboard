@@ -138,3 +138,4 @@ so scripts print results as `::notice` / `::error` annotations.
 Logo (06-Nov, Viraj's choice): green bull-horn V, site/icons/logo.svg, no background on the site; PNG icons from scripts/make_icons.py.
 UI redesign phases N0-N12: docs/PLAN.md. N0 (app frame: rail, top-bar search, card, status bar, skeletons) built 06-Nov.
 N1 (scanner workspace: picker with pins/counts, resizable list, column drawer, grid of mini charts) built 06-Nov.
+N2 (chart: legend controls, indicator popup with preview, settings drawer, drawing bar, cup/VCP SVG, earnings table) built 06-Nov.

@@ -125,7 +125,7 @@ logo, colours, font, icons and wording (the site is public: no copied branding).
 | Phase | Content | Status |
 |---|---|---|
 | N0 | Brand + app frame: green bull-horn V logo, colours (emerald accent, dark rail), Inter font, own line icons, left rail (bottom bar on phones), top bar with stock/index search (`/` key), card, status bar, About dialog, loading skeletons, small animations | built 2026-11-06 |
-| N1 | Scanner workspace: results list, scanner menu, column drawer, grid view 2/3/4 | open |
+| N1 | Scanner workspace: results list (drag wider = more columns), scanner menu (search, folders, pin, counts, info), pinned scanners, + New scan, column drawer, grid view 2/3/4 with mini charts, Copy / CSV in the status bar | built 2026-11-06 |
 | N2 | Chart: header, legend, indicator popup, settings drawer, pane resize, drawing bar, volume colours, pattern drawings, earnings table | open |
 | N3 | Custom scan window (5 tabs, ~50 filters, live count, save / load) | open |
 | N4 | Stock side panel + Financials page + Peers | open |

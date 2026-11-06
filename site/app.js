@@ -420,6 +420,48 @@
     return txt;
   }
 
+  /* Phase N1: scanner workspace. Top: new scan, scanner picker (search, folders, pin, counts), formula, pinned scanners,
+     list / grid switch. Wide screens: resizable results list (more columns when wider) + chart; grid of mini charts. */
+  const ICON = {
+    list: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="12" y="4" width="9" height="16" rx="1.5"/></svg>',
+    grid: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>',
+    filter: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>',
+    sort: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4"/></svg>',
+    cols: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>',
+    pin: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6l-1 6 4 4H6l4-4z"/><path d="M12 14v6"/></svg>',
+    plus: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+  };
+  const GRID_SORTS = [["scan", "Scan order"], ["az", "A-Z"], ["mcap", "Market cap"], ["price", "Price"], ["perf", "1D %"], ["rs", "RS rating"], ["vol", "Traded value"]];
+  const gridSorted = (rows, k) => {
+    if (k === "scan") return rows;
+    const by = { az: (r) => r.symbol, mcap: (r) => r.mcap_cr, price: (r) => r.close, perf: (r) => r.chg_1d, rs: (r) => r.rs_rating, vol: (r) => r.turnover_cr }[k];
+    return rows.slice().sort((a, b) => (k === "az" ? String(by(a)).localeCompare(String(by(b))) : (by(b) ?? -Infinity) - (by(a) ?? -Infinity)));
+  };
+  let gridCharts = [], gridObs = null;
+  function clearGrid() {
+    if (gridObs) { gridObs.disconnect(); gridObs = null; }
+    while (gridCharts.length) { try { gridCharts.pop().remove(); } catch (e) { /* gone */ } }
+  }
+  const scanCounts = new Map();                      // scan id + rule -> count, for the picker
+  function scanCount(sc) {
+    const k = sc.id + JSON.stringify(sc.rule) + sc.universe + state.screenDate;
+    if (!scanCounts.has(k)) { try { scanCounts.set(k, SDS.run(state.screen, sc).length); } catch (e) { scanCounts.set(k, null); } }
+    return scanCounts.get(k);
+  }
+  function scanPicker(current) {
+    const pins = store.get("sd-pins", []);
+    const folders = [];
+    for (const s of allScans()) { let f = folders.find((x) => x[0] === (s.folder || "Other")); if (!f) folders.push(f = [s.folder || "Other", []]); f[1].push(s); }
+    return `<div class="pk-q">${ICON.filter}<input type="search" id="pkQ" placeholder="Search scanners" aria-label="Search scanners"></div>`
+      + folders.map(([f, list]) => `<details class="pk-f" ${list.some((s) => s.id === current) ? "open" : ""}><summary>${esc(f)} <small>${list.length}</small></summary>`
+        + list.map((s) => `<div class="pk-row ${s.id === current ? "on" : ""}" data-t="${esc((s.name + " " + (s.description || "")).toLowerCase())}">`
+          + `<button type="button" class="pk-pin ${pins.includes(s.id) ? "on" : ""}" data-pin="${esc(s.id)}" title="${pins.includes(s.id) ? "Unpin" : "Pin to the top bar"}" aria-label="Pin ${esc(s.name)}">${ICON.pin}</button>`
+          + `<a href="#/scanners/${encodeURIComponent(s.id)}">${esc(s.name)}</a>`
+          + `<span class="pk-i" title="${esc(s.description || s.name)}" aria-label="About ${esc(s.name)}">i</span>`
+          + `<small class="pk-n" data-count="${esc(s.id)}">…</small></div>`).join("") + "</details>").join("")
+      + `<div class="tree-act"><button type="button" data-exp>Export my scans</button><label class="btn sm">Import <input type="file" id="impScans" accept=".json" hidden></label></div>`;
+  }
+
   async function renderStocks() {
     const st = state.stocks;
     const mode = routeName();                                  // "stocks" or "scanners"
@@ -427,6 +469,7 @@
     try { await loadScreen(); if (mode === "scanners") await loadScans(); }
     catch (e) { view.innerHTML = `<p class="empty">Could not load the stock table (${esc(e.message)}).</p>`; return; }
     if (routeName() !== mode) return;
+    clearGrid();
     let scan = null, base = state.screen;
     if (mode === "scanners") {
       const id = decodeURIComponent(location.hash.replace(/^#\/?/, "").split("/")[1] || "") || store.get("sd-scan", "trend-template");
@@ -435,53 +478,126 @@
       store.set("sd-scan", scan.id);
       base = SDS.run(state.screen, scan);
     }
+    const ui = Object.assign({ view: "list", gridCols: 3, gridSort: "scan", listW: 300, filters: false }, store.get("sd-ws", {}));
+    const saveUi = () => store.set("sd-ws", ui);
+    const isWide = wide();
     const sectors = [...new Set(state.screen.map((r) => r.sector).filter(Boolean))].sort();
     const sortItem = SD.SORTS.find((x) => x[0] === st.sort);
-    const sortName = sortItem ? sortItem[1] : SD.COLUMNS[st.sort] ? SD.COLUMNS[st.sort].label : st.sort;
-    const head = scan ? `<div class="scan-head"><div class="menu-wrap"><button class="btn" id="scanBtn" type="button">☰ Scanners ▾</button>
-        <div class="menu tree" id="scanMenu" hidden>${scanTree(scan.id)}<div class="tree-act"><button type="button" data-exp>Export my scans</button>
-        <label class="btn sm">Import <input type="file" id="impScans" accept=".json" hidden></label></div></div></div>
-        <h1>${esc(scan.name)}${scan.edited ? ' <span class="tag">edited</span>' : ""}</h1><button class="btn" id="formulaBtn" type="button">ƒ Formula</button></div>
-        <p class="sub">${esc(scan.description || "")}<br><span class="rule-en">${esc(SDS.describe(scan.rule || { all: [] }, state.labels))}${scan.universe === "liquid" ? " · liquid stocks only" : ""}</span></p>`
-      : `<h1>Stocks</h1><p class="sub">Every NSE main-board stock with all indicator fields of ${SD.fmtDate(state.screenDate)}.
-      Pick columns with ⚙, sort with the menu or a column title, tick rows to copy or export.${wide() ? " Click a row for its chart, ↑ / ↓ to move." : " Tap a row for its chart."}</p>`;
-    view.innerHTML = `${head}
-      <div class="controls">${seg("uni", [["all", "All"], ["liquid", "Liquid"], ["n500", "Nifty 500"], ["fno", "F&O"]], st.universe)}
-        <select id="sector" aria-label="Sector"><option value="">All sectors</option>${sectors.map((x) => `<option ${x === st.sector ? "selected" : ""}>${esc(x)}</option>`).join("")}</select>
-        <input id="q" type="search" placeholder="Search symbol, name, industry" value="${esc(st.text)}" aria-label="Search">
-        <div class="menu-wrap"><button class="btn" id="sortBtn" type="button">Sort: ${esc(sortName)} ${st.dir === "asc" ? "▲" : "▼"}</button>
-          <div class="menu" id="sortMenu" hidden>${SD.SORTS.map(([k, label]) => `<button type="button" data-sort="${k}" class="${k === st.sort ? "on" : ""}">${label}</button>`).join("")}
-          <button type="button" data-flip>Reverse order ⇅</button></div></div>
-        <button class="btn" id="colBtn" type="button" title="Column settings">⚙ Columns</button>
-        <button class="btn" id="copy" type="button" title="Copy symbols as NSE:SYMBOL (TradingView watchlist format)">Copy</button>
-        <button class="btn" id="csv" type="button">CSV</button></div>
-      <div class="split ${wide() ? "on" : ""}"><div id="tbl" class="list"></div><div class="chart-pane" id="pane"><p class="empty">Click a stock to see its chart.</p></div></div>
-      <div class="foot-bar" id="fbar"></div>`;
+    const sortName = sortItem ? sortItem[1] : SD.COLUMNS[st.sort] ? SD.COLUMNS[st.sort].label : st.sort === "symbol" ? "Symbol" : st.sort;
+    const pins = store.get("sd-pins", []).map((p) => allScans().find((s) => s.id === p)).filter(Boolean);
+    const bar = scan
+      ? `<button class="btn primary" id="newScan" type="button">${ICON.plus}<span>New scan</span></button>
+        <div class="menu-wrap"><button class="btn ws-pick" id="scanBtn" type="button" aria-haspopup="true"><b>${esc(scan.name)}</b>${scan.edited ? ' <span class="tag">edited</span>' : ""} <span class="caret">▾</span></button>
+          <div class="menu picker" id="scanMenu" hidden></div></div>
+        <button class="btn icon" id="formulaBtn" type="button" title="Formula: see or change the rule">ƒ</button>
+        <div class="pins">${pins.length ? pins.map((s) => `<a class="pin-chip ${s.id === scan.id ? "on" : ""}" href="#/scanners/${encodeURIComponent(s.id)}">${esc(s.name)}</a>`).join("")
+          : '<span class="muted small">Pin a scanner from the menu to show it here</span>'}</div>`
+      : `<h1 class="ws-title">All stocks</h1><span class="muted small">every NSE main-board stock, all fields of ${SD.fmtDate(state.screenDate)}</span>`;
+    const desc = scan ? `<p class="ws-desc">${esc(scan.description || "")} <span class="rule-en">${esc(SDS.describe(scan.rule || { all: [] }, state.labels))}${scan.universe === "liquid" ? " · liquid stocks only" : ""}</span></p>` : "";
+    view.innerHTML = `<div class="ws-bar">${bar}
+        <div class="ws-right">${ui.view === "grid" ? `<select id="gSort" aria-label="Grid order">${GRID_SORTS.map(([k, l]) => `<option value="${k}" ${k === ui.gridSort ? "selected" : ""}>${l}</option>`).join("")}</select>
+          ${seg("gcols", [["2", "2"], ["3", "3"], ["4", "4"]], String(ui.gridCols))}` : ""}
+          <div class="seg icons" role="group" aria-label="View"><button type="button" data-v="list" class="${ui.view === "list" ? "on" : ""}" title="List + chart">${ICON.list}</button>
+          <button type="button" data-v="grid" class="${ui.view === "grid" ? "on" : ""}" title="Grid of charts">${ICON.grid}</button></div></div></div>
+      ${desc}
+      <div class="ws-main ${ui.view} ${isWide ? "wide" : ""}" id="wsMain" style="--list-w:${ui.listW}px">
+        <section class="results">
+          <div class="res-h"><b>Results</b><span class="count" id="resN"></span>
+            <button class="icon-btn sm ${ui.filters ? "on" : ""}" id="fltBtn" type="button" title="Search and filters">${ICON.filter}</button>
+            <div class="menu-wrap"><button class="icon-btn sm" id="sortBtn" type="button" title="Sort: ${esc(sortName)}">${ICON.sort}</button>
+              <div class="menu right" id="sortMenu" hidden><small class="menu-h">Sort by · now ${esc(sortName)} ${st.dir === "asc" ? "▲" : "▼"}</small>${SD.SORTS.map(([k, label]) => `<button type="button" data-sort="${k}" class="${k === st.sort ? "on" : ""}">${label}</button>`).join("")}
+              <button type="button" data-flip>Reverse order ⇅</button></div></div>
+            <button class="icon-btn sm" id="colBtn" type="button" title="Columns">${ICON.cols}</button></div>
+          <div class="res-f" ${ui.filters ? "" : "hidden"}>${seg("uni", [["all", "All"], ["liquid", "Liquid"], ["n500", "Nifty 500"], ["fno", "F&O"]], st.universe)}
+            <select id="sector" aria-label="Sector"><option value="">All sectors</option>${sectors.map((x) => `<option ${x === st.sector ? "selected" : ""}>${esc(x)}</option>`).join("")}</select>
+            <input id="q" type="search" placeholder="Search in results" value="${esc(st.text)}" aria-label="Search in results"></div>
+          <div id="tbl" class="res-list"></div>
+        </section>
+        <div class="res-drag" id="resDrag" role="separator" aria-orientation="vertical" title="Drag to make the list wider or narrower"></div>
+        <div class="chart-pane" id="pane"><p class="empty">Select a stock from the results to chart it.</p></div>
+        <div class="grid" id="grid" style="--gcols:${ui.gridCols}"></div>
+      </div>`;
     let rows = [];
-    const footer = () => { $("#fbar").textContent = `${rows.length.toLocaleString("en-IN")} stocks · ${state.screen.length.toLocaleString("en-IN")} scanned · `
-      + `${state.selected.size} selected · data ${SD.fmtDate(state.screenDate)} · Not investment advice`; };
+    const stPage = $("#stPage");
+    const footer = () => {
+      const name = scan ? scan.name : "All stocks";
+      stPage.innerHTML = `<button class="st-btn" id="copy" type="button" title="Copy symbols as NSE:SYMBOL (TradingView watchlist)">Copy</button>`
+        + `<button class="st-btn" id="csv" type="button">CSV</button><span>${esc(name)} · ${state.selected.size} of ${rows.length.toLocaleString("en-IN")} selected</span>`
+        + `<span class="st-n">${rows.length.toLocaleString("en-IN")} stocks · ${state.screen.length.toLocaleString("en-IN")} scanned</span>`;
+      $("#resN").textContent = rows.length.toLocaleString("en-IN");
+      $("#copy").onclick = copySel;
+      $("#csv").onclick = csvSel;
+    };
+    // how many extra columns fit in the list: wider list = more columns (phones: all, scroll sideways)
+    const fitCols = () => {
+      if (!isWide || ui.view !== "list") return st.cols;
+      const w = $("#wsMain .results").clientWidth;
+      return st.cols.slice(0, Math.max(0, Math.floor((w - 250) / 86)));
+    };
+    let shownCols = -1;
     const draw = () => {
       rows = SD.sortRows(SD.filterStocks(base, st), st.sort, st.dir);
-      const cols = st.cols;
+      if (ui.view === "grid") { drawGrid(); footer(); return; }
+      const cols = fitCols();
+      shownCols = cols.length;
       const mark = (c) => (st.sort === c ? (st.dir === "asc" ? " ▲" : " ▼") : "");
-      const head = `<th class="l"><input type="checkbox" id="selAll" aria-label="Select all shown"></th><th class="l sticky ${st.sort === "symbol" ? "sorted" : ""}" data-col="symbol">Stock${mark("symbol")}</th>`
+      const head = `<th class="l ck"><input type="checkbox" id="selAll" aria-label="Select all shown"></th><th class="l sticky ${st.sort === "symbol" ? "sorted" : ""}" data-col="symbol">Symbol${mark("symbol")}</th>`
         + `<th data-col="close" class="${st.sort === "close" ? "sorted" : ""}">LTP${mark("close")}</th>`
         + cols.map((c) => `<th data-col="${c}" class="${SD.COLUMNS[c].fmt === "text" ? "l " : ""}${st.sort === c ? "sorted" : ""}">${esc(SD.COLUMNS[c].label)}${mark(c)}</th>`).join("");
       const body = rows.slice(0, st.limit).map((r) => `<tr data-key="${esc(r.key)}" class="${state.current === r.key ? "cur" : ""}">`
-        + `<td class="l"><input type="checkbox" data-sel="${esc(r.key)}" ${state.selected.has(r.key) ? "checked" : ""} aria-label="Select ${esc(r.symbol)}"></td>`
+        + `<td class="l ck"><input type="checkbox" data-sel="${esc(r.key)}" ${state.selected.has(r.key) ? "checked" : ""} aria-label="Select ${esc(r.symbol)}"></td>`
         + `<td class="l sticky name"><b>${esc(r.symbol)}</b><span>${esc(r.name)}</span></td><td class="num">${SD.fmtPrice(r.close)}</td>`
         + cols.map((c) => `<td class="${SD.COLUMNS[c].fmt === "text" ? "l" : "num"}">${cellHTML(r, c)}</td>`).join("") + "</tr>").join("");
       const more = rows.length > st.limit ? `<button class="btn more" data-more type="button">Show more (${rows.length - st.limit} left)</button>` : "";
-      $("#tbl").innerHTML = rows.length ? `<div class="table-wrap"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>${more}`
+      $("#tbl").innerHTML = rows.length ? `<div class="table-wrap"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>${more}</div>`
         : `<div class="table-wrap"><div class="empty">Nothing matches.</div></div>`;
       footer();
       store.set("sd-stocks", { universe: st.universe, sector: st.sector, sort: st.sort, dir: st.dir, cols: st.cols });
+    };
+    // grid of mini charts: candles of the last ~6 months + 20 / 50-day averages, drawn when the card scrolls into view
+    let gridLimit = ui.gridCols * 4;
+    const drawGrid = () => {
+      clearGrid();
+      const list = gridSorted(rows, ui.gridSort);
+      const box = $("#grid");
+      box.innerHTML = list.length ? list.slice(0, gridLimit).map((r) => `<article class="gcard" data-key="${esc(r.key)}" tabindex="0">
+          <div class="g-h"><b>${esc(r.symbol)}</b>${pct(r.chg_1d)}<span class="g-px num">${SD.fmtPrice(r.close)}</span></div>
+          <div class="g-s muted">M ${r.mcap_cr == null ? "–" : "₹" + SD.fmtInt(r.mcap_cr) + " Cr"} · F ${r.float_mcap_cr == null ? "–" : "₹" + SD.fmtInt(r.float_mcap_cr) + " Cr"}${r.rs_rating == null ? "" : " · RS " + r.rs_rating}</div>
+          <div class="g-ch" data-id="${esc(r.id)}"><i class="skel"></i></div>
+          <div class="g-f muted">Vol ${SD.fmtVol(r.volume)} · Avg 20D ${SD.fmtVol(r.avg_vol20)} · RVol ${r.rvol == null ? "–" : Number(r.rvol).toFixed(2) + "x"}</div></article>`).join("")
+        + (list.length > gridLimit ? `<button class="btn more g-more" data-gmore type="button">Show more (${list.length - gridLimit} left)</button>` : "")
+        : `<div class="empty">Nothing matches.</div>`;
+      gridObs = new IntersectionObserver((ents) => ents.forEach((en) => { if (en.isIntersecting) { gridObs.unobserve(en.target); miniChart(en.target); } }), { rootMargin: "200px" });
+      box.querySelectorAll(".g-ch").forEach((el) => gridObs.observe(el));
+    };
+    const miniChart = async (el) => {
+      let data;
+      try { [data] = await Promise.all([getJSON(`data/c/s/${encodeURIComponent(el.dataset.id)}.json`), SDChart.loadLib()]); }
+      catch (e) { el.innerHTML = '<p class="empty small">No chart</p>'; return; }
+      if (!el.isConnected) return;
+      const bars = SD.candlesFromChart(data, "adjusted").slice(-180);
+      const L = window.LightweightCharts, cs = getComputedStyle(document.documentElement), col = (v) => cs.getPropertyValue(v).trim();
+      el.innerHTML = "";
+      const ch = L.createChart(el, { layout: { background: { color: "transparent" }, textColor: col("--muted"), fontSize: 10, attributionLogo: false },
+        grid: { vertLines: { visible: false }, horzLines: { visible: false } }, rightPriceScale: { borderVisible: false, scaleMargins: { top: 0.08, bottom: 0.04 } },
+        timeScale: { borderVisible: false, visible: false }, handleScroll: false, handleScale: false, crosshair: { mode: 2 } });
+      gridCharts.push(ch);
+      const s = ch.addSeries(L.CandlestickSeries, { upColor: col("--up"), downColor: col("--down"), borderVisible: false, wickUpColor: col("--up"), wickDownColor: col("--down"), priceLineVisible: false });
+      s.setData(bars.map((b) => ({ time: b.time, open: b.open, high: b.high, low: b.low, close: b.close })));
+      const all = SD.candlesFromChart(data, "adjusted"), off = all.length - bars.length;
+      [[20, "#3b82f6"], [50, "#f59e0b"]].forEach(([n, c]) => {
+        const pts = [];
+        let sum = 0;
+        for (let i = 0; i < all.length; i++) { sum += all[i].close; if (i >= n) sum -= all[i - n].close; if (i >= off && i >= n - 1) pts.push({ time: all[i].time, value: sum / n }); }
+        ch.addSeries(L.LineSeries, { color: c, lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false }).setData(pts);
+      });
+      ch.timeScale().fitContent();
     };
     draw();
     const openRow = (key, scroll) => {
       const r = state.screenByKey.get(key);
       if (!r) return;
-      if (!wide()) { location.hash = "#/i/s/" + r.id; return; }
+      if (!isWide) { location.hash = "#/i/s/" + r.id; return; }
       state.current = key;
       view.querySelectorAll("tr.cur").forEach((x) => x.classList.remove("cur"));
       const tr = view.querySelector(`tr[data-key="${CSS.escape(key)}"]`);
@@ -490,7 +606,7 @@
     };
     $("#tbl").onclick = (e) => {
       const th = e.target.closest("th[data-col]");
-      if (th) { const c = th.dataset.col; st.dir = st.sort === c ? (st.dir === "asc" ? "desc" : "asc") : c === "symbol" ? "asc" : "desc"; st.sort = c; return renderStocks(); }
+      if (th) { const c = th.dataset.col; st.dir = st.sort === c ? (st.dir === "asc" ? "desc" : "asc") : c === "symbol" ? "asc" : "desc"; st.sort = c; return draw(); }
       if (e.target.id === "selAll") { rows.slice(0, st.limit).forEach((r) => (e.target.checked ? state.selected.add(r.key) : state.selected.delete(r.key))); return draw(); }
       const sel = e.target.closest("[data-sel]");
       if (sel) { if (sel.checked) state.selected.add(sel.dataset.sel); else state.selected.delete(sel.dataset.sel); return footer(); }
@@ -498,43 +614,116 @@
       const tr = e.target.closest("tr[data-key]");
       if (tr) openRow(tr.dataset.key, false);
     };
+    $("#grid").onclick = (e) => {
+      if (e.target.closest("[data-gmore]")) { gridLimit += ui.gridCols * 4; return drawGrid(); }
+      const c = e.target.closest(".gcard");
+      if (!c) return;
+      if (!isWide) { location.hash = "#/i/" + c.dataset.key.replace(":", "/"); return; }
+      state.current = c.dataset.key; ui.view = "list"; saveUi(); renderStocks();
+    };
+    $("#grid").onkeydown = (e) => { if (e.key === "Enter" && e.target.matches(".gcard")) e.target.click(); };
     view.onkeydown = (e) => {
-      if (!wide() || !state.current || !["ArrowDown", "ArrowUp"].includes(e.key) || e.target.matches("input, select, textarea")) return;
+      if (!isWide || ui.view !== "list" || !state.current || !["ArrowDown", "ArrowUp"].includes(e.key) || e.target.matches("input, select, textarea")) return;
       const i = rows.findIndex((r) => r.key === state.current), j = i + (e.key === "ArrowDown" ? 1 : -1);
       if (rows[j]) { e.preventDefault(); if (j >= st.limit) { st.limit += PAGE; draw(); } openRow(rows[j].key, true); }
     };
     $("[data-seg=uni]").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; st.universe = b.dataset.v; st.limit = PAGE; setOn(e.currentTarget, b); draw(); };
     $("#sector").onchange = (e) => { st.sector = e.target.value; st.limit = PAGE; draw(); };
     $("#q").oninput = (e) => { st.text = e.target.value; st.limit = PAGE; draw(); };
-    $("#sortBtn").onclick = () => { $("#sortMenu").hidden = !$("#sortMenu").hidden; };
+    $("#fltBtn").onclick = () => { ui.filters = !ui.filters; saveUi(); $(".res-f").hidden = !ui.filters; $("#fltBtn").classList.toggle("on", ui.filters); if (ui.filters) $("#q").focus(); };
+    const toggleMenu = (id) => { const m = $(id); const open = m.hidden; view.querySelectorAll(".menu").forEach((x) => { x.hidden = true; }); m.hidden = !open; return open; };
+    $("#sortBtn").onclick = () => toggleMenu("#sortMenu");
     $("#sortMenu").onclick = (e) => {
       const b = e.target.closest("button"); if (!b) return;
       if (b.dataset.flip != null) st.dir = st.dir === "asc" ? "desc" : "asc";
       else { const s = SD.SORTS.find((x) => x[0] === b.dataset.sort); st.sort = s[0]; st.dir = s[2]; }
       renderStocks();
     };
-    $("#colBtn").onclick = () => columnSettings(() => renderStocks());
+    $("#colBtn").onclick = () => columnSettings(() => { shownCols = -1; draw(); });
+    view.querySelector(".ws-right .icons").onclick = (e) => { const b = e.target.closest("button"); if (!b || b.dataset.v === ui.view) return; ui.view = b.dataset.v; saveUi(); renderStocks(); };
+    if (ui.view === "grid") {
+      $("[data-seg=gcols]").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; ui.gridCols = Number(b.dataset.v); gridLimit = ui.gridCols * 4; saveUi(); setOn(e.currentTarget, b); $("#grid").style.setProperty("--gcols", ui.gridCols); drawGrid(); };
+      $("#gSort").onchange = (e) => { ui.gridSort = e.target.value; saveUi(); drawGrid(); };
+    }
+    // drag the divider: wider list shows more columns
+    const drag = $("#resDrag"), wsMain = $("#wsMain");
+    drag.onpointerdown = (e) => {
+      if (!isWide) return;
+      e.preventDefault(); drag.setPointerCapture(e.pointerId); wsMain.classList.add("dragging");
+      const left = wsMain.getBoundingClientRect().left, max = wsMain.clientWidth - 360;
+      drag.onpointermove = (ev) => {
+        ui.listW = Math.round(Math.min(Math.max(ev.clientX - left, 240), max));
+        wsMain.style.setProperty("--list-w", ui.listW + "px");
+        if (fitCols().length !== shownCols) draw();
+      };
+      drag.onpointerup = () => { drag.onpointermove = drag.onpointerup = null; wsMain.classList.remove("dragging"); saveUi(); window.dispatchEvent(new Event("resize")); };
+    };
+    // list + chart fill the screen down to the status bar
+    const fitH = () => {
+      if (!wsMain.isConnected) { window.removeEventListener("resize", fitH); return; }
+      if (isWide && ui.view === "list") wsMain.style.height = Math.max(480, innerHeight - (wsMain.getBoundingClientRect().top + scrollY) - 64) + "px";
+    };
+    fitH();
+    window.addEventListener("resize", fitH);
+    drag.ondblclick = () => { ui.listW = 300; saveUi(); wsMain.style.setProperty("--list-w", "300px"); draw(); window.dispatchEvent(new Event("resize")); };
     const picked = () => (state.selected.size ? rows.filter((r) => state.selected.has(r.key)) : rows);
-    $("#copy").onclick = async () => {
+    async function copySel() {
       const list = picked(), txt = list.map((r) => "NSE:" + r.symbol).join(",");
       try { await navigator.clipboard.writeText(txt); $("#copy").textContent = `Copied ${list.length}`; } catch (e) { prompt("Copy these symbols:", txt); }
       setTimeout(() => { const b = $("#copy"); if (b) b.textContent = "Copy"; }, 2000);
-    };
-    $("#csv").onclick = () => {
+    }
+    function csvSel() {
       const cols = ["symbol", "name", "close", ...st.cols];
       const blob = new Blob([SD.toCSV(picked(), cols)], { type: "text/csv" });
       const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${scan ? scan.id : "stocks"}-${state.screenDate}.csv`; a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-    };
-    if (scan) {
-      $("#scanBtn").onclick = () => { $("#scanMenu").hidden = !$("#scanMenu").hidden; };
-      $("#scanMenu").onclick = (e) => { if (e.target.closest("[data-exp]")) exportScans(); if (e.target.closest("a")) $("#scanMenu").hidden = true; };
-      $("#impScans").onchange = (e) => { if (e.target.files[0]) importScans(e.target.files[0], () => renderStocks()); };
-      $("#formulaBtn").onclick = () => formulaEditor(scan, (id) => { state.lastScan = null; if (id === scan.id) renderStocks(); else location.hash = "#/scanners/" + encodeURIComponent(id); });
     }
-    if (wide()) {
+    if (scan) {
+      $("#scanBtn").onclick = () => {
+        if (!toggleMenu("#scanMenu")) return;
+        const menu = $("#scanMenu");
+        menu.innerHTML = scanPicker(scan.id);
+        menu.querySelector("#pkQ").focus();
+        // counts after the menu is drawn (each scan runs once per data day)
+        setTimeout(() => menu.querySelectorAll("[data-count]").forEach((el) => {
+          const s = allScans().find((x) => x.id === el.dataset.count); const n = s ? scanCount(s) : null; el.textContent = n == null ? "–" : n.toLocaleString("en-IN");
+        }), 30);
+        menu.querySelector("#pkQ").oninput = (e) => {
+          const q = e.target.value.toLowerCase();
+          menu.querySelectorAll(".pk-row").forEach((r) => { r.hidden = !r.dataset.t.includes(q); });
+          menu.querySelectorAll(".pk-f").forEach((f) => { f.hidden = !f.querySelector(".pk-row:not([hidden])"); if (q) f.open = true; });
+        };
+        menu.querySelector("#impScans").onchange = (e) => { if (e.target.files[0]) importScans(e.target.files[0], () => renderStocks()); };
+      };
+      $("#scanMenu").onclick = (e) => {
+        if (e.target.closest("[data-exp]")) exportScans();
+        const pin = e.target.closest("[data-pin]");
+        if (pin) {
+          const p = store.get("sd-pins", []), id = pin.dataset.pin;
+          store.set("sd-pins", p.includes(id) ? p.filter((x) => x !== id) : [...p, id].slice(-8));
+          pin.classList.toggle("on");
+          const chips = view.querySelector(".pins"), list = store.get("sd-pins", []).map((x) => allScans().find((s) => s.id === x)).filter(Boolean);
+          chips.innerHTML = list.length ? list.map((s) => `<a class="pin-chip ${s.id === scan.id ? "on" : ""}" href="#/scanners/${encodeURIComponent(s.id)}">${esc(s.name)}</a>`).join("")
+            : '<span class="muted small">Pin a scanner from the menu to show it here</span>';
+          return;
+        }
+        if (e.target.closest("a")) $("#scanMenu").hidden = true;
+      };
+      $("#formulaBtn").onclick = () => formulaEditor(scan, (id) => { state.lastScan = null; if (id === scan.id) renderStocks(); else location.hash = "#/scanners/" + encodeURIComponent(id); });
+      $("#newScan").onclick = () => {
+        const name = prompt("Name of your new scan:", "My scan"); if (!name) return;
+        const u = userScans(), id = "my-" + Date.now().toString(36);
+        u.mine.push({ id, name: name.slice(0, 60), description: "My scan", universe: "all", rule: { all: [] } });
+        saveUserScans(u);
+        state.lastScan = null;
+        location.hash = "#/scanners/" + encodeURIComponent(id);
+        setTimeout(() => { const s = allScans().find((x) => x.id === id); if (s) formulaEditor(s, () => { state.lastScan = null; renderStocks(); }); }, 400);
+      };
+    }
+    view.onclick = (e) => { if (!e.target.closest(".menu-wrap")) view.querySelectorAll(".menu").forEach((x) => { x.hidden = true; }); };
+    if (isWide && ui.view === "list") {
       const first = state.current && rows.some((r) => r.key === state.current) ? state.current : rows[0] && rows[0].key;
-      if (first) openRow(first, false);
+      if (first) openRow(first, true);
     }
   }
 
@@ -709,7 +898,7 @@
   function columnSettings(done) {
     const st = state.stocks;
     const m = document.createElement("div");
-    m.className = "modal-bg";
+    m.className = "modal-bg drawer";
     const groups = SD.COLUMN_GROUPS.map(([g, cols]) => `<details ${g === "General" ? "open" : ""}><summary>${g} <small>${cols.length}</small></summary>`
       + cols.map(([id, label]) => `<label class="f-row" data-t="${esc(label.toLowerCase())}"><input type="checkbox" value="${id}" ${st.cols.includes(id) ? "checked" : ""}> ${esc(label)}</label>`).join("") + "</details>").join("");
     const mine = () => st.cols.map((c, i) => `<div class="mine-row"><span>${esc(SD.COLUMNS[c].label)}</span><span>`
@@ -717,15 +906,16 @@
       + `<button class="btn sm" data-rm="${c}" type="button" aria-label="Remove">✕</button></span></div>`).join("");
     m.innerHTML = `<div class="modal wide" role="dialog" aria-label="Column settings"><div class="modal-h"><b>Column settings</b>
       <button class="icon-btn" data-x type="button" aria-label="Close">✕</button></div><div class="modal-b cols-grid">
-      <div><input type="search" id="colQ" placeholder="Search columns" aria-label="Search columns"><div id="colGroups">${groups}</div></div>
       <div><h4>Your columns <small id="nCols">${st.cols.length}</small> <button class="btn sm" id="colReset" type="button">Reset</button></h4><div id="mine">${mine()}</div>
-      <p class="muted small">Changes are saved automatically in this browser.</p></div></div></div>`;
+      <p class="muted small">Changes show at once and are saved in this browser. Make the list wider to see more of them.</p></div>
+      <div><h4>Add columns</h4><input type="search" id="colQ" placeholder="Search columns" aria-label="Search columns"><div id="colGroups">${groups}</div></div></div></div>`;
     document.body.appendChild(m);
     const refresh = () => {
       m.querySelector("#mine").innerHTML = mine();
       m.querySelector("#nCols").textContent = st.cols.length;
       m.querySelectorAll("#colGroups input").forEach((i) => { i.checked = st.cols.includes(i.value); });
       store.set("sd-stocks", { ...store.get("sd-stocks", {}), cols: st.cols });
+      done();
     };
     m.addEventListener("change", (e) => {
       if (!e.target.matches("#colGroups input")) return;
@@ -733,7 +923,7 @@
       st.cols = e.target.checked ? [...st.cols.filter((c) => c !== v), v] : st.cols.filter((c) => c !== v);
       refresh();
     });
-    const shut = () => { m.remove(); document.removeEventListener("keydown", onKey); done(); };
+    const shut = () => { m.remove(); document.removeEventListener("keydown", onKey); };
     const onKey = (e) => { if (e.key === "Escape") shut(); };
     document.addEventListener("keydown", onKey);
     m.addEventListener("click", (e) => {
@@ -870,7 +1060,10 @@
     view.classList.remove("enter"); void view.offsetWidth; view.classList.add("enter");
     SDChart.close();
     clearBreadthCharts();
+    clearGrid();
     view.onkeydown = null;
+    view.onclick = null;
+    $("#stPage").innerHTML = "";
     if (parts[0] === "stocks" || parts[0] === "scanners") renderStocks();
     else if (parts[0] === "fields") renderFields();
     else if (parts[0] === "screener") renderScreener();

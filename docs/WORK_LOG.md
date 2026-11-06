@@ -576,3 +576,19 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Checked in the preview: light + dark, phone 375 px (no sideways scroll, 7 bottom items), search, About, scanners split.
   Tests 172 Python + 24 JS green.
 - NEXT: N1 scanner workspace.
+
+### 2026-11-06: UI redesign N1 - scanner workspace (Stocks + Scanners pages)
+- Top row: + New scan (name -> empty My Scan -> formula editor), scanner picker (search box, folders that open / close,
+  pin icon, i = description on hover, live count of each scan, computed once per data day), ƒ formula, pinned scanners as
+  chips ("Pin a scanner from the menu to show it here"), list / grid switch.
+- Wide screens (>= 1100 px): results list on the left + chart on the right, both fill the screen down to the status bar.
+  Drag the divider: a wider list shows more of your columns (about 86 px each); double-click = back to 300 px. Saved in
+  this browser (sd-ws). Results header: search + universe / sector filters (toggle), sort menu, columns.
+- Columns: the old dialog is now a drawer from the right; changes show at once.
+- Grid: 2 / 3 / 4 cards per row (phones 1, tablets max 2); card = symbol, 1D %, price, M / F market cap, RS, mini chart
+  (last ~180 days, candles + 20 / 50-day averages, drawn when scrolled into view), Vol / Avg 20D / RVol. Order: scan order,
+  A-Z, market cap, price, 1D %, RS, traded value. Click = list view with that stock's chart.
+- Status bar on these pages: Copy (NSE:SYMBOL list), CSV, "n of N selected", "N stocks · M scanned".
+- Phones: list only (all columns, scroll sideways), tap = stock page, as before.
+- Checked in the preview at 1440 px, 746 px and 375 px. Tests 172 Python + 24 JS green.
+- NEXT: N2 chart.

@@ -29,7 +29,8 @@ stock / index nu naam lakho -> Enter = sidho chart.
 - **Market** - badha NSE + BSE indices ane stocks ni ek moti list (search, sector, CSV).
 - **Stocks** - badha ~2,600 stocks: **⚙ Columns** thi 230+ columns pasand karo (price, returns, moving averages, pivot,
   volume, RS rating, stage, fundamentals, growth, holding, group rank ...). Row par click = baju ma chart; ↑ / ↓ thi aagal-paachhal.
-  **Copy** = TradingView watchlist mate `NSE:SYMBOL` list.
+  **Copy** = TradingView watchlist mate `NSE:SYMBOL` list. List ni jamni kinar kheñcho = list pahodi, vadhu columns.
+  Upar jamni baju ▥ / ▦ = list + chart ke 2 / 3 / 4 chart ni grid.
 - **Scanners** - 33 taiyar scanner, folder ma: My Scans, Classic, Patterns, Earnings, Fundamentals. **ƒ Formula** thi niyam
   joi / badli shako (tamara browser ma save thay; Export / Import thi bija PC par).
 - **Groups** - Sector / Industry / Theme: rank, Leading / Weakening / Lagging / Improving tag, 1D thi YTD median, 20 divas na

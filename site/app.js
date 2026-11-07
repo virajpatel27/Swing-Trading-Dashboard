@@ -336,83 +336,192 @@
     Working: "t-up", Failing: "t-down", Stretched: "t-warn", "Washed out": "t-info", Normal: "" };
   async function renderBreadth(tab) {
     clearBreadthCharts();
-    const tabs = `<div class="seg"><a class="btn-seg ${tab !== "indices" ? "on" : ""}" href="#/breadth">Market Breadth</a><a class="btn-seg ${tab === "indices" ? "on" : ""}" href="#/breadth/indices">Major Indices</a></div>`;
+    const tabs = `<div class="bx-tabs"><a class="${tab !== "indices" ? "on" : ""}" href="#/breadth">Market Breadth</a><a class="${tab === "indices" ? "on" : ""}" href="#/breadth/indices">Major Indices</a></div>`;
     if (tab === "indices") return renderMajorIndices(tabs);
     if (!state.breadth) view.innerHTML = SKEL("Loading breadth");
-    try { if (!state.breadth) state.breadth = await getJSON("data/breadth.json"); await SDChart.loadLib(); }
+    try { if (!state.breadth) state.breadth = await getJSON("data/breadth.json"); }
     catch (e) { view.innerHTML = `<p class="empty">Breadth is not built yet (${esc(e.message)}).</p>`; return; }
     if (routeName() !== "breadth") return;
-    const B = state.breadth, bs = state.bstate || (state.bstate = { uni: store.get("sd-buni", "liquid"), range: store.get("sd-brange", "3m"), hl: "52" });
-    const U = B.universes[bs.uni], S = U.series;
-    const n = { "1m": 21, "3m": 63, "1y": 252 }[bs.range];
-    const days = B.days.slice(-n), cut = (arr) => (arr || []).slice(-n);
-    const last = (k) => { const a = S[k]; return a ? a[a.length - 1] : null; };
-    const f0 = (v) => (v == null ? "–" : Math.round(v).toLocaleString("en-IN"));
+    const B = state.breadth;
+    const bs = state.bstate || (state.bstate = Object.assign({ uni: "liquid", range: "3m", hl: "20", part: "50", ad: "20", mv: "d" }, store.get("sd-breadth", {})));
+    const saveB = () => store.set("sd-breadth", { uni: bs.uni, range: bs.range, hl: bs.hl, part: bs.part, ad: bs.ad, mv: bs.mv });
+    const U = B.universes[bs.uni] || B.universes.liquid, S = U.series;
+    const n = Math.min({ "1m": 21, "3m": 63, "1y": 252 }[bs.range], B.days.length);
+    const days = B.days.slice(-n), cut = (k) => (S[k] || []).slice(-n), full = (k) => S[k] || [];
+    const f0 = (v) => (v == null || !isFinite(v) ? "–" : Math.round(v).toLocaleString("en-IN"));
     const read = U.read || {};
     const READ = [["momentum", "Momentum"], ["short_term", "Short-term"], ["big_trend", "Big trend"], ["breakouts", "Breakouts"], ["overdone", "Overdone?"], ["leadership", "Leadership"]];
-    const stage = [["stage1", "Base", "#9e9e9e"], ["stage2", "Uptrend", "#089981"], ["stage3", "Top", "#ff9800"], ["stage4", "Downtrend", "#f23645"]];
-    const judged = (k) => (S[k] || []).filter((x) => x != null).slice(-5).reduce((a, b) => a + b, 0);    // last 5 days that can be judged
-    const held5 = judged("held"), fail5 = judged("failed");
-    const lastHeld = [...(S.held || [])].reverse().find((x) => x != null), lastFail = [...(S.failed || [])].reverse().find((x) => x != null);
-    const adSum = (k) => cut(S[k]).slice(-20).reduce((a, b) => a + (b || 0), 0) / Math.min(20, n);
-    const cards = [
-      ["part", "Participation", `${f0(last("pct_above20"))}% / ${f0(last("pct_above50"))}% / ${f0(last("pct_above200"))}%`, `above 20 / 50 / 200-day average · ${esc(U.labels.participation || "")}`],
-      ["ad", "Advance / Decline (20 sessions)", (last("ad_ratio") ?? 0).toFixed(2), `avg ${f0(adSum("adv"))} up / ${f0(adSum("dec"))} down · ${esc(U.labels.ad || "")}`],
-      ["lms", "Large vs Mid vs Small", "", "Nifty 50 / Midcap 150 / Smallcap 250, % change over the range"],
-      ["hl", "Net new highs − lows", `${f0(last("nh" + bs.hl) - last("nl" + bs.hl))}`, `${f0(last("nh" + bs.hl))} highs / ${f0(last("nl" + bs.hl))} lows (${bs.hl === "52" ? "52-week" : "20-day"})`],
-      ["mv", "4% movers", `${f0(last("up4") - last("dn4"))}`, `${f0(last("up4"))} up / ${f0(last("dn4"))} down today`],
-      ["bo", "Breakouts held vs failed", `${f0(lastHeld)} held, ${f0(lastFail)} failed`, `${held5 + fail5 ? Math.round((100 * held5) / (held5 + fail5)) : "–"}% held over the last 5 evaluated days · breakout = close above the 50-session high, held = still above 5 sessions later`],
-    ];
-    view.innerHTML = `<h1>Market</h1>${tabs}
-      <div class="controls">${seg("buni", [["liquid", `Liquid stocks ${f0(last("n") && B.universes.liquid.series.n.slice(-1)[0])}`], ["all", `All stocks ${f0(B.universes.all.series.n.slice(-1)[0])}`]], bs.uni)}
-        ${seg("brange", [["1m", "1M"], ["3m", "3M"], ["1y", "1Y"]], bs.range)}<span class="muted small">grey line = Nifty 500</span></div>
-      <div class="breadth-grid"><div class="read"><h2>Market read · ${SD.fmtDate(B.data_date)}</h2>
-        ${READ.filter(([k]) => read[k]).map(([k, l]) => `<div class="read-row" title="${esc(read[k].rule)}"><small>${l}</small><span class="tag ${WORD_CLS[read[k].word] || "t-info"}">${esc(read[k].word)}</span><p>${esc(read[k].text)}</p></div>`).join("")}
-        <p class="muted small">Our own simple rules (hover a line to see it). Not investment advice.</p></div>
-        <div><div class="stage-bar"><small>Stage mix of ${f0(last("stage_n"))} stocks with 64+ sessions</small><div class="bar">${stage.map(([k, l, c]) => `<span style="flex:${last(k) || 0.0001};background:${c}" title="${l}"></span>`).join("")}</div>
-          <div class="stage-legend">${stage.map(([k, l, c]) => { const ch = U.stage_change[k]; return `<span><i style="background:${c}"></i>${l} ${(last(k) ?? 0).toFixed(1)}%${ch ? ` <small class="${ch > 0 ? "up" : "down"}">${ch > 0 ? "+" : ""}${ch}</small>` : ""}</span>`; }).join("")}</div></div>
-        <div class="bcards">${cards.map(([id, t, v, sub]) => `<div class="bcard"><div class="bc-head"><b>${t}</b>${id === "hl" ? seg("bhl", [["52", "52W"], ["20", "20D"]], bs.hl) : ""}</div>
-          ${v ? `<div class="bc-val">${v}</div>` : ""}<small class="muted">${sub}</small><div class="bc-chart" id="bc-${id}"></div></div>`).join("")}</div></div></div>`;
-    const L = window.LightweightCharts, cs = getComputedStyle(document.documentElement), col = (v) => cs.getPropertyValue(v).trim();
-    const mk = (id) => {
-      const el = $("#bc-" + id);
-      const ch = L.createChart(el, { height: 170, layout: { background: { color: "transparent" }, textColor: col("--muted"), fontSize: 11, attributionLogo: false },
-        grid: { vertLines: { visible: false }, horzLines: { color: col("--line") } }, rightPriceScale: { borderVisible: false }, leftPriceScale: { visible: false },
-        timeScale: { borderVisible: false }, handleScroll: false, handleScale: false, crosshair: { mode: 0 } });
-      breadthCharts.push(ch);
-      const n500 = cut(B.indices.NIFTY_500);
-      if (id !== "lms" && n500.length) {
-        const s = ch.addSeries(L.LineSeries, { color: "#9e9e9e", lineWidth: 1, priceScaleId: "left", lastValueVisible: false, priceLineVisible: false });
-        s.setData(days.map((d, i) => (n500[i] == null ? { time: d } : { time: d, value: n500[i] })));
+    const STG = [["stage1", "Base", "#9e9e9e"], ["stage2", "Uptrend", "#2962ff"], ["stage3", "Top", "#f59e0b"], ["stage4", "Downtrend", "#db2777"]];
+    const lastOf = (a) => { for (let i = a.length - 1; i >= 0; i--) if (a[i] != null) return a[i]; return null; };
+    // rolling sums over the full series, then cut to the range
+    const roll = (a, w) => a.map((_, i) => { if (i < w - 1) return null; let s = 0; for (let k = i - w + 1; k <= i; k++) { if (a[k] == null) return null; s += a[k]; } return s; });
+    const ratio = (u, d) => u.map((x, i) => (x == null || d[i] == null || !d[i] ? null : x / d[i]));
+    const tail = (a) => a.slice(-n);
+    const n500 = (B.indices.NIFTY_500 || []).slice(-n);
+    const lab = (v, labels) => { for (const [lim, t] of labels || []) if (v < lim) return t; return ""; };
+    const trend = (a, i, higherBetter = true) => { const j = i - 5; if (j < 0 || a[i] == null || a[j] == null || a[i] === a[j]) return ""; const better = (a[i] > a[j]) === higherBetter; return `<span class="${better ? "up" : "down"}">· ${better ? "better ↑" : "worse ↓"}</span>`; };
+    // series per chart (all already cut to the range)
+    const partK = `pct_above${bs.part}`, part = cut(partK);
+    const hlH = cut("nh" + bs.hl), hlL = cut("nl" + bs.hl), hl = hlH.map((v, i) => (v == null || hlL[i] == null ? null : v - hlL[i]));
+    const adv = full("adv"), dec = full("dec");
+    const adR = bs.ad === "line" ? cut("ad_line") : tail(ratio(roll(adv, Number(bs.ad)), roll(dec, Number(bs.ad))));
+    const up4 = full("up4"), dn4 = full("dn4");
+    const mv = bs.mv === "d" ? tail(up4.map((v, i) => (v == null || dn4[i] == null ? null : v - dn4[i]))) : tail(ratio(roll(up4, Number(bs.mv)), roll(dn4, Number(bs.mv))));
+    const held = cut("held"), failed = cut("failed");
+    const LMS = [["NIFTY_50", "N50", "#2962ff"], ["NIFTY_MIDCAP_150", "MID150", "#f59e0b"], ["NIFTY_SMALLCAP_250", "SML250", "#db2777"]];
+    const lms = LMS.map(([k, l, c]) => { const x = (B.indices[k] || []).slice(-n), b0 = x.find((v) => v != null); return { l, c, vals: x.map((v) => (v == null || !b0 ? null : (v / b0 - 1) * 100)) }; });
+    const judged = (a) => a.filter((x) => x != null).slice(-5).reduce((s, b) => s + b, 0);
+    const h5 = judged(full("held")), f5 = judged(full("failed"));
+    // one chart = header + SVG; hover anywhere moves the crosshair in every chart
+    const CH = [];
+    const chartBox = (id, title, toggle, info) => `<div class="bx-c" data-c="${id}"><div class="bx-ch"><small>${title}</small>${toggle || ""}</div><div class="bx-v" id="bv-${id}"></div>
+      <div class="bx-svg" id="bs-${id}"></div>${info ? `<small class="muted bx-note">${info}</small>` : ""}</div>`;
+    const N = days.length;
+    view.innerHTML = `<div class="bx">${tabs}
+      <div class="bx-g"><aside class="bx-l"><div class="bx-lh"><b>Market breadth</b><small class="muted">read as of ${shortDay(B.data_date)}</small></div>
+        ${READ.filter(([k]) => read[k]).map(([k, l]) => `<div class="hr-row" title="${esc(read[k].rule || "")}"><div><i class="hr-dot ${WORD_CLS[read[k].word] || "t-info"}"></i><b>${l}</b><span class="tag ${WORD_CLS[read[k].word] || "t-info"}">${esc(read[k].word)}</span></div><p>${esc(read[k].text)}</p></div>`).join("")}
+        <div class="bx-stage"><div class="bx-lh"><small class="muted">STAGE ANALYSIS</small><small class="muted">of ${f0(lastOf(full("stage_n")))} stocks (64+ days)</small></div>
+          <div class="bar">${STG.map(([k, l, c]) => `<span style="flex:${lastOf(full(k)) || 0.0001};background:${c}" title="${l}"></span>`).join("")}</div>
+          <div class="bx-sg">${STG.map(([k, l, c]) => { const ch = (U.stage_change || {})[k]; return `<div><small><i style="background:${c}"></i>${l}</small><b>${(lastOf(full(k)) ?? 0).toFixed(1)}%</b><small class="${ch > 0 ? "up" : ch < 0 ? "down" : "muted"}">${ch ? (ch > 0 ? "+" : "") + ch + " 1D" : "–"}</small></div>`; }).join("")}</div></div>
+        <p class="muted small">Our own simple rules (hover a line to see it). Not investment advice.</p></aside>
+      <section class="bx-r"><div class="bx-rh"><b>Market internals</b><span class="pk-i" title="Participation: share of stocks above their 20 / 50 / 200-day average. Net highs - lows: stocks at a 20-day (or 52-week) high minus those at a low. Advance / decline: stocks that rose / fell over the last 20 or 40 sessions (above 1 = more rose) or the cumulative advance - decline line. 4% movers: stocks up 4 % or more in a day minus those down 4 %, or the 5 / 10-day ratio. Breakouts: closes above the 50-session high; held = still above 5 sessions later. The grey line in each chart is the Nifty 500.">i</span>
+          <small class="muted"><i class="bx-grey"></i> Nifty 500 (grey line)</small>
+          <span class="bx-tools">${seg("buni", [["liquid", `Liquid ${f0(lastOf(B.universes.liquid.series.n))}`], ["all", `All ${f0(lastOf(B.universes.all.series.n))}`]], bs.uni)}${seg("brange", [["1m", "1M"], ["3m", "3M"], ["1y", "1Y"]], bs.range)}</span></div>
+        <div class="bx-grid">
+          ${chartBox("part", "PARTICIPATION", seg("bpart", [["20", "20D"], ["50", "50D"], ["200", "200D"]], bs.part))}
+          ${chartBox("hl", "NET HIGHS − LOWS", seg("bhl", [["20", "20D"], ["52", "52W"]], bs.hl))}
+          ${chartBox("ad", "ADVANCE / DECLINE", seg("bad", [["20", "20D"], ["40", "40D"], ["line", "A-D line"]], bs.ad))}
+          ${chartBox("mv", "4% MOVERS", seg("bmv", [["d", "Daily"], ["5", "5D ratio"], ["10", "10D ratio"]], bs.mv))}
+          ${chartBox("lms", "LARGE VS MID VS SMALL", "")}
+          ${chartBox("bo", "BREAKOUTS · BREAKDOWNS", `<span class="bx-chip">${f0(lastOf(full("held")))} held, ${f0(lastOf(full("failed")))} failed · ${h5 + f5 ? Math.round((100 * h5) / (h5 + f5)) : "–"}% held over 5 days</span>`)}
+        </div></section></div></div>`;
+    $("#stPage").innerHTML = `<span>${f0(lastOf(S.n))} ${bs.uni === "liquid" ? "liquid " : ""}stocks</span><span class="st-n">data ${SD.fmtDate(B.data_date)}</span>`;
+    const W = 520, H = 150, PL = 40, PR = 6, PT = 6, PB = 18;
+    const make = (id, o) => {
+      const vals = o.series.flatMap((s) => s.vals).filter((v) => v != null && isFinite(v));
+      let lo = o.lo ?? Math.min(...vals), hi = o.hi ?? Math.max(...vals);
+      if (o.zero) { lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
+      if (!(hi > lo)) { hi = lo + 1; }
+      const padY = (hi - lo) * 0.06; if (o.lo == null) lo -= padY; if (o.hi == null) hi += padY;
+      const X = (i) => PL + (i / Math.max(N - 1, 1)) * (W - PL - PR), Y = (v) => PT + (1 - (v - lo) / (hi - lo)) * (H - PT - PB), bw = (W - PL - PR) / Math.max(N, 1);
+      const fmtT = (v) => (Math.abs(hi - lo) < 5 ? v.toFixed(2) : Math.round(v).toLocaleString("en-IN"));
+      const ticks = o.ticks || [lo + padY, (lo + hi) / 2, hi - padY];
+      let s = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="bx-s">`;
+      for (const [a, b, c] of o.bands || []) s += `<rect x="${PL}" y="${Y(Math.min(b, hi))}" width="${W - PL - PR}" height="${Math.max(0, Y(Math.max(a, lo)) - Y(Math.min(b, hi)))}" fill="${c}"/>`;
+      for (const t of ticks) s += `<line x1="${PL}" x2="${W - PR}" y1="${Y(t)}" y2="${Y(t)}" class="hl-grid"/><text x="${PL - 4}" y="${Y(t) + 3}" text-anchor="end" class="hl-ax">${fmtT(t)}${o.unit || ""}</text>`;
+      if (o.grey) {
+        const g = o.grey.filter((v) => v != null), glo = Math.min(...g), ghi = Math.max(...g), GY = (v) => PT + (1 - (v - glo) / (ghi - glo || 1)) * (H - PT - PB);
+        s += `<polyline points="${o.grey.map((v, i) => (v == null ? "" : `${X(i).toFixed(1)},${GY(v).toFixed(1)}`)).filter(Boolean).join(" ")}" fill="none" stroke="var(--muted)" stroke-opacity=".55" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
       }
-      return ch;
+      for (const se of o.series) {
+        if (se.bars) s += se.vals.map((v, i) => (v == null ? "" : `<rect x="${(X(i) - bw * 0.38).toFixed(1)}" y="${Math.min(Y(v), Y(0)).toFixed(1)}" width="${(bw * 0.76).toFixed(1)}" height="${Math.max(1, Math.abs(Y(v) - Y(0))).toFixed(1)}" fill="${v >= 0 ? se.up : se.down}"/>`)).join("");
+        else {
+          const pts = se.vals.map((v, i) => (v == null ? null : `${X(i).toFixed(1)},${Y(v).toFixed(1)}`)).filter(Boolean);
+          if (se.fill && pts.length) s += `<path d="M${pts[0].split(",")[0]},${Y(lo)} L${pts.join(" L")} L${pts[pts.length - 1].split(",")[0]},${Y(lo)} Z" fill="${se.fill}"/>`;
+          s += `<polyline points="${pts.join(" ")}" fill="none" stroke="${se.color}" stroke-width="${se.width || 1.8}" vector-effect="non-scaling-stroke"/>`;
+        }
+      }
+      s += `<text x="${PL}" y="${H - 4}" class="hl-ax">${esc(shortDay(days[0]))}</text><text x="${W - PR}" y="${H - 4}" text-anchor="end" class="hl-ax">${esc(shortDay(days[N - 1]))}</text>`;
+      s += `<line class="bx-x" x1="0" x2="0" y1="${PT}" y2="${H - PB}" style="display:none"/>${o.series.filter((se) => !se.bars).map((se, k) => `<circle class="bx-dot" data-k="${k}" r="3.5" fill="${se.color}" style="display:none"/>`).join("")}</svg>`;
+      const el = $("#bs-" + id);
+      el.innerHTML = s;
+      CH.push({ id, el, o, X, Y, head: o.head });
     };
-    const line = (ch, arr, color, extra) => { const s = ch.addSeries(L.LineSeries, { color, lineWidth: 2, priceLineVisible: false, ...(extra || {}) }); s.setData(days.map((d, i) => (arr[i] == null ? { time: d } : { time: d, value: arr[i] }))); return s; };
-    const bars = (ch, arr, up, down) => { const s = ch.addSeries(L.HistogramSeries, { priceLineVisible: false }); s.setData(days.map((d, i) => (arr[i] == null ? { time: d } : { time: d, value: arr[i], color: arr[i] >= 0 ? up : down }))); return s; };
-    { const ch = mk("part"); const a = line(ch, cut(S.pct_above20), "#2962ff"); line(ch, cut(S.pct_above50), "#ff9800"); line(ch, cut(S.pct_above200), "#7e57c2");
-      a.createPriceLine({ price: 20, color: col("--down"), lineStyle: 2, lineWidth: 1, axisLabelVisible: false }); a.createPriceLine({ price: 80, color: col("--up"), lineStyle: 2, lineWidth: 1, axisLabelVisible: false }); }
-    { const ch = mk("ad"); const a = line(ch, cut(S.ad_ratio), "#2962ff"); a.createPriceLine({ price: 1, color: col("--muted"), lineStyle: 2, lineWidth: 1, axisLabelVisible: false }); }
-    { const ch = mk("lms"); [["NIFTY_50", "#2962ff"], ["NIFTY_MIDCAP_150", "#ff9800"], ["NIFTY_SMALLCAP_250", "#f23645"]].forEach(([k, c]) => {
-        const x = cut(B.indices[k]); const b0 = x.find((v) => v != null); if (b0) line(ch, x.map((v) => (v == null ? null : (v / b0 - 1) * 100)), c); }); }
-    { const ch = mk("hl"); const h = cut(S["nh" + bs.hl]), l = cut(S["nl" + bs.hl]); bars(ch, h.map((v, i) => (v == null || l[i] == null ? null : v - l[i])), col("--up"), col("--down")); }
-    { const ch = mk("mv"); const u = cut(S.up4), d = cut(S.dn4); bars(ch, u.map((v, i) => (v == null || d[i] == null ? null : v - d[i])), col("--up"), col("--down")); }
-    { const ch = mk("bo"); bars(ch, cut(S.held), col("--up"), col("--up")); bars(ch, cut(S.failed).map((v) => (v == null ? null : -v)), col("--down"), col("--down")); }
-    breadthCharts.forEach((c) => c.timeScale().fitContent());
-    const on = (name, fn) => { const g = $(`[data-seg=${name}]`); if (g) g.onclick = (e) => { const b = e.target.closest("button"); if (b) { fn(b.dataset.v); renderBreadth(); } }; };
-    on("buni", (v) => { bs.uni = v; store.set("sd-buni", v); });
-    on("brange", (v) => { bs.range = v; store.set("sd-brange", v); });
-    on("bhl", (v) => { bs.hl = v; });
+    const sync = (i) => {
+      for (const c of CH) {
+        const line = c.el.querySelector(".bx-x"), atEnd = i == null;
+        const j = atEnd ? N - 1 : i;
+        line.style.display = atEnd ? "none" : ""; line.setAttribute("x1", c.X(j)); line.setAttribute("x2", c.X(j));
+        c.el.querySelectorAll(".bx-dot").forEach((d) => { const se = c.o.series.filter((x) => !x.bars)[Number(d.dataset.k)], v = se.vals[j]; d.style.display = atEnd || v == null ? "none" : ""; if (v != null) { d.setAttribute("cx", c.X(j)); d.setAttribute("cy", c.Y(v)); } });
+        $("#bv-" + c.id).innerHTML = c.head(j);
+      }
+    };
+    const day = (j) => `<small class="muted bx-d">${esc(shortDay(days[j]))}</small>`;
+    make("part", { series: [{ vals: part, color: "#2962ff", fill: "rgba(41,98,255,.12)" }], lo: 0, hi: 100, ticks: [0, 20, 50, 80, 100], unit: "%", grey: n500,
+      bands: [[80, 100, "rgba(219,39,119,.09)"], [0, 20, "rgba(219,39,119,.05)"]],
+      head: (j) => `<b>${part[j] == null ? "–" : part[j].toFixed(1) + "%"}</b><span class="bx-w">${esc(lab(part[j], B.config.participation_labels))}</span>${trend(part, j)}${day(j)}` });
+    make("hl", { series: [{ vals: hl, bars: true, up: "rgba(41,98,255,.75)", down: "rgba(219,39,119,.75)" }], zero: true, grey: n500,
+      head: (j) => `<b>${hl[j] == null ? "–" : (hl[j] > 0 ? "+" : "") + f0(hl[j])}</b><span class="bx-w">${hl[j] == null ? "" : hl[j] > 0 ? (hlL[j] && hlH[j] > 3 * hlL[j] ? "Far more highs than lows" : "More highs than lows") : hl[j] < 0 ? (hlH[j] && hlL[j] > 3 * hlH[j] ? "Far more lows than highs" : "More lows than highs") : "Even"}</span>${trend(hl, j)}${day(j)}<small class="muted bx-r2">${f0(hlH[j])} highs / ${f0(hlL[j])} lows</small>` });
+    make("ad", { series: [{ vals: adR, color: "#2962ff" }], grey: n500, bands: bs.ad === "line" ? [] : [[0, 1, "rgba(219,39,119,.06)"], [1, 99, "rgba(41,98,255,.05)"]],
+      ticks: bs.ad === "line" ? undefined : undefined,
+      head: (j) => `<b>${adR[j] == null ? "–" : bs.ad === "line" ? f0(adR[j]) : adR[j].toFixed(2)}</b><span class="bx-w">${bs.ad === "line" ? "cumulative advances − declines" : adR[j] == null ? "" : esc(lab(adR[j], B.config.ad_labels) || (adR[j] >= 1 ? "More risers" : "More fallers"))}</span>${trend(adR, j)}${day(j)}<small class="muted bx-r2">${f0(tail(adv)[j])} up / ${f0(tail(dec)[j])} down that day</small>` });
+    make("mv", bs.mv === "d" ? { series: [{ vals: mv, bars: true, up: "rgba(41,98,255,.75)", down: "rgba(219,39,119,.75)" }], zero: true, grey: n500,
+        head: (j) => { const u = tail(up4)[j], d = tail(dn4)[j], r = d ? u / d : u ? 9 : 1; return `<b>${mv[j] == null ? "–" : (mv[j] > 0 ? "+" : "") + f0(mv[j])}</b><span class="bx-w">${r >= 2 ? "Heavy buying" : r >= 1.2 ? "More buying" : r > 0.83 ? "Balanced" : r > 0.5 ? "More selling" : "Heavy selling"}</span>${trend(mv, j)}${day(j)}<small class="muted bx-r2">${f0(u)} up / ${f0(d)} down</small>`; } }
+      : { series: [{ vals: mv, color: "#2962ff" }], grey: n500, bands: [[0, 1, "rgba(219,39,119,.06)"]],
+        head: (j) => `<b>${mv[j] == null ? "–" : mv[j].toFixed(2)}</b><span class="bx-w">${mv[j] == null ? "" : mv[j] >= 1 ? "more 4 % gainers" : "more 4 % losers"} (${bs.mv} days)</span>${trend(mv, j)}${day(j)}` });
+    make("lms", { series: lms.map((x) => ({ vals: x.vals, color: x.c })), zero: true, unit: "%",
+      head: (j) => `${lms.map((x) => `<span class="bx-lg"><i style="background:${x.c}"></i>${x.l} <b class="${x.vals[j] >= 0 ? "up" : "down"}">${x.vals[j] == null ? "–" : (x.vals[j] > 0 ? "+" : "") + x.vals[j].toFixed(1) + "%"}</b></span>`).join("")}${day(j)}` });
+    make("bo", { series: [{ vals: held, bars: true, up: "rgba(41,98,255,.75)", down: "rgba(41,98,255,.75)" }, { vals: failed.map((v) => (v == null ? null : -v)), bars: true, up: "rgba(219,39,119,.75)", down: "rgba(219,39,119,.75)" }], zero: true, grey: n500,
+      head: (j) => { let k = j; while (k > 0 && held[k] == null) k--;
+        return `<b>${held[k] == null ? "–" : f0(held[k])}</b><span class="bx-w">held</span> <b>${failed[k] == null ? "–" : f0(failed[k])}</b><span class="bx-w">failed</span>${day(k)}<small class="muted bx-r2">${k < j ? "latest judged day · " : ""}breakouts of ${esc(shortDay(days[Math.max(0, k - 5)]))}, judged 5 sessions later</small>`; } });
+    sync(null);
+    view.querySelectorAll(".bx-svg").forEach((el) => {
+      el.addEventListener("mousemove", (e) => { const r = el.getBoundingClientRect(), x = ((e.clientX - r.left) / r.width) * W; const i = Math.round(((x - PL) / (W - PL - PR)) * (N - 1)); sync(Math.max(0, Math.min(N - 1, i))); });
+      el.addEventListener("mouseleave", () => sync(null));
+    });
+    const on = (name, fn) => { const g = $(`[data-seg=${name}]`); if (g) g.onclick = (e) => { const b = e.target.closest("button"); if (b) { fn(b.dataset.v); saveB(); renderBreadth(); } }; };
+    on("buni", (v) => { bs.uni = v; }); on("brange", (v) => { bs.range = v; }); on("bhl", (v) => { bs.hl = v; });
+    on("bpart", (v) => { bs.part = v; }); on("bad", (v) => { bs.ad = v; }); on("bmv", (v) => { bs.mv = v; });
   }
-  function renderMajorIndices(tabs) {
-    const idx = state.rows.filter((r) => r.kind === "index");
-    const groups = [["Broad market", idx.filter((r) => r.exchange === "NSE" && ["INDICES ELIGIBLE IN DERIVATIVES", "BROAD MARKET INDICES"].includes(r.category)).concat(idx.filter((r) => r.id === "SENSEX"))],
-      ["Sectors", idx.filter((r) => r.exchange === "NSE" && r.category === "SECTORAL INDICES")]];
-    const cols = [["chg_1d", "1D"], ["chg_1w", "1W"], ["chg_1m", "1M"], ["chg_3m", "3M"], ["chg_1y", "1Y"], ["from_hi52", "From 52W high"]];
-    view.innerHTML = `<h1>Market</h1>${tabs}<p class="sub">Main NSE indices (and BSE Sensex). Tap a row for its chart.</p>`
-      + groups.map(([title, rows]) => `<h2>${title}</h2><div class="table-wrap"><table><thead><tr><th class="l">Index</th><th>Close</th>${cols.map(([, l]) => `<th>${l}</th>`).join("")}<th>RSI</th><th class="l">Trend</th></tr></thead><tbody>`
-        + rows.map((r) => `<tr data-href="#/i/${r.key.replace(":", "/")}"><td class="l"><b>${esc(r.name)}</b></td><td class="num">${SD.fmtPrice(r.close)}</td>${cols.map(([k]) => `<td class="num">${pct(r[k])}</td>`).join("")}`
-          + `<td class="num">${r.rsi14 ?? "–"}</td><td class="l">${esc(r.trend || "")}</td></tr>`).join("") + "</tbody></table></div>").join("");
-    view.querySelectorAll("tr[data-href]").forEach((tr) => { tr.onclick = () => { location.hash = tr.dataset.href; }; });
+
+  /* Major indices: a grid of index charts (Phase N10) */
+  async function renderMajorIndices(tabs) {
+    const mi = Object.assign({ grp: "broad", tf: "D", type: "candle", ma: true, sort: "default", cols: 3 }, store.get("sd-mi", {}));
+    const save = () => store.set("sd-mi", mi);
+    const idx = state.rows.filter((r) => r.kind === "index" && r.exchange === "NSE");
+    const BROAD = ["NIFTY_50", "NIFTY_NEXT_50", "NIFTY_100", "NIFTY_200", "NIFTY_500", "NIFTY_MIDCAP_50", "NIFTY_MIDCAP_100", "NIFTY_MIDCAP_150", "NIFTY_SMALLCAP_100", "NIFTY_SMALLCAP_250", "NIFTY_MICROCAP_250", "NIFTY_MIDSMALLCAP_400", "INDIA_VIX"];
+    const broad = BROAD.map((id) => idx.find((r) => r.id === id)).filter(Boolean);
+    const sect = idx.filter((r) => r.category === "SECTORAL INDICES");
+    let list = mi.grp === "sector" ? sect : broad;
+    if (mi.sort === "1d") list = list.slice().sort((a, b) => (b.chg_1d ?? -1e9) - (a.chg_1d ?? -1e9));
+    else if (mi.sort === "1w") list = list.slice().sort((a, b) => (b.chg_1w ?? -1e9) - (a.chg_1w ?? -1e9));
+    else if (mi.sort === "name") list = list.slice().sort((a, b) => a.name.localeCompare(b.name));
+    view.innerHTML = `<div class="bx">${tabs}<div class="mi-bar">${seg("mgrp", [["broad", `Broad (${broad.length})`], ["sector", `Sector (${sect.length})`]], mi.grp)}
+        ${seg("mtype", [["candle", "Candles"], ["bar", "Bars"]], mi.type)}${seg("mtf", [["D", "1D"], ["W", "1W"]], mi.tf)}
+        <button class="btn sm ${mi.ma ? "on" : ""}" id="miMa" type="button">MA</button>
+        <span class="mi-r"><select id="miSort" aria-label="Sort"><option value="default" ${mi.sort === "default" ? "selected" : ""}>Sort: usual order</option><option value="1d" ${mi.sort === "1d" ? "selected" : ""}>Sort: 1D %</option>
+          <option value="1w" ${mi.sort === "1w" ? "selected" : ""}>Sort: 1W %</option><option value="name" ${mi.sort === "name" ? "selected" : ""}>Sort: name</option></select>
+          ${seg("mcols", [["1", "1"], ["2", "2"], ["3", "3"]], String(mi.cols))}</span></div>
+      <div class="mi-grid" style="--mcols:${mi.cols}">${list.map((r) => `<a class="mi-card" href="#/i/n/${encodeURIComponent(r.id)}" data-id="${esc(r.id)}"><div class="mi-h"><b>${esc(r.name)}</b>
+        <small>1D ${pct(r.chg_1d)}</small><small>1W ${pct(r.chg_1w)}</small><span class="num">${SD.fmtPrice(r.close)}</span></div><div class="mi-ch"><i class="skel"></i></div></a>`).join("")}</div></div>`;
+    $("#stPage").innerHTML = `<span>${list.length} of ${broad.length + sect.length} indices</span><span class="st-n">${mi.grp === "sector" ? "Sector" : "Broad"} · data ${SD.fmtDate(state.dataDate)}</span>`;
+    try { await SDChart.loadLib(); } catch (e) { return; }
+    const L = window.LightweightCharts, cs = getComputedStyle(document.documentElement), col = (v) => cs.getPropertyValue(v).trim();
+    const draw = async (card) => {
+      const el = card.querySelector(".mi-ch");
+      let d; try { d = await getJSON(`data/c/n/${encodeURIComponent(card.dataset.id)}.json`); } catch (e) { el.innerHTML = '<p class="empty small">No chart</p>'; return; }
+      if (!el.isConnected) return;
+      let bars = SD.candlesFromChart(d, "adjusted");
+      if (mi.tf === "W") bars = SD.toWeekly(bars);
+      const all = bars, show = all.slice(mi.tf === "W" ? -104 : -130);
+      el.innerHTML = "";
+      const ch = L.createChart(el, { layout: { background: { color: "transparent" }, textColor: col("--muted"), fontSize: 10, attributionLogo: false, panes: { separatorColor: col("--line") } },
+        grid: { vertLines: { visible: false }, horzLines: { color: col("--line") } }, rightPriceScale: { borderVisible: false }, timeScale: { borderVisible: false }, handleScroll: false, handleScale: false, crosshair: { mode: 0 } });
+      breadthCharts.push(ch);
+      const up = col("--up"), dn = col("--down");
+      const s = mi.type === "bar" ? ch.addSeries(L.BarSeries, { upColor: up, downColor: dn, priceLineVisible: false }) : ch.addSeries(L.CandlestickSeries, { upColor: up, downColor: dn, wickUpColor: up, wickDownColor: dn, borderVisible: false, priceLineVisible: false });
+      s.setData(show.map((b) => ({ time: b.time, open: b.open, high: b.high, low: b.low, close: b.close })));
+      if (mi.ma) {
+        const off = all.length - show.length;
+        [[20, "#2962ff"], [50, "#f59e0b"]].forEach(([n, c]) => {
+          const e = SDI.ema(all.map((b) => b.close), n);
+          ch.addSeries(L.LineSeries, { color: c, lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false })
+            .setData(show.map((b, i) => (e[off + i] == null ? { time: b.time } : { time: b.time, value: e[off + i] })));
+        });
+      }
+      if (show.some((b) => b.volume)) {
+        const v = ch.addSeries(L.HistogramSeries, { priceFormat: { type: "volume" }, priceLineVisible: false, lastValueVisible: false }, 1);
+        v.setData(show.map((b, i) => ({ time: b.time, value: b.volume || 0, color: (i && b.close < show[i - 1].close ? dn : up) + "88" })));
+        ch.panes()[0].setStretchFactor(4); ch.panes()[1].setStretchFactor(1);
+      }
+      ch.timeScale().fitContent();
+    };
+    const obs = new IntersectionObserver((ents) => ents.forEach((en) => { if (en.isIntersecting) { obs.unobserve(en.target); draw(en.target); } }), { rootMargin: "200px" });
+    view.querySelectorAll(".mi-card").forEach((c) => obs.observe(c));
+    const on = (name, fn) => { const g = view.querySelector(`[data-seg=${name}]`); if (g) g.onclick = (e) => { const b = e.target.closest("button"); if (b) { fn(b.dataset.v); save(); renderBreadth("indices"); } }; };
+    on("mgrp", (v) => { mi.grp = v; }); on("mtype", (v) => { mi.type = v; }); on("mtf", (v) => { mi.tf = v; }); on("mcols", (v) => { mi.cols = Number(v); });
+    $("#miMa").onclick = () => { mi.ma = !mi.ma; save(); renderBreadth("indices"); };
+    $("#miSort").onchange = (e) => { mi.sort = e.target.value; save(); renderBreadth("indices"); };
   }
 
   /* ------------------------------------------------------------------ watchlist */

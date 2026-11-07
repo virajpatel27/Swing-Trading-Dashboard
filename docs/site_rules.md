@@ -30,3 +30,10 @@ net margin up (npm_up_qtrs >= 1), turnaround, RS rating >= 70.
 - Points come from swingdash/group_rank.py (strength, momentum; config/group_rank.yaml). Daily tail = the last 5 / 10 / 20
   sessions; weekly = points 5 sessions apart (last 5 / 10). Benchmarks: equal-weight market (default), Nifty 50, Nifty 500.
 - Drawn tails: inner points smoothed 1-2-1, the head is exact. Heading = direction of the last step (8 arrows).
+
+## Breadth page (Phase N10)
+- "better / worse" = today's value vs 5 sessions earlier (for A/D, highs-lows, movers, participation higher = better).
+- A/D 20D / 40D = advances / declines summed over 20 or 40 sessions; A-D line = cumulative (advances - declines).
+- 4% movers: daily = up 4 % minus down 4 %; 5D / 10D ratio = sum of up-4 % days / sum of down-4 % days. Words: ratio >= 2
+  heavy buying, >= 1.2 more buying, > 0.83 balanced, > 0.5 more selling, else heavy selling.
+- Net highs - lows words: "far more" when one side is more than 3 times the other.

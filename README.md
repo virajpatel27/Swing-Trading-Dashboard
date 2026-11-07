@@ -44,8 +44,8 @@ stock / index nu naam lakho -> Enter = sidho chart.
   nano + / - = rank ketlo badlayo, rangin bindu = Leading / Improving / Weakening / Lagging. ‹ thi column vadi do.
 - **RRG** - kaya sector / industry / theme aagal (Leading), sudhre chhe (Improving), dhimo pade chhe (Weakening) ke
   pachhal (Lagging): poonchhdi = chhella divas no rasto. Mouse = rasto ane mahiti, click = pin. Daily / Weekly, Nifty 50 / 500 saathe.
-- **Breadth** - bajaar ni tabiyat: 6 line nu saransh (Momentum, Short-term, Big trend, Breakouts, Overdone?, Leadership),
-  stage mix ane 6 chart; **Major Indices** tab.
+- **Breadth** - dabi baju 6 line nu saransh ane Stage mix; jamni baju 6 chart (Participation, Highs-Lows, Advance/Decline,
+  4% movers, Large/Mid/Small, Breakouts). Ek chart par mouse = badhā chart ma e j divas. **Major Indices** = index na chart ni grid.
 - **Watchlist** - ★ dabavo; aa browser ma save rahe chhe.
 - **Stock panel** (chart ni jamni baju, ▯ button thi chalu / bandh): bhav, Overview (key ratios, pros & cons), Financials
   (12 quarter na nana bar), Peers (e j industry), Shareholding. ⤢ = aakhu Financials page.

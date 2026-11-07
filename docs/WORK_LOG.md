@@ -713,3 +713,15 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   Works with old group_ranks.json too (10 daily points, market only).
 - Checked in the preview (1500 px) with the rebuilt 06-Nov snapshot. Tests 181 Python + 29 JS green.
 - NEXT: N10 breadth restyle + major indices grid.
+
+### 2026-11-08: UI redesign N10 - breadth restyle + major indices grid
+- renderBreadth rewritten with light SVG charts (no chart library): left panel = market read + stage analysis (bar, %,
+  1D change); right = "Market internals" with universe (liquid / all) and range (1M / 3M / 1Y), six charts each with its
+  own toggle, value, word, better / worse and date; moving the mouse over any chart moves a crosshair and the values in
+  all six. Grey line = Nifty 500 in every chart. Breakouts header shows the latest judged day (the last 5 are not judged yet).
+- renderMajorIndices: grid of Lightweight Charts cards (lazy, IntersectionObserver): Broad (13 NSE broad indices + VIX)
+  or Sector (21), candles / bars, daily / weekly, EMA 20 / 50, sort by usual order / 1D / 1W / name, 1-3 per row; click
+  = index page. NSE index files carry no volume, so no volume pane.
+- Note: SD.ema returns a trimmed array; charts use SDI.ema (aligned with nulls).
+- Checked in the preview at 1500 px and 375 px. Tests 181 Python + 29 JS green.
+- NEXT: N11 leaders.

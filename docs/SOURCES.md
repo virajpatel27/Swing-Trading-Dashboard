@@ -87,3 +87,8 @@ Script: `scripts/probe_sources.py`.
 ## IPOs (changed 2026-11-07)
 - `api/public-past-issues` now labels main-board issues "Equity" (was EQ / BE ...). ipos.csv is merged with the saved list
   (never shrinks); ipo_upcoming.csv = main-board issues not listed yet.
+
+## Sector / industry / themes (from 2026-11-07)
+- `config/reference_classes.csv` (Viraj's choice): symbol -> sector, industry, themes copied from the reference app's stock
+  export with `scripts/import_reference_classes.py`. It wins over NSE's classification and our theme rules. NSE's 4 levels
+  stay in data/meta/classification.csv (fallback for stocks not in the list).

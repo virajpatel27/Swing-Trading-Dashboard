@@ -85,6 +85,8 @@ def fetch_one(http, symbol: str, series: str = "EQ") -> dict | None:
 
 LEVELS = ["macro", "sector", "industry", "basic_industry"]
 OVERRIDES = Path(__file__).resolve().parents[1] / "config" / "classification_overrides.csv"
+# sector + industry (= NSE basic industry level) exactly as the reference app lists them (Viraj 2026-11-07); wins over both
+REFERENCE = Path(__file__).resolve().parents[1] / "config" / "reference_classes.csv"
 
 
 def old_style(sector: str) -> bool:
@@ -92,15 +94,28 @@ def old_style(sector: str) -> bool:
     return bool(sector) and sector.isupper()
 
 
-def load(path: Path, overrides: Path | None = OVERRIDES) -> pd.DataFrame:
+def load(path: Path, overrides: Path | None = OVERRIDES, reference: Path | None = REFERENCE) -> pd.DataFrame:
     """classification.csv with config/classification_overrides.csv on top (BSE's identical 4-level classification, fetched
     from the PC, or a marked guess) for stocks where NSE gave nothing or only its old classification. Indexed by symbol;
     column class_source says where the four levels come from."""
     cls = pd.read_csv(path, dtype=str).fillna("") if path.exists() else pd.DataFrame(columns=COLS)
     cls = cls.set_index("symbol")
     cls["class_source"] = cls["source"] if "source" in cls.columns else ""
-    if overrides is None or not overrides.exists():
-        return cls
+    if overrides is not None and overrides.exists():
+        cls = _apply_overrides(cls, overrides)
+    if reference is not None and reference.exists():
+        ref = pd.read_csv(reference, dtype=str).fillna("").drop_duplicates("symbol").set_index("symbol")
+        new = ref.index.difference(cls.index)
+        if len(new):
+            cls = pd.concat([cls, pd.DataFrame("", index=new, columns=cls.columns)])
+        idx = ref.index
+        cls.loc[idx, "sector"] = ref["sector"].where(ref["sector"] != "", cls.loc[idx, "sector"])
+        cls.loc[idx, "basic_industry"] = ref["industry"]
+        cls.loc[idx, "class_source"] = ("reference list " + ref.get("as_of", pd.Series("", index=idx))).str.strip()
+    return cls
+
+
+def _apply_overrides(cls: pd.DataFrame, overrides: Path) -> pd.DataFrame:
     ov = pd.read_csv(overrides, dtype=str).fillna("").set_index("symbol")
     for sym, r in ov.iterrows():
         cur = cls.loc[sym] if sym in cls.index else None

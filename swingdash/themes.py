@@ -1,4 +1,8 @@
-"""Theme membership from config/theme_rules.yaml -> data/meta/themes.csv (theme, symbol, source), rebuilt every day.
+"""Theme membership -> data/meta/themes.csv (theme, symbol, source), rebuilt every day.
+
+Since 2026-11-07 (Viraj's choice) the themes of every stock in config/reference_classes.csv are exactly the reference
+app's (scripts/import_reference_classes.py). Stocks that list does not know yet (new listings) still get themes from
+config/theme_rules.yaml, but only themes whose name is in the reference list:
 
 Sources, best first: an official NSE thematic index the stock belongs to (from its NSE quote), an NSE basic industry, a
 hand-made list ("manual - check"). Stocks must be in our list and active. reports/themes_review.md shows every theme with
@@ -75,11 +79,27 @@ def review(df: pd.DataFrame, master: pd.DataFrame, warnings: list[str]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def from_reference(ref: pd.DataFrame, master: pd.DataFrame) -> pd.DataFrame:
+    """Memberships of the reference list for our active stocks (ref = config/reference_classes.csv)."""
+    active = set(master.loc[master["status"] == "active", "symbol"])
+    rows = [(t, r.symbol, f"reference list {r.as_of}".strip()) for r in ref.itertuples() if r.symbol in active
+            for t in str(r.themes).split("|") if t.strip()]
+    return pd.DataFrame(rows, columns=COLS)
+
+
 def run(root: Path, log=print, write_review: bool = False) -> pd.DataFrame:
     data = root / "data"
     master = pd.read_csv(data / "meta" / "stocks.csv", dtype=str).fillna("")
     cls = classification.load(data / "meta" / "classification.csv")
     df, warnings = build(load_rules(root / "config" / "theme_rules.yaml"), master, cls)
+    ref_path = root / "config" / "reference_classes.csv"
+    if ref_path.exists():
+        ref = pd.read_csv(ref_path, dtype=str).fillna("")
+        known = set(ref["symbol"])
+        names = {t for x in ref["themes"] for t in str(x).split("|") if t.strip()}
+        # stocks the list does not know get rule themes, but only themes that exist in the reference list (same 96 names)
+        df = pd.concat([from_reference(ref, master), df[~df["symbol"].isin(known) & df["theme"].isin(names)]], ignore_index=True)
+        df = df.drop_duplicates(["theme", "symbol"]).sort_values(["theme", "symbol"]).reset_index(drop=True)
     text = df.to_csv(index=False, lineterminator="\n")
     path = data / "meta" / "themes.csv"
     if not path.exists() or path.read_text(encoding="utf-8") != text:

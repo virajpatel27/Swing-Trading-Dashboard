@@ -771,3 +771,19 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - First data: the daily run adds the last 3 days; Actions -> Backfill history -> job announcements fills the last year.
 - Checked in the preview with filings of 01-Oct..07-Nov read into a temp folder (never into data/): 8,262 filings in
   10 days, BEL panel 7, home 8 deals, 33 recent listings; phone 375 px fine. Tests 187 Python + 32 JS green.
+
+### 2026-11-07: accuracy step 1 - sector, industry and themes exactly as the reference list (Viraj: "Exact copy j")
+- Why: Viraj wants the same sector / industry / theme groups as the reference app, so group ranks, RRG and theme scans
+  match what he compares with.
+- `scripts/import_reference_classes.py "<all-stocks export csv>"` -> `config/reference_classes.csv` (symbol, sector,
+  industry, themes "A|B", as_of). Only these 4 columns are copied into the repo; the export stays in git-ignored reference/.
+  First import: 2,614 stocks, 23 sectors, 192 industries, 96 themes (as of 2026-11-06).
+- `classification.load`: NSE classification -> overrides -> reference list on top (sector when not empty, basic_industry =
+  reference industry, class_source "reference list <as_of>"). Vectorized (the row loop made the tests very slow).
+- `themes.run`: themes = reference memberships for listed stocks; our rule themes only for stocks NOT in the list (new
+  listings) and only for theme names the list has. So the site shows exactly the reference's 96 themes.
+- Check against the exports: sector, industry and theme sets 100 % equal on 02, 05 and 06 Nov (3,784 memberships, 1 from rules).
+- Takes effect on GitHub after the push + the next Daily update (or Backfill history) rebuilds stocks / themes / groups.
+- Refresh: run the import script with a newer export, then commit config/reference_classes.csv.
+- Tests 190 Python + 32 JS green.
+- Next: step 2 stage + RS rating tuning against the 4 exports (02/04/05/06 Nov).

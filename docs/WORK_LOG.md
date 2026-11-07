@@ -689,3 +689,16 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Phone: the bottom bar now scrolls sideways (10 pages); the open page's icon scrolls into view.
 - Checked in the preview at 1500 px and 375 px with the 06-Nov data. Tests 179 Python + 29 JS green.
 - NEXT: N8 groups in 3 columns.
+
+### 2026-11-08: UI redesign N8 - groups in columns
+- renderGroups rewritten: `#/groups/<level>[/<group>[/<industry>]]`. Wide screens: one bordered strip of columns -
+  Sector level: Sectors | Industries of the chosen sector (+ "All <sector> stocks") | Stocks | Chart; Industry / Theme
+  level: list | Stocks | Chart. The top-ranked group is chosen when none is given. Clicking a stock opens its chart in a
+  last column and folds the group columns to thin vertical labels (‹ / › or a click on the label opens them again).
+- Group rows: name + tag dot, rank with the rank change as a small superscript, median return of the chosen period,
+  20D highs / lows (sector, industry, theme) or "> 50 SMA" + stock count (industries of a sector); hover = strength,
+  momentum, % above 50 SMA, members, tag. Stock list sortable (symbol, LTP, period %, from 52W high, RS), 20H / 20L badges.
+- Period 1D / 1W / 1M / 3M / 1Y / YTD (saved), search, "Show small groups". Phones: one level at a time with a back link.
+- Fixed a class clash (`.grow` of the Financials page) by naming the column classes gc-grow / gc-grow2.
+- Checked in the preview at 1500 px and 375 px. Tests 179 Python + 29 JS green.
+- NEXT: N9 RRG.

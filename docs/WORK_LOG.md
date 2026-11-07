@@ -851,3 +851,13 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   asks again for 10 days after a share action. Takes effect when the daily job rebuilds stocks.csv.
 - Free float left as 100 - promoter % (their definition takes out more holders, not available from NSE's summary).
 - Tests 194 Python + 32 JS green. Next: step 5 (safety: shrink guard + daily price cross-check).
+
+### 2026-11-07: accuracy step 5 - safety checks
+- swingdash/shrink_guard.py: the data check (validate_data.py) reports an ERROR when a guarded file (stocks.csv,
+  classification.csv, trading_days.csv, ipos.csv, themes / groups, index members, fii_dii ...) has > 20 % fewer lines
+  than in the last commit, or a guarded folder (fundamentals, corporate_actions, stocks raw / adjusted, announcements)
+  > 20 % fewer files -> the workflow does not commit. Skipped with --no-baseline (restore). Setting validation.max_shrink_pct.
+- swingdash/crosscheck_bse.py, daily step 4h: liquid stocks' NSE closes vs BSE's bhavcopy of the same day (by ISIN, BSE
+  volume >= 1,000). > 3 % apart -> data/meta/crosscheck_bse.csv + warning; > 10 % of the compared stocks apart -> ERROR
+  (wrong day / file). 06-Nov: 1,457 compared, 1 apart (INDOTECH +3.6 %). BSE's download site answers GitHub.
+- Tests 196 Python + 32 JS green.

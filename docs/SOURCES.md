@@ -92,3 +92,8 @@ Script: `scripts/probe_sources.py`.
 - `config/reference_classes.csv` (Viraj's choice): symbol -> sector, industry, themes copied from the reference app's stock
   export with `scripts/import_reference_classes.py`. It wins over NSE's classification and our theme rules. NSE's 4 levels
   stay in data/meta/classification.csv (fallback for stocks not in the list).
+
+## Second-source price check (from 2026-11-07)
+- `https://www.bseindia.com/download/BhavCopy/Equity/BhavCopy_BSE_CM_0_0_0_YYYYMMDD_F_0000.CSV` (UDiFF bhavcopy; ISIN,
+  ClsPric, TtlTradgVol): daily step 4h compares liquid stocks' closes with ours (swingdash/crosscheck_bse.py). Only a
+  check: our prices always come from NSE.

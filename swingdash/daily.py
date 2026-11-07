@@ -8,6 +8,8 @@
   4. sector/industry + share count for new stocks, entries older than 30 days, or after a split / bonus
      4b. stock master data/meta/stocks.csv (F&O flag, price band, market cap, free float, liquid flag)
      4c. themes (data/meta/themes.csv) + equal-weight sector / industry / theme indices (data/groups/)
+     4d-4g fundamentals, FII / DII, index members, company announcements
+     4h. second-source check: closes of liquid stocks vs BSE's bhavcopy (swingdash/crosscheck_bse.py)
   5. snapshot (latest.json, sectors.json) - written only when its content changed
 The data check and the commit are separate workflow steps. BSE indices are NOT here: BSE refuses GitHub (weekly PC job).
 Nothing new (holiday, weekend, second run of the day) -> no file changes -> nothing to commit.
@@ -20,7 +22,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import backfill, classification, config, fundamentals, announcements, groups, index_members, market_flows, rebuild, snapshot, stock_master, store, themes
+from . import backfill, classification, config, crosscheck_bse, fundamentals, announcements, groups, index_members, market_flows, rebuild, snapshot, stock_master, store, themes
 
 
 def recheck_start(days: set[date], n: int, fallback: date) -> date:
@@ -180,6 +182,14 @@ def run(ctx: backfill.Ctx, log=print) -> dict:
         res["announcements"] = announcements.daily(data, ctx.http, ctx.today, log=log)
     except Exception as exc:  # noqa: BLE001 - never stop the price update for this
         res["announcements"] = {"stopped": f"{type(exc).__name__}: {str(exc)[:80]}"}
+
+    # 4h. second-source check: liquid stocks' closes vs BSE's bhavcopy of the newest day (warnings; data check errors
+    #     when many differ)
+    try:
+        newest = pd.to_datetime(pd.read_csv(data / "meta" / "trading_days.csv")["date"]).max().date()
+        res["crosscheck_bse"] = crosscheck_bse.daily(data, ctx.http, newest, log=log)
+    except Exception as exc:  # noqa: BLE001 - never stop the price update for this
+        res["crosscheck_bse"] = {"stopped": f"{type(exc).__name__}: {str(exc)[:80]}"}
 
     # 5. snapshot
     latest, sectors = snapshot.build(data, log=log)

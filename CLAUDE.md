@@ -158,3 +158,4 @@ Scanners part B (07-Nov): s2b_age / so_age / rb_age events (engine.events, recen
 Scanners part C (07-Nov): engine.base_levels (lvl_/wlvl_/ipo_ fields, latest day only) for daily/weekly base, near pivot, IPO base. Part D open: RS before price, VCP, tight setups.
 Scanners part D (07-Nov): rsb_today (RS line vs NIFTY_MIDSMALLCAP_400, events.rsb_*). VCP / Tight unchanged (not matchable). Step 3 done for price scans.
 Step 4 (07-Nov): turnover avg = mean(volume x close); beta up to previous day; stock_master.stale_split_factor for NSE's late share counts.
+Step 5 (07-Nov): shrink_guard (validate_data error when a data file/folder shrinks > 20 % vs HEAD; skipped with --no-baseline) + crosscheck_bse (daily 4h, NSE vs BSE closes of liquid stocks).

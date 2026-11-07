@@ -14,6 +14,8 @@ validation:
   max_row_drop_pct: 1.0              # a run that makes an instrument lose more rows than this is refused
   jump_pct: 20.0                     # close-to-close move above this with no corporate action -> data issue
   recheck_days: 5                    # daily job re-reads the last N trading days
+  max_shrink_pct: 20                 # a data file / folder with > 20 % fewer lines / files than the last commit -> error
+  max_bse_mismatch_share: 10         # > 10 % of liquid stocks closing > 3 % apart on NSE and BSE -> error (wrong day?)
 classification_refresh_days: 30         # ask NSE again for a stock's sector after this many days
 
 liquid:                                 # "liquid" stock (Viraj's master prompt): all three must hold

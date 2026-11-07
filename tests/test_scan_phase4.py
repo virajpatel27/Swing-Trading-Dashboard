@@ -238,3 +238,24 @@ def test_breakout_events():
     assert last["stage"] in ("2", "2A") and last["s2b_age"] == 0                 # above the 50-day high on 5x volume
     assert last["rb_age"] == 0 and last["rb_level"] == pytest.approx(131.0)     # old resistance 131 broken, close 6.9 % above
     assert f["rb_age"].iloc[:-30].isna().all()                                   # only the last 30 rows are computed
+
+
+def test_base_levels_daily_and_ipo():
+    cfg = yaml.safe_load(open(ROOT / "config" / "indicators.yaml"))
+    # rise 100 -> 130 (top at row 259), then a 15 % pullback and a recovery to just under the top
+    c = np.r_[np.linspace(80, 100, 230), np.linspace(100, 130, 30), np.linspace(129, 110.5, 20), np.linspace(110.5, 128, 25)]
+    n = len(c)
+    hi = c * 1.002
+    hi[259] = 131.0
+    adj = pd.DataFrame({"date": pd.bdate_range("2025-01-01", periods=n), "open": c, "high": hi, "low": c * 0.995,
+                        "close": c, "volume": np.full(n, 1000.0)})
+    last = engine.stock_fields(adj, cfg=cfg).iloc[-1]
+    assert last["lvl_price"] == pytest.approx(131.0) and last["lvl_age"] == n - 1 - 259
+    assert 15 < last["lvl_depth"] < 17 and last["lvl_dist_adr"] > 0
+    # a new listing: level = listing-day high until a close gets above it
+    c2 = np.array([100, 98, 96, 97, 99, 98.0])
+    ipo = pd.DataFrame({"date": pd.bdate_range("2026-10-01", periods=6), "open": c2, "high": np.array([105, 99, 97, 106, 100, 99.0]),
+                        "low": c2 - 1, "close": c2, "volume": np.full(6, 1000.0)})
+    f = engine.stock_fields(ipo, cfg=cfg)
+    assert f["ipo_lvl"].iloc[-1] == 105 and f["ipo_base_bars"].iloc[-1] == 5     # 106 high on day 4 closed below 105: no move
+    assert f["ipo_dist"].iloc[-1] == pytest.approx((105 / 98 - 1) * 100)

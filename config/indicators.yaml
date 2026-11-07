@@ -47,3 +47,10 @@ events:                           # event scans (engine.events), calibrated 07-N
   rb_rvol: 2.0                    #   broken by a close on >= 2 x 20-day volume within 4 sessions,
   rb_window: 4
   rb_above: 5                     #   today >= 5 % above the level, Stage 2 today
+  base_swing: 16                  # daily base / near pivot level: swing high = highest of +-16 sessions,
+  base_min_age: 22                #   22..168 sessions old, after a 20 % rise, no close above it since
+  base_max_age: 168
+  wbase_swing: 4                  # weekly base: the same on weekly candles, +-4 weeks, 17..71 weeks old
+  wbase_min_age: 17
+  wbase_max_age: 71
+  ipo_max_bars: 30                # IPO base: stocks with at most 30 sessions

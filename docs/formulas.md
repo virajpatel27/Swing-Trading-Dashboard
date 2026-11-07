@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S9**. Fields: **281**.
+Current phase: **S9**. Fields: **294**.
 
 ## Sources
 
@@ -249,6 +249,19 @@ Current phase: **S9**. Fields: **281**.
 | `so_age` | Shakeout (sessions ago) | integer | Sessions since the recovery from an intraday drop >= the usual daily range that held within 3 % of SMA50, back to the close before the drop within 2 sessions, close above SMA50 and SMA200, SMA50 above SMA200; empty after 5 sessions | close, high, low | data/snapshot/screen.json |
 | `rb_age` | Recent breakout (sessions ago) | integer | Sessions since a close above an old resistance (swing high >= 26 sessions old after a 20 % rise, no close above it since) on >= 2 x the 20-day volume; today >= 5 % above it, Stage 2; empty after 4 sessions | close, high, low, volume, stage | data/snapshot/screen.json |
 | `rb_level` | Recent breakout level | rupees | The resistance level of the recent breakout | high | data/snapshot/screen.json |
+| `adr100_pct` | ADR % (100 days) | percent | 100 x (average of high / low over 100 sessions - 1) | high, low | data/snapshot/screen.json |
+| `lvl_price` | Base level | rupees | Latest swing high (highest of +-16 sessions), 22-168 sessions old, reached after a 20 % rise, no close above it since (latest day only) | high, low, close | data/snapshot/screen.json |
+| `lvl_age` | Base level age (sessions) | integer | Sessions since the base level | lvl_price | data/snapshot/screen.json |
+| `lvl_depth` | Base depth % | percent | % from the base level down to the lowest low since | lvl_price, low | data/snapshot/screen.json |
+| `lvl_dist_adr` | Below base level (ADRs) | number | % below the base level / ADR % (20 days) | lvl_price, close, adr_pct | data/snapshot/screen.json |
+| `wlvl_price` | Weekly base level | rupees | As the base level, on weekly candles: swing high of +-4 weeks, 17-71 weeks old | high, low, close | data/snapshot/screen.json |
+| `wlvl_age` | Weekly base age (weeks) | integer | Weeks since the weekly base level | wlvl_price | data/snapshot/screen.json |
+| `wlvl_depth` | Weekly base depth % | percent | % from the weekly level down to the lowest weekly low since | wlvl_price, low | data/snapshot/screen.json |
+| `wlvl_dist_adr` | Below weekly level (ADRs) | number | % below the weekly level / ADR % (20 days) | wlvl_price, close, adr_pct | data/snapshot/screen.json |
+| `ipo_lvl` | IPO base level | rupees | Stocks with <= 30 sessions: the listing day's high, moved to a later day's high when a close gets above the level | high, close | data/snapshot/screen.json |
+| `ipo_base_bars` | IPO base sessions | integer | Sessions since the IPO base level | ipo_lvl | data/snapshot/screen.json |
+| `ipo_depth` | IPO base depth % | percent | % from the IPO level down to the lowest low since | ipo_lvl, low | data/snapshot/screen.json |
+| `ipo_dist` | Below IPO level % | percent | % the close is below the IPO base level | ipo_lvl, close | data/snapshot/screen.json |
 | `new_low_20d_3d` | New 20D low (3 days) | boolean | new_low_20d on any of the last 3 sessions | new_low_20d | data/snapshot/screen.json |
 | `min_from_sma50_5d` | Lowest from 50 SMA % (5D) | percent | Lowest from_sma50 of the last 5 sessions | from_sma50 | data/snapshot/screen.json |
 | `pivot_vs_hi52` | Pivot vs 52W high % | percent | (pivot / hi52 - 1) x 100 (0 = the pivot is the 52-week high) | pivot, hi52 | data/snapshot/screen.json |

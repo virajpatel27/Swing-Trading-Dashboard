@@ -166,6 +166,15 @@ Part B (same day):
 | Recent Breakout | EVENT (4 sessions): close above an old resistance (swing high, +-8 bars, >= 26 sessions old, after a 20 % rise, no close above it since) on >= 2 x volume; now >= 5 % above it, Stage 2 | 0.21 / 0.21 | 0.93 / 0.93 |
 | Shakeout | EVENT (5 sessions): intraday drop >= usual daily range ((high-low)/close, 20 days), low within 3 % of SMA50, recovered to the close before the drop within 2 sessions, uptrend | 0 / 0 | 0.93 / 0.57 |
 
-Still to do (part C): RS before Price (benchmark of their RS line not found yet; best
+Part C (same day; base levels are computed for the latest day only, engine.base_levels):
+
+| scanner | rule | before (06-Nov) | after (4 days) |
+|---|---|---|---|
+| Daily Base | level = latest swing high (+-16 sessions), 22-84 sessions old, after a 20 % rise, no close above it since; depth 10-35 % and <= 8.5 x ADR(100); within 3 ADR(20) under it | 0.41 / 0.46 | 0.96 / 0.97 |
+| Near Pivot | same level, up to 168 sessions old, depth 10-45 % (<= 8.5 x ADR100), within 1 ADR under it | 0.44 / 0.31 | 0.92 / 0.91 |
+| Weekly Base | same on weekly candles (+-4 weeks, 17-71 weeks old), depth 10-45 % (<= 8.5 x ADR100), within 3 ADR | 0.28 / 0.24 | 0.96 / 0.79 |
+| IPO Base | <= 30 sessions listed; level = listing-day high, moved to a later high when a close gets above it; >= 3 sessions since, <= 25 % deep, 0-8 % under it | 0 / 0 | 0.93 / 0.70 |
+
+Still to do (part D): RS before Price (benchmark of their RS line not found yet; best
 Nifty MidSmallcap 400, 68 / 93 %), Shakeout, Daily / Weekly Base, Near Pivot, VCP, Tight Setups, IPO Base. Earnings
 scanners after the fundamentals are complete (~10-Nov). The reference's event scans keep an event 5 sessions ("age").

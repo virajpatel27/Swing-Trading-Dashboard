@@ -448,38 +448,39 @@
    "id": "daily-base",
    "folder": "Patterns",
    "name": "Daily Base",
-   "description": "A young base (3 weeks to about 4 months) after a 15 %+ rise, at most 35 % deep, with the price back within 15 % of the top and no breakout yet.",
+   "description": "Building a base under a level: a swing high 22-84 sessions old (after a 20 % rise, no close above it since), the pullback from it 10 % to 35 % deep (and at most 8.5 x the 100-day ADR), now within 3 ADRs of the level.",
    "universe": "all",
    "rule": {
     "all": [
      {
-      "field": "pivot_age",
+      "field": "lvl_age",
+      "op": "<=",
+      "value": 84
+     },
+     {
+      "field": "lvl_depth",
       "op": "between",
       "value": [
-       15,
-       90
+       10,
+       35
       ]
      },
      {
-      "field": "base_depth",
+      "field": "lvl_depth",
       "op": "<=",
-      "value": 35
+      "field2": "adr100_pct",
+      "mult": 8.5
      },
      {
-      "field": "dist_pivot",
-      "op": ">=",
-      "value": -15
-     },
-     {
-      "field": "base_prior_gain",
-      "op": ">=",
-      "value": 15
+      "field": "lvl_dist_adr",
+      "op": "<=",
+      "value": 3
      }
     ]
    },
    "sort": {
-    "field": "dist_pivot",
-    "dir": "desc"
+    "field": "lvl_dist_adr",
+    "dir": "asc"
    },
    "phase": 7
   },
@@ -487,33 +488,34 @@
    "id": "weekly-base",
    "folder": "Patterns",
    "name": "Weekly Base",
-   "description": "A long base (about 4 to 18 months), at most 55 % deep, with the price back within 16 % of its top and no breakout yet.",
+   "description": "A weekly base: a weekly swing high 17-71 weeks old (after a 20 % rise, no weekly close above it since), 10 % to 45 % deep (at most 8.5 x the 100-day ADR), now within 3 ADRs of the level.",
    "universe": "all",
    "rule": {
     "all": [
      {
-      "field": "pivot_w_age",
+      "field": "wlvl_depth",
       "op": "between",
       "value": [
-       85,
-       390
+       10,
+       45
       ]
      },
      {
-      "field": "base_w_depth",
+      "field": "wlvl_depth",
       "op": "<=",
-      "value": 55
+      "field2": "adr100_pct",
+      "mult": 8.5
      },
      {
-      "field": "dist_pivot_w",
-      "op": ">=",
-      "value": -16
+      "field": "wlvl_dist_adr",
+      "op": "<=",
+      "value": 3
      }
     ]
    },
    "sort": {
-    "field": "dist_pivot_w",
-    "dir": "desc"
+    "field": "wlvl_dist_adr",
+    "dir": "asc"
    },
    "phase": 7
   },
@@ -521,21 +523,34 @@
    "id": "near-pivot",
    "folder": "Patterns",
    "name": "Near Pivot",
-   "description": "Just under the pivot of its base: closer than one usual daily range (ADR %).",
+   "description": "Within 1 ADR under a base level (a swing high 22-168 sessions old after a 20 % rise, no close above it since), the base 10 % to 45 % deep (at most 8.5 x the 100-day ADR).",
    "universe": "all",
    "rule": {
     "all": [
      {
-      "field": "dist_pivot",
-      "op": ">=",
-      "field2": "adr_pct",
-      "mult": -1
+      "field": "lvl_depth",
+      "op": "between",
+      "value": [
+       10,
+       45
+      ]
+     },
+     {
+      "field": "lvl_depth",
+      "op": "<=",
+      "field2": "adr100_pct",
+      "mult": 8.5
+     },
+     {
+      "field": "lvl_dist_adr",
+      "op": "<=",
+      "value": 1
      }
     ]
    },
    "sort": {
-    "field": "dist_pivot",
-    "dir": "desc"
+    "field": "lvl_dist_adr",
+    "dir": "asc"
    },
    "phase": 7
   },
@@ -645,35 +660,33 @@
    "id": "ipo-base",
    "folder": "Patterns",
    "name": "IPO Base",
-   "description": "Listed through an IPO within the last year, in its first base (25+ sessions) just under the high since listing (within 10 %).",
+   "description": "A new listing (30 sessions or fewer) basing under its high: at least 3 sessions since the level (listing-day high, or a later high after a close above it), at most 25 % deep, now 0-8 % under it.",
    "universe": "all",
    "rule": {
     "all": [
      {
-      "field": "days_since_ipo",
-      "op": "<=",
-      "value": 365
+      "field": "ipo_base_bars",
+      "op": ">=",
+      "value": 3
      },
      {
-      "field": "pivot_age",
-      "op": ">=",
+      "field": "ipo_depth",
+      "op": "<=",
       "value": 25
      },
      {
-      "field": "pivot_vs_hi52",
-      "op": ">=",
-      "value": -0.5
-     },
-     {
-      "field": "dist_pivot",
-      "op": ">=",
-      "value": -10
+      "field": "ipo_dist",
+      "op": "between",
+      "value": [
+       0,
+       8
+      ]
      }
     ]
    },
    "sort": {
-    "field": "dist_pivot",
-    "dir": "desc"
+    "field": "ipo_dist",
+    "dir": "asc"
    },
    "phase": 7
   },

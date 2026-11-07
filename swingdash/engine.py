@@ -350,6 +350,59 @@ def events(f: pd.DataFrame, cfg: dict) -> pd.DataFrame:
         conf |= fall.shift(r, fill_value=False).astype(bool) & (c >= pc.shift(r))
     out["so_age"] = event_age(conf & (c > s50) & (c > s200) & (s50 > s200), w).to_numpy()
     out["rb_age"], out["rb_level"] = recent_breakout(f, cfg)
+    return pd.concat([out, base_levels(f, cfg)], axis=1)
+
+
+def _base_level(h, l, c, t: int, k: int, min_age: int, max_age: int, prior_min: float = 0.2) -> int | None:
+    """Latest swing high (highest of +-k bars), min_age..max_age bars before t, that no close got above in (j, t],
+    reached after a rise of >= prior_min from the low of the 60 bars before it."""
+    for j in range(t - min_age, max(k, t - max_age) - 1, -1):
+        if not h[j] >= np.nanmax(h[j - k:j + k + 1]) or np.nanmax(c[j + 1:t + 1]) > h[j]:
+            continue
+        lo = np.nanmin(l[max(0, j - 60):j + 1])
+        if lo > 0 and h[j] / lo - 1 >= prior_min:
+            return j
+    return None
+
+
+def base_levels(f: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """Base / pivot levels of the LATEST day (earlier rows empty), calibrated 07-Nov-2026 on 4 days of reference lists.
+      lvl_*   daily: the latest swing high (+-base_swing bars, base_min_age..base_max_age sessions old, after a 20 % rise,
+              no close above it since). lvl_depth = % from it to the lowest low since, lvl_dist_adr = % below it / ADR %.
+      wlvl_*  the same on weekly candles (+-wbase_swing weeks, wbase_min_age..wbase_max_age weeks).
+      ipo_*   stocks with <= ipo_max_bars sessions: level = the listing day's high, moved to a later day's high whenever a
+              close gets above the level; ipo_base_bars = sessions since that day.
+    adr100_pct = 100-session ADR % (the reference caps a base's depth at 8.5 x this)."""
+    n = len(f)
+    cols = ["adr100_pct", "lvl_price", "lvl_age", "lvl_depth", "lvl_dist_adr", "wlvl_price", "wlvl_age", "wlvl_depth",
+            "wlvl_dist_adr", "ipo_lvl", "ipo_base_bars", "ipo_depth", "ipo_dist"]
+    out = pd.DataFrame(np.nan, index=f.index, columns=cols)
+    h, l, c = (f[k].to_numpy(float) for k in ("high", "low", "close"))
+    out["adr100_pct"] = 100 * ((f["high"] / f["low"]).rolling(100, min_periods=100).mean() - 1)
+    if n < 5:
+        return out
+    t, adr = n - 1, f["adr_pct"].iat[-1]
+    row = out.index[-1]
+    j = _base_level(h, l, c, t, int(cfg.get("base_swing", 16)), int(cfg.get("base_min_age", 22)), int(cfg.get("base_max_age", 168)))
+    if j is not None and j < t:
+        out.loc[row, ["lvl_price", "lvl_age", "lvl_depth", "lvl_dist_adr"]] = [
+            h[j], t - j, (1 - np.nanmin(l[j + 1:]) / h[j]) * 100, (h[j] / c[t] - 1) * 100 / adr if adr > 0 else np.nan]
+    wk = f["date"].dt.to_period("W-FRI")
+    g = pd.DataFrame({"h": f["high"], "l": f["low"], "c": f["close"]}).groupby(wk.to_numpy())
+    wh, wl, wc = g["h"].max().to_numpy(), g["l"].min().to_numpy(), g["c"].last().to_numpy()
+    tw = len(wc) - 1
+    jw = _base_level(wh, wl, wc, tw, int(cfg.get("wbase_swing", 4)), int(cfg.get("wbase_min_age", 17)), int(cfg.get("wbase_max_age", 71)))
+    if jw is not None and jw < tw:
+        out.loc[row, ["wlvl_price", "wlvl_age", "wlvl_depth", "wlvl_dist_adr"]] = [
+            wh[jw], tw - jw, (1 - np.nanmin(wl[jw + 1:]) / wh[jw]) * 100, (wh[jw] / c[t] - 1) * 100 / adr if adr > 0 else np.nan]
+    if n <= int(cfg.get("ipo_max_bars", 30)):
+        lvl, jl = h[0], 0
+        for i in range(1, n):
+            if c[i] > lvl:
+                lvl, jl = h[i], i
+        if jl < t:
+            out.loc[row, ["ipo_lvl", "ipo_base_bars", "ipo_depth", "ipo_dist"]] = [
+                lvl, t - jl, (1 - np.nanmin(l[jl + 1:]) / lvl) * 100, (lvl / c[t] - 1) * 100]
     return out
 
 

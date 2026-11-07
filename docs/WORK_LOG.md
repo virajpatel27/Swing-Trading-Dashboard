@@ -828,3 +828,11 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - 4-day average recall / precision: Stage 2 Breakout 0.96 / 0.88 (was 0.30 / 0.43), Recent Breakout 0.93 / 0.93 (was
   0.21 / 0.21), Shakeout 0.93 / 0.57 (was 0 / 0). Part A scans unchanged.
 - Next (part C): RS before Price, Daily / Weekly Base, Near Pivot, VCP, Tight Setups, IPO Base.
+
+### 2026-11-07: accuracy step 3, part C - base and pivot scans
+- engine.base_levels (latest day only): lvl_* (daily level), wlvl_* (weekly candles), ipo_* (new listings), adr100_pct.
+  Settings config/indicators.yaml -> events (base_swing 16, 22-168 sessions; weekly +-4, 17-71 weeks; ipo_max_bars 30).
+- config/scanners.json: daily-base, near-pivot, weekly-base, ipo-base use them. Registry fields + test (193 Python, 32 JS green).
+- 4-day average recall / precision: Daily Base 0.96 / 0.97 (was 0.41 / 0.46), Near Pivot 0.92 / 0.91 (0.44 / 0.31),
+  Weekly Base 0.96 / 0.79 (0.28 / 0.24), IPO Base 0.93 / 0.70 (0 / 0). Parts A and B unchanged.
+- Next (part D): RS before Price, VCP, Tight Setups. Earnings scans after ~10-Nov.

@@ -139,3 +139,4 @@ Logo (06-Nov, Viraj's choice): green bull-horn V, site/icons/logo.svg, no backgr
 UI redesign phases N0-N12: docs/PLAN.md. N0 (app frame: rail, top-bar search, card, status bar, skeletons) built 06-Nov.
 N1 (scanner workspace: picker with pins/counts, resizable list, column drawer, grid of mini charts) built 06-Nov.
 N2 (chart: legend controls, indicator popup with preview, settings drawer, drawing bar, cup/VCP SVG, earnings table) built 06-Nov.
+N3 (custom scan window: CS filter list in app.js, csRule -> scanner rule, builder state saved with My Scans) built 07-Nov.

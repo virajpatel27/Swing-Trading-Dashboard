@@ -489,6 +489,7 @@
       ? `<button class="btn primary" id="newScan" type="button">${ICON.plus}<span>New scan</span></button>
         <div class="menu-wrap"><button class="btn ws-pick" id="scanBtn" type="button" aria-haspopup="true"><b>${esc(scan.name)}</b>${scan.edited ? ' <span class="tag">edited</span>' : ""} <span class="caret">▾</span></button>
           <div class="menu picker" id="scanMenu" hidden></div></div>
+        <button class="btn icon" id="csBtn" type="button" title="Custom scan: pick filters">${ICON.cols}</button>
         <button class="btn icon" id="formulaBtn" type="button" title="Formula: see or change the rule">ƒ</button>
         <div class="pins">${pins.length ? pins.map((s) => `<a class="pin-chip ${s.id === scan.id ? "on" : ""}" href="#/scanners/${encodeURIComponent(s.id)}">${esc(s.name)}</a>`).join("")
           : '<span class="muted small">Pin a scanner from the menu to show it here</span>'}</div>`
@@ -710,15 +711,8 @@
         if (e.target.closest("a")) $("#scanMenu").hidden = true;
       };
       $("#formulaBtn").onclick = () => formulaEditor(scan, (id) => { state.lastScan = null; if (id === scan.id) renderStocks(); else location.hash = "#/scanners/" + encodeURIComponent(id); });
-      $("#newScan").onclick = () => {
-        const name = prompt("Name of your new scan:", "My scan"); if (!name) return;
-        const u = userScans(), id = "my-" + Date.now().toString(36);
-        u.mine.push({ id, name: name.slice(0, 60), description: "My scan", universe: "all", rule: { all: [] } });
-        saveUserScans(u);
-        state.lastScan = null;
-        location.hash = "#/scanners/" + encodeURIComponent(id);
-        setTimeout(() => { const s = allScans().find((x) => x.id === id); if (s) formulaEditor(s, () => { state.lastScan = null; renderStocks(); }); }, 400);
-      };
+      $("#newScan").onclick = () => customScan({ fresh: true });
+      $("#csBtn").onclick = () => customScan({ load: scan.builder ? scan : null });
     }
     view.onclick = (e) => { if (!e.target.closest(".menu-wrap")) view.querySelectorAll(".menu").forEach((x) => { x.hidden = true; }); };
     if (isWide && ui.view === "list") {
@@ -990,6 +984,278 @@
       } catch (e) { $("#acts").textContent = "Not available."; }
     }
   }
+  /* ------------------------------------------------------------------ custom scan window (Phase N3): 5 tabs of filters, live count,
+     save / load. A filter makes conditions of the same rule format as every scanner (scan.js), so saved scans work everywhere. */
+  const CS_TABS = [["u", "Stock universe"], ["t", "Technicals"], ["s", "Strength & volume"], ["e", "Earnings"], ["f", "Fundamentals"]];
+  const MA_OPTS = [["ema10", "10 EMA"], ["ema20", "20 EMA"], ["ema21", "21 EMA"], ["ema50", "50 EMA"], ["ema200", "200 EMA"],
+    ["sma10", "10 SMA"], ["sma20", "20 SMA"], ["sma50", "50 SMA"], ["sma150", "150 SMA"], ["sma200", "200 SMA"]];
+  const gt = (a, b) => ({ field: a, op: ">", field2: b, mult: 1 });
+  // t tab, s section, id, l label, ty type, h hint; types: flag, range, cmp, combo, multi, pick, period, mas
+  const CS = [
+    { t: "u", s: "Universe", id: "liquid", l: "Liquid stocks", ty: "flag", h: "enough rupee volume to buy and sell easily (our liquid rule)", uni: true },
+    { t: "u", s: "Universe", id: "index", l: "Index", ty: "pick", opts: [["n500", "Nifty 500 only", { field: "n500", op: "is", value: true }], ["out", "Outside Nifty 500", { field: "n500", op: "is", value: false }]] },
+    { t: "u", s: "Universe", id: "fno", l: "F&O stocks", ty: "pick", opts: [["only", "Include only", { field: "fno", op: "is", value: true }], ["ex", "Exclude", { field: "fno", op: "is", value: false }]] },
+    { t: "u", s: "Universe", id: "stage", l: "Stage", ty: "multi", field: "stage", opts: [["2", "2 Uptrend"], ["2A", "2A Early uptrend"], ["1", "1 Basing"], ["3", "3 Topping"], ["4A", "4A Improving"], ["4", "4 Downtrend"]], def: ["2"] },
+    { t: "u", s: "Universe", id: "circuit", l: "Exclude circuit stocks", ty: "flag", h: "drop 2 % and 5 % price bands", rule: { field: "price_band", op: "in", value: ["10", "20", "No Band"] } },
+    { t: "u", s: "Universe", id: "listage", l: "Listing age", ty: "combo", parts: [["days_listed", ">=", 180, "older than (days)"]] },
+    { t: "u", s: "Groups", id: "sector", l: "Sector", ty: "multi", field: "sector", dyn: "sector" },
+    { t: "u", s: "Groups", id: "bind", l: "Basic industry", ty: "multi", field: "basic_industry", dyn: "basic_industry" },
+    { t: "u", s: "Groups", id: "theme", l: "Theme", ty: "multi", field: "theme", dyn: "theme" },
+    { t: "u", s: "Size", id: "mcap", l: "Market cap (₹ Cr)", ty: "range", field: "mcap_cr", def: [500, 500000] },
+    { t: "u", s: "Size", id: "price", l: "Price (₹)", ty: "range", field: "close", def: [50, 10000] },
+    { t: "u", s: "Size", id: "ffpct", l: "Free float %", ty: "range", field: "float_pct", def: [25, 100] },
+    { t: "u", s: "Size", id: "ffmc", l: "Float market cap (₹ Cr)", ty: "range", field: "float_mcap_cr", def: [300, 100000] },
+    { t: "t", s: "Moving averages", id: "maorder", l: "MA order", ty: "pick", opts: [
+      ["mm", "Close > 50 > 150 > 200 SMA", [gt("close", "sma50"), gt("sma50", "sma150"), gt("sma150", "sma200")]],
+      ["e3", "10 > 20 > 50 EMA", [gt("ema10", "ema20"), gt("ema20", "ema50")]],
+      ["e4", "10 > 21 > 50 > 200 EMA", [gt("ema10", "ema21"), gt("ema21", "ema50"), gt("ema50", "ema200")]],
+      ["s2", "50 SMA > 200 SMA", [gt("sma50", "sma200")]]] },
+    { t: "t", s: "Moving averages", id: "above", l: "Price above MA", ty: "mas", dir: ">", def: ["sma50", "sma200"] },
+    { t: "t", s: "Moving averages", id: "below", l: "Price below MA", ty: "mas", dir: "<", def: ["ema20"] },
+    { t: "t", s: "Moving averages", id: "s200up", l: "200 SMA rising (1 month)", ty: "flag", rule: { field: "sma200_chg_1m", op: ">", value: 0 } },
+    { t: "t", s: "Moving averages", id: "near50", l: "Distance from 50 SMA %", ty: "range", field: "from_sma50", def: [0, 10] },
+    { t: "t", s: "Highs and lows", id: "fromhi", l: "% from 52W high", ty: "range", field: "from_hi52", def: [-25, 0] },
+    { t: "t", s: "Highs and lows", id: "fromlo", l: "% from 52W low", ty: "cmp", field: "from_lo52", def: [">=", 30] },
+    { t: "t", s: "Highs and lows", id: "fromath", l: "% from all-time high", ty: "range", field: "from_ath", def: [-15, 0] },
+    { t: "t", s: "Highs and lows", id: "pivot", l: "Distance to pivot %", ty: "range", field: "dist_pivot", def: [-5, 0], h: "minus = below the base top" },
+    { t: "t", s: "Momentum", id: "rsi", l: "RSI (14)", ty: "range", field: "rsi14", def: [50, 70] },
+    { t: "t", s: "Momentum", id: "ret", l: "Return", ty: "period", opts: [["ret_1w", "1 week"], ["ret_1m", "1 month"], ["ret_3m", "3 months"], ["ret_6m", "6 months"], ["ret_1y", "1 year"], ["ret_ytd", "This year"]], def: ["ret_1m", ">=", 20] },
+    { t: "t", s: "Momentum", id: "chg", l: "Daily change %", ty: "range", field: "chg_1d", def: [2, 20] },
+    { t: "t", s: "Momentum", id: "gap", l: "Gap up %", ty: "cmp", field: "gap_up", def: [">=", 2] },
+    { t: "t", s: "Momentum", id: "st", l: "Supertrend up", ty: "flag", rule: { field: "supertrend_dir", op: "==", value: 1 } },
+    { t: "t", s: "Range and setups", id: "range", l: "Day range %", ty: "cmp", field: "range_pct", def: ["<=", 3] },
+    { t: "t", s: "Range and setups", id: "adr", l: "ADR % (20 days)", ty: "cmp", field: "adr_pct", def: [">=", 3] },
+    { t: "t", s: "Range and setups", id: "tight", l: "Tight closes % (5 days)", ty: "cmp", field: "tight_pct", def: ["<=", 2] },
+    { t: "t", s: "Range and setups", id: "depth", l: "Base depth %", ty: "cmp", field: "base_depth", def: ["<=", 25] },
+    { t: "t", s: "Range and setups", id: "vcp", l: "VCP contractions", ty: "cmp", field: "vcp_contractions", def: [">=", 2] },
+    { t: "t", s: "Range and setups", id: "inside", l: "Inside day", ty: "flag", rule: { field: "inside_day", op: "is", value: true } },
+    { t: "s", s: "Relative strength", id: "rs", l: "RS rating", ty: "range", field: "rs_rating", def: [70, 99] },
+    { t: "s", s: "Relative strength", id: "rschg", l: "RS rating change, 1 week", ty: "cmp", field: "rs_chg_1w", def: [">=", 5] },
+    { t: "s", s: "Relative strength", id: "rshi", l: "RS line at 52W high", ty: "flag", rule: { field: "rs_line_52w_high", op: "is", value: true } },
+    { t: "s", s: "Relative strength", id: "rsfirst", l: "RS new high before price", ty: "flag", rule: { field: "rs_new_high_before_price", op: "is", value: true } },
+    { t: "s", s: "Relative strength", id: "mans", l: "Mansfield RS above 0", ty: "flag", rule: { field: "mansfield_rs", op: ">", value: 0 } },
+    { t: "s", s: "Groups", id: "secrank", l: "Sector rank", ty: "cmp", field: "sector_rank", def: ["<=", 5] },
+    { t: "s", s: "Groups", id: "indrank", l: "Industry rank", ty: "cmp", field: "industry_rank", def: ["<=", 20] },
+    { t: "s", s: "Groups", id: "indtag", l: "Industry status", ty: "multi", field: "industry_tag", opts: [["Leading", "Leading"], ["Improving", "Improving"], ["Weakening", "Weakening"], ["Lagging", "Lagging"]], def: ["Leading"] },
+    { t: "s", s: "Groups", id: "themetag", l: "Theme status", ty: "multi", field: "theme_status", opts: [["Leading", "Leading"], ["Improving", "Improving"], ["Weakening", "Weakening"], ["Lagging", "Lagging"]], def: ["Leading"] },
+    { t: "s", s: "Volume", id: "turn20", l: "Avg ₹ volume 20 days (Cr)", ty: "cmp", field: "turnover_avg20_cr", def: [">=", 5] },
+    { t: "s", s: "Volume", id: "turn", l: "Price × volume today (Cr)", ty: "cmp", field: "turnover_cr", def: [">=", 10] },
+    { t: "s", s: "Volume", id: "rvol", l: "Relative volume (× 20-day avg)", ty: "cmp", field: "rvol", def: [">=", 1.5] },
+    { t: "s", s: "Volume", id: "deliv", l: "Delivery %", ty: "cmp", field: "deliv_pct", def: [">=", 50] },
+    { t: "s", s: "Volume", id: "hv", l: "High volume", ty: "pick", opts: [["hve", "Highest ever", { field: "hve", op: "is", value: true }], ["hvy", "Highest in a year", { field: "hvy", op: "is", value: true }], ["hvq", "Highest in a quarter", { field: "hvq", op: "is", value: true }]] },
+    { t: "s", s: "Volume", id: "pp", l: "Pocket pivot", ty: "flag", rule: { field: "pocket_pivot", op: "is", value: true } },
+    { t: "s", s: "Volume", id: "dry", l: "Volume dry-up", ty: "flag", rule: { field: "dry_up", op: "is", value: true } },
+    { t: "e", s: "Latest quarter", id: "sy", l: "Sales growth YoY %", ty: "cmp", field: "sales_g_yoy", def: [">=", 20] },
+    { t: "e", s: "Latest quarter", id: "sq", l: "Sales growth QoQ %", ty: "cmp", field: "sales_g_qoq", def: [">=", 10] },
+    { t: "e", s: "Latest quarter", id: "py", l: "Net profit growth YoY %", ty: "cmp", field: "np_g_yoy", def: [">=", 25] },
+    { t: "e", s: "Latest quarter", id: "pq", l: "Net profit growth QoQ %", ty: "cmp", field: "np_g_qoq", def: [">=", 10] },
+    { t: "e", s: "Latest quarter", id: "ey", l: "EPS growth YoY %", ty: "cmp", field: "eps_g_yoy", def: [">=", 25] },
+    { t: "e", s: "Latest quarter", id: "eq", l: "EPS growth QoQ %", ty: "cmp", field: "eps_g_qoq", def: [">=", 10] },
+    { t: "e", s: "Streaks", id: "sup", l: "Sales rising for (quarters)", ty: "cmp", field: "sales_up_qtrs", def: [">=", 3] },
+    { t: "e", s: "Streaks", id: "eup", l: "EPS rising for (quarters)", ty: "cmp", field: "eps_up_qtrs", def: [">=", 3] },
+    { t: "e", s: "Streaks", id: "pup", l: "Net profit up QoQ for (quarters)", ty: "cmp", field: "np_qoq_up_qtrs", def: [">=", 2] },
+    { t: "e", s: "Streaks", id: "eacc", l: "EPS growth speeding up (quarters)", ty: "cmp", field: "eps_g_accel_qtrs", def: [">=", 2] },
+    { t: "e", s: "Streaks", id: "mup", l: "Net margin up for (quarters)", ty: "cmp", field: "npm_up_qtrs", def: [">=", 2] },
+    { t: "e", s: "Results days", id: "recent", l: "Results declared in the last (days)", ty: "combo", parts: [["days_since_result", "<=", 30, "days"]] },
+    { t: "e", s: "Results days", id: "soon", l: "Results due in the next (days)", ty: "range", field: "days_to_result", def: [0, 14] },
+    { t: "e", s: "Results days", id: "egap", l: "Results gap-up", ty: "combo", parts: [["earn_gap_pct", ">=", 3, "gap ≥ %"], ["earn_sessions", "<=", 20, "within sessions"]] },
+    { t: "e", s: "Results days", id: "emove", l: "Big move on results day %", ty: "cmp", field: "earn_chg_pct", def: [">=", 5] },
+    { t: "e", s: "Results days", id: "eheld", l: "Results move held", ty: "flag", rule: { field: "earn_held", op: "is", value: true } },
+    { t: "f", s: "Growth", id: "scagr", l: "Sales growth (CAGR %)", ty: "period", opts: [["sales_cagr_3y", "3 years"], ["sales_cagr_5y", "5 years"], ["sales_cagr_10y", "10 years"]], def: ["sales_cagr_5y", ">=", 15] },
+    { t: "f", s: "Growth", id: "pcagr", l: "Profit growth (CAGR %)", ty: "period", opts: [["np_cagr_3y", "3 years"], ["np_cagr_5y", "5 years"], ["np_cagr_10y", "10 years"]], def: ["np_cagr_5y", ">=", 15] },
+    { t: "f", s: "Growth", id: "attm", l: "Sales growth TTM %", ty: "cmp", field: "sales_g_ttm", def: [">=", 15] },
+    { t: "f", s: "Returns on capital", id: "roe", l: "ROE %", ty: "cmp", field: "roe", def: [">=", 15] },
+    { t: "f", s: "Returns on capital", id: "roce", l: "ROCE %", ty: "cmp", field: "roce", def: [">=", 15] },
+    { t: "f", s: "Returns on capital", id: "opm", l: "Operating margin TTM %", ty: "cmp", field: "opm_ttm", def: [">=", 12] },
+    { t: "f", s: "Returns on capital", id: "de", l: "Debt / equity", ty: "cmp", field: "debt_equity", def: ["<=", 0.5] },
+    { t: "f", s: "Valuation", id: "pe", l: "P/E", ty: "range", field: "pe", def: [5, 40] },
+    { t: "f", s: "Valuation", id: "peg", l: "PEG", ty: "cmp", field: "peg", def: ["<=", 1.5] },
+    { t: "f", s: "Valuation", id: "pb", l: "Price / book", ty: "cmp", field: "pb", def: ["<=", 5] },
+    { t: "f", s: "Valuation", id: "dy", l: "Dividend yield %", ty: "cmp", field: "div_yield", def: [">=", 1] },
+    { t: "f", s: "Holding", id: "prom", l: "Promoter holding %", ty: "cmp", field: "prom_hold", def: [">=", 50] },
+    { t: "f", s: "Holding", id: "promc", l: "Promoter change, 1 quarter (pts)", ty: "cmp", field: "prom_chg_1q", def: [">=", 0.5] },
+    { t: "f", s: "Holding", id: "fii", l: "FII holding %", ty: "cmp", field: "fii_hold", def: [">=", 5] },
+    { t: "f", s: "Holding", id: "fiic", l: "FII change, 1 quarter (pts)", ty: "cmp", field: "fii_chg_1q", def: [">=", 0.5] },
+  ];
+  const csFieldsOf = (f) => (f.field ? [f.field] : f.parts ? f.parts.map((p) => p[0]) : f.rule ? [f.rule.field] : []);
+  /** the conditions of one filter (an array) from its values */
+  function csRule(f, v) {
+    v = v || {};
+    const n = (x) => (x === "" || x == null || Number.isNaN(Number(x)) ? null : Number(x));
+    switch (f.ty) {
+      case "flag": return f.uni ? [] : [f.rule];
+      case "range": {
+        const a = n(v.a), b = n(v.b);
+        if (a != null && b != null) return [{ field: f.field, op: "between", value: [Math.min(a, b), Math.max(a, b)] }];
+        if (a != null) return [{ field: f.field, op: ">=", value: a }];
+        if (b != null) return [{ field: f.field, op: "<=", value: b }];
+        return [];
+      }
+      case "cmp": return n(v.x) == null ? [] : [{ field: f.field, op: v.op || f.def[0], value: n(v.x) }];
+      case "combo": return f.parts.map((p, i) => (n((v.x || [])[i]) == null ? null : { field: p[0], op: p[1], value: n(v.x[i]) })).filter(Boolean);
+      case "period": return n(v.x) == null ? [] : [{ field: v.f || f.def[0], op: v.op || f.def[1], value: n(v.x) }];
+      case "multi": return (v.sel || []).length ? [{ field: f.field, op: "in", value: v.sel.slice() }] : [];
+      case "pick": { const o = f.opts.find((x) => x[0] === v.p) || f.opts[0]; return Array.isArray(o[2]) ? o[2] : [o[2]]; }
+      case "mas": return (v.sel || []).map((m) => ({ field: "close", op: f.dir, field2: m, mult: 1 }));
+      default: return [];
+    }
+  }
+  const csDefault = (f) => ({ range: { a: f.def && f.def[0], b: f.def && f.def[1] }, cmp: { op: f.def && f.def[0], x: f.def && f.def[1] },
+    combo: { x: (f.parts || []).map((p) => p[2]) }, period: { f: f.def && f.def[0], op: f.def && f.def[1], x: f.def && f.def[2] },
+    multi: { sel: (f.def || []).slice() }, pick: { p: f.opts && f.opts[0][0] }, mas: { sel: (f.def || []).slice() }, flag: {} }[f.ty] || {});
+  /** builder state {name, f: {id: {on, v}}} -> {universe, rule} */
+  function csScan(cs) {
+    const all = [];
+    let universe = "all";
+    for (const f of CS) {
+      const s = cs.f[f.id];
+      if (!s || !s.on) continue;
+      if (f.uni) universe = "liquid";
+      all.push(...csRule(f, s.v));
+    }
+    return { universe, rule: { all } };
+  }
+
+  function customScan(opts = {}) {
+    const known = new Set((state.fields || []).map((f) => f.id));
+    const avail = (f) => csFieldsOf(f).every((x) => known.has(x) || ["close", "n500", "fno", "price_band", "stage", "sector", "basic_industry", "theme", "days_listed"].includes(x));
+    const list = CS.filter(avail);
+    const u = userScans();
+    let cs = opts.load && opts.load.builder ? clone(opts.load.builder) : opts.fresh ? { name: "", f: {} } : store.get("sd-cs-draft", null) || { name: "", f: {} };
+    let loadedId = opts.load && opts.load.builder ? opts.load.id : opts.fresh ? null : cs.loadedId || null;
+    delete cs.loadedId;
+    let tab = store.get("sd-cs-tab", "u");
+    const dyn = {};
+    for (const k of ["sector", "basic_industry", "theme"]) dyn[k] = [...new Set(state.screen.map((r) => r[k]).filter(Boolean))].sort().map((x) => [x, x]);
+    const m = document.createElement("div");
+    m.className = "modal-bg cs-bg";
+    m.innerHTML = `<div class="modal cs" role="dialog" aria-label="Custom scan">
+      <div class="cs-h"><b>Custom scan</b><input class="cs-name" id="csName" placeholder="Untitled scan" value="${esc(cs.name || "")}" aria-label="Scan name" maxlength="60">
+        <div class="menu-wrap"><button class="btn sm" id="csLoad" type="button">Load saved ▾</button><div class="menu right" id="csLoadM" hidden></div></div>
+        <button class="btn sm" id="csSave" type="button">Save scan</button><button class="icon-btn" data-x type="button" aria-label="Close">✕</button></div>
+      <div class="cs-tabs"><div class="cs-tl" role="tablist">${CS_TABS.map(([k, l]) => `<button type="button" role="tab" data-tab="${k}" class="${k === tab ? "on" : ""}">${l}<i data-tc="${k}"></i></button>`).join("")}</div>
+        <input type="search" id="csQ" placeholder="Find a filter, e.g. RSI" aria-label="Find a filter"></div>
+      <div class="cs-b" id="csB"></div>
+      <div class="cs-f"><span id="csCount"></span><button class="btn" id="csReset" type="button">Reset</button><button class="btn primary" id="csRun" type="button">Run scan</button></div></div>`;
+    document.body.appendChild(m);
+    const st = (id) => cs.f[id] || (cs.f[id] = { on: false, v: csDefault(CS.find((x) => x.id === id)) });
+    const ctrl = (f) => {
+      const v = st(f.id).v;
+      const num = (name, val, w) => `<input type="number" step="any" data-k="${name}" value="${val == null ? "" : esc(val)}" style="width:${w || 84}px">`;
+      const opSel = (name, val, ops) => `<select data-k="${name}">${(ops || [">=", "<=", ">", "<"]).map((o) => `<option ${o === val ? "selected" : ""}>${o}</option>`).join("")}</select>`;
+      switch (f.ty) {
+        case "flag": return f.h ? `<small class="muted">${esc(f.h)}</small>` : "";
+        case "range": return `Between ${num("a", v.a)} and ${num("b", v.b)}`;
+        case "cmp": return `${opSel("op", v.op)} ${num("x", v.x)}`;
+        case "combo": return f.parts.map((p, i) => `<span class="muted">${esc(p[3])}</span> ${num("x" + i, (v.x || [])[i], 70)}`).join(" ");
+        case "period": return `<select data-k="f">${f.opts.map(([k, l]) => `<option value="${k}" ${k === v.f ? "selected" : ""}>${l}</option>`).join("")}</select> ${opSel("op", v.op)} ${num("x", v.x, 70)}`;
+        case "pick": return `<select data-k="p">${f.opts.map(([k, l]) => `<option value="${k}" ${k === v.p ? "selected" : ""}>${esc(l)}</option>`).join("")}</select>`;
+        case "multi": case "mas": {
+          const opts = f.ty === "mas" ? MA_OPTS : f.dyn ? dyn[f.dyn] : f.opts, sel = v.sel || [];
+          const txt = sel.length ? (sel.length <= 2 ? sel.map((s) => (opts.find((o) => o[0] === s) || [s, s])[1]).join(", ") : `${sel.length} chosen`) : "Choose…";
+          return `<details class="cs-ms"><summary>${esc(txt)}</summary><div class="cs-ml">${opts.length > 12 ? '<input type="search" class="cs-mq" placeholder="Search">' : ""}
+            ${opts.map(([k, l]) => `<label data-t="${esc(String(l).toLowerCase())}"><input type="checkbox" data-sel="${esc(k)}" ${sel.includes(k) ? "checked" : ""}> ${esc(l)}</label>`).join("")}</div></details>`;
+        }
+        default: return "";
+      }
+    };
+    const rowHTML = (f) => `<div class="cs-row ${st(f.id).on ? "on" : ""}" data-id="${f.id}" data-t="${esc((f.l + " " + (f.h || "") + " " + csFieldsOf(f).map((x) => state.labels[x] || x).join(" ")).toLowerCase())}">
+      <label class="cs-on"><input type="checkbox" data-on ${st(f.id).on ? "checked" : ""}> <span>${esc(f.l)}</span></label><div class="cs-c">${ctrl(f)}</div></div>`;
+    const drawBody = () => {
+      const q = m.querySelector("#csQ").value.trim().toLowerCase();
+      const shown = q ? list.filter((f) => (f.l + " " + (f.h || "") + " " + csFieldsOf(f).map((x) => state.labels[x] || x).join(" ")).toLowerCase().includes(q)) : list.filter((f) => f.t === tab);
+      const secs = [];
+      for (const f of shown) { const key = q ? (CS_TABS.find((x) => x[0] === f.t) || ["", ""])[1] + " · " + f.s : f.s; let s = secs.find((x) => x[0] === key); if (!s) secs.push(s = [key, []]); s[1].push(f); }
+      m.querySelector("#csB").innerHTML = secs.length ? secs.map(([s, fs]) => `<section class="cs-sec"><h4>${esc(s)}</h4>${fs.map(rowHTML).join("")}</section>`).join("")
+        : '<p class="empty">No filter matches.</p>';
+    };
+    let timer = null;
+    const count = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        const sc = csScan(cs), n = SDS.run(state.screen, sc).length, active = Object.entries(cs.f).filter(([id, s]) => s.on && list.some((f) => f.id === id));
+        m.querySelector("#csCount").innerHTML = `<b>${n.toLocaleString("en-IN")}</b> stocks pass this scan · ${active.length} filter${active.length === 1 ? "" : "s"} active across all tabs`;
+        for (const [k] of CS_TABS) { const c = active.filter(([id]) => (CS.find((f) => f.id === id) || {}).t === k).length; m.querySelector(`[data-tc="${k}"]`).textContent = c || ""; }
+        cs.name = m.querySelector("#csName").value.trim();
+        store.set("sd-cs-draft", { ...cs, loadedId });
+      }, 90);
+    };
+    const readRow = (row) => {
+      const f = CS.find((x) => x.id === row.dataset.id), s = st(f.id), g = (k) => { const el = row.querySelector(`[data-k="${k}"]`); return el ? el.value : undefined; };
+      if (f.ty === "range") s.v = { a: g("a"), b: g("b") };
+      else if (f.ty === "cmp") s.v = { op: g("op"), x: g("x") };
+      else if (f.ty === "combo") s.v = { x: f.parts.map((p, i) => g("x" + i)) };
+      else if (f.ty === "period") s.v = { f: g("f"), op: g("op"), x: g("x") };
+      else if (f.ty === "pick") s.v = { p: g("p") };
+      else if (f.ty === "multi" || f.ty === "mas") s.v = { sel: [...row.querySelectorAll("[data-sel]:checked")].map((x) => x.dataset.sel) };
+    };
+    const shut = () => { m.classList.add("closing"); setTimeout(() => m.remove(), 140); document.removeEventListener("keydown", onKey, true); };
+    const onKey = (e) => {
+      if (e.key === "Escape" && !e.target.closest("details[open]")) shut();
+      if (e.key === "/" && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) { e.preventDefault(); e.stopPropagation(); m.querySelector("#csQ").focus(); }
+    };
+    document.addEventListener("keydown", onKey, true);
+    m.addEventListener("change", (e) => {
+      const row = e.target.closest(".cs-row");
+      if (!row) return;
+      if (e.target.matches("[data-on]")) { st(row.dataset.id).on = e.target.checked; row.classList.toggle("on", e.target.checked); }
+      else {
+        readRow(row);
+        if (!st(row.dataset.id).on) { st(row.dataset.id).on = true; row.classList.add("on"); row.querySelector("[data-on]").checked = true; }
+        if (e.target.matches("[data-sel]")) { const f = CS.find((x) => x.id === row.dataset.id), opts = f.ty === "mas" ? MA_OPTS : f.dyn ? dyn[f.dyn] : f.opts, sel = st(f.id).v.sel;
+          row.querySelector("summary").textContent = sel.length ? (sel.length <= 2 ? sel.map((s) => (opts.find((o) => o[0] === s) || [s, s])[1]).join(", ") : `${sel.length} chosen`) : "Choose…"; }
+      }
+      count();
+    });
+    m.addEventListener("input", (e) => {
+      if (e.target.id === "csQ") return drawBody();
+      if (e.target.id === "csName") return count();
+      if (e.target.classList.contains("cs-mq")) { const q = e.target.value.toLowerCase(); e.target.parentElement.querySelectorAll("label").forEach((l) => { l.hidden = !l.dataset.t.includes(q); }); return; }
+      if (e.target.type === "number") { const row = e.target.closest(".cs-row"); readRow(row); if (!st(row.dataset.id).on) { st(row.dataset.id).on = true; row.classList.add("on"); row.querySelector("[data-on]").checked = true; } count(); }
+    });
+    const savedList = () => userScans().mine.filter((x) => x.builder);
+    m.addEventListener("click", (e) => {
+      if (e.target === m || e.target.closest("[data-x]")) return shut();
+      const t = e.target.closest("[data-tab]");
+      if (t) { tab = t.dataset.tab; store.set("sd-cs-tab", tab); m.querySelector("#csQ").value = ""; m.querySelectorAll("[data-tab]").forEach((b) => b.classList.toggle("on", b === t)); drawBody(); return; }
+      if (!e.target.closest(".cs-ms")) m.querySelectorAll(".cs-ms[open]").forEach((d) => { d.open = false; });
+      if (e.target.closest("#csLoad")) {
+        const menu = m.querySelector("#csLoadM"), sv = savedList();
+        menu.innerHTML = (sv.length ? sv.map((x) => `<button type="button" data-ld="${esc(x.id)}">${esc(x.id === "custom-last" ? "Last run" + (x.builder.name ? ": " + x.builder.name : "") : x.name)}</button>`).join("") : '<small class="menu-h">No saved custom scans yet.</small>')
+          + '<button type="button" data-ld="">New, empty scan</button>';
+        menu.hidden = !menu.hidden; return;
+      }
+      const ld = e.target.closest("[data-ld]");
+      if (ld) {
+        const x = savedList().find((y) => y.id === ld.dataset.ld);
+        cs = x ? clone(x.builder) : { name: "", f: {} }; loadedId = x ? x.id : null;
+        m.querySelector("#csName").value = cs.name || ""; m.querySelector("#csLoadM").hidden = true; drawBody(); count(); return;
+      }
+      if (!e.target.closest("#csLoadM")) m.querySelector("#csLoadM").hidden = true;
+      if (e.target.closest("#csReset")) { cs = { name: m.querySelector("#csName").value, f: {} }; drawBody(); count(); return; }
+      const save = e.target.closest("#csSave"), run = e.target.closest("#csRun");
+      if (save || run) {
+        cs.name = m.querySelector("#csName").value.trim();
+        const sc = csScan(cs), uu = userScans();
+        let id;
+        if (save) {
+          if (!cs.name) { const nm = prompt("Name of your scan:", "My custom scan"); if (!nm) return; cs.name = nm.slice(0, 60); m.querySelector("#csName").value = cs.name; }
+          id = loadedId && loadedId !== "custom-last" && uu.mine.some((x) => x.id === loadedId) ? loadedId : "my-" + Date.now().toString(36);
+        } else id = loadedId && uu.mine.some((x) => x.id === loadedId) ? loadedId : "custom-last";
+        const name = id === "custom-last" ? "Custom scan (last run)" : cs.name || "Custom scan";
+        const entry = { id, name, description: "Custom scan (filters)", universe: sc.universe, rule: sc.rule, builder: clone(cs) };
+        uu.mine = uu.mine.some((x) => x.id === id) ? uu.mine.map((x) => (x.id === id ? entry : x)) : [...uu.mine, entry];
+        saveUserScans(uu); loadedId = id;
+        store.set("sd-cs-draft", { ...cs, loadedId });
+        if (save) { const b = m.querySelector("#csSave"); b.textContent = "Saved ✓"; setTimeout(() => { b.textContent = "Save scan"; }, 1500); }
+        if (run) { shut(); state.lastScan = null; if (location.hash === "#/scanners/" + encodeURIComponent(id)) renderStocks(); else location.hash = "#/scanners/" + encodeURIComponent(id); }
+      }
+    });
+    drawBody();
+    count();
+    setTimeout(() => m.querySelector("#csQ").focus(), 50);
+  }
+
   /* ------------------------------------------------------------------ financials (Phase S8): data/f/<id>.json, fin.js */
   const finNum = (v, d = 0) => (v == null || !isFinite(v) ? "–" : Number(v).toLocaleString("en-IN", { minimumFractionDigits: d, maximumFractionDigits: d }));
   function earningsSnapshot(r) {

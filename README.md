@@ -31,7 +31,8 @@ stock / index nu naam lakho -> Enter = sidho chart.
   volume, RS rating, stage, fundamentals, growth, holding, group rank ...). Row par click = baju ma chart; ↑ / ↓ thi aagal-paachhal.
   **Copy** = TradingView watchlist mate `NSE:SYMBOL` list. List ni jamni kinar kheñcho = list pahodi, vadhu columns.
   Upar jamni baju ▥ / ▦ = list + chart ke 2 / 3 / 4 chart ni grid.
-- **Scanners** - 33 taiyar scanner, folder ma: My Scans, Classic, Patterns, Earnings, Fundamentals. **ƒ Formula** thi niyam
+- **Scanners** - 33 taiyar scanner, folder ma: My Scans, Classic, Patterns, Earnings, Fundamentals. **+ New scan** (ke sliders button) = Custom scan window: 5 tab ma filter tick karo, niche tarat ketla stock pass
+  thay e dekhay; **Run scan** = result, **Save scan** = My Scans ma naam saathe. **ƒ Formula** thi niyam
   joi / badli shako (tamara browser ma save thay; Export / Import thi bija PC par).
 - **Groups** - Sector / Industry / Theme: rank, Leading / Weakening / Lagging / Improving tag, 1D thi YTD median, 20 divas na
   high/low, % 50 SMA upar. Click = enaa industries ane stocks.

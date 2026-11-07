@@ -614,3 +614,22 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - "»" button brings the chart back to the latest bar after scrolling into the past.
 - Checked in the preview at 1440 px (light + dark) and 375 px. Tests 172 Python + 24 JS green.
 - NEXT: N3 custom scan window.
+
+### 2026-11-07: UI redesign N3 - custom scan window
+- "+ New scan" opens an empty window, the sliders button next to the scanner picker opens the current custom scan
+  (or the last draft). Header: name, Load saved, Save scan, close; tabs Stock universe / Technicals / Strength & volume /
+  Earnings / Fundamentals with a badge of active filters; "Find a filter" search across all tabs (`/` key).
+- 80 filters, all on existing screen fields (config/fields.yaml): universe (liquid, Nifty 500, F&O, stage, circuit
+  bands, listing age, sector / basic industry / theme multi-select, market cap, price, free float, float mcap), technicals
+  (MA order presets, price above / below chosen MAs, 200 SMA rising, distances, 52W / ATH, pivot, RSI, return by period,
+  daily change, gap, Supertrend, day range, ADR, tight closes, base depth, VCP, inside day), strength & volume (RS rating
+  and change, RS line highs, Mansfield, sector / industry rank and status, theme status, rupee volume, RVol, delivery %,
+  HVE / HVY / HVQ, pocket pivot, dry-up), earnings (YoY / QoQ growth, streaks, acceleration, results in last / next
+  N days, results gap-up, big results move, move held), fundamentals (sales / profit CAGR, TTM growth, ROE, ROCE, OPM,
+  D/E, P/E, PEG, P/B, dividend yield, promoter / FII holding and change). Filters whose field is not in fields.json are hidden.
+- Changing a value ticks the filter; the footer counts at once ("N stocks pass this scan · K filters active").
+- Run scan = scan "Custom scan (last run)" in My Scans; Save scan = a named My Scan. Both keep the filter state
+  ("builder") so they open again in the window; the rule is the normal scanner rule (works with pins, grid, CSV, formula).
+- Checked in the preview (1440 px + 375 px): count 168 = results 168 for stage 2 + liquid + above 50/200 SMA + RSI 55-70.
+  Tests 172 Python + 24 JS green.
+- NEXT: N4 stock side panel + Financials page + Peers.

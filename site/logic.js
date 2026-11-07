@@ -304,9 +304,23 @@
     return out;
   }
 
+  /** our leader score 0..100 (Phase N11 leaders page): 40 % RS rating, 20 % nearness to the 52-week high, 15 % trend
+      (close > 50 > 150 > 200 SMA and a rising 200 SMA), 15 % industry rank, 10 % latest results. nInd = industries ranked. */
+  function leaderScore(r, nInd = 100) {
+    if (r == null || r.rs_rating == null || r.close == null) return null;
+    const cl = (x) => Math.max(0, Math.min(100, x));
+    const hi = r.from_hi52 == null ? 0 : cl(100 + r.from_hi52 * 4);
+    const up = (a, b) => (a != null && b != null && a > b ? 25 : 0);
+    const trend = up(r.close, r.sma50) + up(r.sma50, r.sma150) + up(r.sma150, r.sma200) + (r.sma200_chg_1m > 0 ? 25 : 0);
+    const grp = r.industry_rank == null ? 50 : cl(100 * (1 - (r.industry_rank - 1) / Math.max(nInd - 1, 1)));
+    let earn = 30;
+    if (r.eps_g_yoy != null || r.sales_g_yoy != null) earn = (r.eps_g_yoy > 0 ? 50 : 0) + (r.sales_g_yoy > 10 ? 25 : 0) + (r.eps_g_yoy > 25 ? 25 : 0);
+    return Math.round(0.4 * cl(r.rs_rating) + 0.2 * hi + 0.15 * trend + 0.15 * grp + 0.1 * earn);
+  }
+
   const api = { PERIODS, SCREENS, RANGES, rowsFromSnapshot, keyOf, fmtPrice, fmtPct, fmtInt, fmtVol, fmtDate, filterRows, sortRows,
     toCSV, candlesFromChart, toWeekly, ema, sliceRange, colorClass, heatLevel, STAGE_TXT, COLUMN_GROUPS, COLUMNS, DEFAULT_COLUMNS, SORTS,
-    screenRows, fmtCell, filterStocks, earnGrade, squarify };
+    screenRows, fmtCell, filterStocks, earnGrade, squarify, leaderScore };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.SD = api;
 })(typeof self !== "undefined" ? self : this);

@@ -40,6 +40,8 @@ stock / index nu naam lakho -> Enter = sidho chart.
   baki chhe; jamni baju chhella 14 divas na results card; Filters (growth, grade, signals). ‹ › thi aagal-paachhal athvadiyu.
 - **Heatmap** - Nifty 50 / 200 / 500 / Midcap / Smallcap ... na badha stock rangin chorasa ma (moto chorus = vadhu
   turnover ke market cap, lilo = vadhyo, laal = ghatyo). Sector na naam par click = enaa industries.
+- **Leaders** - aapda "leader score" (RS, 52W high ni najik, trend, industry rank, results) pramane top stock, theme pramane
+  vibhag ma; stock par click = baju ma chart.
 - **Groups** - column ma: Sectors -> Industries -> Stocks -> Chart (Industry / Theme ma: list -> Stocks -> Chart). Rank ni baju
   nano + / - = rank ketlo badlayo, rangin bindu = Leading / Improving / Weakening / Lagging. ‹ thi column vadi do.
 - **RRG** - kaya sector / industry / theme aagal (Leading), sudhre chhe (Improving), dhimo pade chhe (Weakening) ke

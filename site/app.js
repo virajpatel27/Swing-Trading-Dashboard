@@ -1119,6 +1119,60 @@
       } catch (e) { $("#acts").textContent = "Not available."; }
     }
   }
+  /* ------------------------------------------------------------------ leaders (Phase N11): top stocks by our leader score */
+  async function renderLeaders() {
+    if (!state.screen) view.innerHTML = SKEL("Loading leaders");
+    try { await loadScreen(); } catch (e) { view.innerHTML = `<p class="empty">Could not load the stock table (${esc(e.message)}).</p>`; return; }
+    if (routeName() !== "leaders") return;
+    const ls = Object.assign({ by: "theme", top: 160, minTurn: 5, open: {} }, store.get("sd-leaders", {}));
+    const save = () => store.set("sd-leaders", ls);
+    const nInd = new Set(state.screen.map((r) => r.industry_rank).filter((x) => x != null)).size || 100;
+    const pool = state.screen.filter((r) => !r.stale && (r.turnover_avg20_cr ?? 0) >= ls.minTurn && !["2", "5"].includes(String(r.price_band)));
+    const scored = pool.map((r) => ({ r, s: SD.leaderScore(r, nInd) })).filter((x) => x.s != null).sort((a, b) => b.s - a.s);
+    const top = scored.slice(0, ls.top);
+    const keyOf = (r) => (ls.by === "theme" ? r.theme || r.basic_industry || "Other" : ls.by === "industry" ? r.basic_industry || r.industry || "Other" : r.sector || "Other");
+    const groupsL = new Map();
+    for (const x of top) { const k = keyOf(x.r); if (!groupsL.has(k)) groupsL.set(k, []); groupsL.get(k).push(x); }
+    const secs = [...groupsL].sort((a, b) => b[1].length - a[1].length || b[1][0].s - a[1][0].s);
+    const isWide = wide();
+    if (state.ldStock && !top.some((x) => x.r.key === state.ldStock)) state.ldStock = null;
+    if (!state.ldStock && isWide && top.length) state.ldStock = top[0].r.key;
+    const tags = (r) => [r.stage === "2" || r.stage === "2A" ? "Stage 2" : "", r.dist_pivot != null && r.dist_pivot > -5 && r.dist_pivot <= 0 ? "Near pivot" : "",
+      r.vcp_contractions >= 2 ? "VCP" : "", r.rs_line_52w_high ? "RS high" : "", r.pocket_pivot ? "Pocket pivot" : ""].filter(Boolean);
+    const row = ({ r, s }) => `<tr data-key="${esc(r.key)}" class="${state.ldStock === r.key ? "on" : ""}"><td class="l"><b>${esc(r.symbol)}</b><span class="ld-sub">${esc(ls.by === "theme" ? r.basic_industry || "" : r.theme || "")}${tags(r).map((t) => ` <i class="hs-tag">${t}</i>`).join("")}</span></td>
+      <td class="num"><span class="ld-score" style="--s:${s}">${s}</span></td><td class="num">${r.rs_rating ?? "–"}</td><td class="num">${pct(r.chg_1d)}</td><td class="num">${pct(r.ret_1w)}</td>
+      <td class="num">${pct(r.ret_1m)}</td><td class="num">${pct(r.from_hi52)}</td><td class="num">${finNum(r.mcap_cr)}</td></tr>`;
+    const head = `<thead><tr><th class="l">Stock</th><th title="Our leader score 0-100">Score</th><th>RS</th><th>1D</th><th>1W</th><th>1M</th><th>52W high</th><th>MCap Cr</th></tr></thead>`;
+    const body = secs.map(([k, list]) => { const shut = ls.open[k] === false;
+      return `<tbody class="ld-sec ${shut ? "shut" : ""}"><tr class="ld-h" data-sec="${esc(k)}"><td colspan="8"><span class="caret">▾</span> <b>${esc(k)}</b> <small class="muted">${list.length}</small>
+        <small class="muted ld-avg">avg score ${Math.round(list.reduce((a, x) => a + x.s, 0) / list.length)}</small></td></tr>${shut ? "" : list.map(row).join("")}</tbody>`; }).join("");
+    const rule = "Leader score (0-100, our own rule): 40 % RS rating, 20 % nearness to the 52-week high (0 % = full, -25 % or lower = none), 15 % trend (close > 50 > 150 > 200-day average, rising 200-day), 15 % industry rank, 10 % latest results (EPS and sales growth). Only stocks with enough daily turnover and without 2 % / 5 % price bands.";
+    view.innerHTML = `<div class="ld"><div class="ld-bar"><h1>Top leaders <span class="pk-i" title="${esc(rule)}">i</span></h1>
+        <label class="muted small">Group by ${`<select id="ldBy"><option value="theme" ${ls.by === "theme" ? "selected" : ""}>Theme</option><option value="industry" ${ls.by === "industry" ? "selected" : ""}>Industry</option><option value="sector" ${ls.by === "sector" ? "selected" : ""}>Sector</option></select>`}</label>
+        <label class="muted small">Show <select id="ldTop">${[50, 100, 160, 250].map((n) => `<option ${n === ls.top ? "selected" : ""}>${n}</option>`).join("")}</select></label>
+        <label class="muted small">Turnover ≥ <select id="ldTurn">${[1, 5, 10, 25].map((n) => `<option value="${n}" ${n === ls.minTurn ? "selected" : ""}>₹${n} Cr</option>`).join("")}</select></label>
+        <span class="ld-r"><button class="btn sm" id="ldAll" type="button">Fold all</button><button class="btn sm" id="ldCopy" type="button">Copy to TradingView</button></span></div>
+      <div class="ld-main ${isWide ? "wide" : ""}"><div class="ld-list"><table class="gt ld-t">${head}${body}</table></div>${isWide ? '<div class="chart-pane ld-chart" id="ldPane"></div>' : ""}</div>
+      <p class="muted small">${esc(rule)} Not investment advice.</p></div>`;
+    $("#stPage").innerHTML = `<span>${top.length} of ${pool.length.toLocaleString("en-IN")} stocks</span><span class="st-n">top ${ls.top} by leader score · ₹${ls.minTurn} Cr+ turnover · excl. 2% / 5% bands</span>`;
+    const lm = view.querySelector(".ld-main");
+    if (isWide) lm.style.height = Math.max(460, innerHeight - (lm.getBoundingClientRect().top + scrollY) - 64) + "px";
+    const openChart = (key) => { const r = state.screenByKey.get(key); if (r && $("#ldPane")) SDChart.open($("#ldPane"), r, { kind: "s" }); };
+    if (isWide && state.ldStock) openChart(state.ldStock);
+    view.querySelector(".ld-t").onclick = (e) => {
+      const h = e.target.closest(".ld-h"); if (h) { const k = h.dataset.sec; ls.open[k] = ls.open[k] === false; save(); renderLeaders(); return; }
+      const tr = e.target.closest("tr[data-key]"); if (!tr) return;
+      if (!isWide) { location.hash = "#/i/" + tr.dataset.key.replace(":", "/"); return; }
+      state.ldStock = tr.dataset.key; view.querySelectorAll(".ld-t tr.on").forEach((x) => x.classList.remove("on")); tr.classList.add("on"); openChart(tr.dataset.key);
+    };
+    $("#ldBy").onchange = (e) => { ls.by = e.target.value; ls.open = {}; save(); renderLeaders(); };
+    $("#ldTop").onchange = (e) => { ls.top = Number(e.target.value); save(); renderLeaders(); };
+    $("#ldTurn").onchange = (e) => { ls.minTurn = Number(e.target.value); save(); renderLeaders(); };
+    $("#ldAll").textContent = secs.every(([k]) => ls.open[k] === false) ? "Open all" : "Fold all";
+    $("#ldAll").onclick = () => { const fold = !secs.every(([k]) => ls.open[k] === false); ls.open = {}; if (fold) secs.forEach(([k]) => { ls.open[k] = false; }); save(); renderLeaders(); };
+    $("#ldCopy").onclick = async () => { const t = top.map(({ r }) => "NSE:" + r.symbol).join(","); try { await navigator.clipboard.writeText(t); $("#ldCopy").textContent = `Copied ${top.length}`; } catch (e) { prompt("Copy these symbols:", t); } };
+  }
+
   /* ------------------------------------------------------------------ RRG (Phase N9): strength x momentum with tails */
   const RRG_Q = { Leading: "#16a34a", Improving: "#2962ff", Weakening: "#f59e0b", Lagging: "#db2777" };
   const quadOf = (s, m) => (s >= 100 ? (m >= 100 ? "Leading" : "Weakening") : (m >= 100 ? "Improving" : "Lagging"));
@@ -2086,7 +2140,7 @@
   function route() {
     if (!state.rows.length) return;
     const parts = location.hash.replace(/^#\/?/, "").split("/").map(decodeURIComponent);
-    const tab = { "": "home", market: "market", earnings: "earnings", heatmap: "heatmap", rrg: "rrg", stocks: "stocks", scanners: "scanners", screener: "scanners", sectors: "groups", groups: "groups", breadth: "breadth", watchlist: "watchlist", fields: "fields", i: "" }[parts[0]] ?? "market";
+    const tab = { "": "home", market: "market", earnings: "earnings", heatmap: "heatmap", rrg: "rrg", leaders: "leaders", stocks: "stocks", scanners: "scanners", screener: "scanners", sectors: "groups", groups: "groups", breadth: "breadth", watchlist: "watchlist", fields: "fields", i: "" }[parts[0]] ?? "market";
     document.querySelectorAll(".rail [data-tab]").forEach((a) => a.classList.toggle("active", a.dataset.tab === tab));
     const act = document.querySelector(".rail-main .active");
     if (act && matchMedia("(max-width: 720px)").matches) act.scrollIntoView({ inline: "center", block: "nearest" });
@@ -2109,6 +2163,7 @@
     else if (parts[0] === "earnings") renderEarnings(parts[1]);
     else if (parts[0] === "heatmap") renderHeatmap();
     else if (parts[0] === "rrg") renderRRG();
+    else if (parts[0] === "leaders") renderLeaders();
     else renderHome();
     window.scrollTo(0, 0);
   }

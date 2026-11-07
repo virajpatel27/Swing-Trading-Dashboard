@@ -37,3 +37,9 @@ net margin up (npm_up_qtrs >= 1), turnaround, RS rating >= 70.
 - 4% movers: daily = up 4 % minus down 4 %; 5D / 10D ratio = sum of up-4 % days / sum of down-4 % days. Words: ratio >= 2
   heavy buying, >= 1.2 more buying, > 0.83 balanced, > 0.5 more selling, else heavy selling.
 - Net highs - lows words: "far more" when one side is more than 3 times the other.
+
+## Leader score (Phase N11) - site/logic.js `leaderScore`, tests/js/leaders.test.js
+0-100 = 40 % RS rating + 20 % nearness to the 52-week high (0 % below = 100, 25 % or more below = 0) + 15 % trend
+(25 each: close > 50-day SMA, 50 > 150, 150 > 200, 200-day SMA higher than a month ago) + 15 % industry rank
+(1st = 100, last = 0; unknown = 50) + 10 % latest results (EPS YoY > 0: 50, sales YoY > 10 %: +25, EPS YoY > 25 %: +25;
+no results = 30). Pool: not stale, average 20-day turnover >= the chosen Rs crore (default 5), no 2 % / 5 % price band.

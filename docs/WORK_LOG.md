@@ -725,3 +725,13 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Note: SD.ema returns a trimmed array; charts use SDI.ema (aligned with nulls).
 - Checked in the preview at 1500 px and 375 px. Tests 181 Python + 29 JS green.
 - NEXT: N11 leaders.
+
+### 2026-11-08: UI redesign N11 - leaders
+- SD.leaderScore (logic.js, rule in docs/site_rules.md, tests/js/leaders.test.js). Page `#/leaders` (rail "Leaders"):
+  top N by score from the liquid pool, sections by theme (or basic industry when a stock has no theme) / industry /
+  sector with count and average score, click a section to fold it, Fold all / Open all, tags (Stage 2, near pivot, VCP,
+  RS high, pocket pivot), score badge tinted by score, chart of the clicked stock beside the list (wide screens), Copy
+  to TradingView, status "N of M stocks · top N by leader score · Rs X Cr+ turnover · excl. 2% / 5% bands".
+- No "catalyst" (news) column: we have no news data.
+- Checked in the preview at 1500 px and 375 px (06-Nov data: 160 of 1,149 stocks, DIVISLAB 95 on top). Tests 181 Python + 32 JS green.
+- NEXT: N12 polish.

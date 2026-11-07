@@ -1,7 +1,7 @@
 level,id,name,parent,stocks,small,first_date,last_date
 industry,2-3-wheelers,2/3 Wheelers,Automobile and Auto Components,8,False,2007-06-06,2026-11-06
 industry,abrasives-and-bearings,Abrasives & Bearings,Capital Goods,6,False,2016-07-28,2026-11-06
-industry,advertising-and-media-agencies,Advertising & Media Agencies,Media Entertainment & Publication,3,True,,
+industry,advertising-and-media-agencies,Advertising & Media Agencies,Media Entertainment & Publication,4,True,,
 industry,aerospace-and-defense,Aerospace & Defense,Capital Goods,27,False,2010-11-11,2026-11-06
 industry,airline,Airline,Services,2,True,,
 industry,airport-and-airport-services,Airport & Airport services,Services,2,True,,
@@ -201,7 +201,7 @@ sector,financial-services,Financial Services,,299,False,2007-01-16,2026-11-06
 sector,forest-materials,Forest Materials,,25,False,2007-12-20,2026-11-06
 sector,healthcare,Healthcare,,183,False,2007-01-16,2026-11-06
 sector,information-technology,Information Technology,,141,False,2007-01-16,2026-11-06
-sector,media-entertainment-and-publication,Media Entertainment & Publication,,55,False,2007-01-16,2026-11-06
+sector,media-entertainment-and-publication,Media Entertainment & Publication,,56,False,2007-01-16,2026-11-06
 sector,metals-and-mining,Metals & Mining,,61,False,2007-01-16,2026-11-06
 sector,oil-gas-and-consumable-fuels,Oil Gas & Consumable Fuels,,46,False,2007-01-16,2026-11-06
 sector,power,Power,,35,False,2007-01-16,2026-11-06

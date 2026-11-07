@@ -35,3 +35,4 @@ ex_date,type,ratio,factor,amount,method,status,subject,source
 2026-03-30,bonus,1:1,0.5,,ratio from NSE text,applied,Bonus 1:1,NSE
 2026-05-26,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 0.05 Per Share,NSE
 2026-08-05,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 0.05 Per Share,NSE
+2026-11-12,dividend,,,0.05,,future,Interim Dividend - Re 0.05 Per Share,NSE

@@ -1,5 +1,5 @@
 {
- "date": "2026-11-06",
+ "date": "2026-11-07",
  "universe": 2633,
  "nifty500": {
   "stocks": 500,
@@ -7,21 +7,21 @@
  },
  "all": {
   "stocks": 2633,
-  "with_doc": 1117
+  "with_doc": 1390
  },
  "kinds": {
-  "company": 913,
-  "nbfc": 76,
-  "?": 87,
-  "bank": 32,
-  "insurance": 9
+  "company": 1143,
+  "nbfc": 92,
+  "?": 111,
+  "bank": 34,
+  "insurance": 10
  },
- "with_8_quarters": 882,
- "with_5_years": 717,
- "with_balance_sheet": 1010,
- "with_cash_flow": 999,
- "with_shareholding": 1028,
- "latest_quarter_older_than_150_days": 101,
+ "with_8_quarters": 1093,
+ "with_5_years": 879,
+ "with_balance_sheet": 1255,
+ "with_cash_flow": 1234,
+ "with_shareholding": 1273,
+ "latest_quarter_older_than_150_days": 128,
  "no_results": [
   "3BBLACKBIO",
   "ABBOTINDIA",
@@ -30,7 +30,6 @@
   "ACSTECH",
   "ADDIND",
   "ADVIKCA",
-  "AGOL",
   "AKCAPIT",
   "ALFREDHE",
   "ALUFLUOR",
@@ -72,6 +71,7 @@
   "BNALTD",
   "BONDADA",
   "BONFIG",
-  "BPLPHARMA"
+  "BPLPHARMA",
+  "BRAHMINFRA"
  ]
 }

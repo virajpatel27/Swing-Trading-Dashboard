@@ -101,12 +101,11 @@ def build(root: Path, out: Path, log=print) -> dict:
         shutil.copy2(data / "snapshot" / "group_ranks.json", out / "data" / "group_ranks.json")
     if (data / "snapshot" / "breadth.json").exists():       # Breadth page (Phase S10)
         shutil.copy2(data / "snapshot" / "breadth.json", out / "data" / "breadth.json")
-    members = index_members.site_payload(data)                  # index members (heatmap page, Phase N7)
-    if members:
-        (out / "data" / "index_members.json").write_text(json.dumps(members, separators=(",", ":")), encoding="utf-8")
-    flows = market_flows.site_payload(data)                     # FII / DII cash flows (home page, Phase N5)
-    if flows:
-        (out / "data" / "fii_dii.json").write_text(json.dumps(flows, separators=(",", ":")), encoding="utf-8")
+    # index members (heatmap, Phase N7) and FII / DII flows (home, Phase N5); empty files until the first daily run
+    members = index_members.site_payload(data) or {}
+    (out / "data" / "index_members.json").write_text(json.dumps(members, separators=(",", ":")), encoding="utf-8")
+    flows = market_flows.site_payload(data) or {"source": "NSE provisional FII / FPI and DII cash-market trades, Rs crore", "since": None, "rows": []}
+    (out / "data" / "fii_dii.json").write_text(json.dumps(flows, separators=(",", ":")), encoding="utf-8")
     shutil.copy2(root / "config" / "scanners.json", out / "data" / "scanners.json")
     (out / "data" / "fields.json").write_text(json.dumps(fields_payload(root)), encoding="utf-8")
 

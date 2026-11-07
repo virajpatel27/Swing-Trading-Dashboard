@@ -148,3 +148,4 @@ N8 (groups in columns #/groups/<level>/<group>/<industry>, chart column) built 0
 N9 (RRG #/rrg; group_rank tails d/w for mkt + rrg_benchmarks, tail_days in group_ranks.json) built 08-Nov.
 N10 (breadth: SVG charts with shared crosshair; major indices LWC grid) built 08-Nov. SD.ema is TRIMMED - use SDI.ema for aligned series.
 N11 (leaders #/leaders, SD.leaderScore) built 08-Nov.
+N12 polish done 08-Nov: UI redesign N0-N12 COMPLETE. site_build always writes fii_dii.json + index_members.json.

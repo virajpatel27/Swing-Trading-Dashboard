@@ -735,3 +735,14 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - No "catalyst" (news) column: we have no news data.
 - Checked in the preview at 1500 px and 375 px (06-Nov data: 160 of 1,149 stocks, DIVISLAB 95 on top). Tests 181 Python + 32 JS green.
 - NEXT: N12 polish.
+
+### 2026-11-08: UI redesign N12 - polish (redesign N0-N12 complete)
+- Live site checked page by page after the N11 deploy (home, market, stocks, scanners, earnings, heatmap, leaders, groups,
+  RRG, breadth, major indices, watchlist, stock page, formulas): no script errors. The only 404s were
+  data/fii_dii.json and data/index_members.json (made by the daily run from Monday) -> site_build now always writes
+  them (empty until the first run); the heatmap falls back to "Liquid stocks" when no index list exists yet.
+- Dark mode checked (home, earnings, heatmap, RRG); phones: all 14 pages at 375 px without sideways scroll; short
+  laptop screens: the rail scrolls / shrinks so its items never cover Formulas / Theme / About.
+- Tests 181 Python + 32 JS green.
+- Next ideas (not started): news / catalysts and intraday need new data sources; maybe a "Pages" tab bar like the
+  reference; Google Drive backup (manual checklist).

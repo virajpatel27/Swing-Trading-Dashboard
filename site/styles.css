@@ -1045,3 +1045,14 @@ td.small { font-size: 12px; white-space: normal; min-width: 140px; }
 .ld-avg { float: right; }
 .ld-score { display: inline-block; min-width: 30px; text-align: center; font-weight: 700; font-size: 12px; padding: 1px 6px; border-radius: 6px;
   color: #fff; background: color-mix(in srgb, var(--accent) calc(var(--s) * 1%), #9aa5a1); }
+
+/* ---------------------------------------------------------------- Phase N12: polish */
+@media (min-width: 721px) {
+  .rail-main { overflow-y: auto; min-height: 0; flex: 0 1 auto; scrollbar-width: none; }
+  .rail-main::-webkit-scrollbar { display: none; }
+  .rail-end { flex: none; padding-top: 6px; }
+}
+@media (min-width: 721px) and (max-height: 780px) {
+  .rail a[data-tab], .rail button { height: 38px; }
+  .rail-main { margin-top: 10px; gap: 2px; }
+}

@@ -136,6 +136,6 @@ logo, colours, font, icons and wording (the site is public: no copied branding).
 | N9 | RRG `#/rrg`: strength x momentum chart with smoothed fading tails (5 / 10 / 20 points), quadrant colours, Sectors / Industries / Themes (Top 20 or all), Daily / Weekly, benchmark equal-weight market / Nifty 50 / Nifty 500, hover trace + card (heading, points in quadrant, 5-point momentum change), click to pin, side list by quadrant with heading arrows | built 2026-11-08 |
 | N10 | Breadth restyle: read + stage panel left, 6 market-internals charts with one shared crosshair (participation 20/50/200D, net highs-lows 20D/52W, A/D 20D/40D/A-D line, 4% movers daily/5D/10D ratio, large vs mid vs small, breakouts held/failed), better/worse vs 5 sessions; Major Indices grid (Broad 13 / Sector 21, candles/bars, 1D/1W, MA 20/50, sort, 1-3 per row) | built 2026-11-08 |
 | N11 | Leaders `#/leaders`: top 50 / 100 / 160 / 250 by our leader score (SD.leaderScore), grouped by theme / industry / sector with foldable sections, setup tags, score badge, chart beside the list, copy to TradingView, turnover filter | built 2026-11-08 |
-| N12 | Polish | open |
+| N12 | Polish: every page checked on the live site (no script errors), dark mode, phones (14 pages at 375 px without sideways scroll), short laptop screens (rail fits), empty FII / DII and index files until the first daily run, heatmap falls back to liquid stocks | built 2026-11-08 |
 
 Not possible for now: live / intraday prices, news / concalls, company descriptions.

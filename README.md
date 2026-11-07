@@ -92,7 +92,7 @@ app: [docs/calibration.md](docs/calibration.md), history of the work: [docs/WORK
 
 | Workflow | When | What |
 |---|---|---|
-| Daily update | Mon-Fri 16:40 IST (+ 17:20, 18:30; official index file 23:50; safety 08:00), manual | new days (+ re-check of the last 5), delivery, corporate actions, adjusted prices, classification, stock master, groups, new results / shareholding / results calendar, data check, commit, website. Failure -> GitHub issue |
+| Daily update | Mon-Fri 16:40 IST (+ 17:20, 18:30; official index file 23:50; safety 08:00), manual | new days (+ re-check of the last 5), delivery, corporate actions, adjusted prices, classification, stock master, groups, new results / shareholding / results calendar, FII / DII cash flows, NSE index member lists, data check, commit, website. Failure -> GitHub issue |
 | Fundamentals nightly | every day 23:40 IST | reads stocks whose fundamentals were never read (~450 per night) until all are done, then a 1-minute no-op |
 | Deploy website | after a data change, on site changes, manual | screen + groups + breadth snapshot, one chart and one financials file per stock, publish (~7 min) |
 | Weekly backup | Saturday 10:00 IST | `data/` zip as Release `data-YYYY-MM-DD` (last 12 kept), Google Drive copy (once set up), `backup` branch moved forward |

@@ -1299,7 +1299,7 @@
     catch (e) { view.innerHTML = `<p class="empty">Could not load the stock table (${esc(e.message)}).</p>`; return; }
     if (routeName() !== "heatmap") return;
     const hm = Object.assign({ index: "NIFTY_500", area: "turnover_cr", color: "chg_1d", sector: "" }, store.get("sd-hm", {}));
-    if (!state.members[hm.index] && !["FNO", "LIQUID"].includes(hm.index)) hm.index = "NIFTY_500";
+    if (!state.members[hm.index] && !["FNO", "LIQUID"].includes(hm.index)) hm.index = state.members.NIFTY_500 ? "NIFTY_500" : "LIQUID";
     const save = () => store.set("sd-hm", { index: hm.index, area: hm.area, color: hm.color });
     const sel = (id, opts, val) => `<select id="${id}">${opts.map(([v, l]) => `<option value="${v}" ${v === val ? "selected" : ""}>${l}</option>`).join("")}</select>`;
     const idxOpts = HM_INDEX.filter(([k]) => state.members[k] || k === "FNO" || k === "LIQUID");
@@ -1604,7 +1604,7 @@
     const flowRow = (k, label) => { const lastR = fr[fr.length - 1]; return `<div class="hf-row"><div class="hf-t"><b>${label}</b><small class="muted">${lastR ? shortDay(lastR.date) : ""}</small><b class="${lastR && lastR[k] >= 0 ? "up" : "down"}">${lastR ? (lastR[k] > 0 ? "+" : "") + finNum(lastR[k]) : "–"}</b></div>
       ${svgBars(fr.map((r) => r[k]))}<div class="hf-t"><small class="muted">${fr.length} session${fr.length === 1 ? "" : "s"} net</small><b class="${sum(k) >= 0 ? "up" : "down"}">${sum(k) > 0 ? "+" : ""}${finNum(sum(k))}</b></div></div>`; };
     const hl = (S.nh20 || []).slice(-22).map((h, i) => h - ((S.nl20 || []).slice(-22)[i] || 0));
-    const flowHTML = `<div class="hp-h"><small class="muted">FII / DII CASH · LAST ${Math.max(fr.length, 1)} SESSION${fr.length === 1 ? "" : "S"}</small><small class="muted">₹ crore</small></div>
+    const flowHTML = `<div class="hp-h"><small class="muted">FII / DII CASH · ${fr.length > 1 ? `LAST ${fr.length} SESSIONS` : "LATEST SESSION"}</small><small class="muted">₹ crore</small></div>
       ${fr.length ? flowRow("fii_net", "FII") + flowRow("dii_net", "DII") + (fr.length < 22 ? `<p class="muted small">Collected daily from NSE since ${SD.fmtDate(flows.since)}; the bars fill up to 22 sessions.</p>` : "") : '<p class="muted small">FII / DII figures start with the next daily update.</p>'}
       <div class="hp-h" style="margin-top:12px"><small class="muted">20-DAY HIGHS · LOWS · LAST 22 SESSIONS</small></div>
       ${B ? `<div class="hf-row"><div class="hf-t"><b>Net highs − lows</b><small class="muted">${shortDay(days[days.length - 1])}</small><b class="${hl[hl.length - 1] >= 0 ? "up" : "down"}">${hl[hl.length - 1] > 0 ? "+" : ""}${hl[hl.length - 1] ?? "–"}</b></div>${svgBars(hl)}

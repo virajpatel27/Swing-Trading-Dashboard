@@ -590,5 +590,14 @@ def backfill_fundamentals(ctx: Ctx, until: date | None = None) -> dict:
                                  int(ctx.settings.get("fundamentals_refresh_days", 120)), log=ctx.log, clock=ctx.clock)
 
 
+def backfill_announcements(ctx: Ctx, until: date | None = None) -> dict:
+    """Company announcements filed with NSE for the last 365 days, newest first (swingdash/announcements.py); days that
+    already have a file are skipped, so a stopped run simply continues."""
+    from . import announcements
+    end = until or ctx.today
+    return announcements.backfill(ctx.data, ctx.http, end - timedelta(days=365), end, ctx.deadline, log=ctx.log, clock=ctx.clock)
+
+
 JOBS = {"stocks": backfill_stocks, "nse-indices": backfill_nse_indices, "bse-indices": backfill_bse_indices,
-        "bse-update": update_bse_indices, "delivery": backfill_delivery, "fundamentals": backfill_fundamentals}
+        "bse-update": update_bse_indices, "delivery": backfill_delivery, "fundamentals": backfill_fundamentals,
+        "announcements": backfill_announcements}

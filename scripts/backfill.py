@@ -5,6 +5,7 @@
     python scripts/backfill.py --job bse-indices          # PC only: BSE refuses GitHub's servers
     python scripts/backfill.py --job delivery             # delivery % 2007 -> (needs the stocks job's trading days)
     python scripts/backfill.py --job fundamentals [--new-only]   # NSE XBRL results / shareholding (Nifty 500 first)
+    python scripts/backfill.py --job announcements             # company filings with NSE, last 365 days
     python scripts/backfill.py --job all
 
 Afterwards run scripts/validate_data.py (the workflow does it) before committing.

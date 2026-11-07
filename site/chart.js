@@ -32,7 +32,7 @@
   /* ------------------------------------------------------------------ settings (with defaults) */
   const DEFAULTS = {
     style: "classic", type: "candle", tf: "D",
-    marks: { hilo52: false, swings: false, swingPct: 10, circuit: false, inside: false, actions: true, pivot: true, vcp: true, cup: true, tight: false, earnings: true },
+    marks: { hilo52: false, swings: false, swingPct: 10, circuit: false, inside: false, actions: true, pivot: true, vcp: true, cup: true, tight: false, earnings: true, news: true },
     show: { earn: true, earnOpen: true, desc: true, due: true }, grid: true,
     chips: { float: true, rs: true, stage: true, from: true, theme: true },
     ind: {
@@ -137,14 +137,17 @@
     box.innerHTML = `<div class="ch-top" id="chTools"></div><div class="ch-head" id="chHead"></div><div class="legend" id="chLegend"></div>
       <div class="ch-wrap"><div class="ch-canvas" id="chCanvas"><i class="skel ch-skel"></i></div>
       <svg class="ch-pat" id="chPat"></svg><svg class="ch-svg" id="chSvg"></svg><div class="ch-dbar" id="chDraw"></div>
-      <div class="ch-vol muted" id="chVol"></div><button class="ch-end" id="chEnd" type="button" title="Back to the latest bar" hidden>${ic("end")}</button></div>
+      <div class="ch-vol muted" id="chVol"></div><div class="ch-news" id="chNews" hidden></div><button class="ch-end" id="chEnd" type="button" title="Back to the latest bar" hidden>${ic("end")}</button></div>
       <div class="ch-earn" id="chEarn"></div><div class="ch-note muted" id="chNote"></div>`;
     cur = { box, row, opts, kind: opts.kind || "s" };
     renderTools();
     renderDrawBar();
     let data;
     try {
-      [data] = await Promise.all([getChartFile(cur.kind, row.id), loadLib()]);
+      let news;
+      [data, , news] = await Promise.all([getChartFile(cur.kind, row.id), loadLib(),
+        cur.kind === "s" ? fetch(`data/a/${encodeURIComponent(row.symbol || row.id)}.json`, { cache: "no-cache" }).then((r) => (r.ok ? r.json() : [])).catch(() => []) : []]);
+      cur.news = Array.isArray(news) ? news : [];
     } catch (e) {
       box.querySelector("#chCanvas").innerHTML = `<p class="empty">Chart not available (${esc(e.message)}).</p>`;
       return;
@@ -259,6 +262,23 @@
         const t = `${String(m.d).slice(0, 4)}-${String(m.d).slice(4, 6)}-${String(m.d).slice(6, 8)}`;
         const b = [...bars].reverse().find((x) => x.time <= t);
         if (b) marks.push({ time: b.time, position: "belowBar", color: "#f59e0b", shape: "circle", text: "C", size: 0.8 });
+      }
+    }
+    // company filings with NSE (news): one marker per bar with the most telling category letter, details in a card on hover
+    if (!pv) cur.newsAt = new Map();
+    if (!pv && C.marks.news !== false && cur.news && cur.news.length) {
+      const PRI = "ODRMFKCAEP", COL = { E: "#7e57c2", K: "#0ea5e9", O: "#16a34a", D: "#2962ff", C: "#f59e0b", F: "#a855f7", M: "#64748b", R: "#db2777", A: "#14b8a6", P: "#94a3b8" };
+      for (const n of cur.news) {
+        const d = n[0].slice(0, 10), b = bars.find((x) => x.time >= d);
+        if (!b) continue;
+        if (!cur.newsAt.has(b.time)) cur.newsAt.set(b.time, []);
+        cur.newsAt.get(b.time).push(n);
+      }
+      for (const [t, list] of cur.newsAt) {
+        const cats = [...new Set(list.map((n) => n[2]))].sort((a, b) => PRI.indexOf(a) - PRI.indexOf(b));
+        const show = cats.filter((c) => !(c === "E" && C.marks.earnings) && c !== "P");
+        if (!show.length) continue;
+        marks.push({ time: t, position: "belowBar", color: COL[show[0]], shape: "circle", text: show[0] + (list.length > 1 ? String(list.length) : ""), size: 0.7 });
       }
     }
     if (!pv && C.marks.earnings && cur.data.e) {             // results days: "E" on the first bar on / after the day
@@ -448,6 +468,7 @@
     header(bars.length - 1, vflags);
     cur.onPaint = () => header(bars.length - 1, vflags);   // the volume label needs the painted panes (drawings.render calls it)
     chart.subscribeCrosshairMove((p) => {
+      cur.hoverNews = !!(p && p.time);
       if (!p || !p.time) return header(bars.length - 1, vflags);
       const i = times.indexOf(p.time);
       if (i >= 0) header(i, vflags);
@@ -482,6 +503,15 @@
   function header(i, vflags) {
     if (!cur || !cur.bars) return;
     const b = cur.bars[i], p = cur.bars[i - 1], r = cur.row;
+    const nb = cur.box.querySelector("#chNews"), nl = cur.newsAt && cur.newsAt.get(b.time);
+    if (nb) {
+      nb.hidden = !nl || i === cur.bars.length - 1 && !cur.hoverNews;
+      if (nl) {
+        const NAME = { E: "Results", K: "Con-call / meet", O: "Orders & business", D: "Deals & expansion", C: "Corporate action", F: "Fund raising", M: "Management", R: "Regulatory & legal", A: "Credit rating", P: "Update" };
+        nb.innerHTML = `<small class="muted">FILINGS · ${esc(S.fmtDate(b.time))} · ${nl.length}</small>` + nl.slice(0, 5).map((n) => `<div><b class="nc-${n[2]}">${NAME[n[2]] || n[2]}</b> <small class="muted">${esc(n[0].slice(11, 16))}</small><span>${esc(n[4] || n[3])}</span></div>`).join("")
+          + (nl.length > 5 ? `<small class="muted">+${nl.length - 5} more in the stock panel</small>` : "");
+      }
+    }
     const chg = p ? (b.close / p.close - 1) * 100 : null, chgAbs = p ? b.close - p.close : null;
     const back = (n) => { const x = cur.bars[i - n]; return x ? (b.close / x.close - 1) * 100 : null; };
     const w = cfg.tf === "W";
@@ -743,6 +773,7 @@
       ${tog("inside", "Inside bars", mk.inside, "bar inside the previous bar's range")}
       <h4>Events</h4>${tog("earnings", "Results days", mk.earnings !== false, "quarterly results", smp.earn)}
       ${tog("actions", "Corporate actions", mk.actions, "split / bonus / rights / demerger", smp.act)}
+      ${tog("news", "Company filings", mk.news !== false, "orders, deals, management, regulatory ... filed with NSE (hover for details)", '<b class="badge" style="background:#16a34a">O</b>')}
       ${tog("circuit", "Circuit limits", mk.circuit, "today's price band")}
       <h4>Price levels</h4>${tog("hilo52", "52-week high & low", mk.hilo52, "dashed lines", smp.hl)}
       ${tog("swings", "Swing % moves", mk.swings, "", smp.sw)}<label class="f-row sd-sub">Swing size % <input type="number" name="swingPct" value="${mk.swingPct}"></label>
@@ -761,7 +792,7 @@
     const apply = () => {
       const e = f.elements;
       cfg.style = e.style.value;
-      for (const k of ["inside", "actions", "circuit", "hilo52", "swings", "pivot", "vcp", "tight", "earnings", "cup"]) cfg.marks[k] = e[k].checked;
+      for (const k of ["inside", "actions", "circuit", "hilo52", "swings", "pivot", "vcp", "tight", "earnings", "cup", "news"]) cfg.marks[k] = e[k].checked;
       cfg.marks.swingPct = Number(e.swingPct.value) || 10;
       cfg.grid = e.grid.checked;
       cfg.chips = { float: e.c_float.checked, rs: e.c_rs.checked, stage: e.c_stage.checked, from: e.c_from.checked, theme: e.c_theme.checked };

@@ -61,6 +61,9 @@ Angel One is used only by the Source probe (a check). The daily update does not 
 - [ ] **Before 10-Mar-2028:** GitHub retires API version `2022-11-28` (header in the answer: Sunset 10-Mar-2028). Ask Claude
       for the current version and change X-GitHub-Api-Version in both cron-job.org jobs.
 
+- [ ] **Once, after pushing the news code (07-Nov-2026):** Actions -> **Backfill history** -> Run workflow -> job
+      **announcements** (fills the last 365 days of company filings, ~20-30 minutes; it can run again safely).
+
 ## Weekly
 - BSE indices: tell Claude **"BSE update karo"** (runs on the PC, BSE refuses GitHub); Pull origin first, then commit what it changed.
 

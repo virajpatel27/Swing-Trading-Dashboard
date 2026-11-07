@@ -746,3 +746,28 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Tests 181 Python + 32 JS green.
 - Next ideas (not started): news / catalysts and intraday need new data sources; maybe a "Pages" tab bar like the
   reference; Google Drive backup (manual checklist).
+### 2026-11-07: missing data, part 1 (backend only - website part not built yet)
+- BUG fixed: NSE now labels main-board issues "Equity" (was EQ), so data/meta/ipos.csv became EMPTY on 05-Nov (New Listing /
+  IPO Base scanners lost their IPO dates). nse.parse_past_issues accepts "Equity"; stock_master.download_ipos MERGES with the
+  saved list (never shrinks) and writes data/meta/ipo_upcoming.csv (main-board issues not listed yet). The next daily run
+  refills ipos.csv (~560 listings).
+- swingdash/announcements.py: NSE company announcements (exchange filings), our category letters (E results, K con-call,
+  O orders, D deals, C corporate action, F fund raising, M management, R regulatory, A rating, P press), routine filings left
+  out; data/announcements/YYYY-MM/DD.csv (13 months); daily step 4g (last 3 days); backfill job "announcements" (365 days);
+  site_build writes data/news.json (10 days) + data/a/<SYMBOL>.json (400 days). tests/test_news_ipos.py.
+- Website part done the same day (next entry).
+
+### 2026-11-07: missing data, part 2 - company filings and IPOs on the website
+- site_build: data/ipos.json (listings of the last 45 days + main-board issues not listed yet), news files (part 1).
+- News page `#/news` (rail "News"): filings of the last 10 days by day, category chips with counts (our letters E K O D C F M
+  R A P), "My watchlist", symbol search, 150 at a time, link to each filing's PDF on nsearchives.nseindia.com.
+- Chart: one round marker per bar with filings (most telling category letter + count; results and plain updates left
+  out because E markers already exist), hover = card "FILINGS · date" with up to 5 items; settings drawer -> Events ->
+  "Company filings" on / off.
+- Stock panel: "Filings & con-calls" (n in 30 days) - con-call / presentation / transcript links first, then the latest
+  12 filings, "All recent filings" opens the News page filtered to the stock.
+- Home: "Orders, deals & expansion" (O / D filings of liquid stocks, last 5 days) and IPOs in "Coming up" (open / waiting
+  to list, plus listings of the last 45 days with issue price and today's gain).
+- First data: the daily run adds the last 3 days; Actions -> Backfill history -> job announcements fills the last year.
+- Checked in the preview with filings of 01-Oct..07-Nov read into a temp folder (never into data/): 8,262 filings in
+  10 days, BEL panel 7, home 8 deals, 33 recent listings; phone 375 px fine. Tests 187 Python + 32 JS green.

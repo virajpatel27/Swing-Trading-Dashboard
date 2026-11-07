@@ -40,6 +40,8 @@ stock / index nu naam lakho -> Enter = sidho chart.
   baki chhe; jamni baju chhella 14 divas na results card; Filters (growth, grade, signals). ‹ › thi aagal-paachhal athvadiyu.
 - **Heatmap** - Nifty 50 / 200 / 500 / Midcap / Smallcap ... na badha stock rangin chorasa ma (moto chorus = vadhu
   turnover ke market cap, lilo = vadhyo, laal = ghatyo). Sector na naam par click = enaa industries.
+- **News** - companies e NSE ma file karelā chhella 10 divas na announcements (results, con-call, orders, deals,
+  management, regulatory ...), category ane watchlist filter; dar line par PDF filing ni link. Chart par pan marker.
 - **Leaders** - aapda "leader score" (RS, 52W high ni najik, trend, industry rank, results) pramane top stock, theme pramane
   vibhag ma; stock par click = baju ma chart.
 - **Groups** - column ma: Sectors -> Industries -> Stocks -> Chart (Industry / Theme ma: list -> Stocks -> Chart). Rank ni baju

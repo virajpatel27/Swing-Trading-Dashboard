@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import backfill, classification, config, fundamentals, groups, index_members, market_flows, rebuild, snapshot, stock_master, store, themes
+from . import backfill, classification, config, fundamentals, announcements, groups, index_members, market_flows, rebuild, snapshot, stock_master, store, themes
 
 
 def recheck_start(days: set[date], n: int, fallback: date) -> date:
@@ -143,7 +143,7 @@ def run(ctx: backfill.Ctx, log=print) -> dict:
 
     # 4b. stock master (F&O flag, price band, market cap, liquid flag)
     fno, bands = stock_master.download_lists(ctx.http, log)
-    stock_master.download_ipos(data, ctx.http, log)
+    stock_master.download_ipos(data, ctx.http, log, today=str(ctx.today))
     master = stock_master.build(data, fno, bands, ctx.settings.get("liquid"), log=log)
     res["stock_master_written"] = stock_master.write(data, master)
     res["liquid_stocks"] = int(master["liquid"].sum())
@@ -174,6 +174,12 @@ def run(ctx: backfill.Ctx, log=print) -> dict:
         res["index_members"] = index_members.update(data, ctx.http, log=log)
     except Exception as exc:  # noqa: BLE001 - never stop the price update for this
         res["index_members"] = {"stopped": f"{type(exc).__name__}: {str(exc)[:80]}"}
+
+    # 4g. company announcements filed with NSE (news page, chart markers, stock panel): the last 3 days again
+    try:
+        res["announcements"] = announcements.daily(data, ctx.http, ctx.today, log=log)
+    except Exception as exc:  # noqa: BLE001 - never stop the price update for this
+        res["announcements"] = {"stopped": f"{type(exc).__name__}: {str(exc)[:80]}"}
 
     # 5. snapshot
     latest, sectors = snapshot.build(data, log=log)

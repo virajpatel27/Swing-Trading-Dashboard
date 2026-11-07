@@ -19,7 +19,7 @@ from pathlib import Path
 import pandas as pd
 
 from . import fundamentals, corporate_actions as ca
-from . import index_members, market_flows, registry, store
+from . import announcements, index_members, market_flows, registry, store
 from .adjust import ADJ_COLS
 
 FOLDER = {("stock", "NSE"): "s", ("index", "NSE"): "n", ("index", "BSE"): "b"}
@@ -101,6 +101,20 @@ def build(root: Path, out: Path, log=print) -> dict:
         shutil.copy2(data / "snapshot" / "group_ranks.json", out / "data" / "group_ranks.json")
     if (data / "snapshot" / "breadth.json").exists():       # Breadth page (Phase S10)
         shutil.copy2(data / "snapshot" / "breadth.json", out / "data" / "breadth.json")
+    # company announcements (news page, chart markers, stock panel): last 10 days + one file per stock (400 days)
+    uni = data / "meta" / "universe_stocks.csv"
+    syms = set(pd.read_csv(uni)["symbol"].astype(str)) if uni.exists() else set()
+    latest = json.loads((data / "snapshot" / "latest.json").read_text(encoding="utf-8")).get("data_date") or datetime.now().strftime("%Y-%m-%d")
+    announcements.site_files(data, out, syms, latest)
+    # IPOs (home page): listings of the last 45 days + main-board issues not listed yet
+    ipo = {"recent": [], "upcoming": []}
+    if (data / "meta" / "ipos.csv").exists():
+        li = pd.read_csv(data / "meta" / "ipos.csv", dtype=str, keep_default_na=False)
+        since = (pd.Timestamp(latest) - pd.Timedelta(days=45)).strftime("%Y-%m-%d")
+        ipo["recent"] = li[li["ipo_date"] >= since].sort_values("ipo_date", ascending=False)[["symbol", "ipo_date", "ipo_price"]].values.tolist()
+    if (data / "meta" / "ipo_upcoming.csv").exists():
+        ipo["upcoming"] = pd.read_csv(data / "meta" / "ipo_upcoming.csv", dtype=str, keep_default_na=False).values.tolist()
+    (out / "data" / "ipos.json").write_text(json.dumps(ipo, separators=(",", ":")), encoding="utf-8")
     # index members (heatmap, Phase N7) and FII / DII flows (home, Phase N5); empty files until the first daily run
     members = index_members.site_payload(data) or {}
     (out / "data" / "index_members.json").write_text(json.dumps(members, separators=(",", ":")), encoding="utf-8")

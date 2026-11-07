@@ -1119,6 +1119,57 @@
       } catch (e) { $("#acts").textContent = "Not available."; }
     }
   }
+  /* ------------------------------------------------------------------ news: company filings with NSE */
+  const NEWS_COL = { E: "#7e57c2", K: "#0ea5e9", O: "#16a34a", D: "#2962ff", C: "#f59e0b", F: "#a855f7", M: "#64748b", R: "#db2777", A: "#14b8a6", P: "#94a3b8" };
+  const getNews = () => state.newsP || (state.newsP = getJSON("data/news.json").catch(() => ({ cats: {}, pdf: "", rows: [] })));
+  const stockNewsCache = new Map();
+  const getStockNews = (sym) => { if (!stockNewsCache.has(sym)) stockNewsCache.set(sym, getJSON(`data/a/${encodeURIComponent(sym)}.json`).catch(() => [])); return stockNewsCache.get(sym); };
+  const newsTime = (dt) => dt.slice(11, 16);
+  const newsBadge = (c, cats) => `<i class="nw-c" style="--c:${NEWS_COL[c] || "#94a3b8"}" title="${esc((cats || {})[c] || "")}">${c}</i>`;
+  const newsText = (desc, about) => `${esc(desc)}${about ? ` <span class="muted">· ${esc(about)}</span>` : ""}`;
+  const newsLink = (url, pdf) => (url ? `<a class="nw-pdf" href="${esc(url.startsWith("http") ? url : pdf + url)}" target="_blank" rel="noopener" title="The company's filing (PDF on nseindia.com)">Filing ↗</a>` : "");
+
+  async function renderNews() {
+    view.innerHTML = SKEL("Loading company filings");
+    const N = await getNews();
+    try { await loadScreen(); } catch (e) { /* names stay empty */ }
+    if (routeName() !== "news") return;
+    const ns = Object.assign({ cats: [], watch: false, q: "", limit: 150 }, store.get("sd-news", {}), { limit: state.newsLimit || 150 });
+    const save = () => store.set("sd-news", { cats: ns.cats, watch: ns.watch, q: ns.q });
+    const q = ns.q.trim().toUpperCase();
+    const watched = new Set([...state.watch].map((k) => k.split(":")[1]));
+    const rows = N.rows.filter(([, sym, c]) => (!ns.cats.length || ns.cats.includes(c)) && (!ns.watch || watched.has(sym)) && (!q || sym.includes(q)));
+    const byKey = (sym) => state.screenByKey.get("s:" + sym);
+    let html = "", day = "";
+    for (const [dt, sym, c, desc, about, url] of rows.slice(0, ns.limit)) {
+      if (dt.slice(0, 10) !== day) { day = dt.slice(0, 10); html += `<h4 class="nw-day">${esc(shortDay(day))}</h4>`; }
+      const r = byKey(sym);
+      html += `<div class="nw-row"><small class="nw-t">${newsTime(dt)}</small>${newsBadge(c, N.cats)}<div class="nw-b"><a href="#/i/s/${encodeURIComponent(sym)}"><b>${esc(sym)}</b></a>`
+        + `${r ? ` <small class="muted">${esc(r.name || "")}</small> ${pct(r.chg_1d)}` : ""}<div>${newsText(desc, about)}</div></div>${newsLink(url, N.pdf)}</div>`;
+    }
+    const counts = {}; for (const x of N.rows) counts[x[2]] = (counts[x[2]] || 0) + 1;
+    view.innerHTML = `<div class="nw"><div class="nw-bar"><h1>Company filings</h1>
+        <div class="nw-cats"><button type="button" data-cat="" class="${ns.cats.length ? "" : "on"}">All <small>${N.rows.length}</small></button>
+        ${Object.entries(N.cats || {}).map(([k, l]) => `<button type="button" data-cat="${k}" class="${ns.cats.includes(k) ? "on" : ""}">${newsBadge(k, N.cats)} ${esc(l)} <small>${counts[k] || 0}</small></button>`).join("")}</div>
+        <label class="chk"><input type="checkbox" id="nwWatch" ${ns.watch ? "checked" : ""}> My watchlist</label>
+        <input type="search" id="nwQ" placeholder="Symbol" value="${esc(ns.q)}" aria-label="Symbol"></div>
+      <div class="nw-list">${html || '<p class="empty">No filing matches.</p>'}</div>
+      ${rows.length > ns.limit ? `<button class="btn more" id="nwMore" type="button">Show more (${rows.length - ns.limit} left)</button>` : ""}
+      <p class="muted small">Announcements the companies filed with NSE in the last 10 days (exchange filings, not news articles). The category is our own
+        grouping of NSE's subject; open the filing for the full text. Not investment advice.</p></div>`;
+    $("#stPage").innerHTML = `<span>${rows.length.toLocaleString("en-IN")} filings</span><span class="st-n">${N.rows.length ? `${esc(shortDay(N.rows[N.rows.length - 1][0].slice(0, 10)))} – ${esc(shortDay(N.rows[0][0].slice(0, 10)))}` : ""}</span>`;
+    view.querySelector(".nw-cats").onclick = (e) => {
+      const b = e.target.closest("[data-cat]"); if (!b) return;
+      const k = b.dataset.cat;
+      ns.cats = !k ? [] : ns.cats.includes(k) ? ns.cats.filter((x) => x !== k) : [...ns.cats, k];
+      state.newsLimit = 150; save(); renderNews();
+    };
+    $("#nwWatch").onchange = (e) => { ns.watch = e.target.checked; save(); renderNews(); };
+    $("#nwQ").oninput = (e) => { const v = e.target.value; clearTimeout(state.nwT); state.nwT = setTimeout(() => { state.newsQ = v; renderNewsQ(v); }, 250); };
+    const renderNewsQ = (v) => { store.set("sd-news", { cats: ns.cats, watch: ns.watch, q: v }); renderNews().then(() => { const i = $("#nwQ"); if (i) { i.focus(); i.setSelectionRange(v.length, v.length); } }); };
+    if ($("#nwMore")) $("#nwMore").onclick = () => { state.newsLimit = ns.limit + 150; renderNews(); };
+  }
+
   /* ------------------------------------------------------------------ leaders (Phase N11): top stocks by our leader score */
   async function renderLeaders() {
     if (!state.screen) view.innerHTML = SKEL("Loading leaders");
@@ -1572,6 +1623,9 @@
     try { if (!state.groups) state.groups = await getJSON("data/group_ranks.json"); } catch (e) { /* no groups yet */ }
     try { flows = await getJSON("data/fii_dii.json"); } catch (e) { flows = null; }
     try { if (!state.scanSpec) await loadScans(); } catch (e) { /* no scanners */ }
+    const N = await getNews();
+    let ipos = { recent: [], upcoming: [] };
+    try { ipos = await getJSON("data/ipos.json"); } catch (e) { /* none yet */ }
     if (routeName() !== "") return;
     const hs = Object.assign({ part: "50", more: false }, store.get("sd-home", {}));
     const saveHs = () => store.set("sd-home", hs);
@@ -1636,7 +1690,19 @@
     const due = new Map();
     for (const r of state.screen || []) if (r.next_result && r.next_result > today && r.days_to_result != null && r.days_to_result <= 10) { if (!due.has(r.next_result)) due.set(r.next_result, []); due.get(r.next_result).push(r); }
     const dueHTML = [...due.keys()].sort().slice(0, 5).map((d) => { const list = due.get(d).sort((a, b) => (b.mcap_cr ?? 0) - (a.mcap_cr ?? 0)); return `<div class="he-d"><b>${shortDay(d)}</b><div>${list.slice(0, 6).map((r) => `<a href="#/i/s/${encodeURIComponent(r.id)}">${esc(r.symbol)}</a>`).join("")}${list.length > 6 ? `<span class="muted">+${list.length - 6} more</span>` : ""}</div></div>`; }).join("");
+    // orders, deals and approvals of the last 5 days (company filings), liquid stocks, biggest first
+    const d5 = (() => { const t = new Date((state.screenDate || state.dataDate) + "T00:00:00"); t.setDate(t.getDate() - 5); return t.toISOString().slice(0, 10); })();
+    const deals = N.rows.filter((n) => (n[2] === "O" || n[2] === "D") && n[0] >= d5).map((n) => ({ n, r: state.screenByKey.get("s:" + n[1]) }))
+      .filter((x) => x.r && (x.r.liquid_day ?? x.r.liquid)).sort((a, b) => (a.n[0] < b.n[0] ? 1 : -1)).slice(0, 8);
+    const dealsHTML = deals.length ? deals.map(({ n, r }) => `<div class="hd-row"><small class="muted">${esc(shortDay(n[0].slice(0, 10)))}<br>${esc(n[0].slice(11, 16))}</small>
+      <div><a href="#/i/s/${encodeURIComponent(n[1])}"><b>${esc(n[1])}</b></a> ${newsBadge(n[2], N.cats)} <small class="muted">${esc(N.cats[n[2]] || "")}</small><div class="small">${newsText(n[3], n[4])}</div></div>${newsLink(n[5], N.pdf)}</div>`).join("")
+      : '<p class="muted small">No orders or deals filed by liquid stocks in the last 5 days.</p>';
+    const ipoHTML = (ipos.upcoming.length ? ipos.upcoming.map(([sym, name, op, cl, price, lst]) => `<div class="he-c"><b>${esc(sym)}</b><span>${esc(name || "")} · bids ${esc(SD.fmtDate(op))} – ${esc(SD.fmtDate(cl))} · ${esc(price)}${lst ? ` · lists ${esc(SD.fmtDate(lst))}` : ""}</span></div>`).join("")
+        : '<p class="muted small">No main-board IPO open or waiting to list.</p>')
+      + (ipos.recent.length ? `<small class="muted hm-l">LISTED IN THE LAST 45 DAYS</small>` + ipos.recent.slice(0, 6).map(([sym, d, pr]) => { const r = state.screenByKey.get("s:" + sym), g = r && pr ? (r.close / Number(pr) - 1) * 100 : null;
+          return `<div class="he-c"><b>${r ? `<a href="#/i/s/${encodeURIComponent(sym)}">${esc(sym)}</a>` : esc(sym)}</b><span>${esc(SD.fmtDate(d))} · issue ₹${esc(pr)}${g != null ? ` · now ₹${SD.fmtPrice(r.close)} ${pct(g)}` : ""}</span></div>`; }).join("") : "");
     const evHTML = `<small class="muted hm-l">RESULTS</small>${dueHTML || '<p class="muted small">No results dates in the next 10 days.</p>'}
+      <small class="muted hm-l">IPOs (MAIN BOARD)</small>${ipoHTML}
       <small class="muted hm-l">CALENDAR</small>${expiries(today, 4).map(([d, t]) => `<div class="he-c"><b>${shortDay(d)}</b><span>${t}</span></div>`).join("")}<p class="muted small">Expiry days move earlier when the exchange is closed.</p>`;
     // watchlist plan
     const sig = (r) => [r.pocket_pivot && "Pocket pivot", r.high_volume && r.chg_1d > 0 && "Up on big volume", r.hve && "Highest volume ever", r.rs_line_52w_high && "RS line high",
@@ -1653,7 +1719,8 @@
       <div class="hc-2"><section class="hcard"><div class="hc-h"><h2>Today's setups</h2><span class="muted small">${setups.length} liquid stocks, RS 70+, nearest the pivot</span>
           <button class="btn sm" id="hsCopy" type="button">Copy to TradingView</button><a class="sp-link" href="#/scanners/near-pivot">Open in Scanner →</a></div>${setHTML}</section>
         <div class="hc-col"><section class="hcard"><div class="hc-h"><h2>Where the money is</h2><span class="muted small">themes · 1 week</span></div>${moneyHTML}</section>
-          <section class="hcard ev"><div class="hc-h"><h2>Coming up</h2><span class="muted small">results, expiries</span></div>${evHTML}</section></div></div>
+          <section class="hcard ev"><div class="hc-h"><h2>Coming up</h2><span class="muted small">results, IPOs, expiries</span></div>${evHTML}</section></div></div>
+      <section class="hcard"><div class="hc-h"><h2>Orders, deals & expansion</h2><span class="muted small">company filings with NSE · last 5 days · liquid stocks</span><a class="sp-link" href="#/news">All filings →</a></div><div class="hd">${dealsHTML}</div></section>
       <section class="hcard"><div class="hc-h"><h2>Your watchlist plan</h2><span class="muted small">${wl.length} stock${wl.length === 1 ? "" : "s"}</span><a class="sp-link" href="#/watchlist">Open watchlist →</a></div><div class="hw">${wlHTML}</div></section>
       <p class="muted small">Our own simple rules on end-of-day data. Educational purpose only, not investment advice.</p></div>`;
     $("#stPage").innerHTML = `<span>${setups.length} setups</span><span class="st-n">Data ${SD.fmtDate(state.screenDate || state.dataDate)}</span>`;
@@ -1731,7 +1798,7 @@
         + `<td class="${x.np_ttm < 0 ? "down" : ""}">${finNum(x.np_ttm)}</td><td>${pctv(x.roce)}</td></tr>`).join("")
       + `</tbody></table></div><button type="button" class="sp-link" data-sp="peers">Compare all ${peersAll.length} peers →</button><small class="muted"> ${esc(r[grp])} · TTM figures</small>` : '<p class="muted small">No other stock in this industry.</p>';
     box.innerHTML = `<div class="sp">${head}${sec("ov", "Overview", ovSum, ov)}${sec("fin", "Financials", '<i class="skel sp-sk"></i>', SKEL("Loading financials"))}
-      ${sec("peers", "Peers", peerSum, peerBody)}${sec("shp", "Shareholding", "", '<i class="skel sp-sk"></i>')}</div>`;
+      ${sec("peers", "Peers", peerSum, peerBody)}${sec("shp", "Shareholding", "", '<i class="skel sp-sk"></i>')}${sec("news", "Filings & con-calls", '<i class="skel sp-sk"></i>', '<i class="skel sp-sk"></i>')}</div>`;
     box.onclick = (e) => {
       const a = e.target.closest("[data-sp]");
       if (a) {
@@ -1746,6 +1813,19 @@
       if (t) { store.set("sd-panel-ftab", t.dataset.ftab); drawFin(); }
     };
     box.querySelectorAll("details.sp-sec").forEach((d) => d.addEventListener("toggle", () => { const o = store.get("sd-panel-open", open); o[d.dataset.sec] = d.open; store.set("sd-panel-open", o); }));
+    // filings with NSE (data/a/<SYMBOL>.json): con-call / presentation links first, then the latest filings
+    getStockNews(r.symbol).then(async (list) => {
+      const sx = box.querySelector('[data-sec="news"]'); if (!sx || box.dataset.id !== id) return;
+      const N = await getNews(), pdf = N.pdf || "https://nsearchives.nseindia.com/corporate/";
+      const d30 = (() => { const t = new Date((state.screenDate || state.dataDate) + "T00:00:00"); t.setDate(t.getDate() - 30); return t.toISOString().slice(0, 10); })();
+      sx.querySelector(".sp-sum").textContent = list.length ? `${list.filter((n) => n[0] >= d30).length} in 30 days` : "none";
+      const calls = list.filter((n) => n[2] === "K" && n[5]).slice(0, 6);
+      const item = (n) => `<div class="sp-nw">${newsBadge(n[2], N.cats)}<div><small class="muted">${esc(SD.fmtDate(n[0].slice(0, 10)))} ${esc(n[0].slice(11, 16))}</small><div>${newsText(n[3], n[4])}</div></div>${newsLink(n[5], pdf)}</div>`;
+      sx.querySelector(".sp-b").innerHTML = list.length ? `${calls.length ? `<h5>Con-calls & presentations</h5>${calls.map(item).join("")}` : ""}
+        <h5>Latest filings</h5>${list.filter((n) => n[2] !== "K").slice(0, 12).map(item).join("") || '<p class="muted small">Only con-call notices.</p>'}
+        <a class="sp-link" href="#/news" data-nwq="${esc(r.symbol)}">All recent filings →</a>` : '<p class="muted small">No filings with NSE in the last year.</p>';
+      const a = sx.querySelector("[data-nwq]"); if (a) a.onclick = () => store.set("sd-news", { ...store.get("sd-news", {}), q: a.dataset.nwq, cats: [] });
+    });
     const doc = await getFin(id);
     if (box.dataset.id !== id) return;
     const finSec = box.querySelector('[data-sec="fin"]'), shpSec = box.querySelector('[data-sec="shp"]');
@@ -2140,7 +2220,7 @@
   function route() {
     if (!state.rows.length) return;
     const parts = location.hash.replace(/^#\/?/, "").split("/").map(decodeURIComponent);
-    const tab = { "": "home", market: "market", earnings: "earnings", heatmap: "heatmap", rrg: "rrg", leaders: "leaders", stocks: "stocks", scanners: "scanners", screener: "scanners", sectors: "groups", groups: "groups", breadth: "breadth", watchlist: "watchlist", fields: "fields", i: "" }[parts[0]] ?? "market";
+    const tab = { "": "home", market: "market", earnings: "earnings", heatmap: "heatmap", rrg: "rrg", leaders: "leaders", news: "news", stocks: "stocks", scanners: "scanners", screener: "scanners", sectors: "groups", groups: "groups", breadth: "breadth", watchlist: "watchlist", fields: "fields", i: "" }[parts[0]] ?? "market";
     document.querySelectorAll(".rail [data-tab]").forEach((a) => a.classList.toggle("active", a.dataset.tab === tab));
     const act = document.querySelector(".rail-main .active");
     if (act && matchMedia("(max-width: 720px)").matches) act.scrollIntoView({ inline: "center", block: "nearest" });
@@ -2164,6 +2244,7 @@
     else if (parts[0] === "heatmap") renderHeatmap();
     else if (parts[0] === "rrg") renderRRG();
     else if (parts[0] === "leaders") renderLeaders();
+    else if (parts[0] === "news") renderNews();
     else renderHome();
     window.scrollTo(0, 0);
   }

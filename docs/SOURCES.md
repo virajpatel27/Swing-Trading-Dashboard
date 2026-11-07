@@ -78,3 +78,12 @@ Script: `scripts/probe_sources.py`.
   Microcap 250, MidSmallcap 400 and Bank (Company Name, Industry, Symbol, Series, ISIN Code). Daily step 4f
   (swingdash/index_members.py) keeps `data/meta/index_members.csv` (index, symbol), rewritten only when a list changes;
   a failed or too-short list (< 80 % of the expected count) keeps the saved members. Website: `data/index_members.json`.
+
+## Company announcements (from 2026-11-07)
+- `https://www.nseindia.com/api/corporate-announcements?index=equities&from_date=DD-MM-YYYY&to_date=DD-MM-YYYY`
+  (Referer the corporate-filings page): every filing a listed company made with NSE (~1,000-1,500 a day): subject, short
+  text, time, link to the PDF on nsearchives. swingdash/announcements.py keeps them in data/announcements/YYYY-MM/DD.csv
+  (13 months, routine filings left out). Daily step 4g (last 3 days); backfill job `announcements` (last 365 days).
+## IPOs (changed 2026-11-07)
+- `api/public-past-issues` now labels main-board issues "Equity" (was EQ / BE ...). ipos.csv is merged with the saved list
+  (never shrinks); ipo_upcoming.csv = main-board issues not listed yet.

@@ -11,7 +11,7 @@ on:
       job:
         description: "What to download"
         type: choice
-        options: [stocks, nse-indices, classification, delivery, fundamentals]
+        options: [stocks, nse-indices, classification, delivery, fundamentals, announcements]
         default: stocks
       max_minutes:
         description: "Stop cleanly after this many minutes (the whole job may run at most 6 hours)"
@@ -76,6 +76,8 @@ jobs:
               python scripts/fetch_classification.py --max-minutes "$MAX" ;;
             delivery)
               python scripts/backfill.py --job delivery --max-minutes "$MAX" ;;
+            announcements)                              # company filings of the last 365 days, ~3 s per day
+              python scripts/backfill.py --job announcements --max-minutes "$MAX" ;;
             fundamentals)                               # ~40 s per stock: Nifty 500 first, then the rest
               python scripts/backfill.py --job fundamentals --max-minutes "$MAX"
               python scripts/fundamentals_report.py ;;

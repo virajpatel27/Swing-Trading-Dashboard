@@ -177,20 +177,33 @@ def share_count_changed(data: Path, today) -> set[str]:
     return out
 
 
-def download_ipos(data: Path, http, log=print) -> int:
-    """data/meta/ipos.csv: main-board IPOs (NSE past issues) under today's symbols (renames followed). Kept when NSE fails."""
+def download_ipos(data: Path, http, log=print, today: str | None = None) -> int:
+    """data/meta/ipos.csv: main-board IPOs (NSE past issues) under today's symbols (renames followed), MERGED with the saved
+    list (NSE's answer can be short or change its labels - the list never shrinks). Also data/meta/ipo_upcoming.csv:
+    main-board issues not listed yet. Both kept when NSE fails."""
     try:
-        ipos = nse.past_issues(http)
+        raw = nse.api_json(http, "api/public-past-issues")
+        raw = raw if isinstance(raw, list) else []
+        ipos = nse.past_issues(http, raw)
         changes = nse.symbol_changes(http)
     except Exception as exc:  # noqa: BLE001
         log(f"  IPO list not available ({type(exc).__name__}); keeping the saved one")
         return 0
     new_of = dict(zip(changes.sort_values("date")["old"], changes.sort_values("date")["new"]))
+    path = data / "meta" / "ipos.csv"
+    saved = pd.read_csv(path, dtype=str) if path.exists() else pd.DataFrame(columns=["symbol", "ipo_date", "ipo_price"])
+    ipos = pd.concat([saved, ipos.astype({"ipo_price": object})], ignore_index=True)
     for _ in range(5):                                   # follow chains A -> B -> C
         ipos["symbol"] = ipos["symbol"].map(lambda s: new_of.get(s, s))
-    ipos = ipos.sort_values("ipo_date").drop_duplicates("symbol", keep="last").sort_values("symbol")
-    path = data / "meta" / "ipos.csv"
+    ipos["ipo_price"] = pd.to_numeric(ipos["ipo_price"], errors="coerce")
+    ipos = ipos.dropna(subset=["ipo_date"]).sort_values("ipo_date").drop_duplicates("symbol", keep="last").sort_values("symbol")
     text = ipos.to_csv(index=False, lineterminator="\n")
     if not path.exists() or path.read_text(encoding="utf-8") != text:
         path.write_text(text, encoding="utf-8", newline="\n")
+    up = nse.parse_issue_pipeline(raw, today or pd.Timestamp.today().strftime("%Y-%m-%d"))
+    up_path = data / "meta" / "ipo_upcoming.csv"
+    up_text = up.to_csv(index=False, lineterminator="\n")
+    if not up_path.exists() or up_path.read_text(encoding="utf-8") != up_text:
+        up_path.write_text(up_text, encoding="utf-8", newline="\n")
+    log(f"  IPOs: {len(ipos)} main-board listings known, {len(up)} upcoming")
     return len(ipos)

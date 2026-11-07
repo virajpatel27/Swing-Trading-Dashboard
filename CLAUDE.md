@@ -149,3 +149,4 @@ N9 (RRG #/rrg; group_rank tails d/w for mkt + rrg_benchmarks, tail_days in group
 N10 (breadth: SVG charts with shared crosshair; major indices LWC grid) built 08-Nov. SD.ema is TRIMMED - use SDI.ema for aligned series.
 N11 (leaders #/leaders, SD.leaderScore) built 08-Nov.
 N12 polish done 08-Nov: UI redesign N0-N12 COMPLETE. site_build always writes fii_dii.json + index_members.json.
+News (07-Nov): swingdash/announcements.py (daily step 4g, backfill job announcements, data/announcements/YYYY-MM/DD.csv), #/news, chart filing markers, panel filings, home deals + IPOs. IPO fix: NSE label 'Equity', ipos.csv never shrinks.

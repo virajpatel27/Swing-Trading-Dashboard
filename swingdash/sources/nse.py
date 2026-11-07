@@ -342,12 +342,13 @@ def parse_mto(content: bytes) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------- IPOs (checked 2026-11-05)
-MAIN_BOARD = {"EQ", "BE", "BZ", "RR", "IV"}
+# NSE wrote EQ / BE ... until early Nov-2026, now "Equity" (SME, DEBT, InvIT are left out)
+MAIN_BOARD = {"EQ", "BE", "BZ", "RR", "IV", "EQUITY"}
 
 
-def past_issues(http) -> pd.DataFrame:
+def past_issues(http, raw: list | None = None) -> pd.DataFrame:
     """NSE's list of public issues (IPOs) with listing date and issue price; main board only (no SME, no debt)."""
-    rows = api_json(http, "api/public-past-issues")
+    rows = raw if raw is not None else api_json(http, "api/public-past-issues")
     return parse_past_issues(rows if isinstance(rows, list) else [])
 
 
@@ -355,10 +356,31 @@ def parse_past_issues(rows: list[dict]) -> pd.DataFrame:
     df = pd.DataFrame(rows)
     if df.empty:
         return pd.DataFrame(columns=["symbol", "ipo_date", "ipo_price"])
-    df = df[df["securityType"].astype(str).str.strip().isin(MAIN_BOARD)]
+    df = df[df["securityType"].astype(str).str.strip().str.upper().isin(MAIN_BOARD)]
     out = pd.DataFrame({"symbol": df["symbol"].astype(str).str.strip(),
                         "ipo_date": pd.to_datetime(df["listingDate"].astype(str).str.strip(), format="%d-%b-%Y", errors="coerce"),
                         "ipo_price": pd.to_numeric(df["issuePrice"].astype(str).str.replace(",", "").str.strip(), errors="coerce")})
     out = out.dropna(subset=["ipo_date"]).sort_values("ipo_date").drop_duplicates("symbol", keep="last")
     out["ipo_date"] = out["ipo_date"].dt.strftime("%Y-%m-%d")
     return out.reset_index(drop=True)
+
+
+def parse_issue_pipeline(rows: list[dict], today: str) -> pd.DataFrame:
+    """Main-board issues not listed yet (or listing from `today` on): name, symbol, bidding days, price (range), listing day."""
+    cols = ["symbol", "name", "open", "close", "price", "listing"]
+    df = pd.DataFrame(rows)
+    if df.empty or "securityType" not in df:
+        return pd.DataFrame(columns=cols)
+    df = df[df["securityType"].astype(str).str.strip().str.upper().isin(MAIN_BOARD)]
+    d = lambda c: pd.to_datetime(df[c].astype(str).str.strip(), format="%d-%b-%Y", errors="coerce").dt.strftime("%Y-%m-%d")
+    name = df["companyName"] if "companyName" in df else df["symbol"]
+    if "company" in df:
+        name = name.where(name.notna() & (name.astype(str).str.strip() != ""), df["company"])
+    out = pd.DataFrame({"symbol": df["symbol"].astype(str).str.strip(), "name": name.fillna("").astype(str).str.strip(),
+                        "open": d("ipoStartDate"), "close": d("ipoEndDate"),
+                        "price": df["issuePrice"].astype(str).where(df["issuePrice"].astype(str).str.strip() != "-", df.get("priceRange", "")).astype(str).str.strip(),
+                        "listing": d("listingDate")})
+    # not listed yet (or listing from today on), bidding opened within the last 45 days or later (old withdrawn issues out)
+    recent = (pd.Timestamp(today) - pd.Timedelta(days=45)).strftime("%Y-%m-%d")
+    out = out[(out["listing"].isna() | (out["listing"] >= today)) & (out["open"] >= recent)]
+    return out.drop_duplicates("symbol").sort_values(["open", "symbol"]).reset_index(drop=True)[cols]

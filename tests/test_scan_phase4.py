@@ -87,7 +87,7 @@ def test_supertrend_matches_tradingview_logic(sym):
 
 
 def test_stage_rules():
-    cfg = {"long_ma": 200, "fast_ma": 50, "min_sessions": 64, "slope_days": 20, "flat": 0.01, "early_days": 30}
+    cfg = yaml.safe_load(open(ROOT / "config" / "stage.yaml"))
     up = pd.Series(np.linspace(100, 300, 400))
     assert engine.stage(up, cfg).iloc[-1] == "2"
     down = pd.Series(np.linspace(300, 100, 400))
@@ -99,6 +99,18 @@ def test_stage_rules():
     assert "2A" in set(st.iloc[-40:]) and st.iloc[:63].isna().all()       # early uptrend after a downtrend; no stage < 64
     improving = pd.concat([pd.Series(np.linspace(300, 100, 300)), pd.Series(np.linspace(100, 130, 30))], ignore_index=True)
     assert engine.stage(improving, cfg).iloc[-1] == "4A"
+    # a shallow dip below SMA50 without an extended run stays Uptrend (07-Nov calibration)
+    mild = pd.concat([pd.Series(np.linspace(100, 115, 380)), pd.Series(np.linspace(115, 112, 20))], ignore_index=True)
+    assert engine.stage(mild, cfg).iloc[-1] == "2"
+    # basing: below SMA200, back above SMA50 and SMA150
+    base = pd.concat([pd.Series(np.linspace(300, 100, 200)), pd.Series(np.full(150, 100.0)), pd.Series(np.linspace(100, 104, 10))],
+                     ignore_index=True)
+    assert engine.stage(base, cfg).iloc[-1] == "1"
+    # young stocks (64..199 sessions) use SMA50 / SMA10 / SMA30
+    young_up = pd.Series(np.linspace(100, 150, 120))
+    assert engine.stage(young_up, cfg).iloc[-1] == "2" and engine.stage(young_up, cfg).iloc[:63].isna().all()
+    young_down = pd.Series(np.linspace(150, 100, 120))
+    assert engine.stage(young_down, cfg).iloc[-1] == "4"
 
 
 def test_relative_extension_and_days_since_high():
@@ -132,8 +144,12 @@ def test_rs_score_young_stock_and_rank():
     assert s.iloc[:63].isna().all() and pd.notna(s.iloc[63])               # from the 64th session; 3M and 6M used later
     exp = (0.4 * (c.iloc[-1] / c.iloc[-64] - 1) + 0.2 * (c.iloc[-1] / c.iloc[-127] - 1)) / 0.6
     assert s.iloc[-1] == pytest.approx(exp)
-    vals = pd.DataFrame([[1, 2, 3, np.nan]])
+    s10 = engine.rs_score(c, {63: 0.4, 126: 0.2, 189: 0.2, 252: 0.2}, 10)   # from the 11th session: return since day 1
+    assert s10.iloc[:10].isna().all() and s10.iloc[30] == pytest.approx(c.iloc[30] / c.iloc[0] - 1)
+    assert s10.iloc[-1] == pytest.approx(exp)
+    vals = pd.DataFrame([[1, 2, 3, np.nan], [1, 2, 3, 4]])
     assert screen.rank99(vals).iloc[0, :3].tolist() == [33, 66, 99]
+    assert screen.rank99(vals).iloc[1].tolist() == [24, 49, 74, 99]                 # rounded down (0.25 x 99 = 24.75)
 
 
 def test_registry_covers_the_screen():

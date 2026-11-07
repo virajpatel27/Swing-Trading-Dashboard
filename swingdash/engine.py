@@ -137,16 +137,28 @@ def days_since_max(s: pd.Series, n: int) -> pd.Series:
 
 
 def stage(c: pd.Series, cfg: dict) -> pd.Series:
-    """Stage per day (config/stage.yaml): 1 Basing, 2A Early uptrend, 2 Uptrend, 3 Topping, 4 Downtrend, 4A Improving."""
-    mn = int(cfg.get("min_sessions", 64))
-    long_ = c.rolling(int(cfg.get("long_ma", 200)), min_periods=mn).mean()
-    fast = c.rolling(int(cfg.get("fast_ma", 50)), min_periods=min(mn, int(cfg.get("fast_ma", 50)))).mean()
-    slope = long_ / long_.shift(int(cfg.get("slope_days", 20))) - 1
-    flat = float(cfg.get("flat", 0.01))
+    """Stage per day (config/stage.yaml): 1 Basing, 2A Early uptrend, 2 Uptrend, 3 Topping, 4 Downtrend, 4A Improving.
+    Stocks with long_ma sessions or more:
+      above SMA200: 2, except below SMA50 after an extended run (SMA20 > SMA200 x 1.06 and close > SMA200 x 1.03) = 3
+      at / below SMA200: 1 when back above SMA50 and (almost) above SMA150, 4A when above SMA50 only, else 4
+    Younger stocks (min_sessions on): above SMA50 = 2 (3 when the close drops 1.5 % below SMA10), else 1 when 2 % above
+    SMA30, else 4."""
+    mn, L = int(cfg.get("min_sessions", 64)), int(cfg.get("long_ma", 200))
+    sma = lambda k: c.rolling(int(k)).mean()
+    long_, fast, mid, short = sma(L), sma(cfg.get("fast_ma", 50)), sma(cfg.get("mid_ma", 150)), sma(cfg.get("short_ma", 20))
     above_long, above_fast = c > long_, c >= fast
-    base = np.where(above_long & above_fast, "2", np.where(above_long, "3",
-                    np.where(above_fast & (slope.abs() < flat), "1", np.where(above_fast, "4A", "4"))))
-    base = pd.Series(base, index=c.index).where(long_.notna() & fast.notna())
+    extended = (short > long_ * (1 + float(cfg.get("top_ext", 0.06)))) & (c > long_ * (1 + float(cfg.get("top_above", 0.03))))
+    basing = above_fast & (c > mid * (1 - float(cfg.get("base_tol", 0.008))))
+    old = np.where(above_long, np.where(above_fast | ~extended, "2", "3"),
+                   np.where(basing, "1", np.where(above_fast, "4A", "4")))
+    # young stocks (min_sessions .. long_ma sessions): the same idea on shorter averages
+    y = cfg.get("young") or {}
+    y_long, y_fast, y_mid = sma(y.get("long_ma", 50)), sma(y.get("fast_ma", 10)), sma(y.get("mid_ma", 30))
+    young = np.where(c > y_long * (1 - float(y.get("long_tol", 0.005))),
+                     np.where(c < y_fast * (1 - float(y.get("fast_tol", 0.015))), "3", "2"),
+                     np.where(c > y_mid * (1 + float(y.get("base_above", 0.02))), "1", "4"))
+    n = pd.Series(np.arange(1, len(c) + 1), index=c.index)
+    base = pd.Series(np.where(n >= L, old, young), index=c.index).where((n >= mn) & c.notna())
     # 2A: the first early_days sessions of a Stage 2 that came from 1 / 4 / 4A
     early, out, prev, run, from_low = int(cfg.get("early_days", 30)), [], None, 0, False
     for b in base:
@@ -281,7 +293,9 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
 
 # ---------------------------------------------------------------- all stocks of one day / of every day
 def rs_score(c: pd.Series, weights: dict, min_sessions: int) -> pd.Series:
-    """Weighted returns over 3/6/9/12 months; a younger stock uses the periods it has (weights of the rest dropped)."""
+    """Weighted returns over 3/6/9/12 months; a younger stock uses the periods it has (weights of the rest dropped), and
+    one younger than the shortest period its return since the first session (calibrated 07-Nov: the reference rates
+    stocks from their 11th session on)."""
     num = pd.Series(0.0, index=c.index)
     den = pd.Series(0.0, index=c.index)
     for n, w in weights.items():
@@ -290,7 +304,8 @@ def rs_score(c: pd.Series, weights: dict, min_sessions: int) -> pd.Series:
         num = num + r.fillna(0) * w
         den = den + ok * w
     have = pd.Series(np.arange(1, len(c) + 1), index=c.index) > min_sessions
-    return (num / den.replace(0, np.nan)).where(have)
+    since = c / c.iloc[0] - 1 if len(c) else c
+    return (num / den.replace(0, np.nan)).fillna(since).where(have)
 
 
 def percentile_vs(values: pd.DataFrame, reference: pd.DataFrame) -> pd.DataFrame:

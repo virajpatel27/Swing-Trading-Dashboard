@@ -31,8 +31,8 @@ Where a definition was chosen because it matched, the setting is in `config/indi
 | From 52W high / low | standard | 93.8 % / 97.3 % within 0.2 pt |
 | RS line at 52W high | benchmark Nifty Smallcap 250 (their default; Nifty 500: 98.5 %) | 99.2 % |
 | RS new high before price | as above, price below its 52W high | 98.8 % |
-| Stage | above SMA200 and SMA50 = 2, above SMA200 below SMA50 = 3, below SMA200 = 4 (Basing: ours) | 90.5 % (single-average 30-week rules: 47-80 %) |
-| RS rating | IBD-style weighted return, percentile rank among ALL stocks (liquid only: 57 %) | 76.8 % within 3, correlation 0.98 |
+| Stage | re-tuned 07-Nov, see below | 96.4 % (4 days) |
+| RS rating | re-tuned 07-Nov, see below | 80.4 % within 3 (88 % on stocks with full history) |
 | RS change 1W / rating 1M ago | as above, 5 / 21 sessions back | 69 % / 66 % within 3 |
 | Beta 1Y | daily returns vs Nifty 50, 252 sessions | 78.5 % within 0.05 (median gap 0.025) |
 | Avg turnover 20D / 50D | NSE traded value, incl. today | 82 % / 85 % within 3 % (they seem to use volume x price) |
@@ -127,3 +127,16 @@ Breakouts: the reference judged 14 (6 held, 8 failed) on 30-Oct, "27 % held this
 50 / 100-session high (or close high) gives 2-8 breakouts on 23-Oct and 33-53 % held, so its rule is unknown (maybe
 "held / failed" = breakouts vs breakdowns). Ours: close above the 50-session high, held = still above 5 sessions later
 (config/breadth.yaml). Verdict thresholds are our own and shown on the page.
+
+## Re-tuning 07-Nov-2026 (exports of 02, 04, 05 and 06-Nov; rules fitted on 02+04, checked on 05+06)
+
+| field | change | before | after |
+|---|---|---|---|
+| Stage (64+ sessions) | above SMA200 stays 2 below SMA50 unless the run was extended (SMA20 > SMA200 x 1.06 and close > SMA200 x 1.03 -> 3); Basing = below SMA200, above SMA50 and within 0.8 % of SMA150 (the SMA200 slope rule is gone) | 87.4 % | 96.4 % (96.3 / 96.5 / 95.9 / 97.1 per day) |
+| Stage, stocks with 64-199 sessions | own rule on SMA50 / SMA10 / SMA30 (the reference shows no SMA200 for them) | 67 % | 92 % |
+| RS rating | stocks rated from the 11th session (return since the first session when younger than 3 months); percentile rounded down | 70.9 % within 3 | 80.4 % (88.1 % on stocks whose full history we have) |
+
+Weights 0.4 / 0.2 / 0.2 / 0.2 were checked again: rank correlation 0.996 with the reference on mature stocks, no other
+weights do better. What is left for the RS rating is mostly the **~204 stocks that came to NSE from BSE** in 2026 (first
+NSE session 20-Apr or 17-Aug-2026, e.g. HAWKINCOOK, ELANTAS, NIRLON): the reference has their BSE history, we start at
+their NSE listing. Their young scores move everybody's percentile by a few points. Fix = their BSE history (next step).

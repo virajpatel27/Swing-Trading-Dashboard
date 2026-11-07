@@ -787,3 +787,16 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Refresh: run the import script with a newer export, then commit config/reference_classes.csv.
 - Tests 190 Python + 32 JS green.
 - Next: step 2 stage + RS rating tuning against the 4 exports (02/04/05/06 Nov).
+
+### 2026-11-07: accuracy step 2 - stage and RS rating re-tuned on 4 days of reference exports
+- Why: Viraj wants to trust every stage / RS number before an entry. Rules fitted on 02+04-Nov, checked on 05+06-Nov.
+- Stage (`engine.stage`, `site/ind.js` stage, `config/stage.yaml`): 87.4 % -> **96.4 %** equal. Above SMA200 a dip below
+  SMA50 stays Uptrend unless the run was extended (then Topping); Basing = below SMA200, back above SMA50 and SMA150.
+  Stocks with 64-199 sessions: own rule on SMA50 / SMA10 / SMA30 (67 % -> 92 %). JS = Python (fixtures regenerated).
+- RS rating (`engine.rs_score`, `screen.rank99`, indicators.yaml min_sessions 10): young stocks rated from the 11th session
+  (return since the first session under 3 months), percentile rounded down: 70.9 % -> **80.4 %** within 3 points
+  (88 % on stocks with full history).
+- Found: **~204 stocks came to NSE from BSE in 2026** (first NSE session 20-Apr-2026: 81, 17-Aug-2026: 123; HAWKINCOOK,
+  ELANTAS, NIRLON, TIMEX ...). We only have their NSE days, the reference has their BSE history -> their stage, RS, 52W
+  high, ATH, returns are short. Next: fetch their BSE history (www.bseindia.com bhavcopy works from GitHub) and join it.
+- docs/calibration.md has the table. Tests 190 Python + 32 JS green.

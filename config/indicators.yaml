@@ -22,6 +22,7 @@ volume:
 
 rs_rating:
   weights: {63: 0.4, 126: 0.2, 189: 0.2, 252: 0.2}   # IBD-style: recent quarter counts double
-  min_sessions: 63                # fewer sessions: no RS rating; between 63 and 252 the available periods are used
+  min_sessions: 10                # fewer sessions: no RS rating; up to 252 the available periods are used, under 63 the
+                                  # return since the first session (07-Nov: the reference rates from the 11th session)
   universe: all                   # percentile rank among ALL stocks with a score that day (calibrated: 77 % within 3
                                   # points of the reference, correlation 0.98; "liquid" only: 57 %)

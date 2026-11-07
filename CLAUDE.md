@@ -151,3 +151,4 @@ N11 (leaders #/leaders, SD.leaderScore) built 08-Nov.
 N12 polish done 08-Nov: UI redesign N0-N12 COMPLETE. site_build always writes fii_dii.json + index_members.json.
 News (07-Nov): swingdash/announcements.py (daily step 4g, backfill job announcements, data/announcements/YYYY-MM/DD.csv), #/news, chart filing markers, panel filings, home deals + IPOs. IPO fix: NSE label 'Equity', ipos.csv never shrinks.
 Classes (07-Nov, Viraj 'Exact copy j'): config/reference_classes.csv (scripts/import_reference_classes.py <export>) wins in classification.load + themes.run; rule themes only for unlisted stocks.
+Stage/RS (07-Nov): stage rule re-tuned (96.4 %, config/stage.yaml incl. young rule; site/ind.js same), RS from the 11th session + floor percentile (80 %). Open: BSE history for ~204 BSE->NSE stocks of 2026.

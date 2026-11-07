@@ -74,7 +74,7 @@ Current phase: **S9**. Fields: **273**.
 | `trend` | Trend | text | From close vs EMA20 / EMA50 / EMA200 (up, down, sideways) | close, ema20, ema50, ema200 | data/snapshot/latest.json |
 | `rs_3m` | RS vs index 3M % | percent | Stock 63-session return minus benchmark's (Nifty 50 / Sensex) | close, index_history | data/snapshot/latest.json |
 | `rs_6m` | RS vs index 6M % | percent | Stock 126-session return minus benchmark's | close, index_history | data/snapshot/latest.json |
-| `rs_rating` | RS rating | integer | Percentile 1-99 of 0.4 x 3M + 0.2 x 6M + 0.2 x 9M + 0.2 x 12M return among stocks | close | data/snapshot/screen.json, data/snapshot/latest.json |
+| `rs_rating` | RS rating | integer | Percentile 1-99 (rounded down) of 0.4 x 3M + 0.2 x 6M + 0.2 x 9M + 0.2 x 12M return among all stocks; younger stocks: the periods they have, under 3M the return since their first session (from the 11th session) | close | data/snapshot/screen.json, data/snapshot/latest.json |
 | `flags` | Flags | list | Simple signals: 52W / 20D breakout or breakdown, above EMA50 & 200, RSI 50-70, near 52W high, volume spike, strong RS | close, hi52, ema50, ema200, rsi14, vol_ratio, rs_rating | data/snapshot/latest.json |
 
 ## Fields of phase S1
@@ -185,7 +185,7 @@ Current phase: **S9**. Fields: **273**.
 | `rs_new_high_before_price` | RS new high before price | boolean | rs_line_52w_high and today's high below hi52 (price not at a new high) | rs_line_52w_high, hi52 | data/snapshot/screen.json |
 | `mansfield_rs` | Mansfield RS | number | (rs_line / its 52-week (260-session) average - 1) x 100 | rs_line | data/snapshot/screen.json |
 | `beta_1y` | Beta 1Y vs Nifty 50 | number | Covariance / variance of daily returns vs Nifty 50 over 252 sessions | close, index_history | data/snapshot/screen.json |
-| `stage` | Stage | text | 1 Basing, 2A Early uptrend, 2 Uptrend, 3 Topping, 4 Downtrend, 4A Improving: close vs SMA200 and SMA50, slope of SMA200 (config/stage.yaml) | close, indicator_settings | data/snapshot/screen.json |
+| `stage` | Stage | text | 1 Basing, 2A Early uptrend, 2 Uptrend, 3 Topping, 4 Downtrend, 4A Improving: above SMA200 = 2 (3 when below SMA50 after an extended run: SMA20 > SMA200 x 1.06, close > SMA200 x 1.03); below SMA200 = 1 when above SMA50 and SMA150, else 4 / 4A; under 200 sessions SMA50 / SMA10 / SMA30 (config/stage.yaml) | close, indicator_settings | data/snapshot/screen.json |
 | `rs_score` | RS score | number | 0.4 x 3M + 0.2 x 6M + 0.2 x 9M + 0.2 x 12M return (63/126/189/252 sessions; younger stocks: the periods they have) | close | data/snapshot/screen.json |
 | `liquid_day` | Liquid that day | boolean | Median turnover of the last 30 sessions >= Rs 1 Cr and raw close >= Rs 5 (same day) | turnover_cr, raw_close, settings | data/snapshot/screen.json |
 | `rs_rating_1w` | RS rating 1 week | integer | Percentile rank 1-99 of ret_1w among all stocks that day | ret_1w | data/snapshot/screen.json |

@@ -151,18 +151,27 @@
     const m = sma(rs.map((x) => (x == null ? NaN : x)), len);
     return rs.map((x, i) => (x == null || m[i] == null || Number.isNaN(m[i]) ? null : (x / m[i] - 1) * 100));
   }
-  /** Stage per bar (config/stage.yaml defaults): 1 Basing, 2A, 2, 3 Topping, 4 Downtrend, 4A Improving */
+  /** Stage per bar (config/stage.yaml defaults = engine.stage): 1 Basing, 2A, 2, 3 Topping, 4 Downtrend, 4A Improving */
   function stage(c, cfg = {}) {
-    const mn = cfg.min_sessions || 64, L = cfg.long_ma || 200, F = cfg.fast_ma || 50, sd = cfg.slope_days || 20;
-    const flat = cfg.flat == null ? 0.01 : cfg.flat, early = cfg.early_days || 30;
-    const lg = smaMin(c, L, mn), fa = smaMin(c, F, Math.min(mn, F));
+    const d = (k, v) => (cfg[k] == null ? v : cfg[k]), y = cfg.young || {}, yd = (k, v) => (y[k] == null ? v : y[k]);
+    const mn = d("min_sessions", 64), L = d("long_ma", 200), early = d("early_days", 30);
+    const lg = smaMin(c, L, L), fa = smaMin(c, d("fast_ma", 50), d("fast_ma", 50)), md = smaMin(c, d("mid_ma", 150), d("mid_ma", 150));
+    const sh = smaMin(c, d("short_ma", 20), d("short_ma", 20));
+    const yl = smaMin(c, yd("long_ma", 50), yd("long_ma", 50)), yf = smaMin(c, yd("fast_ma", 10), yd("fast_ma", 10));
+    const ym = smaMin(c, yd("mid_ma", 30), yd("mid_ma", 30));
     const out = new Array(c.length).fill(null);
     let prev = null, run = 0, fromLow = false;
     for (let i = 0; i < c.length; i++) {
-      if (lg[i] == null || fa[i] == null) continue;
-      const slope = i >= sd && lg[i - sd] != null ? lg[i] / lg[i - sd] - 1 : NaN;
-      const aL = c[i] > lg[i], aF = c[i] >= fa[i];
-      const b = aL && aF ? "2" : aL ? "3" : aF && Math.abs(slope) < flat ? "1" : aF ? "4A" : "4";
+      if (i + 1 < mn || c[i] == null) continue;
+      let b;
+      if (i + 1 >= L) {
+        const aL = c[i] > lg[i], aF = c[i] >= fa[i];
+        const ext = sh[i] > lg[i] * (1 + d("top_ext", 0.06)) && c[i] > lg[i] * (1 + d("top_above", 0.03));
+        b = aL ? (aF || !ext ? "2" : "3") : aF && c[i] > md[i] * (1 - d("base_tol", 0.008)) ? "1" : aF ? "4A" : "4";
+      } else {
+        b = c[i] > yl[i] * (1 - yd("long_tol", 0.005)) ? (c[i] < yf[i] * (1 - yd("fast_tol", 0.015)) ? "3" : "2")
+          : c[i] > ym[i] * (1 + yd("base_above", 0.02)) ? "1" : "4";
+      }
       if (b === "2") {
         if (prev !== "2") { fromLow = ["1", "4", "4A"].includes(prev); run = 0; }
         run++;

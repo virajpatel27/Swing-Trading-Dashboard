@@ -77,8 +77,8 @@ def one_stock(args) -> tuple[str, dict, pd.DataFrame] | None:
 
 def rank99(values: pd.DataFrame, universe: pd.DataFrame | None = None) -> pd.DataFrame:
     """Per row (day): percentile rank 1..99. universe given: rank against those values only (liquid stocks)."""
-    if universe is None:
-        return (values.rank(axis=1, pct=True) * 99).round().clip(1, 99)
+    if universe is None:                                    # rounded DOWN: 85.9 % within 3 of the reference, rounding 82.7 %
+        return np.floor(values.rank(axis=1, pct=True) * 99 + 1e-9).clip(1, 99)
     return engine.percentile_vs(values, universe)
 
 

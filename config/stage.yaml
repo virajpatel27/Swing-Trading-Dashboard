@@ -1,13 +1,25 @@
-# Stage analysis - Phase S4. Tuned on 03-Nov-2026 against the reference app's stages (docs/calibration.md: 90.5 % equal).
-#   Uptrend (2)   close above the long AND the fast average
-#   Topping (3)   close above the long average but below the fast one (momentum fading)
-#   Downtrend (4) close at / below the long average
-#   Basing (1)    below the long average, back above the fast one, and the long average flat (|slope| < flat)
+# Stage analysis. Re-tuned 07-Nov-2026 on 02/04/05/06-Nov against the reference app (docs/calibration.md):
+# 93.6 % equal (was 87.4 % with the 03-Nov rule). Change this file, not the code (site/ind.js has the same defaults).
+#   Uptrend (2)    close above the long average (also when it dips below the fast one, unless the run was extended)
+#   Topping (3)    above the long average, below the fast one, after an extended run:
+#                  short average > long x (1 + top_ext) AND close > long x (1 + top_above)
+#   Basing (1)     at / below the long average, back above the fast average and (within base_tol) above the mid one
+#   Downtrend (4)  the rest below the long average
 #   Early uptrend (2A)  the first early_days sessions of an Uptrend that came from Basing / Downtrend
-#   Improving (4A)      a Downtrend whose close is back above the fast average (long average still sloping)
-long_ma: 200            # sessions (young stocks: what they have, from min_sessions on)
+#   Improving (4A)      a Downtrend whose close is back above the fast average (but not Basing)
+long_ma: 200            # sessions; stocks with fewer sessions use the `young` rule
 fast_ma: 50
+mid_ma: 150
+short_ma: 20
+top_ext: 0.06
+top_above: 0.03
+base_tol: 0.008
 min_sessions: 64        # fewer sessions: no stage
-slope_days: 20          # slope of the long average = today / 20 sessions ago - 1
-flat: 0.01
 early_days: 30
+young:                  # min_sessions .. long_ma sessions (92 % equal)
+  long_ma: 50           # above long x (1 - long_tol): 2, or 3 when the close is fast_tol below the fast average
+  fast_ma: 10
+  mid_ma: 30            # below: 1 when the close is base_above over the mid average, else 4
+  long_tol: 0.005
+  fast_tol: 0.015
+  base_above: 0.02

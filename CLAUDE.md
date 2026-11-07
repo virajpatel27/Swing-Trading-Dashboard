@@ -160,3 +160,4 @@ Scanners part D (07-Nov): rsb_today (RS line vs NIFTY_MIDSMALLCAP_400, events.rs
 Step 4 (07-Nov): turnover avg = mean(volume x close); beta up to previous day; stock_master.stale_split_factor for NSE's late share counts.
 Step 5 (07-Nov): shrink_guard (validate_data error when a data file/folder shrinks > 20 % vs HEAD; skipped with --no-baseline) + crosscheck_bse (daily 4h, NSE vs BSE closes of liquid stocks).
 VCP (07-Nov): engine.vcp_setup (Trend Template universe, 2-session event, pivot->L1 + last two swing legs); 21/22 reference rows exact, precision 0.36.
+Nav (07-Nov): rail = Home / Scanners / Groups / Breadth; other pages = top 'Pages' tabs (app.js PAGES, localStorage sd-pages, add / remove / drag); top search removed, '/' opens a find dialog.

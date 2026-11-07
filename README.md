@@ -22,8 +22,9 @@ theme ranks, market breadth and company financials from NSE's official filings. 
 - **iPhone (Safari):** link kholo -> niche **Share** button (upar teer vadu chokhun ⬆️) -> niche scroll -> **Add to Home Screen** -> **Add**.
 - Have home screen par icon thi sidhu khulshe. Net na hoy to chhello joyelo data dekhay chhe.
 
-**Dabi baju nu menu** (phone par niche): icon par mouse rakho to naam dekhay. Upar **search** box (ke `/` key):
-stock / index nu naam lakho -> Enter = sidho chart.
+**Dabi baju nu menu** (phone par niche): fakt 4 - Home, Scanners, Groups, Breadth. Baki badha pages upar **Pages** tabs ma:
+tab par ✕ = kadhi nakho, **+ Add page** = pachhu umero, tab kheñchi ne order badlo (tamara browser ma yaad rahe).
+Koi pan jagyae **`/`** key dabavo: stock / index nu naam lakho -> Enter = sidho chart.
 
 **Menu na pages:**
 - **Home** - Warm-up: bajaar ni tabiyat (market read, participation, Stage 2/4, FII/DII, 20D highs-lows), mukhya indices,

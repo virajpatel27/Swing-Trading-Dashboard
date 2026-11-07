@@ -77,14 +77,6 @@ img.logo { display: block; width: 30px; height: auto; }
 .brand { display: none; align-items: center; gap: 8px; color: var(--text); font-weight: 650; white-space: nowrap; }
 .brand:hover { text-decoration: none; }
 .brand img.logo { width: 26px; }
-.gsearch { position: relative; flex: 0 1 440px; display: flex; align-items: center; }
-.gsearch > .ic { position: absolute; left: 11px; width: 17px; height: 17px; color: var(--muted); pointer-events: none; }
-.gsearch input[type="search"] {
-  width: 100%; height: 38px; padding: 0 34px 0 36px; border: 1px solid var(--line); border-radius: 11px; background: var(--panel);
-  box-shadow: var(--shadow); outline: none; transition: border-color .15s, box-shadow .15s;
-}
-.gsearch input[type="search"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.gsearch kbd { position: absolute; right: 9px; font: 11px/1 var(--font); color: var(--muted); border: 1px solid var(--line); border-radius: 5px; padding: 3px 6px; }
 .gres {
   position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 40; background: var(--panel); border: 1px solid var(--line);
   border-radius: 12px; box-shadow: 0 12px 36px rgba(0, 0, 0, .16); padding: 6px; max-height: 60vh; overflow-y: auto; animation: drop .14s ease-out;
@@ -151,8 +143,7 @@ h2 { font-size: 16px; font-weight: 600; margin: 20px 0 8px; }
   .frame { padding: 0 8px 10px; }
   .top { gap: 8px; }
   .brand { display: flex; }
-  .brand span, .asof, .gsearch kbd { display: none; }
-  .gsearch { flex: 1; }
+  .brand span, .asof { display: none; }
   main.card { padding: 14px 12px; border-radius: 14px; min-height: 0; }
   .statusbar { position: static; height: auto; padding: 10px 12px; flex-direction: column; align-items: flex-start; gap: 4px; white-space: normal; border-top: 0; background: none; }
   .statusbar > div { white-space: normal; }
@@ -1084,3 +1075,54 @@ td.small { font-size: 12px; white-space: normal; min-width: 140px; }
 .ch-news .nc-E { color: #7e57c2; } .ch-news .nc-K { color: #0ea5e9; } .ch-news .nc-O { color: #16a34a; } .ch-news .nc-D { color: #2962ff; } .ch-news .nc-C { color: #f59e0b; }
 .ch-news .nc-F { color: #a855f7; } .ch-news .nc-M { color: #64748b; } .ch-news .nc-R { color: #db2777; } .ch-news .nc-A { color: #14b8a6; } .ch-news .nc-P { color: #94a3b8; }
 @media (max-width: 720px) { .nw-row { grid-template-columns: 38px 20px minmax(0, 1fr); } .nw-pdf { grid-column: 3; } .nw-bar #nwQ { margin-left: 0; } }
+
+/* ---------------------------------------------------------------- top bar page tabs (07-Nov, Viraj: rail keeps 4 pages) */
+.pages {
+  flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 4px; padding: 4px 4px 4px 12px;
+  background: linear-gradient(90deg, var(--accent-soft), var(--panel-2)); border: 1px solid var(--line); border-radius: 12px;
+}
+.pg-lbl { font-size: 13px; font-weight: 600; color: var(--text); margin-right: 6px; white-space: nowrap; }
+.pg-tabs { display: flex; align-items: center; gap: 2px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.pg-tabs::-webkit-scrollbar { display: none; }
+.pg-tab {
+  position: relative; display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 12px; border-radius: 9px;
+  color: var(--muted); font-size: 13px; font-weight: 500; white-space: nowrap; user-select: none; transition: background .15s, color .15s;
+}
+.pg-tab .ic { width: 16px; height: 16px; }
+.pg-tab:hover { color: var(--text); background: color-mix(in srgb, var(--panel) 60%, transparent); text-decoration: none; }
+.pg-tab.on { background: var(--panel); color: var(--accent); box-shadow: var(--shadow); font-weight: 600; }
+.pg-tab.drag { opacity: .45; }
+.pg-grip { display: none; font-style: normal; color: var(--muted); font-size: 12px; cursor: grab; margin-left: -4px; }
+.pg-tab.on .pg-grip, .pg-tab:hover .pg-grip { display: inline; }
+.pg-x {
+  display: none; border: 0; background: none; color: var(--muted); font-size: 11px; line-height: 1; padding: 3px 4px; margin-right: -6px;
+  border-radius: 5px; cursor: pointer;
+}
+.pg-tab.on .pg-x, .pg-tab:hover .pg-x { display: inline-block; }
+.pg-x:hover { background: var(--panel-2); color: var(--down); }
+.pg-addw { position: relative; margin-left: auto; flex: none; }
+.pg-add {
+  display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border: 1px solid var(--line); border-radius: 9px;
+  background: var(--panel); color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; box-shadow: var(--shadow);
+}
+.pg-add .ic { width: 16px; height: 16px; }
+.pg-add:hover { border-color: var(--accent); }
+.pg-menu { left: auto; right: 0; min-width: 210px; z-index: 45; }
+.pg-menu button { display: flex; align-items: center; gap: 8px; }
+.pg-menu .ic { width: 16px; height: 16px; }
+.pg-menu hr { border: 0; border-top: 1px solid var(--line); margin: 4px 2px; width: auto; }
+.pg-none { padding: 8px 10px; font-size: 13px; }
+.top .asof { margin-left: 0; }
+.modal-bg.find .modal { width: min(520px, 94vw); }
+.fq { width: 100%; height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); outline: none; }
+.fq:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.gres.fres { position: static; margin-top: 8px; box-shadow: none; border: 0; padding: 0; max-height: 55vh; animation: none; }
+.gres.fres:empty { display: none; }
+@media (max-width: 720px) {
+  .pages { padding: 3px; border-radius: 10px; }
+  .pg-lbl { display: none; }
+  .pg-tab { height: 32px; padding: 0 9px; }
+  .pg-tab .ic { display: none; }
+  .pg-add span { display: none; }
+  .pg-add { padding: 0 9px; }
+}

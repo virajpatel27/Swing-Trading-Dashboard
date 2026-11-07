@@ -868,3 +868,11 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   only), fields vcp_age / vcp_depth1-3 / vcp_pivot / vcp_base_bars, scanner vcp = Trend Template rule + vcp_age <= 2.
 - 4 days: recall 0.875 / precision 0.36 (was 0 / 0); 21 of 22 rows exactly equal (age, depths, pivot). Tests 197 + 32 JS.
 - The chart's VCP drawing (site/ind.js contractions) is unchanged; the old patterns.py vcp_* fields stay for it.
+
+### 2026-11-07: navigation - 4 rail buttons + page tabs on top (Viraj's screenshots)
+- Rail keeps Home, Scanners, Groups, Breadth (+ theme / about at the bottom). Every other page (Market, Stocks, Earnings,
+  Heatmap, Leaders, RRG, News, Watchlist, Formulas) is a tab in a "Pages" strip in the top bar: active tab = white pill
+  with a drag handle and a remove button, "+ Add page" menu brings removed pages back (and "Reset to the default tabs"),
+  tabs can be dragged to a new order. The visitor's list lives in the browser (localStorage "sd-pages").
+- The top bar's search box is gone (Viraj); press "/" anywhere for a small "Find a stock or index" dialog instead.
+- Checked in the preview: desktop + phone 375 px, remove / add / order saved, "/" find (INFY). JS tests 32 green.

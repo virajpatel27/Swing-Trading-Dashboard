@@ -2249,9 +2249,75 @@
     window.scrollTo(0, 0);
   }
 
-  /* ------------------------------------------------------------------ top bar: find a stock / index, about */
-  const gq = $("#gq"), gres = $("#gres");
-  let gHits = [], gOn = 0;
+  /* ------------------------------------------------------------------ top bar: page tabs (add / remove / drag), find */
+  // The rail keeps Home, Scanners, Groups, Breadth; every other page is a tab here (Viraj 07-Nov). The visitor's own list
+  // and order live in the browser (localStorage "sd-pages"); "Add page" brings back a removed one.
+  const IC = (d) => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
+  const PAGES = {
+    market: ["Market", IC('<path d="M3 17l5-6 4 3 6-8"/><path d="M14 6h4v4"/>')],
+    stocks: ["Stocks", IC('<path d="M4 6h16M4 12h16M4 18h10"/>')],
+    earnings: ["Earnings", IC('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M8 14h2M12 14h2M8 17h2"/>')],
+    heatmap: ["Heatmap", IC('<rect x="3" y="3" width="10" height="11" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="15" y="11" width="6" height="10" rx="1"/><rect x="3" y="16" width="10" height="5" rx="1"/>')],
+    leaders: ["Leaders", IC('<path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0z"/><path d="M7 6H4a3 3 0 003 4M17 6h3a3 3 0 01-3 4"/>')],
+    rrg: ["RRG", IC('<path d="M12 3v18M3 12h18"/><path d="M6 17c2-1 3-3 5-3s4 2 6-1"/><circle cx="17" cy="13" r="1.6"/>')],
+    news: ["News", IC('<path d="M4 5h13v14H6a2 2 0 01-2-2z"/><path d="M17 8h3v9a2 2 0 01-2 2"/><path d="M7 9h7M7 12h7M7 15h4"/>')],
+    watchlist: ["Watchlist", IC('<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.9z"/>')],
+    fields: ["Formulas", IC('<path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3z"/><path d="M5 17a3 3 0 013-3h11"/>')],
+  };
+  const PAGES_DEFAULT = ["market", "stocks", "earnings", "heatmap", "leaders", "rrg", "news", "watchlist"];
+  const pgTabs = $("#pgTabs"), pgAdd = $("#pgAdd"), pgMenu = $("#pgMenu");
+  let pages = (store.get("sd-pages", null) || PAGES_DEFAULT).filter((k) => PAGES[k]);
+  const savePages = () => store.set("sd-pages", pages);
+  function drawPages() {
+    const cur = location.hash.replace(/^#\/?/, "").split("/")[0];
+    pgTabs.innerHTML = pages.map((k) => `<a role="listitem" href="#/${k}" data-page="${k}" draggable="true" class="pg-tab${k === cur ? " on" : ""}" title="${esc(PAGES[k][0])}">`
+      + `<i class="pg-grip" aria-hidden="true">⠿</i>${PAGES[k][1]}<span>${esc(PAGES[k][0])}</span>`
+      + `<button type="button" class="pg-x" data-x="${k}" aria-label="Remove ${esc(PAGES[k][0])} from the tabs" title="Remove">✕</button></a>`).join("");
+    const on = pgTabs.querySelector(".on");
+    if (on) on.scrollIntoView({ inline: "nearest", block: "nearest" });
+  }
+  function drawPageMenu() {
+    const rest = Object.keys(PAGES).filter((k) => !pages.includes(k));
+    pgMenu.innerHTML = (rest.length ? rest.map((k) => `<button type="button" role="menuitem" data-add="${k}">${PAGES[k][1]}<span>${esc(PAGES[k][0])}</span></button>`).join("")
+      : `<div class="muted pg-none">All pages are in the tabs.</div>`)
+      + `<hr><button type="button" role="menuitem" data-reset>Reset to the default tabs</button>`;
+  }
+  pgTabs.addEventListener("click", (e) => {
+    const x = e.target.closest("[data-x]");
+    if (!x) return;
+    e.preventDefault(); e.stopPropagation();
+    pages = pages.filter((k) => k !== x.dataset.x); savePages(); drawPages();
+  });
+  pgAdd.onclick = (e) => { e.stopPropagation(); drawPageMenu(); pgMenu.hidden = !pgMenu.hidden; pgAdd.setAttribute("aria-expanded", String(!pgMenu.hidden)); };
+  pgMenu.onclick = (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    if (b.dataset.add) { pages.push(b.dataset.add); location.hash = "#/" + b.dataset.add; }
+    if (b.hasAttribute("data-reset")) pages = PAGES_DEFAULT.slice();
+    savePages(); drawPages(); pgMenu.hidden = true; pgAdd.setAttribute("aria-expanded", "false");
+  };
+  document.addEventListener("click", (e) => { if (!e.target.closest(".pg-addw")) { pgMenu.hidden = true; pgAdd.setAttribute("aria-expanded", "false"); } });
+  let pgDrag = null;
+  pgTabs.addEventListener("dragstart", (e) => {
+    const t = e.target.closest(".pg-tab");
+    if (!t) return;
+    pgDrag = t.dataset.page; t.classList.add("drag"); e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", pgDrag);
+  });
+  pgTabs.addEventListener("dragover", (e) => { if (pgDrag) e.preventDefault(); });
+  pgTabs.addEventListener("drop", (e) => {
+    e.preventDefault();
+    const t = e.target.closest(".pg-tab");
+    if (!pgDrag || !t || t.dataset.page === pgDrag) return;
+    const r = t.getBoundingClientRect(), after = e.clientX > r.left + r.width / 2;
+    pages = pages.filter((k) => k !== pgDrag);
+    pages.splice(pages.indexOf(t.dataset.page) + (after ? 1 : 0), 0, pgDrag);
+    savePages(); drawPages();
+  });
+  pgTabs.addEventListener("dragend", () => { pgDrag = null; pgTabs.querySelectorAll(".drag").forEach((t) => t.classList.remove("drag")); });
+  window.addEventListener("hashchange", drawPages);
+  drawPages();
+
+  // find a stock / index: press "/" anywhere (the top bar's search box was removed, Viraj 07-Nov)
   function gFind(q) {
     q = q.trim().toLowerCase();
     if (!q) return [];
@@ -2264,29 +2330,32 @@
     }
     return hits.sort((a, b) => a[0] - b[0] || a[1] - b[1]).slice(0, 8).map((h) => h[2]);
   }
-  function gDraw() {
-    gHits = gFind(gq.value);
-    gOn = Math.min(gOn, Math.max(gHits.length - 1, 0));
-    if (!gq.value.trim()) { gres.hidden = true; gq.setAttribute("aria-expanded", "false"); return; }
-    gres.innerHTML = gHits.length ? gHits.map((r, i) => `<a role="option" href="#/i/${r.key.replace(":", "/")}" class="${i === gOn ? "on" : ""}">`
-      + `<b>${esc(r.kind === "stock" ? r.symbol : r.name)}</b><span class="num">${SD.fmtPrice(r.close)}<br>${pct(r.chg_1d)}</span>`
-      + `<small>${esc(r.kind === "stock" ? r.name : r.exchange + " index")}${r.sector ? " · " + esc(r.sector) : ""}</small></a>`).join("")
-      : `<div class="empty">No stock or index matches “${esc(gq.value)}”.</div>`;
-    gres.hidden = false;
-    gq.setAttribute("aria-expanded", "true");
+  function openFind() {
+    if (document.querySelector(".modal-bg.find")) return;
+    const m = SDChart.modal("Find a stock or index",
+      `<input id="fq" type="search" class="fq" placeholder="e.g. INFY or Reliance" autocomplete="off" aria-label="Find a stock or index"><div id="fres" class="gres fres"></div>`,
+      null, false, "find");
+    const q = m.querySelector("#fq"), res = m.querySelector("#fres");
+    let hits = [], on = 0;
+    const shut = () => m.querySelector("[data-x]").click();
+    const draw = () => {
+      hits = gFind(q.value); on = Math.min(on, Math.max(hits.length - 1, 0));
+      res.innerHTML = !q.value.trim() ? "" : hits.length ? hits.map((r, i) => `<a role="option" href="#/i/${r.key.replace(":", "/")}" class="${i === on ? "on" : ""}">`
+        + `<b>${esc(r.kind === "stock" ? r.symbol : r.name)}</b><span class="num">${SD.fmtPrice(r.close)}<br>${pct(r.chg_1d)}</span>`
+        + `<small>${esc(r.kind === "stock" ? r.name : r.exchange + " index")}${r.sector ? " · " + esc(r.sector) : ""}</small></a>`).join("")
+        : `<div class="empty">No stock or index matches “${esc(q.value)}”.</div>`;
+    };
+    q.oninput = () => { on = 0; draw(); };
+    q.onkeydown = (e) => {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); on = (on + (e.key === "ArrowDown" ? 1 : -1) + hits.length) % Math.max(hits.length, 1); draw(); }
+      else if (e.key === "Enter" && hits[on]) { location.hash = "#/i/" + hits[on].key.replace(":", "/"); shut(); }
+    };
+    res.onclick = (e) => { if (e.target.closest("a")) shut(); };
+    setTimeout(() => q.focus(), 30);
   }
-  const gClose = () => { gres.hidden = true; gq.setAttribute("aria-expanded", "false"); };
-  gq.oninput = () => { gOn = 0; gDraw(); };
-  gq.onfocus = () => { if (gq.value.trim()) gDraw(); };
-  gq.onkeydown = (e) => {
-    if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); gOn = (gOn + (e.key === "ArrowDown" ? 1 : -1) + gHits.length) % Math.max(gHits.length, 1); gDraw(); }
-    else if (e.key === "Enter" && gHits[gOn]) { location.hash = "#/i/" + gHits[gOn].key.replace(":", "/"); gq.value = ""; gClose(); gq.blur(); }
-    else if (e.key === "Escape") { gq.value = ""; gClose(); gq.blur(); }
-  };
-  gres.onclick = (e) => { if (e.target.closest("a")) { gq.value = ""; gClose(); } };
-  document.addEventListener("click", (e) => { if (!e.target.closest(".gsearch")) gClose(); });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "/" && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) && !document.activeElement.isContentEditable) { e.preventDefault(); gq.focus(); }
+    if (e.key === "/" && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) && !document.activeElement.isContentEditable
+        && !document.querySelector(".modal-bg")) { e.preventDefault(); openFind(); }
   });
   const showAbout = (e) => { if (e) e.preventDefault(); SDChart.modal("About this dashboard", `<div class="about">${$("#aboutTpl").innerHTML}</div>`); };
   $("#about").onclick = showAbout;

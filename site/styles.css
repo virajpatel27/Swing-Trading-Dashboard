@@ -668,3 +668,81 @@ td.small { font-size: 12px; white-space: normal; min-width: 140px; }
 .cs-f #csCount b { color: var(--text); font-size: 16px; }
 .cs-h .btn { white-space: nowrap; }
 @media (max-width: 720px) { .cs-b { columns: 1; } .cs-tabs #csQ { margin-left: 0; flex: 1 1 100%; } .cs-name { flex: 1 1 100px; } .cs-h > b { display: none; } .cs-h { padding: 10px; gap: 6px; } .cs-tl button { padding: 6px 9px; } }
+
+/* ---------------------------------------------------------------- Phase N4: stock panel, financials page */
+.ws-main.list.wide.withp { grid-template-columns: var(--list-w, 300px) 8px minmax(0, 1fr) 340px; column-gap: 0; }
+.ws-main .side-panel { display: none; }
+.ws-main.list.wide.withp .side-panel { display: block; margin-left: 10px; overflow-y: auto; height: 100%; }
+.ws-bar .btn.icon.on, .ws-right .btn.icon.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.d-main.withp { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 12px; align-items: start; }
+.d-main[hidden] { display: none !important; }
+@media (max-width: 1099px) { .d-main.withp { grid-template-columns: 1fr; } }
+.side-panel { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); min-width: 0; }
+.side-panel:empty { display: none !important; }
+.sp { font-size: 13px; }
+.sp-h { display: flex; align-items: flex-start; gap: 8px; padding: 12px 12px 4px; }
+.sp-t { flex: 1; min-width: 0; }
+.sp-t b { display: block; font-size: 14.5px; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sp-act { display: flex; gap: 2px; }
+.sp-act .star { font-size: 15px; }
+.sp-act .star.on { color: #e3a008; }
+.sp-px { display: flex; align-items: baseline; gap: 8px; padding: 0 12px 10px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.sp-px > b { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.sp-rt { margin-left: auto; font-size: 12px; color: var(--muted); }
+.sp-sec { border-bottom: 1px solid var(--line); }
+.sp-sec:last-child { border-bottom: 0; }
+.sp-sec > summary { list-style: none; display: flex; align-items: center; gap: 8px; padding: 10px 12px; cursor: pointer; transition: background .12s; }
+.sp-sec > summary::-webkit-details-marker { display: none; }
+.sp-sec > summary::before { content: "\203A"; color: var(--muted); width: 8px; transition: transform .15s; }
+.sp-sec[open] > summary::before { transform: rotate(90deg); }
+.sp-sec > summary:hover { background: var(--panel-2); }
+.sp-sum { margin-left: auto; font-size: 11.5px; color: var(--muted); text-align: right; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sp-sk { display: inline-block; width: 110px; height: 12px; }
+.sp-b { padding: 0 12px 12px; animation: drop .15s ease-out; }
+.sp-b h5 { margin: 12px 0 6px; font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.sp-b h5 small { text-transform: none; letter-spacing: 0; }
+.sp-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.sp-tag { font-size: 11.5px; padding: 2px 8px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line); }
+.sp-tag.due { color: #db2777; border-color: color-mix(in srgb, #db2777 35%, transparent); background: color-mix(in srgb, #db2777 8%, transparent); }
+.sp-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.sp-kv { background: var(--panel-2); border-radius: 8px; padding: 6px 8px; min-width: 0; }
+.sp-kv small { display: block; color: var(--muted); font-size: 10.5px; }
+.sp-kv b { font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.sp-pc p { margin: 0 0 4px; padding: 6px 8px; border-radius: 8px; font-size: 12.5px; }
+.sp-pc .pro { background: color-mix(in srgb, var(--up) 10%, transparent); }
+.sp-pc .con { background: color-mix(in srgb, var(--down) 10%, transparent); }
+.sp-ft { margin-bottom: 8px; display: flex; }
+.sp-ft button { flex: 1; padding: 4px 6px; font-size: 11.5px; }
+.sp-t2 { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
+.sp-t2 th, .sp-t2 td { padding: 4px 4px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; position: static; background: none; cursor: default; }
+.sp-t2 th { color: var(--muted); font-weight: 500; font-size: 10.5px; }
+.sp-t2 .l { text-align: left; }
+.sp-t2 td b { font-weight: 600; }
+.sp-t2 tr.me td { background: var(--accent-soft); font-weight: 600; }
+.sp-t2 tr[data-peer] { cursor: pointer; }
+.sp-t2 tr[data-peer]:hover td { background: var(--panel-2); }
+.sp-t2.fin td:last-child { font-size: 11px; line-height: 1.25; }
+.sp-t2.fin td.l { white-space: normal; line-height: 1.2; }
+.sp-t2.fin .mbar { width: 72px; }
+.sp-tw { overflow-x: auto; }
+.mbar { display: inline-block; vertical-align: middle; }
+.mbar rect { fill: color-mix(in srgb, var(--accent) 45%, transparent); }
+.mbar rect.last { fill: var(--accent); }
+.mbar rect.neg { fill: color-mix(in srgb, var(--down) 55%, transparent); }
+.mbar rect.neg.last { fill: var(--down); }
+.sp-note { margin: 0 0 8px; padding: 6px 8px; border-radius: 8px; background: var(--panel-2); font-size: 12.5px; }
+.sp-link { border: 0; background: none; color: var(--accent); cursor: pointer; padding: 8px 0 0; font-weight: 600; font-size: 12.5px; }
+.sp-link:hover { text-decoration: underline; }
+.sp-shbar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; margin: 2px 0 8px; gap: 1px; }
+.sp-t2 .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+/* financials page cards */
+.fcard { border: 1px solid var(--line); border-radius: 12px; margin: 14px 0; overflow: hidden; background: var(--panel); }
+.fcard-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.fcard-h h3 { margin: 0 !important; font-size: 15px; }
+.fcard .table-wrap.fin { border: 0; border-radius: 0; box-shadow: none; }
+.table-wrap.fin thead th { background: var(--accent-soft); color: var(--text); }
+.table-wrap.fin th.sticky { background: var(--accent-soft); }
+.table-wrap.fin td.neg, .grow b.neg { color: var(--down); }
+.grow { border-radius: 12px; }
+.pros-cons .pros { background: color-mix(in srgb, var(--up) 6%, var(--panel)); }
+.pros-cons .cons { background: color-mix(in srgb, var(--down) 6%, var(--panel)); }

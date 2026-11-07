@@ -128,7 +128,7 @@ logo, colours, font, icons and wording (the site is public: no copied branding).
 | N1 | Scanner workspace: results list (drag wider = more columns), scanner menu (search, folders, pin, counts, info), pinned scanners, + New scan, column drawer, grid view 2/3/4 with mini charts, Copy / CSV in the status bar | built 2026-11-06 |
 | N2 | Chart: toolbar with chips, OHLC header + results-due date, legend with hide / settings / remove, indicator popup (list + live preview + colour grid), settings drawer (Markers / Display, applies at once), pane resize, vertical drawing bar (+ horizontal line), volume label in its pane, cup curve + VCP wave with % pills, earnings table (last 5 quarters, YoY / QoQ), back-to-latest button | built 2026-11-06 |
 | N3 | Custom scan window: 5 tabs, 80 filters, live count + active filters per tab, filter search (`/`), Load saved / Save scan / Run scan; saved as My Scans (same rule format, so pins, grid, CSV, formula all work) | built 2026-11-07 |
-| N4 | Stock side panel + Financials page + Peers | open |
+| N4 | Stock panel (price head; Overview with tags, 12 key ratios, pros & cons; Financials with mini bars, 4 tabs, CAGR, cash-to-profit; Peers by basic industry; Shareholding bar + mini bars), panel beside the chart on the scanner page and the stock page, Financials page as cards with a consolidated / standalone link and red negatives | built 2026-11-07 |
 | N5 | Warm-up home (incl. FII / DII cash - new data) | open |
 | N6 | Earnings calendar page with our rating rule | open |
 | N7 | Heatmap (index constituent lists) | open |

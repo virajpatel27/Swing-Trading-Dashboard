@@ -39,6 +39,8 @@ stock / index nu naam lakho -> Enter = sidho chart.
 - **Breadth** - bajaar ni tabiyat: 6 line nu saransh (Momentum, Short-term, Big trend, Breakouts, Overdone?, Leadership),
   stage mix ane 6 chart; **Major Indices** tab.
 - **Watchlist** - ★ dabavo; aa browser ma save rahe chhe.
+- **Stock panel** (chart ni jamni baju, ▯ button thi chalu / bandh): bhav, Overview (key ratios, pros & cons), Financials
+  (12 quarter na nana bar), Peers (e j industry), Shareholding. ⤢ = aakhu Financials page.
 - **Stock page** - **Chart | Financials**: chart (ƒx Indicators popup ma preview + rang, ⚙ = settings drawer, legend par 👁 / ⚙ / ×,
   ✏️ = drawing patti, cup curve / VCP lehar, niche Earnings table, panes vachche ni line kheñchi ne uchai badlo) ane company na results,
   P&L, balance sheet, cash flow, shareholding, ratios, Pros & Cons.

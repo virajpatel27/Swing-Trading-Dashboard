@@ -140,3 +140,4 @@ UI redesign phases N0-N12: docs/PLAN.md. N0 (app frame: rail, top-bar search, ca
 N1 (scanner workspace: picker with pins/counts, resizable list, column drawer, grid of mini charts) built 06-Nov.
 N2 (chart: legend controls, indicator popup with preview, settings drawer, drawing bar, cup/VCP SVG, earnings table) built 06-Nov.
 N3 (custom scan window: CS filter list in app.js, csRule -> scanner rule, builder state saved with My Scans) built 07-Nov.
+N4 (stockPanel accordion beside the chart, peers by basic_industry, financials cards) built 07-Nov.

@@ -633,3 +633,20 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Checked in the preview (1440 px + 375 px): count 168 = results 168 for stage 2 + liquid + above 50/200 SMA + RSI 55-70.
   Tests 172 Python + 24 JS green.
 - NEXT: N4 stock side panel + Financials page + Peers.
+
+### 2026-11-07: UI redesign N4 - stock panel, peers, financials page
+- New stockPanel() in site/app.js, shown to the right of the chart on Stocks / Scanners (wide screens, ▯ button in the
+  top row turns it on / off, saved in sd-ws) and on the stock page (beside the chart; under it on phones). The old
+  stats grid and earnings line on the stock page are replaced by the panel.
+- Head: name, NSE:SYMBOL, ⤢ (full Financials page), ★ watchlist, price, 1D %, 1M / 3M.
+- Accordion (open state saved): Overview (sector / industry / theme tags, next results date, 12 key ratios, pros & cons
+  from SDF.prosCons), Financials (Quarterly / Annual / Balance / Cash flow; each line = mini bars of 12 periods + latest
+  + YoY / QoQ; CAGR table; "x % of the profit came in as cash" over 5 years), Peers (same basic industry by market cap:
+  "#n of N by size · P/E vs median", top 7 with this stock highlighted, click = open it, "Compare all N peers" = Stocks page
+  filtered by the industry, sorted by market cap), Shareholding (colour bar + 12-quarter mini bars, QoQ and 1Y change in
+  points). data/f/<id>.json is fetched once per stock (cache).
+- Financials page: each table in a card with "Consolidated figures in ₹ crore · View standalone" (switches the basis),
+  light-green header row, negative numbers red, pros / cons boxes tinted.
+- Checked in the preview at 1500 px and 375 px (the local snapshot is from 04-Nov, so some ratios show –; live data has
+  them). Tests 172 Python + 24 JS green.
+- NEXT: N5 Warm-up home page.

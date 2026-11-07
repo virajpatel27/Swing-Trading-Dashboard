@@ -478,7 +478,7 @@
       store.set("sd-scan", scan.id);
       base = SDS.run(state.screen, scan);
     }
-    const ui = Object.assign({ view: "list", gridCols: 3, gridSort: "scan", listW: 300, filters: false }, store.get("sd-ws", {}));
+    const ui = Object.assign({ view: "list", gridCols: 3, gridSort: "scan", listW: 300, filters: false, panel: true }, store.get("sd-ws", {}));
     const saveUi = () => store.set("sd-ws", ui);
     const isWide = wide();
     const sectors = [...new Set(state.screen.map((r) => r.sector).filter(Boolean))].sort();
@@ -498,10 +498,11 @@
     view.innerHTML = `<div class="ws-bar">${bar}
         <div class="ws-right">${ui.view === "grid" ? `<select id="gSort" aria-label="Grid order">${GRID_SORTS.map(([k, l]) => `<option value="${k}" ${k === ui.gridSort ? "selected" : ""}>${l}</option>`).join("")}</select>
           ${seg("gcols", [["2", "2"], ["3", "3"], ["4", "4"]], String(ui.gridCols))}` : ""}
+          ${ui.view === "list" && isWide ? `<button type="button" class="btn icon ${ui.panel ? "on" : ""}" id="spBtn" title="Stock panel: overview, financials, peers, shareholding"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>` : ""}
           <div class="seg icons" role="group" aria-label="View"><button type="button" data-v="list" class="${ui.view === "list" ? "on" : ""}" title="List + chart">${ICON.list}</button>
           <button type="button" data-v="grid" class="${ui.view === "grid" ? "on" : ""}" title="Grid of charts">${ICON.grid}</button></div></div></div>
       ${desc}
-      <div class="ws-main ${ui.view} ${isWide ? "wide" : ""}" id="wsMain" style="--list-w:${ui.listW}px">
+      <div class="ws-main ${ui.view} ${isWide ? "wide" : ""} ${ui.panel && isWide ? "withp" : ""}" id="wsMain" style="--list-w:${ui.listW}px">
         <section class="results">
           <div class="res-h"><b>Results</b><span class="count" id="resN"></span>
             <button class="icon-btn sm ${ui.filters ? "on" : ""}" id="fltBtn" type="button" title="Search and filters">${ICON.filter}</button>
@@ -516,6 +517,7 @@
         </section>
         <div class="res-drag" id="resDrag" role="separator" aria-orientation="vertical" title="Drag to make the list wider or narrower"></div>
         <div class="chart-pane" id="pane"><p class="empty">Select a stock from the results to chart it.</p></div>
+        <aside class="side-panel" id="side"></aside>
         <div class="grid" id="grid" style="--gcols:${ui.gridCols}"></div>
       </div>`;
     let rows = [];
@@ -604,6 +606,7 @@
       const tr = view.querySelector(`tr[data-key="${CSS.escape(key)}"]`);
       if (tr) { tr.classList.add("cur"); if (scroll) tr.scrollIntoView({ block: "nearest" }); }
       SDChart.open($("#pane"), r, { kind: "s" });
+      if (ui.panel && ui.view === "list") stockPanel($("#side"), r, { onPeer: (pid) => { const k = "s:" + pid; if (rows.some((x) => x.key === k)) openRow(k, true); else location.hash = "#/i/s/" + encodeURIComponent(pid); } });
     };
     $("#tbl").onclick = (e) => {
       const th = e.target.closest("th[data-col]");
@@ -641,6 +644,7 @@
       renderStocks();
     };
     $("#colBtn").onclick = () => columnSettings(() => { shownCols = -1; draw(); });
+    if ($("#spBtn")) $("#spBtn").onclick = () => { ui.panel = !ui.panel; saveUi(); renderStocks(); };
     view.querySelector(".ws-right .icons").onclick = (e) => { const b = e.target.closest("button"); if (!b || b.dataset.v === ui.view) return; ui.view = b.dataset.v; saveUi(); renderStocks(); };
     if (ui.view === "grid") {
       $("[data-seg=gcols]").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; ui.gridCols = Number(b.dataset.v); gridLimit = ui.gridCols * 4; saveUi(); setOn(e.currentTarget, b); $("#grid").style.setProperty("--gcols", ui.gridCols); drawGrid(); };
@@ -952,26 +956,20 @@
       <div class="d-head"><h1>${esc(r.name || r.symbol)}</h1><span class="muted">${esc(r.symbol)} · ${esc(r.exchange || "NSE")}${isStock ? (r.sector ? " · " + esc(r.sector) : "") + (r.basic_industry ? " › " + esc(r.basic_industry) : "") : " index"}</span>
         <button class="star ${state.watch.has(key) ? "on" : ""}" data-star="${esc(key)}" aria-label="Watchlist" style="font-size:20px">★</button></div>
       ${isStock ? `<div class="seg view-tog" id="viewTog"><button type="button" data-v="chart" class="on">Chart</button><button type="button" data-v="fin">Financials</button></div>` : ""}
-      <div class="chart-box big" id="chartBox"></div><div id="finBox" hidden></div>
-      ${isStock ? `<div id="earnSnap" class="earn-snap"></div><div class="stats">
-        ${stat("Market cap", r.mcap_cr != null ? "₹" + SD.fmtCell(r.mcap_cr, "cr") + " Cr" : "–")}${stat("Free float", r.float_pct != null ? Number(r.float_pct).toFixed(1) + "%" : "–")}
-        ${stat("RS rating / 1W change", `${r.rs_rating ?? "–"} / ${SD.fmtCell(r.rs_chg_1w, "signed")}`)}${stat("Stage", SD.fmtCell(r.stage, "stage"))}
-        ${stat("RSI (14) / ADR %", `${SD.fmtCell(r.rsi14, "num1")} / ${SD.fmtCell(r.adr_pct, "num2")}`)}${stat("52W high / from it", `${SD.fmtPrice(r.hi52)} / ${pct(r.from_hi52)}`)}
-        ${stat("1M / 3M / 1Y", `${pct(r.ret_1m)} / ${pct(r.ret_3m)} / ${pct(r.ret_1y)}`)}${stat("Turnover / delivery", `₹${SD.fmtCell(r.turnover_cr, "num2")} Cr / ${SD.fmtCell(r.deliv_pct, "num1")}%`)}
-        ${stat("F&O / circuit band", `${r.fno ? "Yes" : "No"} / ${esc(r.price_band || "–")}${/^\d+$/.test(String(r.price_band || "")) ? "%" : ""}`)}${stat("Listed / history from", `${SD.fmtDate(r.listed || "")} / ${SD.fmtDate(lr.first_date || r.listed || "")}`)}
-      </div><h2>Corporate actions</h2><div id="acts" class="muted">Loading…</div>` : ""}`;
+      <div class="d-main ${isStock ? "withp" : ""}" id="dMain"><div class="chart-box big" id="chartBox"></div>${isStock ? '<aside class="side-panel" id="side"></aside>' : ""}</div><div id="finBox" hidden></div>
+      ${isStock ? `<h2>Corporate actions</h2><div id="acts" class="muted">Loading…</div>` : ""}`;
     view.querySelector("[data-star]").onclick = (e) => { toggleWatch(e.target.dataset.star); e.target.classList.toggle("on"); };
     if (isStock) {
-      $("#earnSnap").innerHTML = earningsSnapshot(r);
       const showView = (v) => {
         setOn($("#viewTog"), $(`#viewTog [data-v=${v}]`));
-        $("#chartBox").hidden = v !== "chart";
+        $("#dMain").hidden = v !== "chart";
         $("#finBox").hidden = v !== "fin";
         store.set("sd-detail-view", v);
         if (v === "fin") renderFinancials($("#finBox"), r, id);
       };
       $("#viewTog").onclick = (e) => { const b = e.target.closest("button"); if (b) showView(b.dataset.v); };
       if (store.get("sd-detail-view", "chart") === "fin") showView("fin");
+      stockPanel($("#side"), r, { onFull: () => { showView("fin"); window.scrollTo(0, 0); } });
     }
     await SDChart.open($("#chartBox"), r, { kind: kindKey });
     if (isStock && $("#acts")) {
@@ -984,6 +982,139 @@
       } catch (e) { $("#acts").textContent = "Not available."; }
     }
   }
+  /* ------------------------------------------------------------------ stock panel (Phase N4): price head + accordion
+     Overview (tags, key ratios, pros & cons) · Financials (mini bars per line) · Peers (same basic industry) · Shareholding */
+  const finCache = new Map();
+  const getFin = (id) => { if (!finCache.has(id)) finCache.set(id, getJSON(`data/f/${encodeURIComponent(id)}.json`).catch(() => null)); return finCache.get(id); };
+  const fq = (end) => { const y = +end.slice(0, 4), m = +end.slice(5, 7); const q = { 6: 1, 9: 2, 12: 3, 3: 4 }[m]; return q ? `Q${q} FY${String(m >= 4 ? y + 1 : y).slice(2)}` : SDF.label(end); };
+  const shortLbl = (end) => `${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+end.slice(5, 7) - 1]} '${end.slice(2, 4)}`;
+  /** small bar chart of a series (oldest first); negative bars in the down colour, the last bar darker */
+  function miniBars(vals, w = 92, h = 24) {
+    const v = vals.map((x) => (x == null || !isFinite(x) ? null : Number(x)));
+    const max = Math.max(0, ...v.filter((x) => x != null)), min = Math.min(0, ...v.filter((x) => x != null));
+    const span = max - min || 1, n = v.length || 1, bw = w / n, zero = h * (max / span);
+    return `<svg class="mbar" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true">${v.map((x, i) => {
+      if (x == null) return "";
+      const bh = Math.max(1, (Math.abs(x) / span) * h), y = x >= 0 ? zero - bh : zero;
+      return `<rect x="${(i * bw + bw * 0.15).toFixed(1)}" y="${y.toFixed(1)}" width="${(bw * 0.7).toFixed(1)}" height="${bh.toFixed(1)}" rx="1" class="${x < 0 ? "neg" : ""} ${i === n - 1 ? "last" : ""}"/>`;
+    }).join("")}</svg>`;
+  }
+  const chgPct = (a, b) => (a == null || b == null || !isFinite(a) || !isFinite(b) || b === 0 ? null : ((a - b) / Math.abs(b)) * 100);
+  const pctTag = (x, d = 0) => (x == null ? '<span class="muted">—</span>' : `<span class="${x >= 0 ? "up" : "down"}">${x > 0 ? "+" : ""}${finNum(x, d)}%</span>`);
+
+  async function stockPanel(box, r, opts = {}) {
+    if (!box) return;
+    const id = r.id;
+    box.dataset.id = id;
+    const open = store.get("sd-panel-open", { ov: true, fin: true, peers: false, shp: false });
+    const watchKey = r.key || `s:${id}`;
+    const sec = (k, title, sum, body) => `<details class="sp-sec" data-sec="${k}" ${open[k] ? "open" : ""}><summary><b>${title}</b><span class="sp-sum">${sum}</span></summary><div class="sp-b">${body}</div></details>`;
+    const kv = (l, v) => `<div class="sp-kv"><small>${l}</small><b>${v}</b></div>`;
+    const pctv = (v, d = 1) => (v == null || !isFinite(v) ? "–" : finNum(v, d) + "%");
+    const head = `<div class="sp-h"><div class="sp-t"><b title="${esc(r.name)}">${esc(r.name || r.symbol)}</b><small class="muted">NSE:${esc(r.symbol)}${r.series && r.series !== "EQ" ? " · " + esc(r.series) : ""}</small></div>
+        <span class="sp-act"><button type="button" class="icon-btn sm" data-sp="full" title="Full financials page">⤢</button>
+        <button type="button" class="icon-btn sm star ${state.watch.has(watchKey) ? "on" : ""}" data-sp="watch" title="Watchlist">★</button></span></div>
+      <div class="sp-px"><b>₹${SD.fmtPrice(r.close)}</b>${pct(r.chg_1d)}<span class="sp-rt">1M ${pct(r.ret_1m)} · 3M ${pct(r.ret_3m)}</span></div>`;
+    const tags = [r.sector, r.basic_industry, r.theme].filter(Boolean).map((t) => `<span class="sp-tag">${esc(t)}</span>`).join("")
+      + (r.next_result ? `<span class="sp-tag due">📅 Results ${esc(SD.fmtDate(r.next_result))}</span>` : "");
+    const pc = SDF.prosCons(r);
+    const ov = `<div class="sp-tags">${tags}</div><h5>Key ratios</h5><div class="sp-grid">
+        ${kv("Market cap", r.mcap_cr != null ? "₹" + finNum(r.mcap_cr) + " Cr" : "–")}${kv("P/E", finNum(r.pe, 1))}${kv("Book value", r.book_value != null ? "₹" + finNum(r.book_value, 1) : "–")}
+        ${kv("Div yield", pctv(r.div_yield))}${kv("ROCE", pctv(r.roce))}${kv("ROE", pctv(r.roe))}
+        ${kv("Float mcap", r.float_mcap_cr != null ? "₹" + finNum(r.float_mcap_cr) + " Cr" : "–")}${kv("Float %", pctv(r.float_pct))}${kv("RS rating", r.rs_rating ?? "–")}
+        ${kv("ADR %", pctv(r.adr_pct, 2))}${kv("RVol", r.rvol == null ? "–" : Math.round(r.rvol * 100) + "%")}${kv("Avg ₹ vol 20D", r.turnover_avg20_cr != null ? "₹" + finNum(r.turnover_avg20_cr, 1) + " Cr" : "–")}</div>
+      <h5>Pros & cons <small class="muted">· automatic rules on the numbers, not advice</small></h5>
+      <div class="sp-pc">${pc.pros.map((x) => `<p class="pro">✓ ${esc(x)}</p>`).join("")}${pc.cons.map((x) => `<p class="con">✕ ${esc(x)}</p>`).join("")}${pc.pros.length + pc.cons.length ? "" : '<p class="muted small">Nothing stands out by our rules.</p>'}</div>`;
+    const ovSum = [r.rs_rating != null ? `RS ${r.rs_rating}` : "", r.pe != null ? `P/E ${finNum(r.pe, 1)}` : "", r.roce != null ? `ROCE ${pctv(r.roce)}` : ""].filter(Boolean).join(" · ");
+    // peers: same basic industry (else industry), by market cap
+    const grp = r.basic_industry ? "basic_industry" : "industry";
+    const peersAll = (state.screen || []).filter((x) => x[grp] && x[grp] === r[grp] && !x.stale).sort((a, b) => (b.mcap_cr ?? -1) - (a.mcap_cr ?? -1));
+    const rank = peersAll.findIndex((x) => x.id === id) + 1;
+    const pes = peersAll.map((x) => x.pe).filter((x) => x != null && x > 0).sort((a, b) => a - b);
+    const medPE = pes.length ? pes[Math.floor(pes.length / 2)] : null;
+    let peers = peersAll.slice(0, 7);
+    if (rank > 7) peers = peers.slice(0, 6).concat([peersAll[rank - 1]]);
+    const peerSum = peersAll.length > 1 ? `#${rank || "–"} of ${peersAll.length} by size${medPE != null && r.pe != null ? ` · P/E ${finNum(r.pe, 1)} vs ${finNum(medPE, 1)} median` : ""}` : "no peers";
+    const peerBody = peersAll.length > 1 ? `<div class="sp-tw"><table class="sp-t2"><thead><tr><th class="l">Stock</th><th>MCap Cr</th><th>P/E</th><th>Sales Cr</th><th>Profit Cr</th><th>ROCE</th></tr></thead><tbody>`
+      + peers.map((x) => `<tr class="${x.id === id ? "me" : ""}" data-peer="${esc(x.id)}"><td class="l"><b>${esc(x.symbol)}</b></td><td>${finNum(x.mcap_cr)}</td><td>${finNum(x.pe, 1)}</td><td>${finNum(x.sales_ttm)}</td>`
+        + `<td class="${x.np_ttm < 0 ? "down" : ""}">${finNum(x.np_ttm)}</td><td>${pctv(x.roce)}</td></tr>`).join("")
+      + `</tbody></table></div><button type="button" class="sp-link" data-sp="peers">Compare all ${peersAll.length} peers →</button><small class="muted"> ${esc(r[grp])} · TTM figures</small>` : '<p class="muted small">No other stock in this industry.</p>';
+    box.innerHTML = `<div class="sp">${head}${sec("ov", "Overview", ovSum, ov)}${sec("fin", "Financials", '<i class="skel sp-sk"></i>', SKEL("Loading financials"))}
+      ${sec("peers", "Peers", peerSum, peerBody)}${sec("shp", "Shareholding", "", '<i class="skel sp-sk"></i>')}</div>`;
+    box.onclick = (e) => {
+      const a = e.target.closest("[data-sp]");
+      if (a) {
+        if (a.dataset.sp === "watch") { toggleWatch(watchKey); a.classList.toggle("on"); }
+        if (a.dataset.sp === "full") { store.set("sd-detail-view", "fin"); if (opts.onFull) opts.onFull(); else location.hash = "#/i/s/" + encodeURIComponent(id); }
+        if (a.dataset.sp === "peers") { Object.assign(state.stocks, { text: r[grp], universe: "all", sector: "", sort: "mcap_cr", dir: "desc", limit: PAGE }); location.hash = "#/stocks"; }
+        return;
+      }
+      const pr = e.target.closest("[data-peer]");
+      if (pr && pr.dataset.peer !== id) { if (opts.onPeer) opts.onPeer(pr.dataset.peer); else location.hash = "#/i/s/" + encodeURIComponent(pr.dataset.peer); return; }
+      const t = e.target.closest("[data-ftab]");
+      if (t) { store.set("sd-panel-ftab", t.dataset.ftab); drawFin(); }
+    };
+    box.querySelectorAll("details.sp-sec").forEach((d) => d.addEventListener("toggle", () => { const o = store.get("sd-panel-open", open); o[d.dataset.sec] = d.open; store.set("sd-panel-open", o); }));
+    const doc = await getFin(id);
+    if (box.dataset.id !== id) return;
+    const finSec = box.querySelector('[data-sec="fin"]'), shpSec = box.querySelector('[data-sec="shp"]');
+    if (!doc) {
+      finSec.querySelector(".sp-sum").textContent = "not filed yet"; finSec.querySelector(".sp-b").innerHTML = '<p class="muted small">No results data for this stock yet.</p>';
+      shpSec.querySelector(".sp-sum").textContent = ""; shpSec.querySelector(".sp-b").innerHTML = '<p class="muted small">No shareholding data yet.</p>';
+      return;
+    }
+    const basis = SDF.basisOf(doc);
+    // summary of the latest quarter
+    const qt = SDF.quarterTable(doc, basis, 13);
+    const qrow = (k) => (qt.rows.find((x) => x[1] === k) || [null, k, []])[2];
+    const qn = qt.ends.length;
+    finSec.querySelector(".sp-sum").innerHTML = qn ? `${shortLbl(qt.ends[qn - 1])} YoY · Sales ${pctTag(chgPct(qrow("sales")[qn - 1], qrow("sales")[qn - 5]))} · Profit ${pctTag(chgPct(qrow("net_profit")[qn - 1], qrow("net_profit")[qn - 5]))}` : "";
+    const drawFin = () => {
+      const tab = store.get("sd-panel-ftab", "q");
+      let t, lines, note = "";
+      if (tab === "q") { t = SDF.quarterTable(doc, basis, 12); lines = ["sales", "op_profit", "opm", "net_profit", "eps"]; }
+      else if (tab === "y") { t = SDF.annualTable(doc, basis, 10); lines = ["sales", "op_profit", "opm", "net_profit", "eps"]; }
+      else if (tab === "bs") { t = SDF.bsTable(doc, basis, 10); lines = ["equity_capital", "reserves", "borrowings", "total", "fixed_assets", "investments"]; }
+      else {
+        t = SDF.cfTable(doc, basis, 10); lines = ["cfo", "cfi", "cff", "fcf"];
+        const yt = SDF.annualTable(doc, basis, 10), npv = (yt.rows.find((x) => x[1] === "net_profit") || [0, 0, []])[2];
+        const cfo = (t.rows.find((x) => x[1] === "cfo") || [0, 0, []])[2], k = Math.min(5, cfo.length);
+        const npY = yt.cols[yt.cols.length - 1] === "TTM" ? npv.slice(0, -1) : npv;
+        const sc = cfo.slice(-k).reduce((s, x) => s + (x || 0), 0), sp = npY.slice(-k).reduce((s, x) => s + (x || 0), 0);
+        if (k && sp > 0) note = `<p class="sp-note">Last ${k} years: <b>${finNum((sc / sp) * 100)}%</b> of the profit came in as cash.</p>`;
+      }
+      const rows = t.rows.filter((x) => lines.includes(x[1]));
+      const isPct = (k) => k === "opm";
+      const n = t.cols.length;
+      const body = n ? rows.map(([l, k, v]) => {
+        const last = v[n - 1], yo = tab === "q" ? v[n - 5] : v[n - 2], qo = tab === "q" ? v[n - 2] : null;
+        const val = last == null ? "–" : isPct(k) ? finNum(last, 1) + "%" : k === "eps" ? "₹" + finNum(last, 2) : finNum(last);
+        return `<tr><td class="l">${esc(l.replace(" (₹)", ""))}</td><td>${miniBars(v)}</td><td><b class="${last < 0 ? "down" : ""}">${val}</b></td>
+          <td>${isPct(k) ? '<span class="muted">—</span>' : pctTag(chgPct(last, yo))}${tab === "q" ? "<br>" + (isPct(k) ? "" : pctTag(chgPct(last, qo))) : ""}</td></tr>`;
+      }).join("") : "";
+      finSec.querySelector(".sp-b").innerHTML = `<div class="seg sm sp-ft">${[["q", "Quarterly"], ["y", "Annual"], ["bs", "Balance"], ["cf", "Cash flow"]].map(([k, l]) => `<button type="button" data-ftab="${k}" class="${k === tab ? "on" : ""}">${l}</button>`).join("")}</div>
+        ${note}${n ? `<table class="sp-t2 fin"><thead><tr><th class="l">₹ Cr</th><th>${tab === "q" ? n + " qtrs" : n + " yrs"}</th><th>${esc(tab === "q" ? fq(t.ends[n - 1]) : t.cols[n - 1])}</th><th>${tab === "q" ? "YoY<br>QoQ" : "1Y"}</th></tr></thead><tbody>${body}</tbody></table>` : '<p class="muted small">Not in the filings.</p>'}
+        ${tab === "y" || tab === "q" ? `<h5>Growth · CAGR</h5><table class="sp-t2 grow"><thead><tr><th class="l"></th><th>3Y</th><th>5Y</th><th>10Y</th></tr></thead><tbody>
+          <tr><td class="l">Sales</td><td>${pctTag(r.sales_cagr_3y)}</td><td>${pctTag(r.sales_cagr_5y)}</td><td>${pctTag(r.sales_cagr_10y)}</td></tr>
+          <tr><td class="l">Net profit</td><td>${pctTag(r.np_cagr_3y)}</td><td>${pctTag(r.np_cagr_5y)}</td><td>${pctTag(r.np_cagr_10y)}</td></tr>
+          <tr><td class="l">ROE (avg)</td><td>${pctv(r.roe_3y)}</td><td>${pctv(r.roe_5y)}</td><td>${pctv(r.roe_10y)}</td></tr></tbody></table>` : ""}
+        <button type="button" class="sp-link" data-sp="full">See all the numbers →</button>`;
+    };
+    drawFin();
+    // shareholding: colour bar + rows with mini bars
+    const sh = SDF.shpTable(doc, 12), sn = sh.cols.length;
+    const SHC = { prom: "#2962ff", fii: "#089981", dii: "#ff9800", govt: "#9c27b0", public: "#9e9e9e", others: "#795548" };
+    if (!sn) { shpSec.querySelector(".sp-b").innerHTML = '<p class="muted small">No shareholding data yet.</p>'; return; }
+    const shRows = sh.rows.filter(([, k]) => SHC[k] && sh.rows.find((x) => x[1] === k)[2][sn - 1] != null);
+    shpSec.querySelector(".sp-sum").innerHTML = `${shortLbl(sh.ends[sn - 1])} · Promoters ${pctv((sh.rows.find((x) => x[1] === "prom") || [0, 0, []])[2][sn - 1])}`;
+    shpSec.querySelector(".sp-b").innerHTML = `<div class="sp-shbar">${shRows.map(([l, k, v]) => `<i style="flex:${Math.max(v[sn - 1], 0.01)};background:${SHC[k]}" title="${esc(l)} ${finNum(v[sn - 1], 2)}%"></i>`).join("")}</div>
+      <table class="sp-t2"><thead><tr><th class="l"></th><th></th><th>${esc(shortLbl(sh.ends[sn - 1]))}</th><th>QoQ</th><th>1Y</th></tr></thead><tbody>${shRows.map(([l, k, v]) => {
+        const d1 = v[sn - 2] == null ? null : v[sn - 1] - v[sn - 2], d4 = v[sn - 5] == null ? null : v[sn - 1] - v[sn - 5];
+        const pt = (x) => (x == null ? '<span class="muted">—</span>' : `<span class="${x >= 0 ? "up" : "down"}">${x > 0 ? "+" : ""}${finNum(x, 2)}</span>`);
+        return `<tr><td class="l"><i class="dot" style="background:${SHC[k]}"></i>${esc(l)}</td><td>${miniBars(v, 80, 20)}</td><td><b>${finNum(v[sn - 1], 2)}%</b></td><td>${pt(d1)}</td><td>${pt(d4)}</td></tr>`;
+      }).join("")}</tbody></table><small class="muted">Change in percentage points.</small>`;
+  }
+
   /* ------------------------------------------------------------------ custom scan window (Phase N3): 5 tabs of filters, live count,
      save / load. A filter makes conditions of the same rule format as every scanner (scan.js), so saved scans work everywhere. */
   const CS_TABS = [["u", "Stock universe"], ["t", "Technicals"], ["s", "Strength & volume"], ["e", "Earnings"], ["f", "Fundamentals"]];
@@ -1258,19 +1389,12 @@
 
   /* ------------------------------------------------------------------ financials (Phase S8): data/f/<id>.json, fin.js */
   const finNum = (v, d = 0) => (v == null || !isFinite(v) ? "–" : Number(v).toLocaleString("en-IN", { minimumFractionDigits: d, maximumFractionDigits: d }));
-  function earningsSnapshot(r) {
-    if (!r.fin_qtr && !r.next_result) return "";
-    const g = (v) => (v == null ? "–" : `<span class="${v >= 0 ? "up" : "down"}">${SD.fmtPct(v)}</span>`);
-    return `<b>Earnings</b> · latest quarter ${r.fin_qtr ? SDF.label(r.fin_qtr) : "–"}${r.last_result ? ` (results ${SD.fmtDate(r.last_result)})` : ""}
-      · Sales YoY ${g(r.sales_g_yoy)} · Profit YoY ${g(r.np_g_yoy)} · EPS YoY ${g(r.eps_g_yoy)} · EPS TTM ₹${finNum(r.eps_ttm, 2)}
-      ${r.next_result ? ` · <b>next results ${SD.fmtDate(r.next_result)}</b>` : ""}`;
-  }
   function finTable(t, kind) {
     if (!t.ends.length) return `<p class="muted">Not in NSE's filings.</p>`;
     const pctRow = (k) => ["opm", "taxp"].includes(k) || kind === "pct";
     const cell = (k, v) => (v == null ? "–" : pctRow(k) ? finNum(v, 1) + "%" : k === "eps" ? finNum(v, 2) : k === "n" ? finNum(v) : kind === "shp" ? finNum(v, 2) + "%" : finNum(v));
     return `<div class="table-wrap fin"><table><thead><tr><th class="l sticky"></th>${t.cols.map((c) => `<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>`
-      + t.rows.map(([l, k, vals]) => `<tr class="${["op_profit", "net_profit", "total", "fcf", "pbt"].includes(k) ? "strong" : ""}"><td class="l sticky">${esc(l)}</td>${vals.map((v) => `<td class="num">${cell(k, v)}</td>`).join("")}</tr>`).join("")
+      + t.rows.map(([l, k, vals]) => `<tr class="${["op_profit", "net_profit", "total", "fcf", "pbt"].includes(k) ? "strong" : ""}"><td class="l sticky">${esc(l)}</td>${vals.map((v) => `<td class="num ${v != null && v < 0 ? "neg" : ""}">${cell(k, v)}</td>`).join("")}</tr>`).join("")
       + "</tbody></table></div>";
   }
   async function renderFinancials(box, r, id) {
@@ -1289,6 +1413,9 @@
     const draw = () => {
       const kind = doc.kind || "company";
       const pc = SDF.prosCons(r);
+      const other = basis === "C" ? "S" : "C", canOther = SDF.hasBasis(doc, other);
+      const fcard = (title, html, pct) => `<section class="fcard"><div class="fcard-h"><h3>${title}</h3><span class="muted small">${pct ? "% of shares" : `${basis === "C" ? "Consolidated" : "Standalone"} figures in ₹ crore`}`
+        + `${!pct && canOther ? ` · <a href="#" data-basis="${other}">View ${other === "C" ? "consolidated" : "standalone"}</a>` : ""}</span></div>${html}</section>`;
       const grow = SDF.growthTable(doc, basis, r, chart);
       const both = SDF.hasBasis(doc, "C") && SDF.hasBasis(doc, "S");
       box.innerHTML = `<div class="fin-head"><h2>Financials</h2>${both ? `<div class="seg" id="basisTog"><button type="button" data-v="C" class="${basis === "C" ? "on" : ""}">Consolidated</button><button type="button" data-v="S" class="${basis === "S" ? "on" : ""}">Standalone</button></div>` : `<span class="muted">${basis === "C" ? "Consolidated" : "Standalone"}</span>`}
@@ -1301,17 +1428,18 @@
         <div class="pros-cons"><div class="pros"><h3>Pros</h3>${pc.pros.length ? `<ul>${pc.pros.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : `<p class="muted">None by our rules.</p>`}</div>
           <div class="cons"><h3>Cons</h3>${pc.cons.length ? `<ul>${pc.cons.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : `<p class="muted">None by our rules.</p>`}</div></div>
         <p class="muted small">Pros and cons are simple automatic rules on the numbers below, not advice.</p>
-        <h3>Quarterly results</h3>${finTable(SDF.quarterTable(doc, basis, 12))}
-        <h3>Profit & loss</h3>${finTable(SDF.annualTable(doc, basis, 10))}
-        <div class="grow-grid">${grow.map(([title, items]) => `<div class="grow"><h4>${esc(title)}</h4>${items.map(([l, v]) => `<div><span>${l}:</span><b>${v == null ? "–" : finNum(v, 0) + "%"}</b></div>`).join("")}</div>`).join("")}</div>
-        <h3>Balance sheet</h3>${finTable(SDF.bsTable(doc, basis, 10))}
-        <h3>Cash flows</h3>${finTable(SDF.cfTable(doc, basis, 10))}
-        <h3>Shareholding pattern</h3>${finTable(SDF.shpTable(doc, 12), "shp")}
+        ${fcard("Quarterly results", finTable(SDF.quarterTable(doc, basis, 12)))}
+        ${fcard("Profit & loss", finTable(SDF.annualTable(doc, basis, 10)))}
+        <div class="grow-grid">${grow.map(([title, items]) => `<div class="grow"><h4>${esc(title)}</h4>${items.map(([l, v]) => `<div><span>${l}:</span><b class="${v != null && v < 0 ? "neg" : ""}">${v == null ? "–" : finNum(v, 0) + "%"}</b></div>`).join("")}</div>`).join("")}</div>
+        ${fcard("Balance sheet", finTable(SDF.bsTable(doc, basis, 10)))}
+        ${fcard("Cash flows", finTable(SDF.cfTable(doc, basis, 10)))}
+        ${fcard("Shareholding pattern", finTable(SDF.shpTable(doc, 12), "shp"), true)}
         <p class="muted small">EPS adjusted for later splits / bonuses. Older years: NSE's XBRL filings start ~2017 (balance sheet ~2019, cash flow ~2020).
         Banks: revenue = interest earned, financing profit = revenue − interest − expenses. Educational purpose only, not investment advice.</p>`;
       box.querySelectorAll(".table-wrap.fin").forEach((w) => { w.scrollLeft = w.scrollWidth; });   // newest period in view
       const bt = box.querySelector("#basisTog");
       if (bt) bt.onclick = (e) => { const b = e.target.closest("button"); if (!b) return; basis = b.dataset.v; store.set("sd-fin-basis", basis); draw(); };
+      box.querySelectorAll("[data-basis]").forEach((a) => { a.onclick = (e) => { e.preventDefault(); basis = a.dataset.basis; store.set("sd-fin-basis", basis); draw(); }; });
     };
     draw();
   }

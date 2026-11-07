@@ -220,3 +220,21 @@ def test_event_age_and_high_volume_event():
     f = engine.stock_fields(adj, cfg=yaml.safe_load(open(ROOT / "config" / "indicators.yaml")))
     assert f["hv_age"].iloc[-1] == 0 and f["hv_rvol"].iloc[-1] == pytest.approx(10.0) and f["hv_move"].iloc[-1] == pytest.approx(8.0)
     assert np.isnan(f["br_age"].iloc[-1])                                    # not under SMA200: no big reversal
+
+
+def test_breakout_events():
+    cfg = yaml.safe_load(open(ROOT / "config" / "indicators.yaml"))
+    stage_cfg = yaml.safe_load(open(ROOT / "config" / "stage.yaml"))
+    # rise 100 -> 130 (resistance at 131 after a > 20 % rise), 40 sessions drifting lower, then a breakout to 140 on 5x volume
+    c = np.r_[np.linspace(80, 100, 230), np.linspace(100, 130, 30), np.linspace(126, 118, 40), [140.0]]
+    n = len(c)
+    hi = c * 1.005
+    hi[259] = 131.0                                   # the swing high
+    adj = pd.DataFrame({"date": pd.bdate_range("2025-01-01", periods=n), "open": c * 0.999, "high": hi, "low": c * 0.995,
+                        "close": c, "volume": np.r_[np.full(n - 1, 1000.0), 5000.0]})
+    adj.loc[n - 1, ["open", "low", "high"]] = [126.0, 125.5, 140.5]
+    f = engine.stock_fields(adj, cfg=cfg, stage_cfg=stage_cfg)
+    last = f.iloc[-1]
+    assert last["stage"] in ("2", "2A") and last["s2b_age"] == 0                 # above the 50-day high on 5x volume
+    assert last["rb_age"] == 0 and last["rb_level"] == pytest.approx(131.0)     # old resistance 131 broken, close 6.9 % above
+    assert f["rb_age"].iloc[:-30].isna().all()                                   # only the last 30 rows are computed

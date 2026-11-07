@@ -330,7 +330,68 @@ def events(f: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     br = ((h / pc - 1) * 100 >= float(cfg.get("br_high", 13))) & (f["chg_1d"] >= float(cfg.get("br_close", 12))) \
         & (f["rvol"] >= float(cfg.get("br_rvol", 3))) & ((pc / sma200_prev - 1) * 100 <= -float(cfg.get("br_below", 6)))
     out["br_age"] = event_age(br, w).to_numpy()
+    # Stage 2 breakout: close above the highest high of the previous 50 sessions on >= 2 x volume, close in the top
+    # quarter of the day, Stage 2 that day (kept s2b_window sessions)
+    st = f["stage"].astype(str) if "stage" in f else pd.Series("", index=f.index)
+    s2b = (c > h.shift(1).rolling(50, min_periods=1).max()) & (f["rvol"] >= float(cfg.get("s2b_rvol", 2.0))) \
+        & (f["close_pos"] >= float(cfg.get("hv_close_pos", 75))) & st.isin(["2", "2A"])
+    out["s2b_age"] = event_age(s2b, int(cfg.get("s2b_window", 6))).to_numpy()
+    # Shakeout: an intraday drop of >= the usual daily range (20-day mean of (high-low)/close) that holds within 3 % of
+    # SMA50 (the close before it above SMA50), recovered to the close before the drop within 2 sessions, in an uptrend
+    # (close above SMA50 and SMA200, SMA50 above SMA200)
+    l = f["low"]
+    s50, s200 = c.rolling(50, min_periods=50).mean(), c.rolling(200, min_periods=200).mean()
+    rng_prev = ((h - l) / c * 100).rolling(20, min_periods=20).mean().shift(1)
+    drop = (1 - l / pc) * 100
+    fall = (drop >= rng_prev) & (drop >= float(cfg.get("so_min_drop", 1.5))) \
+        & (l >= s50 * (1 - float(cfg.get("so_sma50_tol", 3)) / 100)) & (pc > s50.shift(1))
+    conf = pd.Series(False, index=f.index)
+    for r in range(int(cfg.get("so_recovery", 2)) + 1):
+        conf |= fall.shift(r, fill_value=False).astype(bool) & (c >= pc.shift(r))
+    out["so_age"] = event_age(conf & (c > s50) & (c > s200) & (s50 > s200), w).to_numpy()
+    out["rb_age"], out["rb_level"] = recent_breakout(f, cfg)
     return out
+
+
+def _broken_level(h, l, c, e: int, k: int, min_age: int, prior_min: float, lookback: int = 250) -> int | None:
+    """Row of the level broken on day e: the most recent swing high (highest of +-k bars) at least min_age bars old that
+    no close got above until the day before e, reached after a rise of >= prior_min from the low of the 60 bars before it.
+    None when the most recent such high is not broken by close[e]."""
+    for j in range(e - min_age, max(k, e - lookback), -1):
+        if h[j] < np.nanmax(h[j - k:j + k + 1]) or np.nanmax(c[j + 1:e]) > h[j]:
+            continue
+        if c[e] <= h[j]:
+            return None
+        if h[j] / np.nanmin(l[max(0, j - 60):j + 1]) - 1 >= prior_min:
+            return j
+    return None
+
+
+def recent_breakout(f: pd.DataFrame, cfg: dict, last: int = 30) -> tuple[np.ndarray, np.ndarray]:
+    """Recent breakout (calibrated 07-Nov-2026): a close above an old resistance level (see _broken_level) on >= rb_rvol
+    x the 20-day volume within rb_window sessions, today >= rb_above above the level, Stage 2 today.
+    Only the last `last` rows are computed (the screen and scanners use the latest day); earlier rows are empty."""
+    n = len(f)
+    age, lvl = np.full(n, np.nan), np.full(n, np.nan)
+    h, l, c = (f[k].to_numpy(float) for k in ("high", "low", "close"))
+    rv = f["rvol"].to_numpy(float)
+    st = f["stage"].astype(str).to_numpy() if "stage" in f else np.full(n, "")
+    k, min_age, prior = int(cfg.get("rb_swing", 8)), int(cfg.get("rb_min_age", 26)), float(cfg.get("rb_prior", 0.2))
+    win, above, rmin = int(cfg.get("rb_window", 4)), 1 + float(cfg.get("rb_above", 5)) / 100, float(cfg.get("rb_rvol", 2.0))
+    found: dict[int, int | None] = {}
+    for t in range(max(0, n - last), n):
+        if st[t] not in ("2", "2A"):
+            continue
+        for e in range(t, max(-1, t - win - 1), -1):
+            if not rv[e] >= rmin:
+                continue
+            if e not in found:
+                found[e] = _broken_level(h, l, c, e, k, min_age, prior) if e > min_age + k else None
+            j = found[e]
+            if j is not None and c[t] >= h[j] * above:
+                age[t], lvl[t] = t - e, h[j]
+                break
+    return age, lvl
 
 
 # ---------------------------------------------------------------- all stocks of one day / of every day

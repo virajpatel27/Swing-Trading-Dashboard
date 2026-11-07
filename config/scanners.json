@@ -92,34 +92,20 @@
    "id": "stage2-breakout",
    "folder": "Classic",
    "name": "Stage 2 Breakout",
-   "description": "Traded above the highest high of the 50 days before, on at least 1.5 times the usual volume, while basing or in an uptrend.",
+   "description": "Broke out in the last 6 sessions: close above the highest high of the 50 sessions before, on 2 x the usual volume, close near the day's high, in Stage 2.",
    "universe": "all",
    "rule": {
     "all": [
      {
-      "field": "high",
-      "op": ">",
-      "field2": "high_50d_prev"
-     },
-     {
-      "field": "rvol",
-      "op": ">=",
-      "value": 1.5
-     },
-     {
-      "field": "stage",
-      "op": "in",
-      "value": [
-       "1",
-       "2",
-       "2A"
-      ]
+      "field": "s2b_age",
+      "op": "<=",
+      "value": 6
      }
     ]
    },
    "sort": {
-    "field": "rvol",
-    "dir": "desc"
+    "field": "s2b_age",
+    "dir": "asc"
    }
   },
   {
@@ -441,34 +427,19 @@
    "id": "recent-breakout",
    "folder": "Classic",
    "name": "Recent Breakout",
-   "description": "Broke out of a base that lasted at least 40 sessions, on 2x+ volume, within the last 10 sessions, and is still above the old pivot. Liquid stocks only.",
-   "universe": "liquid",
+   "description": "Broke an old resistance (a swing high 26+ sessions old, reached after a 20 % rise) on 2 x the usual volume in the last 4 sessions; now 5 % or more above it, in Stage 2.",
+   "universe": "all",
    "rule": {
     "all": [
      {
-      "field": "breakout_days",
+      "field": "rb_age",
       "op": "<=",
-      "value": 10
-     },
-     {
-      "field": "breakout_rvol",
-      "op": ">=",
-      "value": 2
-     },
-     {
-      "field": "breakout_base_age",
-      "op": ">=",
-      "value": 40
-     },
-     {
-      "field": "close",
-      "op": ">",
-      "field2": "breakout_level"
+      "value": 4
      }
     ]
    },
    "sort": {
-    "field": "breakout_days",
+    "field": "rb_age",
     "dir": "asc"
    },
    "phase": 7
@@ -731,30 +702,20 @@
    "id": "shakeout",
    "folder": "Patterns",
    "name": "Shakeout",
-   "description": "An uptrend stock that dropped 4 %+ below its rising 50-day average in the last 5 sessions and is already back above it.",
+   "description": "Shook out in the last 5 sessions: an intraday drop of at least the usual daily range that held near SMA50, recovered within 2 sessions, in an uptrend (above SMA50 and SMA200, SMA50 above SMA200).",
    "universe": "all",
    "rule": {
     "all": [
      {
-      "field": "min_from_sma50_5d",
+      "field": "so_age",
       "op": "<=",
-      "value": -4
-     },
-     {
-      "field": "from_sma50",
-      "op": ">",
-      "value": 0
-     },
-     {
-      "field": "sma50_chg_1m",
-      "op": ">",
-      "value": 0
+      "value": 5
      }
     ]
    },
    "sort": {
-    "field": "rs_rating",
-    "dir": "desc"
+    "field": "so_age",
+    "dir": "asc"
    },
    "phase": 7
   },

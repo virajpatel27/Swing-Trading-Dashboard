@@ -820,3 +820,11 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Result (4-day average recall / precision): gainers 0.99-1.00 / 0.92-0.96, doublers 0.99 / 0.93, pullbacks 1.00 / 1.00,
   high volume 0.99 / 0.83 (was 0.06), big reversal 1.00 / 0.53 (was 0).
 - Next (part B): Stage 2 / Recent Breakout, RS before Price, Shakeout, bases, Near Pivot, VCP, Tight, IPO Base.
+
+### 2026-11-07: accuracy step 3, part B - breakout and shakeout scans
+- engine.events: s2b_age (Stage 2 breakout), so_age (shakeout), rb_age + rb_level (recent breakout; engine.recent_breakout,
+  only the last 30 rows are computed - the screen uses the latest day). Settings config/indicators.yaml -> events.
+- config/scanners.json: stage2-breakout, recent-breakout, shakeout use them. Registry fields + tests (192 Python, 32 JS green).
+- 4-day average recall / precision: Stage 2 Breakout 0.96 / 0.88 (was 0.30 / 0.43), Recent Breakout 0.93 / 0.93 (was
+  0.21 / 0.21), Shakeout 0.93 / 0.57 (was 0 / 0). Part A scans unchanged.
+- Next (part C): RS before Price, Daily / Weekly Base, Near Pivot, VCP, Tight Setups, IPO Base.

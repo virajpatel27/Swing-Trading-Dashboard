@@ -158,6 +158,14 @@ Rules are in config/scanners.json (each scanner's description says them in words
 | Big Reversal | EVENT: high >= 13 % and close >= 12 % over the previous close, >= 3 x 20D volume, previous close >= 6 % under SMA200 | 0 / 0 | 1.00 / 0.53 |
 | unchanged, already close | Trend Template 0.99 / 0.97, 4% Breakout 0.97 / 0.73, Outperformers 0.86 / 0.96 | | |
 
-Still to do (part B): Stage 2 Breakout, Recent Breakout, RS before Price (benchmark of their RS line not found yet; best
+Part B (same day):
+
+| scanner | change | before (06-Nov) | after (4 days) |
+|---|---|---|---|
+| Stage 2 Breakout | EVENT (6 sessions): close above the previous 50-day high on >= 2 x 20-day volume, close in top 25 %, Stage 2 | 0.30 / 0.43 | 0.96 / 0.88 |
+| Recent Breakout | EVENT (4 sessions): close above an old resistance (swing high, +-8 bars, >= 26 sessions old, after a 20 % rise, no close above it since) on >= 2 x volume; now >= 5 % above it, Stage 2 | 0.21 / 0.21 | 0.93 / 0.93 |
+| Shakeout | EVENT (5 sessions): intraday drop >= usual daily range ((high-low)/close, 20 days), low within 3 % of SMA50, recovered to the close before the drop within 2 sessions, uptrend | 0 / 0 | 0.93 / 0.57 |
+
+Still to do (part C): RS before Price (benchmark of their RS line not found yet; best
 Nifty MidSmallcap 400, 68 / 93 %), Shakeout, Daily / Weekly Base, Near Pivot, VCP, Tight Setups, IPO Base. Earnings
 scanners after the fundamentals are complete (~10-Nov). The reference's event scans keep an event 5 sessions ("age").

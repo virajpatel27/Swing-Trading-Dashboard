@@ -36,3 +36,14 @@ events:                           # event scans (engine.events), calibrated 07-N
   br_close: 12
   br_rvol: 3                      #   volume >= 3 x the previous 20-day average
   br_below: 6                     #   previous close >= 6 % under SMA200
+  s2b_rvol: 2.0                   # Stage 2 breakout: close above the previous 50-day high on >= 2 x 20-day volume, Stage 2
+  s2b_window: 6                   #   kept 6 sessions
+  so_min_drop: 1.5                # shakeout: intraday drop >= 1.5 % and >= the usual daily range,
+  so_sma50_tol: 3                 #   low within 3 % of SMA50 (close before it above SMA50),
+  so_recovery: 2                  #   back to the close before the drop within 2 sessions, in an uptrend
+  rb_swing: 8                     # recent breakout: resistance = swing high (highest of +-8 bars),
+  rb_min_age: 26                  #   at least 26 sessions old, after a rise of >= 20 %,
+  rb_prior: 0.2
+  rb_rvol: 2.0                    #   broken by a close on >= 2 x 20-day volume within 4 sessions,
+  rb_window: 4
+  rb_above: 5                     #   today >= 5 % above the level, Stage 2 today

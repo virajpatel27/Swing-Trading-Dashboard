@@ -154,3 +154,4 @@ Classes (07-Nov, Viraj 'Exact copy j'): config/reference_classes.csv (scripts/im
 Stage/RS (07-Nov): stage rule re-tuned (96.4 %, config/stage.yaml incl. young rule; site/ind.js same), RS from the 11th session + floor percentile (80 %). Open: BSE history for ~204 BSE->NSE stocks of 2026.
 BSE history (07-Nov, PAUSED by Viraj): code ready (bse_history.py, job bse-stocks, PC only), no data fetched yet; see WORK_LOG.
 Scanners (07-Nov, step 3 part A): gainers/doublers/pullbacks/new-listing re-tuned; event scans via engine.events (hv_age, br_age; config indicators.yaml events). Part B open (breakouts, RS before price, shakeout, bases, VCP, tight, IPO base).
+Scanners part B (07-Nov): s2b_age / so_age / rb_age events (engine.events, recent_breakout last 30 rows only). Part C open: RS before price, bases, near pivot, VCP, tight, IPO base.

@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S9**. Fields: **277**.
+Current phase: **S9**. Fields: **281**.
 
 ## Sources
 
@@ -245,6 +245,10 @@ Current phase: **S9**. Fields: **277**.
 | `hv_rvol` | High-volume event: volume x 50D avg | number | Event day's volume / average volume of the 50 sessions before it | volume | data/snapshot/screen.json |
 | `hv_move` | High-volume event: % change | percent | Event day's % change | close | data/snapshot/screen.json |
 | `br_age` | Big reversal (sessions ago) | integer | Sessions since a day with high >= 13 % and close >= 12 % over the previous close on >= 3 x the 20-day volume, the previous close >= 6 % under SMA200; empty after 5 sessions | close, high, volume | data/snapshot/screen.json |
+| `s2b_age` | Stage 2 breakout (sessions ago) | integer | Sessions since a close above the highest high of the previous 50 sessions on >= 2 x the 20-day volume, close in the top 25 % of the day, in Stage 2; empty after 6 sessions | close, high, volume, stage | data/snapshot/screen.json |
+| `so_age` | Shakeout (sessions ago) | integer | Sessions since the recovery from an intraday drop >= the usual daily range that held within 3 % of SMA50, back to the close before the drop within 2 sessions, close above SMA50 and SMA200, SMA50 above SMA200; empty after 5 sessions | close, high, low | data/snapshot/screen.json |
+| `rb_age` | Recent breakout (sessions ago) | integer | Sessions since a close above an old resistance (swing high >= 26 sessions old after a 20 % rise, no close above it since) on >= 2 x the 20-day volume; today >= 5 % above it, Stage 2; empty after 4 sessions | close, high, low, volume, stage | data/snapshot/screen.json |
+| `rb_level` | Recent breakout level | rupees | The resistance level of the recent breakout | high | data/snapshot/screen.json |
 | `new_low_20d_3d` | New 20D low (3 days) | boolean | new_low_20d on any of the last 3 sessions | new_low_20d | data/snapshot/screen.json |
 | `min_from_sma50_5d` | Lowest from 50 SMA % (5D) | percent | Lowest from_sma50 of the last 5 sessions | from_sma50 | data/snapshot/screen.json |
 | `pivot_vs_hi52` | Pivot vs 52W high % | percent | (pivot / hi52 - 1) x 100 (0 = the pivot is the 52-week high) | pivot, hi52 | data/snapshot/screen.json |

@@ -20,3 +20,8 @@ net margin up (npm_up_qtrs >= 1), turnaround, RS rating >= 70.
 - Nifty expiry: weekly = every Tuesday, monthly = the last Tuesday of the month (holidays move it a day earlier).
 - Watchlist plan: good day = 1D >= +1 %, weak day = 1D <= -1 %, else quiet; signals = pocket pivot, up on high volume,
   highest volume ever, RS line at a 52-week high, breakout today, within 3 % below the pivot, volume dry-up, new 20-day low.
+
+## Heatmap (Phase N7)
+- Tiles: squarified treemap (site/logic.js `squarify`, tests/js/treemap.test.js); first by sector, then by stock.
+- Area: today's turnover (Rs crore), market cap, or equal. Colour: diverging red - grey - green, capped at +/-3 % (1D),
+  6 % (1W), 12 % (1M), 25 % (3M); from 52W high 0 to -40 %; RS rating centred on 50.

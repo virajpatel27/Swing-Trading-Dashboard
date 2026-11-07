@@ -273,9 +273,40 @@
     return s == null && p == null ? null : "Mixed";
   }
 
+  /** squarified treemap (Bruls et al.): items [{v > 0, ...}] (largest first works best) into the box {x, y, w, h};
+      returns [{it, x, y, w, h}] covering the box with rectangles as close to squares as possible (Phase N7 heatmap) */
+  function squarify(items, box) {
+    const out = [];
+    let { x, y, w, h } = box;
+    const tot = items.reduce((a, it) => a + it.v, 0);
+    if (!(tot > 0) || w <= 0 || h <= 0) return out;
+    let rest = items.filter((it) => it.v > 0).map((it) => ({ it, a: (it.v * w * h) / tot }));
+    const worst = (row, side) => {
+      const s = row.reduce((a, r) => a + r.a, 0), mx = Math.max(...row.map((r) => r.a)), mn = Math.min(...row.map((r) => r.a));
+      return Math.max((side * side * mx) / (s * s), (s * s) / (side * side * mn));
+    };
+    while (rest.length) {
+      const side = Math.min(w, h);
+      let row = [rest[0]], i = 1;
+      while (i < rest.length) { const nr = row.concat(rest[i]); if (worst(nr, side) <= worst(row, side)) { row = nr; i++; } else break; }
+      const s = row.reduce((a, r) => a + r.a, 0);
+      if (w >= h) {
+        const cw = s / h; let cy = y;
+        for (const r of row) { const ch = r.a / cw; out.push({ it: r.it, x, y: cy, w: cw, h: ch }); cy += ch; }
+        x += cw; w -= cw;
+      } else {
+        const rh = s / w; let cx = x;
+        for (const r of row) { const rw = r.a / rh; out.push({ it: r.it, x: cx, y, w: rw, h: rh }); cx += rw; }
+        y += rh; h -= rh;
+      }
+      rest = rest.slice(row.length);
+    }
+    return out;
+  }
+
   const api = { PERIODS, SCREENS, RANGES, rowsFromSnapshot, keyOf, fmtPrice, fmtPct, fmtInt, fmtVol, fmtDate, filterRows, sortRows,
     toCSV, candlesFromChart, toWeekly, ema, sliceRange, colorClass, heatLevel, STAGE_TXT, COLUMN_GROUPS, COLUMNS, DEFAULT_COLUMNS, SORTS,
-    screenRows, fmtCell, filterStocks, earnGrade };
+    screenRows, fmtCell, filterStocks, earnGrade, squarify };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.SD = api;
 })(typeof self !== "undefined" ? self : this);

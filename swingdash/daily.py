@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import backfill, classification, config, fundamentals, groups, market_flows, rebuild, snapshot, stock_master, store, themes
+from . import backfill, classification, config, fundamentals, groups, index_members, market_flows, rebuild, snapshot, stock_master, store, themes
 
 
 def recheck_start(days: set[date], n: int, fallback: date) -> date:
@@ -168,6 +168,12 @@ def run(ctx: backfill.Ctx, log=print) -> dict:
         res["fii_dii"] = market_flows.update(data, ctx.http, log=log)
     except Exception as exc:  # noqa: BLE001 - never stop the price update for this
         res["fii_dii"] = {"stopped": f"{type(exc).__name__}: {str(exc)[:80]}"}
+
+    # 4f. members of the main NSE indices (heatmap page); rewritten only when a list changed
+    try:
+        res["index_members"] = index_members.update(data, ctx.http, log=log)
+    except Exception as exc:  # noqa: BLE001 - never stop the price update for this
+        res["index_members"] = {"stopped": f"{type(exc).__name__}: {str(exc)[:80]}"}
 
     # 5. snapshot
     latest, sectors = snapshot.build(data, log=log)

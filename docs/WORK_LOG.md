@@ -679,3 +679,13 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Filters (saved): market cap / EPS / sales / profit growth ranges, grade, signals - they apply to the calendar and the
   cards. Rule text in docs/site_rules.md; SD.earnGrade tested in tests/js/earn.test.js.
 - NEXT: N7 heatmap.
+
+### 2026-11-08: UI redesign N7 - heatmap
+- Index members: swingdash/index_members.py (9 NSE index CSVs), daily step 4f, site_build -> data/index_members.json;
+  tests/test_n7_members.py. First file comes with the next daily run (Monday).
+- Page `#/heatmap` (rail "Heatmap"): Index / Area / Colour selects (saved), treemap by sector with a header per sector
+  (click = that sector's basic industries, "‹ All sectors" back), tiles show symbol + value when big enough, hover card
+  (price, 1D / 1W / 1M, RS, market cap, turnover, industry), colour scale under the map, redraws on resize.
+- Phone: the bottom bar now scrolls sideways (10 pages); the open page's icon scrolls into view.
+- Checked in the preview at 1500 px and 375 px with the 06-Nov data. Tests 179 Python + 29 JS green.
+- NEXT: N8 groups in 3 columns.

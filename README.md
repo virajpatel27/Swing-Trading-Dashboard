@@ -38,6 +38,8 @@ stock / index nu naam lakho -> Enter = sidho chart.
   joi / badli shako (tamara browser ma save thay; Export / Import thi bija PC par).
 - **Earnings** - athvadiya nu results calendar: kone results aapya (aapdo grade Excellent / Good / Mixed / Weak) ane kone
   baki chhe; jamni baju chhella 14 divas na results card; Filters (growth, grade, signals). ‹ › thi aagal-paachhal athvadiyu.
+- **Heatmap** - Nifty 50 / 200 / 500 / Midcap / Smallcap ... na badha stock rangin chorasa ma (moto chorus = vadhu
+  turnover ke market cap, lilo = vadhyo, laal = ghatyo). Sector na naam par click = enaa industries.
 - **Groups** - Sector / Industry / Theme: rank, Leading / Weakening / Lagging / Improving tag, 1D thi YTD median, 20 divas na
   high/low, % 50 SMA upar. Click = enaa industries ane stocks.
 - **Breadth** - bajaar ni tabiyat: 6 line nu saransh (Momentum, Short-term, Big trend, Breakouts, Overdone?, Leadership),

@@ -131,7 +131,7 @@ logo, colours, font, icons and wording (the site is public: no copied branding).
 | N4 | Stock panel (price head; Overview with tags, 12 key ratios, pros & cons; Financials with mini bars, 4 tabs, CAGR, cash-to-profit; Peers by basic industry; Shareholding bar + mini bars), panel beside the chart on the scanner page and the stock page, Financials page as cards with a consolidated / standalone link and red negatives | built 2026-11-07 |
 | N5 | Warm-up home (#/): market read, participation 20/50/200D + Nifty 500, stage 2 vs 4, FII / DII cash (new daily data from NSE), 20-day highs - lows, 7 index cards with 3-month sparklines and 50E / 200S, today's setups (copy to TradingView), where the money is (themes 1W), coming up (results, Nifty expiries), watchlist plan with signals. Market table moved to #/market | built 2026-11-07 |
 | N6 | Earnings calendar `#/earnings[/<monday>]`: week Mon-Sat (Sat column includes Sunday), announced (graded) + due, day header with EPS YoY up / down counts, today highlighted, season count, hover card, recent-earnings cards (last 5 quarters from data/f), filters (ranges, grade, signals); our grade rule SD.earnGrade | built 2026-11-08 |
-| N7 | Heatmap (index constituent lists) | open |
+| N7 | Heatmap `#/heatmap`: squarified treemap by sector (click = industries of that sector), index (9 NSE lists + F&O + liquid), area (turnover / market cap / equal), colour (1D / 1W / 1M / 3M / from 52W high / RS), hover card, colour scale; index members from NSE CSVs (daily step 4f) | built 2026-11-08 |
 | N8 | Groups 3-column | open |
 | N9 | RRG | open |
 | N10 | Market breadth restyle + Major Indices grid | open |

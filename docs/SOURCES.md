@@ -72,3 +72,9 @@ Script: `scripts/probe_sources.py`.
   provisional FII / FPI and DII buy, sell and net values (Rs crore) of the LATEST session only. No history endpoint, so the
   daily job (step 4e, swingdash/market_flows.py) adds one row per session to `data/market/fii_dii.csv`; the website gets
   the last 60 rows as `data/fii_dii.json`. A failed call never stops the price update.
+
+## Index members (Phase N7, from 2026-11-08)
+- `https://nsearchives.nseindia.com/content/indices/<file>.csv` for Nifty 50, Next 50, 200, 500, Midcap 150, Smallcap 250,
+  Microcap 250, MidSmallcap 400 and Bank (Company Name, Industry, Symbol, Series, ISIN Code). Daily step 4f
+  (swingdash/index_members.py) keeps `data/meta/index_members.csv` (index, symbol), rewritten only when a list changes;
+  a failed or too-short list (< 80 % of the expected count) keeps the saved members. Website: `data/index_members.json`.

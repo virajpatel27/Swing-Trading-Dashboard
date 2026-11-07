@@ -143,3 +143,4 @@ N3 (custom scan window: CS filter list in app.js, csRule -> scanner rule, builde
 N4 (stockPanel accordion beside the chart, peers by basic_industry, financials cards) built 07-Nov.
 N5 (home #/ warm-up; Market moved to #/market; FII/DII collector swingdash/market_flows.py, daily step 4e, data/market/fii_dii.csv) built 07-Nov.
 N6 (earnings calendar #/earnings, SD.earnGrade rule in logic.js + docs/site_rules.md; docs/formulas.md is GENERATED - never edit by hand) built 08-Nov.
+N7 (heatmap #/heatmap, SD.squarify; index members swingdash/index_members.py daily step 4f, data/meta/index_members.csv) built 08-Nov.

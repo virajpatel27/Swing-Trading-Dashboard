@@ -982,6 +982,95 @@
       } catch (e) { $("#acts").textContent = "Not available."; }
     }
   }
+  /* ------------------------------------------------------------------ heatmap (Phase N7): treemap by sector */
+  const HM_INDEX = [["NIFTY_50", "Nifty 50"], ["NIFTY_NEXT_50", "Nifty Next 50"], ["NIFTY_200", "Nifty 200"], ["NIFTY_500", "Nifty 500"],
+    ["NIFTY_MIDCAP_150", "Midcap 150"], ["NIFTY_SMALLCAP_250", "Smallcap 250"], ["NIFTY_MICROCAP_250", "Microcap 250"],
+    ["NIFTY_MIDSMALLCAP_400", "MidSmallcap 400"], ["NIFTY_BANK", "Nifty Bank"], ["FNO", "F&O stocks"], ["LIQUID", "Liquid stocks"]];
+  const HM_AREA = [["turnover_cr", "Turnover"], ["mcap_cr", "Market cap"], ["equal", "Equal"]];
+  const HM_COLOR = [["chg_1d", "1D %", 3], ["ret_1w", "1W %", 6], ["ret_1m", "1M %", 12], ["ret_3m", "3M %", 25], ["from_hi52", "From 52W high", 40], ["rs_rating", "RS rating", 50]];
+  let hmResize = null;
+  const hexRGB = (c) => { c = c.trim(); if (c.startsWith("#")) { const n = parseInt(c.slice(1).length === 3 ? c.slice(1).replace(/./g, "$&$&") : c.slice(1, 7), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; } const m = c.match(/\d+/g); return m ? m.slice(0, 3).map(Number) : [128, 128, 128]; };
+  const mix = (a, b, t) => a.map((x, i) => Math.round(x + (b[i] - x) * t));
+
+  async function renderHeatmap() {
+    if (!state.screen) view.innerHTML = SKEL("Loading the heatmap");
+    try { await loadScreen(); if (!state.members) state.members = await getJSON("data/index_members.json").catch(() => ({})); }
+    catch (e) { view.innerHTML = `<p class="empty">Could not load the stock table (${esc(e.message)}).</p>`; return; }
+    if (routeName() !== "heatmap") return;
+    const hm = Object.assign({ index: "NIFTY_500", area: "turnover_cr", color: "chg_1d", sector: "" }, store.get("sd-hm", {}));
+    if (!state.members[hm.index] && !["FNO", "LIQUID"].includes(hm.index)) hm.index = "NIFTY_500";
+    const save = () => store.set("sd-hm", { index: hm.index, area: hm.area, color: hm.color });
+    const sel = (id, opts, val) => `<select id="${id}">${opts.map(([v, l]) => `<option value="${v}" ${v === val ? "selected" : ""}>${l}</option>`).join("")}</select>`;
+    const idxOpts = HM_INDEX.filter(([k]) => state.members[k] || k === "FNO" || k === "LIQUID");
+    view.innerHTML = `<div class="hmx"><div class="hmx-bar"><label>Index ${sel("hmIdx", idxOpts, hm.index)}</label><label>Area ${sel("hmArea", HM_AREA, hm.area)}</label>
+        <label>Colour ${sel("hmCol", HM_COLOR.map(([k, l]) => [k, l]), hm.color)}</label><span class="hm-crumb" id="hmCrumb"></span><span class="hm-n muted small" id="hmN"></span></div>
+      <div class="hm-box" id="hmBox"></div><div class="hm-leg" id="hmLeg"></div><div class="ehov" id="hmHov" hidden></div></div>`;
+    const draw = () => {
+      const box = $("#hmBox");
+      if (!box) { window.removeEventListener("resize", hmResize); return; }
+      const mem = state.members[hm.index] ? new Set(state.members[hm.index].symbols) : null;
+      let rows = state.screen.filter((r) => !r.stale && (mem ? mem.has(r.symbol) : hm.index === "FNO" ? r.fno : (r.liquid_day ?? r.liquid)));
+      const total = rows.length;
+      if (hm.sector) rows = rows.filter((r) => (r.sector || "Other") === hm.sector);
+      const val = (r) => (hm.area === "equal" ? 1 : Math.max(r[hm.area] || 0, 0));
+      const groups = new Map();
+      for (const r of rows) { if (!(val(r) > 0)) continue; const g = hm.sector ? (r.basic_industry || r.industry || "Other") : (r.sector || "Other"); if (!groups.has(g)) groups.set(g, []); groups.get(g).push(r); }
+      const W = box.clientWidth, H = Math.max(420, Math.min(innerHeight - 250, W * 0.62));
+      box.style.height = H + "px";
+      const gl = [...groups].map(([g, list]) => ({ v: list.reduce((a, r) => a + val(r), 0), g, list: list.sort((a, b) => val(b) - val(a)) })).sort((a, b) => b.v - a.v);
+      const cs = getComputedStyle(document.documentElement), neg = hexRGB(cs.getPropertyValue("--heat-n4")), mid = hexRGB(cs.getPropertyValue("--heat-0")), pos = hexRGB(cs.getPropertyValue("--heat-p4"));
+      const cdef = HM_COLOR.find((x) => x[0] === hm.color), span = cdef[2];
+      const colorOf = (v) => {
+        if (v == null || !isFinite(v)) return [`rgb(${mid.join(",")})`, false];
+        let t = hm.color === "rs_rating" ? (v - 50) / span : hm.color === "from_hi52" ? (v + span / 2) / (span / 2) : v / span;
+        t = Math.max(-1, Math.min(1, t));
+        const c = t < 0 ? mix(mid, neg, -t) : mix(mid, pos, t);
+        return [`rgb(${c.join(",")})`, Math.abs(t) > 0.55];
+      };
+      const fmtV = (v) => (v == null ? "–" : hm.color === "rs_rating" ? String(v) : (v > 0 ? "+" : "") + Number(v).toFixed(1) + "%");
+      let html = "";
+      for (const gr of SD.squarify(gl, { x: 0, y: 0, w: W, h: H })) {
+        const g = gr.it, head = gr.h > 34 && gr.w > 50 ? 16 : 0;
+        html += `<div class="hm-g" style="left:${gr.x}px;top:${gr.y}px;width:${gr.w}px;height:${gr.h}px">${head ? `<button type="button" class="hm-gh" data-g="${esc(g.g)}" title="${hm.sector ? "" : "Open " + esc(g.g)}">${esc(g.g)}${hm.sector ? "" : " ›"}</button>` : ""}</div>`;
+        for (const t of SD.squarify(g.list.map((r) => ({ v: val(r), r })), { x: gr.x + 1, y: gr.y + head + 1, w: Math.max(gr.w - 2, 0), h: Math.max(gr.h - head - 2, 0) })) {
+          const r = t.it.r, v = r[hm.color], [bg, strong] = colorOf(v);
+          const big = t.w > 46 && t.h > 28, fs = Math.max(10, Math.min(18, Math.sqrt(t.w * t.h) / 6));
+          html += `<a class="hm-t ${strong ? "strong" : ""}" href="#/i/s/${encodeURIComponent(r.id)}" data-k="${esc(r.key)}" style="left:${t.x}px;top:${t.y}px;width:${t.w}px;height:${t.h}px;background:${bg};font-size:${fs}px">`
+            + (big ? `<b>${esc(r.symbol)}</b><span>${fmtV(v)}</span>` : "") + "</a>";
+        }
+      }
+      box.innerHTML = html || '<p class="empty">No stock.</p>';
+      $("#hmCrumb").innerHTML = hm.sector ? `<button type="button" class="btn sm" id="hmBack">‹ All sectors</button> <b>${esc(hm.sector)}</b>` : "";
+      if ($("#hmBack")) $("#hmBack").onclick = () => { hm.sector = ""; draw(); };
+      const lbl = (idxOpts.find((x) => x[0] === hm.index) || ["", hm.index])[1];
+      $("#hmN").textContent = `${rows.length}${hm.sector ? ` of ${total}` : ""} stocks · ${lbl} · area ${HM_AREA.find((x) => x[0] === hm.area)[1].toLowerCase()} · colour ${cdef[1]}`;
+      const ticks = hm.color === "rs_rating" ? [1, 25, 50, 75, 99] : hm.color === "from_hi52" ? [-span, -span * 0.75, -span / 2, -span / 4, 0] : [-span, -span / 2, 0, span / 2, span];
+      $("#hmLeg").innerHTML = `<span class="hm-scale" style="background:linear-gradient(90deg, rgb(${neg.join(",")}), rgb(${mid.join(",")}), rgb(${pos.join(",")}))"></span>`
+        + `<span class="hm-ticks">${ticks.map((x) => `<i>${hm.color === "rs_rating" ? x : (x > 0 ? "+" : "") + x + "%"}</i>`).join("")}</span>`;
+      $("#stPage").innerHTML = `<span>${rows.length} stocks</span><span class="st-n">${esc(lbl)} · data ${SD.fmtDate(state.screenDate)}</span>`;
+    };
+    draw();
+    $("#hmIdx").onchange = (e) => { hm.index = e.target.value; hm.sector = ""; save(); draw(); };
+    $("#hmArea").onchange = (e) => { hm.area = e.target.value; save(); draw(); };
+    $("#hmCol").onchange = (e) => { hm.color = e.target.value; save(); draw(); };
+    $("#hmBox").onclick = (e) => { const g = e.target.closest(".hm-gh"); if (g && !hm.sector) { hm.sector = g.dataset.g; draw(); } };
+    const hov = $("#hmHov");
+    $("#hmBox").addEventListener("mousemove", (e) => {
+      const a = e.target.closest(".hm-t"); if (!a) { hov.hidden = true; return; }
+      const r = state.screenByKey.get(a.dataset.k); if (!r) return;
+      hov.innerHTML = `<b>${esc(r.symbol)}</b> <small class="muted">${esc(r.name || "")}</small><div class="eh-k"><span>Price ₹${SD.fmtPrice(r.close)}</span><span>1D ${pct(r.chg_1d)}</span>
+        <span>1W ${pct(r.ret_1w)}</span><span>1M ${pct(r.ret_1m)}</span><span>RS ${r.rs_rating ?? "–"}</span><span>MCap ₹${finNum(r.mcap_cr)} Cr</span><span>Turnover ₹${finNum(r.turnover_cr, 1)} Cr</span></div>
+        <small class="muted">${esc(r.sector || "")} › ${esc(r.basic_industry || r.industry || "")}</small>`;
+      hov.hidden = false;
+      hov.style.left = `${Math.min(e.clientX + 14, innerWidth - 300)}px`; hov.style.top = `${Math.min(e.clientY + 14, innerHeight - 140)}px`;
+    });
+    $("#hmBox").addEventListener("mouseleave", () => { hov.hidden = true; });
+    if (hmResize) window.removeEventListener("resize", hmResize);
+    let tmr = null;
+    hmResize = () => { clearTimeout(tmr); tmr = setTimeout(() => { if (routeName() === "heatmap") draw(); else window.removeEventListener("resize", hmResize); }, 150); };
+    window.addEventListener("resize", hmResize);
+  }
+
   /* ------------------------------------------------------------------ earnings calendar (Phase N6) */
   /* Our own grade of the latest quarter vs the same quarter a year before (screen fields, fundamentals.py):
      Excellent = sales +15 % or more AND net profit +25 % or more (profit positive), or a turnaround with sales +15 %
@@ -1750,8 +1839,10 @@
   function route() {
     if (!state.rows.length) return;
     const parts = location.hash.replace(/^#\/?/, "").split("/").map(decodeURIComponent);
-    const tab = { "": "home", market: "market", earnings: "earnings", stocks: "stocks", scanners: "scanners", screener: "scanners", sectors: "groups", groups: "groups", breadth: "breadth", watchlist: "watchlist", fields: "fields", i: "" }[parts[0]] ?? "market";
+    const tab = { "": "home", market: "market", earnings: "earnings", heatmap: "heatmap", stocks: "stocks", scanners: "scanners", screener: "scanners", sectors: "groups", groups: "groups", breadth: "breadth", watchlist: "watchlist", fields: "fields", i: "" }[parts[0]] ?? "market";
     document.querySelectorAll(".rail [data-tab]").forEach((a) => a.classList.toggle("active", a.dataset.tab === tab));
+    const act = document.querySelector(".rail-main .active");
+    if (act && matchMedia("(max-width: 720px)").matches) act.scrollIntoView({ inline: "center", block: "nearest" });
     view.classList.remove("enter"); void view.offsetWidth; view.classList.add("enter");
     SDChart.close();
     clearBreadthCharts();
@@ -1769,6 +1860,7 @@
     else if (parts[0] === "i") renderDetail(parts[1], parts.slice(2).join("/"));
     else if (parts[0] === "market") renderMarket();
     else if (parts[0] === "earnings") renderEarnings(parts[1]);
+    else if (parts[0] === "heatmap") renderHeatmap();
     else renderHome();
     window.scrollTo(0, 0);
   }

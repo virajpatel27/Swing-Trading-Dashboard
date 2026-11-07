@@ -145,3 +145,4 @@ N5 (home #/ warm-up; Market moved to #/market; FII/DII collector swingdash/marke
 N6 (earnings calendar #/earnings, SD.earnGrade rule in logic.js + docs/site_rules.md; docs/formulas.md is GENERATED - never edit by hand) built 08-Nov.
 N7 (heatmap #/heatmap, SD.squarify; index members swingdash/index_members.py daily step 4f, data/meta/index_members.csv) built 08-Nov.
 N8 (groups in columns #/groups/<level>/<group>/<industry>, chart column) built 08-Nov.
+N9 (RRG #/rrg; group_rank tails d/w for mkt + rrg_benchmarks, tail_days in group_ranks.json) built 08-Nov.

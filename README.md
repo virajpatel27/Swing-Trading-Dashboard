@@ -42,6 +42,8 @@ stock / index nu naam lakho -> Enter = sidho chart.
   turnover ke market cap, lilo = vadhyo, laal = ghatyo). Sector na naam par click = enaa industries.
 - **Groups** - column ma: Sectors -> Industries -> Stocks -> Chart (Industry / Theme ma: list -> Stocks -> Chart). Rank ni baju
   nano + / - = rank ketlo badlayo, rangin bindu = Leading / Improving / Weakening / Lagging. ‹ thi column vadi do.
+- **RRG** - kaya sector / industry / theme aagal (Leading), sudhre chhe (Improving), dhimo pade chhe (Weakening) ke
+  pachhal (Lagging): poonchhdi = chhella divas no rasto. Mouse = rasto ane mahiti, click = pin. Daily / Weekly, Nifty 50 / 500 saathe.
 - **Breadth** - bajaar ni tabiyat: 6 line nu saransh (Momentum, Short-term, Big trend, Breakouts, Overdone?, Leadership),
   stage mix ane 6 chart; **Major Indices** tab.
 - **Watchlist** - ★ dabavo; aa browser ma save rahe chhe.

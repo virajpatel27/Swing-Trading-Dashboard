@@ -702,3 +702,14 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Fixed a class clash (`.grow` of the Financials page) by naming the column classes gc-grow / gc-grow2.
 - Checked in the preview at 1500 px and 375 px. Tests 179 Python + 29 JS green.
 - NEXT: N9 RRG.
+
+### 2026-11-08: UI redesign N9 - RRG
+- group_rank.py: `tails` per ranked group = {mkt | NIFTY_50 | NIFTY_500: {s: {d, w}, m: {d, w}}} (20 daily points, 10
+  weekly points 5 sessions apart, 1 decimal); rrg() takes an index as benchmark; screen.py reads config `rrg_benchmarks`
+  from data/indices/nse and adds `tail_days` (dates) to group_ranks.json. tests/test_n9_rrg.py.
+- Page `#/rrg` (rail "RRG"): quadrant counts, Tail 5 / 10 / 20, Sectors / Industries / Themes (+ Top 20 / All), Daily /
+  Weekly, benchmark select; SVG chart with tinted quadrants, fading smoothed tails, head dot + label; hover = only that
+  path + start date + card; click = pin (saved per level); side list by quadrant with heading arrows (hover / click too).
+  Works with old group_ranks.json too (10 daily points, market only).
+- Checked in the preview (1500 px) with the rebuilt 06-Nov snapshot. Tests 181 Python + 29 JS green.
+- NEXT: N10 breadth restyle + major indices grid.

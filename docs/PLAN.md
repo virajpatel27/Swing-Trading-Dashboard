@@ -133,7 +133,7 @@ logo, colours, font, icons and wording (the site is public: no copied branding).
 | N6 | Earnings calendar `#/earnings[/<monday>]`: week Mon-Sat (Sat column includes Sunday), announced (graded) + due, day header with EPS YoY up / down counts, today highlighted, season count, hover card, recent-earnings cards (last 5 quarters from data/f), filters (ranges, grade, signals); our grade rule SD.earnGrade | built 2026-11-08 |
 | N7 | Heatmap `#/heatmap`: squarified treemap by sector (click = industries of that sector), index (9 NSE lists + F&O + liquid), area (turnover / market cap / equal), colour (1D / 1W / 1M / 3M / from 52W high / RS), hover card, colour scale; index members from NSE CSVs (daily step 4f) | built 2026-11-08 |
 | N8 | Groups in columns: Sectors -> Industries -> Stocks -> Chart (Industry / Theme: list -> Stocks -> Chart), rank + rank-change superscript, tag dot, hover numbers, foldable columns (fold by themselves when a chart opens), sortable stock list with 20H / 20L, phone: one level at a time with a back link | built 2026-11-08 |
-| N9 | RRG | open |
+| N9 | RRG `#/rrg`: strength x momentum chart with smoothed fading tails (5 / 10 / 20 points), quadrant colours, Sectors / Industries / Themes (Top 20 or all), Daily / Weekly, benchmark equal-weight market / Nifty 50 / Nifty 500, hover trace + card (heading, points in quadrant, 5-point momentum change), click to pin, side list by quadrant with heading arrows | built 2026-11-08 |
 | N10 | Market breadth restyle + Major Indices grid | open |
 | N11 | Leaders (our leader score) | open |
 | N12 | Polish | open |

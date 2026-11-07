@@ -151,7 +151,12 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
     closes = pd.DataFrame({sid: h["close"].iloc[-n_hist - 5:] for sid, h in hists.items()}).sort_index().iloc[-n_hist:]
     mem = groups.membership(data, root)
     rdf = pd.DataFrame(rows).set_index("id")
-    table = group_rank.group_table(rdf, closes, mem, gcfg)
+    benches = {}
+    for bid in gcfg.get("rrg_benchmarks", []):          # RRG page: the same chart against an index (Phase N9)
+        bdf = store.read(data / "indices" / "nse" / bid, store.INDEX_COLS)
+        if len(bdf):
+            benches[bid] = bdf.set_index("date")["close"].astype(float)
+    table = group_rank.group_table(rdf, closes, mem, gcfg, benches)
     gfields = group_rank.stock_fields(rdf, table, mem)
     for row in rows:
         row.update(gfields.get(row["id"], {}))
@@ -171,7 +176,8 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
             t[i] = None if t[i] in ("", None) else float(t[i])
     snap = {"generated_at": datetime.now().strftime("%Y-%m-%d %H:%M"), "data_date": newest.strftime("%Y-%m-%d"),
             "disclaimer": DISCLAIMER, "prices": "adjusted for splits, bonus, rights, demergers", "columns": cols, "rows": table,
-            "groups": {"data_date": newest.strftime("%Y-%m-%d"), "config": gcfg, "levels": table_groups},
+            "groups": {"data_date": newest.strftime("%Y-%m-%d"), "config": gcfg, "levels": table_groups,
+                       "tail_days": group_rank.tail_dates(closes.index, int(gcfg.get("tail_daily", 20)), int(gcfg.get("tail_weekly", 10)))},
             "breadth": breadth.build(data, hists, yaml.safe_load(open(root / "config" / "breadth.yaml", encoding="utf-8")))}
     log(f"screen: {len(table)} stocks x {len(cols)} fields, data date {snap['data_date']}")
     return snap

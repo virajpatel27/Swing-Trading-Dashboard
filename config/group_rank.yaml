@@ -18,3 +18,6 @@ history_sessions: 160          # sessions of prices used (must be > ratio_window
 max_daily_move: 0.25           # a one-day move above 25 % (bad tick / missed corporate action) is left out
 min_members: 5                 # smaller industries / themes get no rank (greyed, "Show small groups")
 tail_points: 10                # strength / momentum points kept per group for a later RRG chart
+tail_daily: 20                 # RRG page (Phase N9): daily points per tail
+tail_weekly: 10                # RRG page: points 5 sessions apart ("weekly")
+rrg_benchmarks: [NIFTY_50, NIFTY_500]   # RRG page: also against these indices (default = equal-weight market)

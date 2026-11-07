@@ -2,6 +2,8 @@
 
 group_table() -> {"sector": [...], "industry": [...], "theme": [...]} one dict per group:
   name, parent (industry: its sector), n, ids (member stock ids), rank, rank_chg, tag, strength, momentum, tail,
+  tails = {benchmark: {"d": last `tail_daily` daily points, "w": last `tail_weekly` points 5 sessions apart}} for the RRG
+  page (benchmark "mkt" = equal-weight market, plus each index of `rrg_benchmarks`),
   med_<p> and avg_<p> for p in 1d / 1w / 1m / 3m / 1y / ytd (median / average member return %), hi20 / lo20 (members
   whose high / low today is the 20-day high / low), above50 (% of members above their 50-day SMA), small
 stock_fields() -> per stock id: sector_rank, sector_tag, industry_rank, industry_tag, sector_rank_1m / industry_rank_1m
@@ -25,12 +27,16 @@ def tag_of(strength: float, momentum: float) -> str | None:
     return "Improving" if momentum >= 100 else "Lagging"
 
 
-def rrg(closes: pd.DataFrame, members: dict[str, list[str]], cfg: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Strength and momentum per day (rows) and group (columns) from the member closes (see config/group_rank.yaml)."""
+def rrg(closes: pd.DataFrame, members: dict[str, list[str]], cfg: dict, bench: pd.Series | None = None) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Strength and momentum per day (rows) and group (columns) from the member closes (see config/group_rank.yaml).
+    bench = an index's closes to compare with instead of the equal-weight market."""
     mv = float(cfg.get("max_daily_move", 0.25))
     rets = closes.pct_change(fill_method=None)
     rets = rets.where(rets.abs() <= mv)
-    market = (1 + rets.mean(axis=1).fillna(0)).cumprod()
+    if bench is not None:
+        market = bench.reindex(closes.index).ffill().astype(float)
+    else:
+        market = (1 + rets.mean(axis=1).fillna(0)).cumprod()
     idx = {}
     for g, ids in members.items():
         cols = [i for i in ids if i in rets.columns]
@@ -45,12 +51,27 @@ def rrg(closes: pd.DataFrame, members: dict[str, list[str]], cfg: dict) -> tuple
     return strength, momentum
 
 
-def group_table(rows: pd.DataFrame, closes: pd.DataFrame, membership: pd.DataFrame, cfg: dict) -> dict[str, list[dict]]:
-    """rows = today's screen rows (index = stock id); closes = adjusted closes (days x stock ids), last sessions."""
+def tail_points(series: pd.Series, n_daily: int, n_weekly: int) -> dict:
+    """{"d": last n_daily values, "w": n_weekly values 5 sessions apart ending with the last one} (None for missing)."""
+    w = series.iloc[::-1].iloc[::5].iloc[:n_weekly].iloc[::-1]
+    return {"d": [_r(x, 1) for x in series.iloc[-n_daily:]], "w": [_r(x, 1) for x in w]}
+
+
+def tail_dates(index: pd.Index, n_daily: int, n_weekly: int) -> dict:
+    s = pd.Series(range(len(index)), index=index)
+    w = s.iloc[::-1].iloc[::5].iloc[:n_weekly].iloc[::-1]
+    return {"d": [d.strftime("%Y-%m-%d") for d in index[-n_daily:]], "w": [d.strftime("%Y-%m-%d") for d in w.index]}
+
+
+def group_table(rows: pd.DataFrame, closes: pd.DataFrame, membership: pd.DataFrame, cfg: dict,
+                benches: dict[str, pd.Series] | None = None) -> dict[str, list[dict]]:
+    """rows = today's screen rows (index = stock id); closes = adjusted closes (days x stock ids), last sessions;
+    benches = {index id: closes} for the RRG page's other benchmarks."""
     rows = rows[~rows.get("stale", pd.Series(False, index=rows.index)).fillna(False).astype(bool)]
     min_n = int(cfg.get("min_members", 5))
     back = int(cfg.get("rank_change_sessions", 5))
     tail = int(cfg.get("tail_points", 10))
+    nd, nw = int(cfg.get("tail_daily", 20)), int(cfg.get("tail_weekly", 10))
     num = lambda c: pd.to_numeric(rows[c], errors="coerce") if c in rows else pd.Series(np.nan, index=rows.index)
     hi20 = num("high") >= num("high_20d")
     lo20 = num("low") <= num("low_20d")
@@ -60,7 +81,9 @@ def group_table(rows: pd.DataFrame, closes: pd.DataFrame, membership: pd.DataFra
         m = membership[(membership["level"] == level) & membership["id"].isin(rows.index)]
         members = {g: list(d["id"]) for g, d in m.groupby("name")}
         parent = dict(zip(m["name"], m["parent"]))
-        strength, momentum = rrg(closes, {g: ids for g, ids in members.items() if len(ids) >= min_n}, cfg)
+        big = {g: ids for g, ids in members.items() if len(ids) >= min_n}
+        strength, momentum = rrg(closes, big, cfg)
+        other = {k: rrg(closes, big, cfg, b) for k, b in (benches or {}).items() if b is not None and len(b)}
         ranks = (-strength).rank(axis=1, method="min") if len(strength) else pd.DataFrame()
         groups = []
         for g, ids in members.items():
@@ -78,6 +101,10 @@ def group_table(rows: pd.DataFrame, closes: pd.DataFrame, membership: pd.DataFra
                 if len(ranks) > back and np.isfinite(ranks[g].iloc[-1 - back]):
                     d["rank_chg"] = int(ranks[g].iloc[-1 - back] - ranks[g].iloc[-1])
                 d["tail"] = [[_r(a), _r(b)] for a, b in zip(strength[g].iloc[-tail:], momentum[g].iloc[-tail:])]
+                d["tails"] = {"mkt": {"s": tail_points(strength[g], nd, nw), "m": tail_points(momentum[g], nd, nw)}}
+                for k, (bs, bm) in other.items():
+                    if g in bs.columns and np.isfinite(bs[g].iloc[-1]):
+                        d["tails"][k] = {"s": tail_points(bs[g], nd, nw), "m": tail_points(bm[g], nd, nw)}
             groups.append(d)
         r1m = pd.Series({d["name"]: d["avg_1m"] for d in groups if not d["small"] and d["avg_1m"] is not None})
         for d in groups:

@@ -25,3 +25,8 @@ net margin up (npm_up_qtrs >= 1), turnaround, RS rating >= 70.
 - Tiles: squarified treemap (site/logic.js `squarify`, tests/js/treemap.test.js); first by sector, then by stock.
 - Area: today's turnover (Rs crore), market cap, or equal. Colour: diverging red - grey - green, capped at +/-3 % (1D),
   6 % (1W), 12 % (1M), 25 % (3M); from 52W high 0 to -40 %; RS rating centred on 50.
+
+## RRG (Phase N9)
+- Points come from swingdash/group_rank.py (strength, momentum; config/group_rank.yaml). Daily tail = the last 5 / 10 / 20
+  sessions; weekly = points 5 sessions apart (last 5 / 10). Benchmarks: equal-weight market (default), Nifty 50, Nifty 500.
+- Drawn tails: inner points smoothed 1-2-1, the head is exact. Heading = direction of the last step (8 arrows).

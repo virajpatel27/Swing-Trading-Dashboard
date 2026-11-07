@@ -185,3 +185,12 @@ Part D (same day):
 Earlier note - still to do: RS before Price (benchmark of their RS line not found yet; best
 Nifty MidSmallcap 400, 68 / 93 %), Shakeout, Daily / Weekly Base, Near Pivot, VCP, Tight Setups, IPO Base. Earnings
 scanners after the fundamentals are complete (~10-Nov). The reference's event scans keep an event 5 sessions ("age").
+
+## Step 4 (07-Nov-2026): market cap, free float, beta, turnover (06-Nov export)
+
+| field | change | before | after |
+|---|---|---|---|
+| Avg turnover 20D / 50D | volume x close averaged incl. today (was NSE traded value = volume x average price); tolerance 1 % or Rs 0.006 Cr (their values are rounded to 0.01 Cr) | 88.6 % / 89.5 % | 99.6 % / 99.1 % |
+| Beta 1Y | 252 sessions up to the PREVIOUS day (was incl. today) | 74.5 % within 0.05 | 83.8 % (correlation 0.996) |
+| Market cap | NSE answers the old share count for a few days after a split: when the stored face value is still the old one of a split / consolidation of the last 30 days, the count is scaled (GNRL, KMEW); and the count is asked again for 10 days after any share action | 90.2 % within 1 % | 90.3 % (the rest: 1-10 % apart, share-count dates differ) |
+| Free float | unchanged = 100 - promoter %. Their promoter % equals ours for 95 %, but their free float is 100 - promoter only for 87 % (they also take out other holders, e.g. SUNPHARMA 45.5 vs NSE public 47.3 %) | 85.0 % within 0.5 pt | unchanged |

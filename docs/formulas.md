@@ -162,8 +162,8 @@ Current phase: **S9**. Fields: **296**.
 | `pocket_pivot` | Pocket pivot | boolean | Up day whose volume beats the volume of every down day of the previous 10 sessions | close, volume, indicator_settings | data/snapshot/screen.json |
 | `dry_up` | Volume dry-up | boolean | Lowest volume of the last 10 sessions and below 0.5 x avg_vol50 | volume, avg_vol50, indicator_settings | data/snapshot/screen.json |
 | `turnover_cr` | Turnover (Rs Cr) | crore | NSE traded value of the day / 1e7 | bhavcopy | data/snapshot/screen.json |
-| `turnover_avg20_cr` | Avg turnover 20D (Rs Cr) | crore | Average turnover_cr of the last 20 sessions incl. today | turnover_cr | data/snapshot/screen.json |
-| `turnover_avg50_cr` | Avg turnover 50D (Rs Cr) | crore | Average turnover_cr of the last 50 sessions incl. today | turnover_cr | data/snapshot/screen.json |
+| `turnover_avg20_cr` | Avg turnover 20D (Rs Cr) | crore | Average of volume x close (Rs Cr) over the last 20 sessions incl. today | close, volume | data/snapshot/screen.json |
+| `turnover_avg50_cr` | Avg turnover 50D (Rs Cr) | crore | Average of volume x close (Rs Cr) over the last 50 sessions incl. today | close, volume | data/snapshot/screen.json |
 | `mfi14` | MFI 14 | number | Money Flow Index: TP = (H+L+C)/3, flow = TP x volume; 100 - 100 / (1 + sum of up-flows / sum of down-flows over 14) | close, volume | data/snapshot/screen.json |
 | `adr_pct` | ADR % (20) | percent | 100 x (average of high/low over 20 sessions - 1) | close | data/snapshot/screen.json |
 | `bb_mid` | Bollinger middle | rupees | SMA 20 of close | close | data/snapshot/screen.json |
@@ -184,7 +184,7 @@ Current phase: **S9**. Fields: **296**.
 | `rs_line_52w_high` | RS line at 52W high | boolean | rs_line >= its highest value of the last 252 sessions | rs_line | data/snapshot/screen.json |
 | `rs_new_high_before_price` | RS new high before price | boolean | rs_line_52w_high and today's high below hi52 (price not at a new high) | rs_line_52w_high, hi52 | data/snapshot/screen.json |
 | `mansfield_rs` | Mansfield RS | number | (rs_line / its 52-week (260-session) average - 1) x 100 | rs_line | data/snapshot/screen.json |
-| `beta_1y` | Beta 1Y vs Nifty 50 | number | Covariance / variance of daily returns vs Nifty 50 over 252 sessions | close, index_history | data/snapshot/screen.json |
+| `beta_1y` | Beta 1Y vs Nifty 50 | number | Covariance / variance of daily returns vs Nifty 50 over the 252 sessions up to the previous day | close, index_history | data/snapshot/screen.json |
 | `stage` | Stage | text | 1 Basing, 2A Early uptrend, 2 Uptrend, 3 Topping, 4 Downtrend, 4A Improving: above SMA200 = 2 (3 when below SMA50 after an extended run: SMA20 > SMA200 x 1.06, close > SMA200 x 1.03); below SMA200 = 1 when above SMA50 and SMA150, else 4 / 4A; under 200 sessions SMA50 / SMA10 / SMA30 (config/stage.yaml) | close, indicator_settings | data/snapshot/screen.json |
 | `rs_score` | RS score | number | 0.4 x 3M + 0.2 x 6M + 0.2 x 9M + 0.2 x 12M return (63/126/189/252 sessions; younger stocks: the periods they have) | close | data/snapshot/screen.json |
 | `liquid_day` | Liquid that day | boolean | Median turnover of the last 30 sessions >= Rs 1 Cr and raw close >= Rs 5 (same day) | turnover_cr, raw_close, settings | data/snapshot/screen.json |

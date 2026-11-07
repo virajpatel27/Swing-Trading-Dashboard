@@ -18,6 +18,8 @@ liquid (Viraj's rule from the master prompt, numbers in config/settings.yaml -> 
 """
 from __future__ import annotations
 
+import re
+
 from pathlib import Path
 
 import pandas as pd
@@ -94,6 +96,8 @@ def build(data: Path, fno: set[str] | None, bands: pd.DataFrame | None, liquid_r
         c = cls.loc[r.symbol] if r.symbol in cls.index else {}
         prev = old.loc[r.symbol] if r.symbol in old.index else {}
         shares, promoter = _num(c.get("shares", "")), _num(c.get("promoter_pct", ""))
+        if shares:
+            shares *= stale_split_factor(data, r.id, _num(c.get("face_value", "")), c.get("fetched", ""))
         fpct = round(100 - promoter, 2) if promoter is not None else _num(c.get("float_pct_nse", ""))
         close = st["close"]
         mcap = shares * close / CR if shares and close else None
@@ -156,9 +160,27 @@ def download_lists(http, log=print) -> tuple[set[str] | None, pd.DataFrame | Non
 SHARE_ACTIONS = ["split", "bonus", "rights", "consolidation", "capital_reduction"]
 
 
-def share_count_changed(data: Path, today) -> set[str]:
+def stale_split_factor(data: Path, sid: str, face_value: float | None, fetched: str = "", max_days: int = 30) -> float:
+    """NSE keeps answering the OLD share count (and face value) for a few days after a split / consolidation (GNRL split
+    10 -> 1 on 05-Nov-2026, KMEW 5 -> 1 on 06-Nov). When the stored face value is still the old one of the latest
+    split / consolidation, the count is scaled by old / new face value until NSE answers the new count."""
+    p = data / "corporate_actions" / f"{sid}.csv"
+    if not face_value or not p.exists():
+        return 1.0
+    ca = pd.read_csv(p, dtype=str).fillna("")
+    ca = ca[ca["type"].isin(["split", "consolidation"]) & ca["status"].str.startswith("applied")].sort_values("ex_date")
+    if ca.empty or not fetched or (pd.Timestamp(fetched) - pd.Timestamp(ca["ex_date"].iat[-1])).days > max_days:
+        return 1.0                                     # only a split of the last max_days before the fetch (older: NSE's count is current)
+    m = re.match(r"FV\s*([\d.]+)\s*->\s*([\d.]+)", str(ca["ratio"].iat[-1]))
+    if not m:
+        return 1.0
+    old, new = float(m.group(1)), float(m.group(2))
+    return old / new if new > 0 and abs(face_value - old) < 1e-9 and abs(old - new) > 1e-9 else 1.0
+
+
+def share_count_changed(data: Path, today, lag_days: int = 10) -> set[str]:
     """Stocks with a split / bonus / rights / consolidation ex-date after the day their share count was fetched (and not in
-    the future): the stored count is out of date, ask NSE again."""
+    the future) - or up to lag_days before it, because NSE updates the count a few days late: ask NSE again."""
     out = set()
     cls_path = data / "meta" / "classification.csv"
     if not cls_path.exists():
@@ -171,7 +193,8 @@ def share_count_changed(data: Path, today) -> set[str]:
         if not fetched or not p.exists():
             continue
         ca = pd.read_csv(p, dtype=str).fillna("")
-        hit = ca[ca["type"].isin(SHARE_ACTIONS) & (ca["ex_date"] > fetched) & (ca["ex_date"] <= str(today))]
+        since = str((pd.Timestamp(fetched) - pd.Timedelta(days=lag_days)).date())
+        hit = ca[ca["type"].isin(SHARE_ACTIONS) & (ca["ex_date"] > since) & (ca["ex_date"] <= str(today))]
         if len(hit):
             out.add(sym)
     return out

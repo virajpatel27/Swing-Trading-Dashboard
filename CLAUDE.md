@@ -157,3 +157,4 @@ Scanners (07-Nov, step 3 part A): gainers/doublers/pullbacks/new-listing re-tune
 Scanners part B (07-Nov): s2b_age / so_age / rb_age events (engine.events, recent_breakout last 30 rows only). Part C open: RS before price, bases, near pivot, VCP, tight, IPO base.
 Scanners part C (07-Nov): engine.base_levels (lvl_/wlvl_/ipo_ fields, latest day only) for daily/weekly base, near pivot, IPO base. Part D open: RS before price, VCP, tight setups.
 Scanners part D (07-Nov): rsb_today (RS line vs NIFTY_MIDSMALLCAP_400, events.rsb_*). VCP / Tight unchanged (not matchable). Step 3 done for price scans.
+Step 4 (07-Nov): turnover avg = mean(volume x close); beta up to previous day; stock_master.stale_split_factor for NSE's late share counts.

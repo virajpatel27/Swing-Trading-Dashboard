@@ -843,3 +843,11 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - 4 days: recall / precision 0.68 / 0.93 (was 0.08 / 0.06). The reference's RS index could not be found exactly.
 - VCP and Tight Setups not changed (see docs/calibration.md). Tests 194 Python + 32 JS green.
 - Step 3 done for the price scanners. Open: earnings scanners after ~10-Nov; New Listing after the BSE step.
+
+### 2026-11-07: accuracy step 4 - turnover, beta, market cap, free float
+- engine: turnover_avg20/50_cr = mean(volume x close) incl. today (99.6 % / 99.1 % equal, was 89 %); beta_1y = 252 sessions
+  up to the previous day (83.8 % within 0.05, was 74.5 %).
+- stock_master: stale_split_factor (NSE's share count lags a split: GNRL / KMEW market cap now right); share_count_changed
+  asks again for 10 days after a share action. Takes effect when the daily job rebuilds stocks.csv.
+- Free float left as 100 - promoter % (their definition takes out more holders, not available from NSE's summary).
+- Tests 194 Python + 32 JS green. Next: step 5 (safety: shrink guard + daily price cross-check).

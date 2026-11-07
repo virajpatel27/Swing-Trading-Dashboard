@@ -241,8 +241,11 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
         r = raw.set_index("date")
         val = pd.to_numeric(r["value"], errors="coerce").reindex(d).reset_index(drop=True)
         f["turnover_cr"] = val / 1e7
-        f["turnover_avg20_cr"] = f["turnover_cr"].rolling(20, min_periods=20).mean()
-        f["turnover_avg50_cr"] = f["turnover_cr"].rolling(50, min_periods=50).mean()
+        # average turnover = volume x close (adjusted volume x adjusted close = as traded), incl. today; calibrated 07-Nov:
+        # 98 % / 95 % equal to the reference (NSE's traded value, i.e. volume x average price: 89 %)
+        pxv = v * c / 1e7
+        f["turnover_avg20_cr"] = pxv.rolling(20, min_periods=20).mean()
+        f["turnover_avg50_cr"] = pxv.rolling(50, min_periods=50).mean()
         f["raw_close"] = pd.to_numeric(r["close"], errors="coerce").reindex(d).reset_index(drop=True)
     if deliv is not None and len(deliv):
         f["deliv_pct"] = deliv.set_index("date")["deliv_pct"].reindex(d).reset_index(drop=True)
@@ -296,7 +299,8 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
             f["mansfield_rs"] = (line / line.rolling(weeks * 5, min_periods=weeks * 5).mean() - 1) * 100
         if bid == cfg.get("beta_benchmark", "NIFTY_50"):
             rs, rb = c.pct_change(), b.pct_change()
-            f["beta_1y"] = rs.rolling(YEAR, min_periods=YEAR // 2).cov(rb) / rb.rolling(YEAR, min_periods=YEAR // 2).var()
+            # 252 sessions up to the PREVIOUS day (calibrated 07-Nov: 84 % within 0.05 of the reference, incl. today 75 %)
+            f["beta_1y"] = (rs.rolling(YEAR, min_periods=YEAR // 2).cov(rb) / rb.rolling(YEAR, min_periods=YEAR // 2).var()).shift(1)
     f["stage"] = stage(c, stage_cfg) if stage_cfg else None
     f = pd.concat([f, events(f, cfg.get("events") or {})], axis=1)
     extra = {"sessions": np.arange(1, len(f) + 1)}

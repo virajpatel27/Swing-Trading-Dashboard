@@ -367,7 +367,92 @@ def events(f: pd.DataFrame, cfg: dict) -> pd.DataFrame:
         conf |= fall.shift(r, fill_value=False).astype(bool) & (c >= pc.shift(r))
     out["so_age"] = event_age(conf & (c > s50) & (c > s200) & (s50 > s200), w).to_numpy()
     out["rb_age"], out["rb_level"] = recent_breakout(f, cfg)
-    return pd.concat([out, base_levels(f, cfg)], axis=1)
+    return pd.concat([out, base_levels(f, cfg), vcp_setup(f, cfg)], axis=1)
+
+
+def _zigzag_lows(h, l, start: int, thr: float) -> list[int]:
+    """Confirmed swing lows after `start` (a low): a low counts once price rose thr (fraction) above it."""
+    lows, seek, ei, ev = [], "H", start, h[start]
+    for i in range(start + 1, len(h)):
+        if seek == "H":
+            if h[i] > ev:
+                ei, ev = i, h[i]
+            elif l[i] <= ev * (1 - thr):
+                seek, ei, ev = "L", i, l[i]
+        else:
+            if l[i] < ev:
+                ei, ev = i, l[i]
+            elif h[i] >= ev * (1 + thr):
+                lows.append(ei)
+                seek, ei, ev = "H", i, h[i]
+    return lows
+
+
+def _vcp_at(h, l, c, e: int, cfg: dict):
+    """VCP with data up to row e, or None. pivot = highest high 15..34 bars back (incl. e) with no close above it since;
+    L1 = lowest low after it; a = last confirmed zigzag low after L1; H1 = highest high L1..a; H2 = highest high after a;
+    L3 = lowest low after H2. Depths pivot->L1, H1->a, H2->L3 must shrink."""
+    mn, mx = int(cfg.get("vcp_min_base", 15)), int(cfg.get("vcp_max_base", 34))
+    lo, hi = e - mx + 1, e - mn + 1
+    if lo < 1 or not c[e] > 0:
+        return None
+    h, l, c = h[:e + 1], l[:e + 1], c[:e + 1]
+    seg = h[lo:hi + 1]
+    if np.all(np.isnan(seg)):
+        return None
+    p = lo + int(np.nanargmax(seg))
+    if np.nanmax(c[p + 1:]) > h[p]:
+        return None
+    i1 = p + 1 + int(np.nanargmin(l[p + 1:]))
+    lows = _zigzag_lows(h, l, i1, float(cfg.get("vcp_swing", 0.03)))
+    if not lows or lows[-1] >= e:
+        return None
+    a = lows[-1]
+    h1 = np.nanmax(h[i1:a + 1])
+    j2 = a + 1 + int(np.nanargmax(h[a + 1:]))
+    if j2 >= e:
+        return None
+    k3 = j2 + 1 + int(np.nanargmin(l[j2 + 1:]))
+    d = [(1 - l[i1] / h[p]) * 100, (1 - l[a] / h1) * 100, (1 - l[k3] / h[j2]) * 100]
+    if not d[0] > d[1] > d[2] > 0:
+        return None
+    if d[0] > float(cfg.get("vcp_first_max", 25)) or d[2] > float(cfg.get("vcp_last_max", 8)) \
+            or (1 - c[e] / h[p]) * 100 > float(cfg.get("vcp_dist_max", 10)):
+        return None
+    hi52 = np.nanmax(h[max(0, e - 251):])
+    tidy = (1 - h[p] / hi52) * 100 <= float(cfg.get("vcp_pivot_vs_hi52", 7)) and d[1] <= float(cfg.get("vcp_mid_ratio", 0.6)) * d[0]
+    return d, h[p], e - p + 1, tidy
+
+
+def vcp_setup(f: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """VCP of the LATEST day (calibrated 07-Nov-2026 on the reference's VCP lists; the scanner adds the Trend Template).
+    An event: the day the VCP first appears (not seen with the same pivot in the vcp_fresh sessions before), kept
+    vcp_window sessions with the values of that day. vcp_age = sessions since, vcp_depth1..3 = the three pullbacks %,
+    vcp_pivot = the base high, vcp_base_bars = sessions from the pivot to that day."""
+    cols = ["vcp_age", "vcp_depth1", "vcp_depth2", "vcp_depth3", "vcp_pivot", "vcp_base_bars"]
+    out = pd.DataFrame(np.nan, index=f.index, columns=cols)
+    h, l, c = (f[k].to_numpy(float) for k in ("high", "low", "close"))
+    t, win, fresh = len(f) - 1, int(cfg.get("vcp_window", 2)), int(cfg.get("vcp_fresh", 5))
+    cache: dict[int, object] = {}
+
+    def at(e: int):
+        if e not in cache:
+            cache[e] = _vcp_at(h, l, c, e, cfg)
+        return cache[e]
+
+    for e in range(t, max(-1, t - win - 1), -1):
+        v = at(e)
+        if v is None:
+            continue
+        st = e                                         # walk back to the first day of this base's VCP
+        while st - 1 >= 0 and (w := at(st - 1)) is not None and w[1] == v[1]:
+            st -= 1
+        seen = any((w := at(x)) is not None and w[1] == v[1] for x in range(max(0, st - fresh), st - 1))
+        first = at(st)
+        if t - st <= win and not seen and first[3]:   # first[3]: pivot near the 52-week high, 2nd pullback <= 0.6 x 1st
+            out.loc[out.index[-1], cols] = [t - st, *first[0], first[1], first[2]]
+        break
+    return out
 
 
 def _base_level(h, l, c, t: int, k: int, min_age: int, max_age: int, prior_min: float = 0.2) -> int | None:

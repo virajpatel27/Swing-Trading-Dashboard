@@ -194,3 +194,17 @@ scanners after the fundamentals are complete (~10-Nov). The reference's event sc
 | Beta 1Y | 252 sessions up to the PREVIOUS day (was incl. today) | 74.5 % within 0.05 | 83.8 % (correlation 0.996) |
 | Market cap | NSE answers the old share count for a few days after a split: when the stored face value is still the old one of a split / consolidation of the last 30 days, the count is scaled (GNRL, KMEW); and the count is asked again for 10 days after any share action | 90.2 % within 1 % | 90.3 % (the rest: 1-10 % apart, share-count dates differ) |
 | Free float | unchanged = 100 - promoter %. Their promoter % equals ours for 95 %, but their free float is 100 - promoter only for 87 % (they also take out other holders, e.g. SUNPHARMA 45.5 vs NSE public 47.3 %) | 85.0 % within 0.5 pt | unchanged |
+
+## VCP rebuilt (07-Nov-2026, with Viraj's VCP screenshots of 06-Nov)
+
+The screenshots say "233 scanned" = the Trend Template list of that day: the reference looks for VCPs only among Trend
+Template stocks (true on all 4 days). Rule found (engine.vcp_setup, config/indicators.yaml events.vcp_*):
+pivot = highest high 15-34 sessions back with no close above it; L1 = lowest low after it; the last confirmed swing low
+after L1 (3 % bounce) and the highest high before it give the 2nd pullback; the highest high after that low and the
+lowest low since give the 3rd. Pullbacks must shrink, 1st <= 25 %, last <= 8 %, close <= 10 % under the pivot. It is an
+EVENT: shown for 2 sessions from the day the VCP first appears, with that day's values (their "age"). Extra filters that
+fit their lists: pivot within 7 % of the 52-week high, 2nd pullback <= 0.6 x the 1st.
+
+Result (4 days, real pipeline): recall 0.875, precision 0.36 (was 0 / 0). For 21 of their 22 rows our age, three
+pullback depths and pivot are EXACTLY theirs (SURAKSHA's middle pullback differs: 5.62 vs 3.96 %); GLOBAL is missed.
+The extra stocks are valid VCPs by this rule that the reference does not list - its remaining filter is unknown.

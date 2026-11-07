@@ -861,3 +861,10 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   volume >= 1,000). > 3 % apart -> data/meta/crosscheck_bse.csv + warning; > 10 % of the compared stocks apart -> ERROR
   (wrong day / file). 06-Nov: 1,457 compared, 1 apart (INDOTECH +3.6 %). BSE's download site answers GitHub.
 - Tests 196 Python + 32 JS green.
+
+### 2026-11-07: VCP rebuilt from Viraj's VCP screenshots (VCP 06-11-2026.zip, kept outside the repo)
+- Found: their VCP only scans Trend Template stocks ("233 scanned"), it is a 2-session event with frozen values, and the
+  pullbacks are pivot->lowest low, then the last two swing legs. engine.vcp_setup + _vcp_at + _zigzag_lows (latest day
+  only), fields vcp_age / vcp_depth1-3 / vcp_pivot / vcp_base_bars, scanner vcp = Trend Template rule + vcp_age <= 2.
+- 4 days: recall 0.875 / precision 0.36 (was 0 / 0); 21 of 22 rows exactly equal (age, depths, pivot). Tests 197 + 32 JS.
+- The chart's VCP drawing (site/ind.js contractions) is unchanged; the old patterns.py vcp_* fields stay for it.

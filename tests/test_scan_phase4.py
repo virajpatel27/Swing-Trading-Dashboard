@@ -270,3 +270,20 @@ def test_rs_before_price():
     adj = pd.DataFrame({"date": d, "open": c, "high": c * 1.01, "low": c * 0.99, "close": c, "volume": np.full(n, 1000.0)})
     last = engine.stock_fields(adj, bench={"NIFTY_MIDSMALLCAP_400": b}, cfg=cfg).iloc[-1]
     assert bool(last["rsb_today"]) and last["rsb_px_below"] == pytest.approx((1 - 114 / c[-51:-1].max()) * 100)
+
+
+def test_vcp_setup_three_shrinking_pullbacks():
+    cfg = yaml.safe_load(open(ROOT / "config" / "indicators.yaml"))
+    # uptrend to a base high of 200 (the 52-week high), then pullbacks of ~20 %, ~8 % and ~4 %
+    up = np.linspace(100, 199, 250)
+    base = [200, 196, 190, 184, 178, 172, 166, 160, 165, 170, 176, 182, 186, 181, 176, 171, 174, 178, 181, 184, 186, 182]
+    c = np.r_[up, base].astype(float)
+    n = len(c)
+    hi, lo = c * 1.003, c * 0.997
+    hi[250] = 200.0
+    adj = pd.DataFrame({"date": pd.bdate_range("2025-01-01", periods=n), "open": c, "high": hi, "low": lo, "close": c,
+                        "volume": np.full(n, 1000.0)})
+    last = engine.stock_fields(adj, cfg=cfg).iloc[-1]
+    assert last["vcp_age"] == 0 and last["vcp_pivot"] == 200.0 and last["vcp_base_bars"] == 22
+    assert last["vcp_depth1"] > last["vcp_depth2"] > last["vcp_depth3"] > 0
+    assert last["vcp_depth1"] == pytest.approx((1 - lo[257] / 200) * 100)

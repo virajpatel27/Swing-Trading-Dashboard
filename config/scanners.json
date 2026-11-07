@@ -553,38 +553,70 @@
    "id": "vcp",
    "folder": "Patterns",
    "name": "VCP",
-   "description": "Volatility contraction: at least 2 pullbacks in a row inside the base, each smaller than the one before, the last one at most 8 %, in an uptrend within 5 % of the pivot.",
+   "description": "Trend Template stocks whose base shows a VCP that appeared in the last 2 sessions: three shrinking pullbacks from a base high 15-34 sessions old (1st <= 25 %, last <= 8 %), close within 10 % of that high, the high near the 52-week high.",
    "universe": "all",
    "rule": {
     "all": [
      {
-      "field": "vcp_contractions",
-      "op": ">=",
-      "value": 2
+      "field": "close",
+      "op": ">",
+      "field2": "sma150"
      },
      {
-      "field": "vcp_last_pct",
+      "field": "close",
+      "op": ">",
+      "field2": "sma200"
+     },
+     {
+      "field": "sma150",
+      "op": ">",
+      "field2": "sma200"
+     },
+     {
+      "field": "sma200_chg_1m",
+      "op": ">",
+      "value": 0
+     },
+     {
+      "field": "sma50",
+      "op": ">",
+      "field2": "sma150"
+     },
+     {
+      "field": "sma50",
+      "op": ">",
+      "field2": "sma200"
+     },
+     {
+      "field": "close",
+      "op": ">",
+      "field2": "sma50"
+     },
+     {
+      "field": "from_lo52",
+      "op": ">=",
+      "value": 30
+     },
+     {
+      "field": "from_hi52",
+      "op": ">=",
+      "value": -25
+     },
+     {
+      "field": "rs_rating",
+      "op": ">=",
+      "value": 70
+     },
+     {
+      "field": "vcp_age",
       "op": "<=",
-      "value": 8
-     },
-     {
-      "field": "stage",
-      "op": "in",
-      "value": [
-       "2",
-       "2A"
-      ]
-     },
-     {
-      "field": "dist_pivot",
-      "op": ">=",
-      "value": -5
+      "value": 2
      }
     ]
    },
    "sort": {
-    "field": "dist_pivot",
-    "dir": "desc"
+    "field": "vcp_age",
+    "dir": "asc"
    },
    "phase": 7
   },

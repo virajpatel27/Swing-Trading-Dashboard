@@ -57,3 +57,13 @@ events:                           # event scans (engine.events), calibrated 07-N
   rsb_benchmark: NIFTY_MIDSMALLCAP_400   # RS before price: RS line vs this index above its 50-session high today,
   rsb_lookback: 50                #   close 0-10 % under its highest close of the previous 50 sessions
   rsb_max_below: 10               #   (the reference's own index is unknown; this one fits best: 68 % / 93 % on 4 days)
+  vcp_min_base: 15                # VCP: pivot (base high) 15..34 sessions back, no close above it since,
+  vcp_max_base: 34
+  vcp_swing: 0.03                 #   swing lows need a 3 % bounce, 3 shrinking pullbacks (pivot->L1, H1->L2, H2->L3),
+  vcp_first_max: 25               #   1st <= 25 %, last <= 8 %, close <= 10 % under the pivot,
+  vcp_last_max: 8
+  vcp_dist_max: 10
+  vcp_pivot_vs_hi52: 7            #   pivot within 7 % of the 52-week high, 2nd pullback <= 0.6 x the 1st,
+  vcp_mid_ratio: 0.6
+  vcp_window: 2                   #   shown for 2 sessions after the day it first appears
+  vcp_fresh: 5                    #   (not when the same base was a VCP in the 5 sessions before)

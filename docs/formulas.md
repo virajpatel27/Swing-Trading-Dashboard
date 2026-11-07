@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S9**. Fields: **296**.
+Current phase: **S9**. Fields: **302**.
 
 ## Sources
 
@@ -264,6 +264,12 @@ Current phase: **S9**. Fields: **296**.
 | `ipo_base_bars` | IPO base sessions | integer | Sessions since the IPO base level | ipo_lvl | data/snapshot/screen.json |
 | `ipo_depth` | IPO base depth % | percent | % from the IPO level down to the lowest low since | ipo_lvl, low | data/snapshot/screen.json |
 | `ipo_dist` | Below IPO level % | percent | % the close is below the IPO base level | ipo_lvl, close | data/snapshot/screen.json |
+| `vcp_age` | VCP (sessions ago) | integer | Sessions since a VCP first appeared (base high 15-34 sessions back, no close above it, three shrinking pullbacks pivot->L1, H1->L2, H2->L3 with a 3 % swing rule, 1st <= 25 %, last <= 8 %, close <= 10 % under the pivot, pivot within 7 % of the 52-week high, 2nd <= 0.6 x 1st); empty after 2 sessions | high, low, close | data/snapshot/screen.json |
+| `vcp_depth1` | VCP 1st pullback % | percent | Pivot down to the lowest low after it | vcp_age | data/snapshot/screen.json |
+| `vcp_depth2` | VCP 2nd pullback % | percent | Highest high after L1 down to the last confirmed swing low | vcp_age | data/snapshot/screen.json |
+| `vcp_depth3` | VCP 3rd pullback % | percent | Highest high after that low down to the lowest low since | vcp_age | data/snapshot/screen.json |
+| `vcp_pivot` | VCP pivot | rupees | The base high of the VCP | vcp_age | data/snapshot/screen.json |
+| `vcp_base_bars` | VCP base sessions | integer | Sessions from the pivot to the day the VCP appeared | vcp_age | data/snapshot/screen.json |
 | `new_low_20d_3d` | New 20D low (3 days) | boolean | new_low_20d on any of the last 3 sessions | new_low_20d | data/snapshot/screen.json |
 | `min_from_sma50_5d` | Lowest from 50 SMA % (5D) | percent | Lowest from_sma50 of the last 5 sessions | from_sma50 | data/snapshot/screen.json |
 | `pivot_vs_hi52` | Pivot vs 52W high % | percent | (pivot / hi52 - 1) x 100 (0 = the pivot is the 52-week high) | pivot, hi52 | data/snapshot/screen.json |

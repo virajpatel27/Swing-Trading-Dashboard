@@ -982,6 +982,149 @@
       } catch (e) { $("#acts").textContent = "Not available."; }
     }
   }
+  /* ------------------------------------------------------------------ earnings calendar (Phase N6) */
+  /* Our own grade of the latest quarter vs the same quarter a year before (screen fields, fundamentals.py):
+     Excellent = sales +15 % or more AND net profit +25 % or more (profit positive), or a turnaround with sales +15 %
+     Good      = sales +5 % or more AND profit +5 % or more (profit positive), or any turnaround (loss -> profit)
+     Weak      = a loss this quarter, or sales AND profit both lower
+     Mixed     = everything else with numbers */
+  const GRADE_RULE = "Our rule on the latest quarter vs a year before: Excellent = sales ≥ +15 % and net profit ≥ +25 % (or a turnaround with sales ≥ +15 %); "
+    + "Good = sales ≥ +5 % and profit ≥ +5 % (or any loss-to-profit turnaround); Weak = a loss, or sales and profit both down; Mixed = the rest.";
+  const earnGrade = (r) => SD.earnGrade(r);
+  const GRADE_CLS = { Excellent: "g-ex", Good: "g-good", Mixed: "g-mix", Weak: "g-weak" };
+  const GRADE_ORDER = { Excellent: 0, Good: 1, Mixed: 2, Weak: 3 };
+  const EARN_SIGNALS = [["eps100", "EPS YoY > 100%", (r) => r.eps_g_yoy > 100], ["pat50", "Profit YoY > 50%", (r) => r.np_g_yoy > 50],
+    ["sales25", "Sales YoY > 25%", (r) => r.sales_g_yoy > 25], ["accel", "EPS growth speeding up", (r) => r.eps_g_accel_qtrs >= 1],
+    ["margin", "Net margin up", (r) => r.npm_up_qtrs >= 1], ["turn", "Turnaround", (r) => r.np_year_ago_q != null && r.np_year_ago_q <= 0 && r.np_last_q > 0],
+    ["rs70", "RS ≥ 70", (r) => r.rs_rating >= 70]];
+  const isoDay = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const mondayOf = (iso) => { const d = new Date(iso + "T00:00:00"); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return isoDay(d); };
+  const addDays = (iso, n) => { const d = new Date(iso + "T00:00:00"); d.setDate(d.getDate() + n); return isoDay(d); };
+
+  async function renderEarnings(weekArg) {
+    if (!state.screen) view.innerHTML = SKEL("Loading the earnings calendar");
+    try { await loadScreen(); } catch (e) { view.innerHTML = `<p class="empty">Could not load the stock table (${esc(e.message)}).</p>`; return; }
+    if (routeName() !== "earnings") return;
+    const today = state.screenDate;
+    const mon = /^\d{4}-\d{2}-\d{2}$/.test(weekArg || "") ? mondayOf(weekArg) : mondayOf(today);
+    const days = [0, 1, 2, 3, 4, 5].map((k) => addDays(mon, k)), sun = addDays(mon, 6);
+    const flt = Object.assign({ mcap: ["", ""], eps: ["", ""], sales: ["", ""], np: ["", ""], grades: [], sig: [], q: "" }, store.get("sd-earn-f", {}));
+    const n = (x) => (x === "" || x == null ? null : Number(x));
+    const inR = (v, [a, b]) => (n(a) == null || (v != null && v >= n(a))) && (n(b) == null || (v != null && v <= n(b)));
+    const nf = () => ["mcap", "eps", "sales", "np"].filter((k) => n(flt[k][0]) != null || n(flt[k][1]) != null).length + flt.grades.length + flt.sig.length;
+    const pass = (r, g) => inR(r.mcap_cr, flt.mcap) && inR(r.eps_g_yoy, flt.eps) && inR(r.sales_g_yoy, flt.sales) && inR(r.np_g_yoy, flt.np)
+      && (!flt.grades.length || flt.grades.includes(g)) && flt.sig.every((k) => { const s = EARN_SIGNALS.find((x) => x[0] === k); return s && s[2](r); });
+    const rows = state.screen.filter((r) => !r.stale);
+    // season: the latest quarter most stocks report
+    const qs = new Map(); for (const r of rows) if (r.fin_qtr) qs.set(r.fin_qtr, (qs.get(r.fin_qtr) || 0) + 1);
+    const qEnd = [...qs.keys()].sort().pop() || "", reported = qs.get(qEnd) || 0;
+    const fqLabel = qEnd ? fq(qEnd) : "";
+    const col = (d) => {
+      const key = d === days[5] ? [d, sun] : [d];
+      const done = rows.filter((r) => key.includes(r.last_result) && r.fin_qtr === qEnd), due = rows.filter((r) => key.includes(r.next_result) && !key.includes(r.last_result));
+      const items = done.map((r) => ({ r, g: earnGrade(r), done: true })).concat(due.map((r) => ({ r, g: null, done: false })))
+        .filter((x) => (x.done ? pass(x.r, x.g) : !nf() || (flt.grades.length === 0 && pass(x.r, null))))
+        .sort((a, b) => (a.done === b.done ? 0 : a.done ? -1 : 1) || (GRADE_ORDER[a.g] ?? 9) - (GRADE_ORDER[b.g] ?? 9) || (b.r.mcap_cr ?? 0) - (a.r.mcap_cr ?? 0));
+      const up = done.filter((r) => r.eps_g_yoy > 0).length, dn = done.filter((r) => r.eps_g_yoy < 0).length;
+      const isToday = d === today, label = new Date(d + "T00:00:00").toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
+      return `<div class="ec ${isToday ? "today" : ""}"><div class="ec-h"><b>${label}${d === days[5] ? " – Sun" : ""}</b>${isToday ? '<span class="tag t-info">TODAY</span>' : ""}
+        <small class="muted">${done.length ? `${done.length} results · EPS YoY <span class="up">▲${up}</span> <span class="down">▼${dn}</span>` : ""}${due.length ? `${done.length ? " · " : ""}${due.length} due` : ""}${!done.length && !due.length ? "nothing listed" : ""}</small></div>
+        <div class="ec-l">${items.length ? items.slice(0, 120).map(({ r, g, done: dn2 }) => `<a class="ec-r" href="#/i/s/${encodeURIComponent(r.id)}" data-k="${esc(r.key)}"><b>${esc(r.symbol)}</b>${dn2 ? `<span class="gr ${GRADE_CLS[g] || ""}">${g || "–"}</span>` : '<small class="muted">due</small>'}</a>`).join("")
+          + (items.length > 120 ? `<small class="muted ec-more">+${items.length - 120} more (use the filters)</small>` : "") : '<p class="muted small ec-none">No stock.</p>'}</div></div>`;
+    };
+    const rangeTxt = `${new Date(days[0] + "T00:00:00").toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })} – ${new Date(days[5] + "T00:00:00").toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}`;
+    // recent earnings: announced in the 14 days up to the end of this week, newest first
+    const recentFrom = addDays(days[5] > today ? today : sun, -14), recentTo = days[5] > today ? today : sun;
+    const recent = rows.filter((r) => r.last_result && r.last_result > recentFrom && r.last_result <= recentTo && r.fin_qtr === qEnd)
+      .map((r) => ({ r, g: earnGrade(r) })).filter(({ r, g }) => pass(r, g) && (!flt.q || r.symbol.toLowerCase().includes(flt.q.toLowerCase()) || String(r.name).toLowerCase().includes(flt.q.toLowerCase())))
+      .sort((a, b) => (a.r.last_result < b.r.last_result ? 1 : a.r.last_result > b.r.last_result ? -1 : (GRADE_ORDER[a.g] ?? 9) - (GRADE_ORDER[b.g] ?? 9) || (b.r.mcap_cr ?? 0) - (a.r.mcap_cr ?? 0)));
+    const rng = (k, l) => `<div class="ef-r"><label><input type="checkbox" data-fon="${k}" ${n(flt[k][0]) != null || n(flt[k][1]) != null ? "checked" : ""}> ${l}</label>between <input type="number" data-f="${k}" data-i="0" value="${esc(flt[k][0])}" placeholder="Any"> and <input type="number" data-f="${k}" data-i="1" value="${esc(flt[k][1])}" placeholder="Any"></div>`;
+    view.innerHTML = `<div class="earn">
+      <div class="eh"><h1>Earnings <span class="pk-i" title="${esc(GRADE_RULE)}">i</span></h1>
+        <a class="btn sm" href="#/earnings/${addDays(mon, -7)}" title="Previous week">‹</a><b class="eh-r">${rangeTxt}</b><a class="btn sm" href="#/earnings/${addDays(mon, 7)}" title="Next week">›</a>
+        <a class="btn sm ${mon === mondayOf(today) ? "on" : ""}" href="#/earnings">Today</a>
+        <span class="eh-s">${fqLabel} season <b>${reported.toLocaleString("en-IN")}</b> / ${rows.length.toLocaleString("en-IN")} stocks announced</span></div>
+      <div class="eg"><div class="ecs">${days.map(col).join("")}</div>
+        <aside class="er"><div class="er-h"><b>Recent earnings</b><div class="er-tools"><input type="search" id="erQ" placeholder="Search stock" value="${esc(flt.q)}">
+          <div class="menu-wrap"><button class="btn sm ${nf() ? "on" : ""}" id="efBtn" type="button">Filters${nf() ? ` · ${nf()}` : ""}</button>
+          <div class="menu right ef" id="efM" hidden><div class="ef-h"><b>Filters</b><small class="muted">${nf() ? nf() + " on" : "No filters on"}</small></div>
+            <h5>EARNINGS</h5>${rng("mcap", "Market cap ₹ Cr")}${rng("eps", "EPS growth %")}${rng("sales", "Sales growth %")}${rng("np", "Profit growth %")}
+            <h5>GRADE</h5><div class="ef-g">${Object.keys(GRADE_ORDER).map((g) => `<label><input type="checkbox" data-grade="${g}" ${flt.grades.includes(g) ? "checked" : ""}> ${g}</label>`).join("")}</div>
+            <h5>SIGNALS</h5><div class="ef-g">${EARN_SIGNALS.map(([k, l]) => `<label><input type="checkbox" data-sig="${k}" ${flt.sig.includes(k) ? "checked" : ""}> ${l}</label>`).join("")}</div>
+            <div class="ef-f"><small class="muted" id="efN">${nf()} filters active</small><button class="btn sm" type="button" data-ef="reset">Reset</button><button class="btn sm primary" type="button" data-ef="apply">Apply filters</button></div></div></div></div></div>
+          <div class="er-l" id="erL"></div></aside></div>
+      <p class="muted small">Grades and signals are our own simple rules on NSE filings (${esc(GRADE_RULE)}) Not investment advice.</p></div>
+      <div class="ehov" id="eHov" hidden></div>`;
+    $("#stPage").innerHTML = `<span>${days.reduce((a, d) => a + rows.filter((r) => r.last_result === d || (d === days[5] && r.last_result === sun)).length, 0)} results this week</span><span class="st-n">${rangeTxt}</span>`;
+    // recent earnings cards: quarterly numbers from data/f (12 at a time)
+    let shown = 0;
+    const card = ({ r, g }) => `<div class="erc" data-id="${esc(r.id)}"><div class="erc-h"><a href="#/i/s/${encodeURIComponent(r.id)}"><b>${esc(r.symbol)}</b> ↗</a><span class="gr ${GRADE_CLS[g] || ""}">${g || "–"}</span>
+        <small class="muted">Price ₹${SD.fmtPrice(r.close)} · MCap ₹${finNum(r.mcap_cr)} Cr</small></div><div class="erc-t"><i class="skel"></i></div></div>`;
+    const fillCard = async (el) => {
+      const doc = await getFin(el.dataset.id);
+      const t = el.querySelector(".erc-t");
+      if (!doc) { t.innerHTML = '<small class="muted">No quarterly numbers.</small>'; return; }
+      const q = SDF.quarterTable(doc, SDF.basisOf(doc), 5), m = q.ends.length;
+      if (m < 2) { t.innerHTML = '<small class="muted">Not enough quarters.</small>'; return; }
+      const cols = [m - 1, m - 2, m - 5].filter((i) => i >= 0);
+      const line = (k, l, d) => { const v = (q.rows.find((x) => x[1] === k) || [0, 0, []])[2]; const yo = m >= 5 ? chgPct(v[m - 1], v[m - 5]) : null;
+        return `<tr><td class="l">${l}</td><td>${yo == null ? "–" : `<span class="${yo >= 0 ? "up" : "down"}">${yo >= 0 ? "↑" : "↓"} ${finNum(Math.abs(yo))}%</span>`}</td>${cols.map((i) => `<td class="${v[i] < 0 ? "down" : ""}">${v[i] == null ? "–" : (k === "eps" ? "₹" + finNum(v[i], 2) : finNum(v[i], Math.abs(v[i]) < 100 ? 1 : 0))}</td>`).join("")}</tr>`; };
+      t.innerHTML = `<table class="sp-t2"><thead><tr><th class="l"></th><th>YoY</th>${cols.map((i) => `<th>${shortLbl(q.ends[i])}</th>`).join("")}</tr></thead><tbody>
+        ${line("sales", "Sales")}${line("op_profit", doc.kind === "bank" || doc.kind === "nbfc" ? "Fin. profit" : "Op. profit")}${line("net_profit", "Net profit")}${line("eps", "EPS")}</tbody></table>`;
+    };
+    const more = () => {
+      const box = $("#erL"), part = recent.slice(shown, shown + 12);
+      let lastDay = shown ? recent[shown - 1].r.last_result : null, html = "";
+      for (const x of part) {
+        if (x.r.last_result !== lastDay) { lastDay = x.r.last_result; html += `<small class="muted er-d">${lastDay === addDays(today, -1) ? "YESTERDAY" : lastDay === today ? "TODAY" : shortDay(lastDay).toUpperCase()}</small>`; }
+        html += card(x);
+      }
+      box.querySelector(".er-more")?.remove();
+      box.insertAdjacentHTML("beforeend", html + (recent.length > shown + 12 ? `<button class="btn sm er-more" type="button">Show more (${recent.length - shown - 12} left)</button>` : ""));
+      box.querySelectorAll(".erc:not([data-done])").forEach((el) => { el.dataset.done = "1"; fillCard(el); });
+      shown += part.length;
+      if (!recent.length) box.innerHTML = '<p class="muted small">No results in the last 14 days match.</p>';
+    };
+    more();
+    $("#erL").onclick = (e) => { if (e.target.closest(".er-more")) more(); };
+    const saveF = () => store.set("sd-earn-f", flt);
+    $("#erQ").oninput = (e) => { flt.q = e.target.value; saveF(); clearTimeout(state.erT); state.erT = setTimeout(() => renderEarnings(weekArg), 250); };
+    $("#efBtn").onclick = (e) => { e.stopPropagation(); $("#efM").hidden = !$("#efM").hidden; };
+    $("#efM").onclick = (e) => {
+      e.stopPropagation();
+      const a = e.target.closest("[data-ef]"); if (!a) return;
+      if (a.dataset.ef === "reset") Object.assign(flt, { mcap: ["", ""], eps: ["", ""], sales: ["", ""], np: ["", ""], grades: [], sig: [] });
+      else {
+        const m = $("#efM");
+        for (const k of ["mcap", "eps", "sales", "np"]) {
+          const on = m.querySelector(`[data-fon="${k}"]`).checked;
+          flt[k] = on ? [0, 1].map((i) => m.querySelector(`[data-f="${k}"][data-i="${i}"]`).value) : ["", ""];
+        }
+        flt.grades = [...m.querySelectorAll("[data-grade]:checked")].map((x) => x.dataset.grade);
+        flt.sig = [...m.querySelectorAll("[data-sig]:checked")].map((x) => x.dataset.sig);
+      }
+      saveF(); renderEarnings(weekArg);
+    };
+    $("#efM").addEventListener("input", (e) => { const f = e.target.dataset.f; if (f) $("#efM").querySelector(`[data-fon="${f}"]`).checked = true; });
+    view.onclick = (e) => { if (!e.target.closest(".menu-wrap")) { const m = $("#efM"); if (m) m.hidden = true; } };
+    // hover card on a calendar entry
+    const hov = $("#eHov");
+    view.querySelector(".ecs").addEventListener("mouseover", (e) => {
+      const a = e.target.closest(".ec-r"); if (!a) return;
+      const r = state.screenByKey.get(a.dataset.k); if (!r) return;
+      const g = a.querySelector(".gr") ? earnGrade(r) : null;
+      hov.innerHTML = `<b>${esc(r.symbol)}</b> <small class="muted">${esc(r.name || "")}</small>${g ? ` <span class="gr ${GRADE_CLS[g]}">${g}</span>` : ""}
+        <div class="eh-k">${g ? `<span>Sales YoY ${pctTag(r.sales_g_yoy)}</span><span>Profit YoY ${pctTag(r.np_g_yoy)}</span><span>EPS YoY ${pctTag(r.eps_g_yoy)}</span>`
+          + `${r.earn_chg_pct != null && r.earn_sessions != null && r.earn_sessions <= 10 ? `<span>Results-day move ${pctTag(r.earn_chg_pct, 1)}</span>` : ""}` : `<span>Results due ${esc(SD.fmtDate(r.next_result || ""))}</span>`}
+        <span>RS ${r.rs_rating ?? "–"}</span><span>MCap ₹${finNum(r.mcap_cr)} Cr</span></div><small class="muted">${esc(r.basic_industry || r.sector || "")}</small>`;
+      const b = a.getBoundingClientRect();
+      hov.hidden = false;
+      hov.style.left = `${Math.min(b.left, innerWidth - 300)}px`; hov.style.top = `${b.bottom + 4}px`;
+    });
+    view.querySelector(".ecs").addEventListener("mouseleave", () => { hov.hidden = true; });
+    view.querySelector(".ecs").addEventListener("scroll", () => { hov.hidden = true; }, true);
+  }
+
   /* ------------------------------------------------------------------ home / warm-up page (Phase N5) */
   /** simple SVG line chart: lines = [{vals, color, fill, dash}], y range lo..hi, bands = [[from, to, colour]], ticks = [values] */
   function svgLines(lines, o = {}) {
@@ -1607,7 +1750,7 @@
   function route() {
     if (!state.rows.length) return;
     const parts = location.hash.replace(/^#\/?/, "").split("/").map(decodeURIComponent);
-    const tab = { "": "home", market: "market", stocks: "stocks", scanners: "scanners", screener: "scanners", sectors: "groups", groups: "groups", breadth: "breadth", watchlist: "watchlist", fields: "fields", i: "" }[parts[0]] ?? "market";
+    const tab = { "": "home", market: "market", earnings: "earnings", stocks: "stocks", scanners: "scanners", screener: "scanners", sectors: "groups", groups: "groups", breadth: "breadth", watchlist: "watchlist", fields: "fields", i: "" }[parts[0]] ?? "market";
     document.querySelectorAll(".rail [data-tab]").forEach((a) => a.classList.toggle("active", a.dataset.tab === tab));
     view.classList.remove("enter"); void view.offsetWidth; view.classList.add("enter");
     SDChart.close();
@@ -1625,6 +1768,7 @@
     else if (parts[0] === "watchlist") renderWatchlist();
     else if (parts[0] === "i") renderDetail(parts[1], parts.slice(2).join("/"));
     else if (parts[0] === "market") renderMarket();
+    else if (parts[0] === "earnings") renderEarnings(parts[1]);
     else renderHome();
     window.scrollTo(0, 0);
   }

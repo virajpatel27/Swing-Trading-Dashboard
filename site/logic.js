@@ -260,9 +260,22 @@
     });
   }
 
+  /** our grade of the latest quarter vs a year before (Phase N6 earnings page): Excellent / Good / Mixed / Weak, or null */
+  function earnGrade(r) {
+    const s = r.sales_g_yoy, p = r.np_g_yoy, np = r.np_last_q, ago = r.np_year_ago_q;
+    if (np == null && s == null) return null;
+    const turn = np != null && ago != null && ago <= 0 && np > 0;
+    if (np != null && np < 0) return "Weak";
+    if (turn) return s != null && s >= 15 ? "Excellent" : "Good";
+    if (s != null && p != null && s >= 15 && p >= 25) return "Excellent";
+    if (s != null && p != null && s >= 5 && p >= 5) return "Good";
+    if (s != null && p != null && s < 0 && p < 0) return "Weak";
+    return s == null && p == null ? null : "Mixed";
+  }
+
   const api = { PERIODS, SCREENS, RANGES, rowsFromSnapshot, keyOf, fmtPrice, fmtPct, fmtInt, fmtVol, fmtDate, filterRows, sortRows,
     toCSV, candlesFromChart, toWeekly, ema, sliceRange, colorClass, heatLevel, STAGE_TXT, COLUMN_GROUPS, COLUMNS, DEFAULT_COLUMNS, SORTS,
-    screenRows, fmtCell, filterStocks };
+    screenRows, fmtCell, filterStocks, earnGrade };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.SD = api;
 })(typeof self !== "undefined" ? self : this);

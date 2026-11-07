@@ -667,3 +667,15 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Not possible: USD/INR and crude (no free official source in our pipeline), CPI dates, news, IPO listings on the home page.
 - Checked in the preview at 1500 px and 375 px. Tests 176 Python + 24 JS green.
 - NEXT: N6 earnings calendar page.
+
+### 2026-11-08: UI redesign N6 - earnings calendar
+- New page `#/earnings` (rail item "Earnings"; `#/earnings/<yyyy-mm-dd>` = that week). Columns Mon-Sat (Saturday also
+  shows Sunday): stocks whose latest results (last_result, quarter = the season's quarter) came that day with our grade,
+  then stocks due that day (next_result). Header: "<n> results · EPS YoY ▲up ▼down" and "<n> due"; today's column tinted;
+  "Q2 FY27 season n / N stocks announced" (stocks whose latest quarter is the newest quarter end).
+- Hover card: name, grade, sales / profit / EPS YoY, results-day move (when within 10 sessions), RS, market cap, industry.
+- Recent earnings (right): last 14 days, newest first, grouped by day; card = price, market cap, Sales / Op. profit /
+  Net profit / EPS for the latest, previous and year-ago quarter with YoY (data/f via the panel's cache), 12 at a time.
+- Filters (saved): market cap / EPS / sales / profit growth ranges, grade, signals - they apply to the calendar and the
+  cards. Rule text in docs/site_rules.md; SD.earnGrade tested in tests/js/earn.test.js.
+- NEXT: N7 heatmap.

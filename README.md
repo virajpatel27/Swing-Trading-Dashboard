@@ -36,6 +36,8 @@ stock / index nu naam lakho -> Enter = sidho chart.
 - **Scanners** - 33 taiyar scanner, folder ma: My Scans, Classic, Patterns, Earnings, Fundamentals. **+ New scan** (ke sliders button) = Custom scan window: 5 tab ma filter tick karo, niche tarat ketla stock pass
   thay e dekhay; **Run scan** = result, **Save scan** = My Scans ma naam saathe. **ƒ Formula** thi niyam
   joi / badli shako (tamara browser ma save thay; Export / Import thi bija PC par).
+- **Earnings** - athvadiya nu results calendar: kone results aapya (aapdo grade Excellent / Good / Mixed / Weak) ane kone
+  baki chhe; jamni baju chhella 14 divas na results card; Filters (growth, grade, signals). ‹ › thi aagal-paachhal athvadiyu.
 - **Groups** - Sector / Industry / Theme: rank, Leading / Weakening / Lagging / Improving tag, 1D thi YTD median, 20 divas na
   high/low, % 50 SMA upar. Click = enaa industries ane stocks.
 - **Breadth** - bajaar ni tabiyat: 6 line nu saransh (Momentum, Short-term, Big trend, Breakouts, Overdone?, Leadership),

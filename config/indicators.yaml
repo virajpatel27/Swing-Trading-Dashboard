@@ -26,3 +26,13 @@ rs_rating:
                                   # return since the first session (07-Nov: the reference rates from the 11th session)
   universe: all                   # percentile rank among ALL stocks with a score that day (calibrated: 77 % within 3
                                   # points of the reference, correlation 0.98; "liquid" only: 57 %)
+
+events:                           # event scans (engine.events), calibrated 07-Nov-2026 on 4 days of reference lists
+  window: 5                       # an event counts for 5 sessions after its day
+  hv_move_x: 2.0                  # high volume: up >= 2 x the previous day's ADR %
+  hv_close_pos: 75                #   close in the top quarter of the day's range
+  hv_lookback: 63                 #   volume above every volume of the previous 63 sessions (a quarter)
+  br_high: 13                     # big reversal: high >= 13 % and close >= 12 % over the previous close
+  br_close: 12
+  br_rvol: 3                      #   volume >= 3 x the previous 20-day average
+  br_below: 6                     #   previous close >= 6 % under SMA200

@@ -6,6 +6,7 @@
     python scripts/backfill.py --job delivery             # delivery % 2007 -> (needs the stocks job's trading days)
     python scripts/backfill.py --job fundamentals [--new-only]   # NSE XBRL results / shareholding (Nifty 500 first)
     python scripts/backfill.py --job announcements             # company filings with NSE, last 365 days
+    python scripts/backfill.py --job bse-stocks                # PC only: BSE days before each stock's NSE start
     python scripts/backfill.py --job all
 
 Afterwards run scripts/validate_data.py (the workflow does it) before committing.
@@ -42,7 +43,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     if a.job == "compact":
         n = 0
-        for sub, cols in (("stocks/raw", store.STOCK_COLS), ("stocks/delivery", store.DELIVERY_COLS),
+        for sub, cols in (("stocks/raw", store.STOCK_COLS), ("stocks/bse", store.STOCK_COLS), ("stocks/delivery", store.DELIVERY_COLS),
                           ("indices/nse", store.INDEX_COLS), ("indices/bse", store.INDEX_COLS)):
             base = ROOT / "data" / sub
             n += sum(store.compact(f, cols) for f in (base.iterdir() if base.exists() else []) if f.is_dir())

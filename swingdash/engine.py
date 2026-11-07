@@ -285,10 +285,52 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
             rs, rb = c.pct_change(), b.pct_change()
             f["beta_1y"] = rs.rolling(YEAR, min_periods=YEAR // 2).cov(rb) / rb.rolling(YEAR, min_periods=YEAR // 2).var()
     f["stage"] = stage(c, stage_cfg) if stage_cfg else None
+    f = pd.concat([f, events(f, cfg.get("events") or {})], axis=1)
     extra = {"sessions": np.arange(1, len(f) + 1)}
     if pattern_cfg:
         extra.update(patterns.fields(f, pattern_cfg))
     return pd.concat([f, pd.DataFrame(extra, index=f.index)], axis=1)
+
+
+def event_age(ev: pd.Series, window: int, value: pd.Series | None = None) -> pd.Series:
+    """Sessions since the latest event (0 = today), NaN when none in the last `window` sessions. value given: the event
+    also ends when a later day's value is bigger than the event day's (e.g. a bigger volume day came after it)."""
+    ev = ev.fillna(False).astype(bool).reset_index(drop=True)
+    pos = pd.Series(np.where(ev, np.arange(len(ev)), np.nan)).ffill()
+    age = pd.Series(np.arange(len(ev)), dtype=float) - pos
+    if value is not None:
+        v = pd.Series(value.to_numpy(float))
+        seg = ev.cumsum()
+        later = v.where(~ev, -np.inf).groupby(seg).cummax()          # biggest value AFTER the event day so far
+        at_event = v.where(ev).groupby(seg).transform("max")
+        age = age.where(~(later > at_event))
+    return age.where(age <= window)
+
+
+def events(f: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """Event fields (calibrated 07-Nov-2026 on 4 days of the reference lists; settings config/indicators.yaml -> events):
+      hv_age   High-volume event within `window` sessions: up chg_move_x x the previous day's ADR or more, close in the top
+               part of the day (close_pos), volume above every volume of the previous hv_lookback sessions; it ends when a
+               bigger volume day follows. hv_rvol / hv_move = volume vs the previous 50-day average / % change that day.
+      br_age   Big reversal: high >= br_high % and close >= br_close % over the previous close, volume >= br_rvol x the
+               previous 20-day average, previous close >= br_below % under SMA200."""
+    w = int(cfg.get("window", 5))
+    c, h, v = f["close"], f["high"], f["volume"]
+    pc = c.shift(1)
+    out = pd.DataFrame(index=f.index)
+    adr_prev = f["adr_pct"].shift(1)
+    hv = (f["chg_1d"] >= float(cfg.get("hv_move_x", 2.0)) * adr_prev) & (f["close_pos"] >= float(cfg.get("hv_close_pos", 75))) \
+        & (v > v.shift(1).rolling(int(cfg.get("hv_lookback", 63)), min_periods=1).max())
+    out["hv_age"] = event_age(hv, w, v).to_numpy()
+    seg = hv.fillna(False).astype(bool).cumsum()
+    rv50 = v / v.shift(1).rolling(50, min_periods=20).mean()
+    out["hv_rvol"] = rv50.where(hv).groupby(seg).ffill().where(out["hv_age"].notna())
+    out["hv_move"] = f["chg_1d"].where(hv).groupby(seg).ffill().where(out["hv_age"].notna())
+    sma200_prev = c.rolling(200, min_periods=200).mean().shift(1)
+    br = ((h / pc - 1) * 100 >= float(cfg.get("br_high", 13))) & (f["chg_1d"] >= float(cfg.get("br_close", 12))) \
+        & (f["rvol"] >= float(cfg.get("br_rvol", 3))) & ((pc / sma200_prev - 1) * 100 <= -float(cfg.get("br_below", 6)))
+    out["br_age"] = event_age(br, w).to_numpy()
+    return out
 
 
 # ---------------------------------------------------------------- all stocks of one day / of every day

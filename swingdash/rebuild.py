@@ -1,4 +1,5 @@
-"""Rebuild corporate-action files and adjusted prices for every stock from raw prices + NSE corporate actions.
+"""Rebuild corporate-action files and adjusted prices for every stock from raw prices + NSE corporate actions
+(+ BSE prices and actions of the days before a stock's first NSE session, swingdash/bse_history.py).
 Cheap enough to run every day for all stocks: only files whose content changed are written (store.write), so a stock's
 adjusted history is rewritten exactly when a new corporate action appears. Raw data is only read.
 Also writes data/meta/share_factors.csv (EPS / per-share factors, see share_factors.py)."""
@@ -9,7 +10,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import adjust, share_factors, store
+from . import adjust, bse_history, share_factors, store
 from . import corporate_actions as ca
 from .sources import nse
 
@@ -41,12 +42,13 @@ def rebuild_adjusted(root: Path, http, settings: dict, universe: dict, today: da
                 saved["factor"] = saved["factor"].where(saved["type"].isin(adjust.EXACT))   # recomputed from prices below
                 saved[["method", "status"]] = ""
                 per[sym] = saved
+    per = bse_history.merge_actions(per, bse_history.actions(data, symbols))   # BSE days before the NSE start
     per = ca.add_overrides(per, root / "config" / "corporate_action_overrides.csv")
     adj_div = bool(settings.get("ADJUST_DIVIDENDS", False))
     all_issues, changed, counts = [], 0, {}
     for sym in symbols:
         sid = ids[sym]
-        raw = store.read(data / "stocks" / "raw" / sid, store.STOCK_COLS)
+        raw = bse_history.joined_raw(data, sid)
         if raw.empty:
             continue
         acts = per.get(sym, pd.DataFrame(columns=ca.CA_COLS))

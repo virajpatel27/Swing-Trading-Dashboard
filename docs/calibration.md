@@ -140,3 +140,24 @@ Weights 0.4 / 0.2 / 0.2 / 0.2 were checked again: rank correlation 0.996 with th
 weights do better. What is left for the RS rating is mostly the **~204 stocks that came to NSE from BSE** in 2026 (first
 NSE session 20-Apr or 17-Aug-2026, e.g. HAWKINCOOK, ELANTAS, NIRLON): the reference has their BSE history, we start at
 their NSE listing. Their young scores move everybody's percentile by a few points. Fix = their BSE history (next step).
+
+## Scanners re-tuned 07-Nov-2026 (part A; average over 02, 04, 05 and 06-Nov)
+
+Recall = share of the reference list we also find; precision = share of our list that is on the reference list.
+Rules are in config/scanners.json (each scanner's description says them in words).
+
+| scanner | change | before (06-Nov) recall / precision | after (4 days) recall / precision |
+|---|---|---|---|
+| 1M Gainers | up >= 20 % in 21 sessions, today's turnover >= Rs 5 Cr, price >= Rs 20 | 0.59 / 0.68 | 1.00 / 0.96 |
+| 3M Gainers | up >= 30 % in 63 sessions, Stage 2 / 3, turnover >= 5 Cr, price >= 20, mcap < 1 lakh Cr | 0.59 / 0.65 | 0.99 / 0.92 |
+| Doublers | up >= 100 % in 1 YEAR (251 sessions), turnover >= 5 Cr | 0.37 / 0.37 | 0.99 / 0.93 |
+| New Listing | IPO 28-365 days ago | 0.83 / 0.90 | 0.83 / 1.00 (rest: demergers / SME moves, needs the BSE step) |
+| 20-SMA Pullback | 1M >= 15 %, close -2..+3 % of SMA20, SMA20 >= EMA50 x 1.025, turnover >= 10 Cr | 0 / 0 | 1.00 / 1.00 |
+| 50-EMA Pullback | 6M >= 40 %, 3M > 0, 1M <= 5 %, close within 3 % of EMA50, EMA50 >= SMA200 x 1.2, turnover >= 10 Cr | 0 / 0 | 1.00 / 1.00 |
+| High Volume | EVENT in the last 5 sessions (engine.events): up >= 2 x previous ADR, close in top 25 %, biggest volume of 63 sessions, no bigger volume since | 0.06 / 0.07 | 0.99 / 0.83 |
+| Big Reversal | EVENT: high >= 13 % and close >= 12 % over the previous close, >= 3 x 20D volume, previous close >= 6 % under SMA200 | 0 / 0 | 1.00 / 0.53 |
+| unchanged, already close | Trend Template 0.99 / 0.97, 4% Breakout 0.97 / 0.73, Outperformers 0.86 / 0.96 | | |
+
+Still to do (part B): Stage 2 Breakout, Recent Breakout, RS before Price (benchmark of their RS line not found yet; best
+Nifty MidSmallcap 400, 68 / 93 %), Shakeout, Daily / Weekly Base, Near Pivot, VCP, Tight Setups, IPO Base. Earnings
+scanners after the fundamentals are complete (~10-Nov). The reference's event scans keep an event 5 sessions ("age").

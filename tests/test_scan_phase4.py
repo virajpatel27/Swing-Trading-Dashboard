@@ -202,3 +202,21 @@ def test_scanners_use_registered_fields_and_evaluate():
     bad = {"folders": ["X"], "scanners": [{"id": "a", "folder": "Y", "rule": {"all": [{"field": "nope", "op": "~", "value": 1}]}}]}
     errs = scanners.check(bad, registry.load())
     assert any("unknown folder" in e for e in errs) and any("unknown field nope" in e for e in errs) and any("operator" in e for e in errs)
+
+
+def test_event_age_and_high_volume_event():
+    ev = pd.Series([False, True, False, False, False, False, False, False])
+    assert engine.event_age(ev, 5).iloc[1:7].tolist() == [0, 1, 2, 3, 4, 5]
+    assert np.isnan(engine.event_age(ev, 5).iloc[7]) and np.isnan(engine.event_age(ev, 5).iloc[0])
+    vol = pd.Series([1, 10, 2, 12, 1, 1, 1, 1.0])                 # a bigger volume day (12) after the event ends it
+    a = engine.event_age(ev, 5, vol)
+    assert a.iloc[2] == 1 and a.iloc[3:].isna().all()
+    # a real high-volume day: +8 % on 10x volume, close at the high, after a quiet quarter
+    n = 120
+    c = np.r_[np.full(n - 1, 100.0), 108.0]
+    d = pd.bdate_range("2026-01-01", periods=n)
+    adj = pd.DataFrame({"date": d, "open": c, "high": c * 1.01, "low": c * 0.99, "close": c, "volume": np.r_[np.full(n - 1, 1000.0), 10000.0]})
+    adj.loc[n - 1, ["open", "high", "low"]] = [100.0, 108.0, 99.5]
+    f = engine.stock_fields(adj, cfg=yaml.safe_load(open(ROOT / "config" / "indicators.yaml")))
+    assert f["hv_age"].iloc[-1] == 0 and f["hv_rvol"].iloc[-1] == pytest.approx(10.0) and f["hv_move"].iloc[-1] == pytest.approx(8.0)
+    assert np.isnan(f["br_age"].iloc[-1])                                    # not under SMA200: no big reversal

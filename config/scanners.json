@@ -156,37 +156,33 @@
    "id": "20sma-pullback",
    "folder": "Classic",
    "name": "20-SMA Pullback",
-   "description": "A leader (RS 90+, up over 3 months) back within 1 % of its rising 20-day average. Liquid stocks only.",
-   "universe": "liquid",
+   "description": "A strong month (up 15 % or more) pulling back to the 20-day average: close between 2 % below and 3 % above SMA20, SMA20 at least 2.5 % above EMA50, today's turnover Rs 10 Cr or more.",
+   "universe": "all",
    "rule": {
     "all": [
      {
-      "field": "rs_rating",
+      "field": "ret_1m",
       "op": ">=",
-      "value": 90
-     },
-     {
-      "field": "ret_3m",
-      "op": ">",
-      "value": 0
+      "value": 15
      },
      {
       "field": "from_sma20",
       "op": "between",
       "value": [
-       -1,
-       1
+       -2,
+       3
       ]
      },
      {
-      "field": "sma20_chg_1w",
-      "op": ">",
-      "value": 0
+      "field": "sma20",
+      "op": ">=",
+      "field2": "ema50",
+      "mult": 1.025
      },
      {
-      "field": "sma50_chg_1m",
-      "op": ">",
-      "value": 0
+      "field": "turnover_cr",
+      "op": ">=",
+      "value": 10
      }
     ]
    },
@@ -199,53 +195,44 @@
    "id": "high-volume",
    "folder": "Classic",
    "name": "High Volume",
-   "description": "The highest volume of the quarter, the year or ever, on an up day.",
+   "description": "A high-volume up day in the last 5 sessions: up 2 x its usual daily range or more, close near the day's high, the biggest volume of the last quarter (63 sessions), no bigger volume day since.",
    "universe": "all",
    "rule": {
     "all": [
      {
-      "any": [
-       {
-        "field": "hvq",
-        "op": "is",
-        "value": true
-       },
-       {
-        "field": "hvy",
-        "op": "is",
-        "value": true
-       },
-       {
-        "field": "hve",
-        "op": "is",
-        "value": true
-       }
-      ]
-     },
-     {
-      "field": "chg_1d",
-      "op": ">",
-      "value": 0
+      "field": "hv_age",
+      "op": "<=",
+      "value": 5
      }
     ]
    },
    "sort": {
-    "field": "rvol",
-    "dir": "desc"
+    "field": "hv_age",
+    "dir": "asc"
    }
   },
   {
    "id": "1m-gainers",
    "folder": "Classic",
    "name": "1M Gainers",
-   "description": "Up 23 % or more in the last month (21 sessions). Liquid stocks only.",
-   "universe": "liquid",
+   "description": "Up 20 % or more in the last month (21 sessions); today's turnover Rs 5 Cr or more, price Rs 20 or more.",
+   "universe": "all",
    "rule": {
     "all": [
      {
       "field": "ret_1m",
       "op": ">=",
-      "value": 23
+      "value": 20
+     },
+     {
+      "field": "turnover_cr",
+      "op": ">=",
+      "value": 5
+     },
+     {
+      "field": "close",
+      "op": ">=",
+      "value": 20
      }
     ]
    },
@@ -258,14 +245,38 @@
    "id": "3m-gainers",
    "folder": "Classic",
    "name": "3M Gainers",
-   "description": "Up 38 % or more in the last 3 months (63 sessions). Liquid stocks only.",
-   "universe": "liquid",
+   "description": "Up 30 % or more in 3 months (63 sessions), in Stage 2 or 3; today's turnover Rs 5 Cr or more, price Rs 20 or more, market cap under Rs 1 lakh Cr.",
+   "universe": "all",
    "rule": {
     "all": [
      {
       "field": "ret_3m",
       "op": ">=",
-      "value": 38
+      "value": 30
+     },
+     {
+      "field": "stage",
+      "op": "in",
+      "value": [
+       "2",
+       "2A",
+       "3"
+      ]
+     },
+     {
+      "field": "turnover_cr",
+      "op": ">=",
+      "value": 5
+     },
+     {
+      "field": "close",
+      "op": ">=",
+      "value": 20
+     },
+     {
+      "field": "mcap_cr",
+      "op": "<",
+      "value": 100000
      }
     ]
    },
@@ -308,14 +319,19 @@
    "id": "doublers",
    "folder": "Classic",
    "name": "Doublers",
-   "description": "At least doubled in the last 6 months (126 sessions).",
+   "description": "Doubled (up 100 % or more) in the last year (251 sessions); today's turnover Rs 5 Cr or more.",
    "universe": "all",
    "rule": {
     "all": [
      {
-      "field": "ret_6m",
+      "field": "ret_1y",
       "op": ">=",
       "value": 100
+     },
+     {
+      "field": "turnover_cr",
+      "op": ">=",
+      "value": 5
      }
     ]
    },
@@ -328,14 +344,17 @@
    "id": "new-listing",
    "folder": "Classic",
    "name": "New Listing",
-   "description": "Came to NSE's main board through an IPO within the last year (NSE's IPO list).",
+   "description": "Came to NSE's main board through an IPO 28 to 365 days ago (NSE's IPO list).",
    "universe": "all",
    "rule": {
     "all": [
      {
       "field": "days_since_ipo",
-      "op": "<=",
-      "value": 365
+      "op": "between",
+      "value": [
+       28,
+       365
+      ]
      }
     ]
    },
@@ -348,41 +367,43 @@
    "id": "50ema-pullback",
    "folder": "Patterns",
    "name": "50-EMA Pullback",
-   "description": "A strong stock (RS 80+, in an uptrend) resting near its rising 50-day average after a quiet month (20-day range at most 20 %). Liquid stocks only.",
-   "universe": "liquid",
+   "description": "A big 6-month winner (up 40 % or more, still up over 3 months, at most +5 % in the last month) back at its 50-day EMA (within 3 %), with EMA50 at least 20 % above SMA200; today's turnover Rs 10 Cr or more.",
+   "universe": "all",
    "rule": {
     "all": [
      {
-      "field": "rs_rating",
+      "field": "ret_6m",
       "op": ">=",
-      "value": 80
+      "value": 40
      },
      {
-      "field": "stage",
-      "op": "in",
-      "value": [
-       "2",
-       "2A",
-       "3"
-      ]
+      "field": "ret_3m",
+      "op": ">",
+      "value": 0
+     },
+     {
+      "field": "ret_1m",
+      "op": "<=",
+      "value": 5
      },
      {
       "field": "from_ema50",
       "op": "between",
       "value": [
-       -2,
+       -3,
        3
       ]
      },
      {
-      "field": "ema50_chg_1m",
-      "op": ">",
-      "value": 0
+      "field": "ema50",
+      "op": ">=",
+      "field2": "sma200",
+      "mult": 1.2
      },
      {
-      "field": "range_20d_pct",
-      "op": "<=",
-      "value": 20
+      "field": "turnover_cr",
+      "op": ">=",
+      "value": 10
      }
     ]
    },
@@ -689,31 +710,20 @@
    "id": "big-reversal",
    "folder": "Patterns",
    "name": "Big Reversal",
-   "description": "A new 20-day low today, but a wide day (1.5 x the usual range) that closed in the top 30 % of its range.",
+   "description": "A big up day in the last 5 sessions while well under SMA200: high 13 % and close 12 % or more above the day before, on 3 x the usual volume.",
    "universe": "all",
    "rule": {
     "all": [
      {
-      "field": "new_low_20d",
-      "op": "is",
-      "value": true
-     },
-     {
-      "field": "close_pos",
-      "op": ">=",
-      "value": 70
-     },
-     {
-      "field": "range_pct",
-      "op": ">=",
-      "field2": "adr_pct",
-      "mult": 1.5
+      "field": "br_age",
+      "op": "<=",
+      "value": 5
      }
     ]
    },
    "sort": {
-    "field": "range_pct",
-    "dir": "desc"
+    "field": "br_age",
+    "dir": "asc"
    },
    "phase": 7
   },

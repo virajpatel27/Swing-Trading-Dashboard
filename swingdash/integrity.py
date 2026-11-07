@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import adjust, meta, store
+from . import adjust, bse_history, meta, store
 from . import corporate_actions as ca
 from .sources import nse
 
@@ -25,7 +25,7 @@ def ca_consistency(data: Path, tol: float = 1e-4) -> list[dict]:
     uni = pd.read_csv(data / "meta" / "universe_stocks.csv")
     out = []
     for r in uni.itertuples():
-        raw = store.read(data / "stocks" / "raw" / r.id, store.STOCK_COLS)
+        raw = bse_history.joined_raw(data, r.id)
         stored = store.read(data / "stocks" / "adjusted" / r.id, adjust.ADJ_COLS)
         if raw.empty:
             continue

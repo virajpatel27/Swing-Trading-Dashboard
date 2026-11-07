@@ -800,3 +800,23 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   ELANTAS, NIRLON, TIMEX ...). We only have their NSE days, the reference has their BSE history -> their stage, RS, 52W
   high, ATH, returns are short. Next: fetch their BSE history (www.bseindia.com bhavcopy works from GitHub) and join it.
 - docs/calibration.md has the table. Tests 190 Python + 32 JS green.
+### 2026-11-07: BSE history for BSE->NSE stocks - code ready, PAUSED (Viraj: "bse na stocks pachi karisu")
+- Code: `swingdash/sources/bse.py` (scrip_list, stock_history = one call 2007 -> day, corp_actions), `swingdash/bse_history.py`
+  (data/stocks/bse/<ID>/ = BSE days before the first NSE session, data/meta/bse_history.csv + bse_actions.csv),
+  rebuild.py / integrity.py use `bse_history.joined_raw` (NSE raw unchanged; no BSE folder = same as before),
+  backfill job `bse-stocks` (PC only). Tests 190 green; NO BSE data fetched into data/ yet.
+- Tried in a temp folder: HAWKINCOOK / ELANTAS / TIMEX / DECNGOLD / KAMAHOLD / KPL get BSE history from 2007 (KPL 2016),
+  joins fit (BSE last close vs NSE first close within ~1-12 %), BSE bonuses 4:1 / 1:1 applied.
+- 1,954 active stocks start on NSE after 2007 (1,831 found on BSE by ISIN); most will get no extra days.
+- To resume: `<python> scripts/backfill.py --job bse-stocks` (~1-2 h, resumable), check, then Viraj commits only
+  data/stocks/bse + data/meta/bse_*.csv; the next GitHub daily run rebuilds adjusted prices and the screen.
+
+### 2026-11-07: accuracy step 3, part A - scanners re-tuned on 4 days of reference lists
+- Real pipeline (build_screen --as-of 02/04/05/06-Nov) compared with the reference scan lists (docs/calibration.md).
+- Rules changed in config/scanners.json: 1M / 3M Gainers, Doublers (1 year, not 6 months), New Listing (28-365 days),
+  20-SMA and 50-EMA Pullback (now 100 % / 100 %), High Volume and Big Reversal as 5-session EVENT scans.
+- New engine.events (+ event_age): hv_age, hv_rvol, hv_move, br_age (settings config/indicators.yaml -> events; registry
+  fields; test). JS scan fixtures regenerated. Tests 191 Python + 32 JS green.
+- Result (4-day average recall / precision): gainers 0.99-1.00 / 0.92-0.96, doublers 0.99 / 0.93, pullbacks 1.00 / 1.00,
+  high volume 0.99 / 0.83 (was 0.06), big reversal 1.00 / 0.53 (was 0).
+- Next (part B): Stage 2 / Recent Breakout, RS before Price, Shakeout, bases, Near Pivot, VCP, Tight, IPO Base.

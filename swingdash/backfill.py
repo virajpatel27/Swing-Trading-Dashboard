@@ -598,6 +598,14 @@ def backfill_announcements(ctx: Ctx, until: date | None = None) -> dict:
     return announcements.backfill(ctx.data, ctx.http, end - timedelta(days=365), end, ctx.deadline, log=ctx.log, clock=ctx.clock)
 
 
+def backfill_bse_stocks(ctx: Ctx, until: date | None = None) -> dict:
+    """PC only: BSE prices + corporate actions of the days before each stock's first NSE session (swingdash/bse_history.py).
+    Stocks asked before are skipped, so it is cheap to run again (new arrivals from BSE)."""
+    from . import bse_history
+    master = pd.read_csv(ctx.data / "meta" / "stocks.csv", dtype=str).fillna("")
+    return bse_history.update(ctx.data, ctx.http, master, ctx.start, ctx.today, ctx.deadline, ctx.clock, ctx.log)
+
+
 JOBS = {"stocks": backfill_stocks, "nse-indices": backfill_nse_indices, "bse-indices": backfill_bse_indices,
         "bse-update": update_bse_indices, "delivery": backfill_delivery, "fundamentals": backfill_fundamentals,
-        "announcements": backfill_announcements}
+        "announcements": backfill_announcements, "bse-stocks": backfill_bse_stocks}

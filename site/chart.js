@@ -838,7 +838,7 @@
       if (!el) return null;
       const r = el.getBoundingClientRect();
       let sw = 60; try { sw = this.chart.priceScale("right").width(); } catch (e) { /* default */ }
-      return { top: this.paneTop(), h: r.height, w: r.width - sw };
+      return { top: this.paneTop(), h: r.height, w: Math.max(0, r.width - sw) };
     },
     pattern(parts) {
       const P = cur.pattern;

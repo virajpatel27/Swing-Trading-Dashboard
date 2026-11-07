@@ -141,3 +141,4 @@ N1 (scanner workspace: picker with pins/counts, resizable list, column drawer, g
 N2 (chart: legend controls, indicator popup with preview, settings drawer, drawing bar, cup/VCP SVG, earnings table) built 06-Nov.
 N3 (custom scan window: CS filter list in app.js, csRule -> scanner rule, builder state saved with My Scans) built 07-Nov.
 N4 (stockPanel accordion beside the chart, peers by basic_industry, financials cards) built 07-Nov.
+N5 (home #/ warm-up; Market moved to #/market; FII/DII collector swingdash/market_flows.py, daily step 4e, data/market/fii_dii.csv) built 07-Nov.

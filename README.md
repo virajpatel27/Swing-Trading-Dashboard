@@ -26,7 +26,9 @@ theme ranks, market breadth and company financials from NSE's official filings. 
 stock / index nu naam lakho -> Enter = sidho chart.
 
 **Menu na pages:**
-- **Market** - badha NSE + BSE indices ane stocks ni ek moti list (search, sector, CSV).
+- **Home** - Warm-up: bajaar ni tabiyat (market read, participation, Stage 2/4, FII/DII, 20D highs-lows), mukhya indices,
+  aaj na setups (pivot ni najik), kaya theme ma paisa jay chhe, aavta results ane expiry, tamari watchlist na signals.
+- **Market** (`#/market`) - badha NSE + BSE indices ane stocks ni ek moti list (search, sector, CSV).
 - **Stocks** - badha ~2,600 stocks: **⚙ Columns** thi 230+ columns pasand karo (price, returns, moving averages, pivot,
   volume, RS rating, stage, fundamentals, growth, holding, group rank ...). Row par click = baju ma chart; ↑ / ↓ thi aagal-paachhal.
   **Copy** = TradingView watchlist mate `NSE:SYMBOL` list. List ni jamni kinar kheñcho = list pahodi, vadhu columns.

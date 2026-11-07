@@ -19,7 +19,7 @@ from pathlib import Path
 import pandas as pd
 
 from . import fundamentals, corporate_actions as ca
-from . import registry, store
+from . import market_flows, registry, store
 from .adjust import ADJ_COLS
 
 FOLDER = {("stock", "NSE"): "s", ("index", "NSE"): "n", ("index", "BSE"): "b"}
@@ -101,6 +101,9 @@ def build(root: Path, out: Path, log=print) -> dict:
         shutil.copy2(data / "snapshot" / "group_ranks.json", out / "data" / "group_ranks.json")
     if (data / "snapshot" / "breadth.json").exists():       # Breadth page (Phase S10)
         shutil.copy2(data / "snapshot" / "breadth.json", out / "data" / "breadth.json")
+    flows = market_flows.site_payload(data)                     # FII / DII cash flows (home page, Phase N5)
+    if flows:
+        (out / "data" / "fii_dii.json").write_text(json.dumps(flows, separators=(",", ":")), encoding="utf-8")
     shutil.copy2(root / "config" / "scanners.json", out / "data" / "scanners.json")
     (out / "data" / "fields.json").write_text(json.dumps(fields_payload(root)), encoding="utf-8")
 

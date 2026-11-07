@@ -129,7 +129,7 @@ logo, colours, font, icons and wording (the site is public: no copied branding).
 | N2 | Chart: toolbar with chips, OHLC header + results-due date, legend with hide / settings / remove, indicator popup (list + live preview + colour grid), settings drawer (Markers / Display, applies at once), pane resize, vertical drawing bar (+ horizontal line), volume label in its pane, cup curve + VCP wave with % pills, earnings table (last 5 quarters, YoY / QoQ), back-to-latest button | built 2026-11-06 |
 | N3 | Custom scan window: 5 tabs, 80 filters, live count + active filters per tab, filter search (`/`), Load saved / Save scan / Run scan; saved as My Scans (same rule format, so pins, grid, CSV, formula all work) | built 2026-11-07 |
 | N4 | Stock panel (price head; Overview with tags, 12 key ratios, pros & cons; Financials with mini bars, 4 tabs, CAGR, cash-to-profit; Peers by basic industry; Shareholding bar + mini bars), panel beside the chart on the scanner page and the stock page, Financials page as cards with a consolidated / standalone link and red negatives | built 2026-11-07 |
-| N5 | Warm-up home (incl. FII / DII cash - new data) | open |
+| N5 | Warm-up home (#/): market read, participation 20/50/200D + Nifty 500, stage 2 vs 4, FII / DII cash (new daily data from NSE), 20-day highs - lows, 7 index cards with 3-month sparklines and 50E / 200S, today's setups (copy to TradingView), where the money is (themes 1W), coming up (results, Nifty expiries), watchlist plan with signals. Market table moved to #/market | built 2026-11-07 |
 | N6 | Earnings calendar page with our rating rule | open |
 | N7 | Heatmap (index constituent lists) | open |
 | N8 | Groups 3-column | open |

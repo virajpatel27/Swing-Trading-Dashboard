@@ -650,3 +650,20 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Checked in the preview at 1500 px and 375 px (the local snapshot is from 04-Nov, so some ratios show –; live data has
   them). Tests 172 Python + 24 JS green.
 - NEXT: N5 Warm-up home page.
+
+### 2026-11-07: UI redesign N5 - warm-up home page + FII / DII data
+- New home page `#/` (rail: Home first; the all-instruments table moved to `#/market`). Sections:
+  Market condition (market read from breadth.json - 3 lines + "show more"; participation % above 20 / 50 / 200-day
+  average with the label from config/breadth.yaml, grey Nifty 500 scaled, pink zone > 80 %; stage 2 vs stage 4 lines;
+  FII / DII net bars + latest + period net; net 20-day highs - lows bars), Indices (Nifty 50 / 500, Midcap 150,
+  Smallcap 250, Microcap 250, Bank, India VIX: price, 1D, 3-month sparkline, % from 52W high, above / below 50 EMA and
+  200 SMA), Today's setups (Near Pivot, VCP, Flag, Tight Range scanners, liquid, RS 70+, nearest the pivot first, 15;
+  Copy to TradingView, Open in Scanner), Where the money is (themes by 1-week average return, top 5 / bottom 3),
+  Coming up (results in the next 10 days by day, biggest first; weekly / monthly Nifty expiry = Tuesday / last Tuesday),
+  Your watchlist plan (good / weak / quiet day with signal chips: pocket pivot, big volume, RS line high, breakout,
+  near pivot, dry-up, new 20-day low). Charts are light SVG (no chart library on the home page).
+- FII / DII: NSE's API gives only the latest session -> swingdash/market_flows.py (parse, merge, update, site_payload),
+  daily step 4e, site_build writes data/fii_dii.json; tests/test_n5_flows.py. History starts with the next daily run.
+- Not possible: USD/INR and crude (no free official source in our pipeline), CPI dates, news, IPO listings on the home page.
+- Checked in the preview at 1500 px and 375 px. Tests 176 Python + 24 JS green.
+- NEXT: N6 earnings calendar page.

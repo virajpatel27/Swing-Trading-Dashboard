@@ -1,6 +1,6 @@
 /* Swing Trading Dashboard - page logic (pure helpers are in logic.js as SD, indicators in ind.js as SDI, the chart in chart.js
    as SDChart). Hash routes:
-   #/  market   #/stocks  results table + chart   #/scanners/<id>  scanner results + formula editor   #/fields  all formulas
+   #/  home (warm-up)   #/market  all instruments   #/stocks  results table + chart   #/scanners/<id>  scanner results + formula editor   #/fields  all formulas
    #/screener (old simple screener)   #/sectors[/<sector>[/<industry>]]   #/watchlist
    #/i/<s|n|b>/<id>  detail with chart */
 (function () {
@@ -949,10 +949,10 @@
     const isStock = kindKey === "s";
     if (isStock) { try { await loadScreen(); } catch (e) { /* fall back to the market row */ } r = state.screenByKey.get(key) || r; }
     if (location.hash.replace(/^#\/?/, "") !== `i/${kindKey}/${id}`) return;
-    if (!r) { view.innerHTML = `<p class="empty">Not found. <a href="#/">Back to market</a></p>`; return; }
+    if (!r) { view.innerHTML = `<p class="empty">Not found. <a href="#/market">Back to market</a></p>`; return; }
     const lr = state.byKey.get(key) || {};
     const stat = (label, val) => `<div class="stat"><small>${label}</small><b>${val}</b></div>`;
-    view.innerHTML = `<div class="crumbs"><a href="${isStock ? "#/stocks" : "#/"}">${isStock ? "Stocks" : "Market"}</a> › ${esc(r.symbol)}</div>
+    view.innerHTML = `<div class="crumbs"><a href="${isStock ? "#/stocks" : "#/market"}">${isStock ? "Stocks" : "Market"}</a> › ${esc(r.symbol)}</div>
       <div class="d-head"><h1>${esc(r.name || r.symbol)}</h1><span class="muted">${esc(r.symbol)} · ${esc(r.exchange || "NSE")}${isStock ? (r.sector ? " · " + esc(r.sector) : "") + (r.basic_industry ? " › " + esc(r.basic_industry) : "") : " index"}</span>
         <button class="star ${state.watch.has(key) ? "on" : ""}" data-star="${esc(key)}" aria-label="Watchlist" style="font-size:20px">★</button></div>
       ${isStock ? `<div class="seg view-tog" id="viewTog"><button type="button" data-v="chart" class="on">Chart</button><button type="button" data-v="fin">Financials</button></div>` : ""}
@@ -982,6 +982,164 @@
       } catch (e) { $("#acts").textContent = "Not available."; }
     }
   }
+  /* ------------------------------------------------------------------ home / warm-up page (Phase N5) */
+  /** simple SVG line chart: lines = [{vals, color, fill, dash}], y range lo..hi, bands = [[from, to, colour]], ticks = [values] */
+  function svgLines(lines, o = {}) {
+    const W = o.w || 560, H = o.h || 150, padL = 30, padB = 16, pw = W - padL - 4, ph = H - padB - 6;
+    const n = Math.max(...lines.map((l) => l.vals.length), 2);
+    const lo = o.lo ?? 0, hi = o.hi ?? 100;
+    const X = (i) => padL + (i / (n - 1)) * pw, Y = (v) => 6 + ph - ((v - lo) / (hi - lo || 1)) * ph;
+    const path = (vals) => vals.map((v, i) => (v == null ? null : `${X(i).toFixed(1)},${Y(v).toFixed(1)}`)).filter(Boolean);
+    let s = `<svg class="hl-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(o.label || "chart")}">`;
+    for (const [a, b, c] of o.bands || []) s += `<rect x="${padL}" y="${Y(b)}" width="${pw}" height="${Y(a) - Y(b)}" fill="${c}"/>`;
+    for (const t of o.ticks || []) s += `<line x1="${padL}" x2="${W - 4}" y1="${Y(t)}" y2="${Y(t)}" class="hl-grid"/><text x="${padL - 4}" y="${Y(t) + 3}" text-anchor="end" class="hl-ax">${t}${o.unit || ""}</text>`;
+    for (const l of lines) {
+      const p = path(l.vals);
+      if (p.length < 2) continue;
+      if (l.fill) s += `<path d="M${p[0].split(",")[0]},${Y(lo)} L${p.join(" L")} L${p[p.length - 1].split(",")[0]},${Y(lo)} Z" fill="${l.fill}"/>`;
+      s += `<polyline points="${p.join(" ")}" fill="none" stroke="${l.color}" stroke-width="${l.width || 1.8}" ${l.dash ? 'stroke-dasharray="3 3"' : ""} vector-effect="non-scaling-stroke"/>`;
+    }
+    for (const [i, t] of o.xlabels || []) s += `<text x="${X(i)}" y="${H - 3}" text-anchor="${i === 0 ? "start" : i >= n - 1 ? "end" : "middle"}" class="hl-ax">${esc(t)}</text>`;
+    return s + "</svg>";
+  }
+  /** bars around zero (FII / DII, highs - lows); the last bar darker */
+  function svgBars(vals, o = {}) {
+    const W = o.w || 300, H = o.h || 34, n = Math.max(vals.length, 1), m = Math.max(1, ...vals.map((v) => Math.abs(v || 0))), bw = W / n, mid = H / 2;
+    return `<svg class="hl-bars" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><line x1="0" x2="${W}" y1="${mid}" y2="${mid}" class="hl-grid"/>${vals.map((v, i) => {
+      if (v == null) return "";
+      const h = Math.max(1, (Math.abs(v) / m) * (mid - 1)), last = i === n - 1;
+      return `<rect x="${(i * bw + bw * 0.12).toFixed(1)}" y="${v >= 0 ? mid - h : mid}" width="${(bw * 0.76).toFixed(1)}" height="${h.toFixed(1)}" class="${v >= 0 ? "pos" : "neg"} ${last ? "last" : ""}"/>`;
+    }).join("")}</svg>`;
+  }
+  const spark = (vals, up, w = 180, h = 36) => {
+    const v = vals.filter((x) => x != null);
+    if (v.length < 2) return "";
+    const lo = Math.min(...v), hi = Math.max(...v), X = (i) => (i / (v.length - 1)) * w, Y = (x) => h - 2 - ((x - lo) / (hi - lo || 1)) * (h - 4);
+    return `<svg class="spark ${up ? "up" : "down"}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${v.map((x, i) => `${X(i).toFixed(1)},${Y(x).toFixed(1)}`).join(" ")}" vector-effect="non-scaling-stroke"/></svg>`;
+  };
+  const shortDay = (d) => { const t = new Date(d + "T00:00:00"); return t.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" }); };
+  /** NSE weekly Nifty expiry: Tuesday (since 1-Sep-2025); monthly = the last Tuesday of the month (holidays move it a day earlier) */
+  function expiries(from, n = 4) {
+    const out = [], d = new Date(from + "T00:00:00");
+    while (out.length < n) {
+      d.setDate(d.getDate() + 1);
+      if (d.getDay() !== 2) continue;
+      const nx = new Date(d); nx.setDate(d.getDate() + 7);
+      const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      out.push([iso, nx.getMonth() !== d.getMonth() ? "Monthly Nifty expiry" : "Weekly Nifty expiry"]);
+    }
+    return out;
+  }
+
+  async function renderHome() {
+    view.innerHTML = SKEL("Loading the warm-up");
+    let B = null, flows = null;
+    try { await loadScreen(); } catch (e) { /* the page still shows the parts without stocks */ }
+    try { if (!state.breadth) state.breadth = await getJSON("data/breadth.json"); B = state.breadth; } catch (e) { B = null; }
+    try { if (!state.groups) state.groups = await getJSON("data/group_ranks.json"); } catch (e) { /* no groups yet */ }
+    try { flows = await getJSON("data/fii_dii.json"); } catch (e) { flows = null; }
+    try { if (!state.scanSpec) await loadScans(); } catch (e) { /* no scanners */ }
+    if (routeName() !== "") return;
+    const hs = Object.assign({ part: "50", more: false }, store.get("sd-home", {}));
+    const saveHs = () => store.set("sd-home", hs);
+    const U = B && (B.universes.liquid || B.universes.all), S = U ? U.series : {};
+    const last = (k) => { const a = S[k]; return a && a.length ? a[a.length - 1] : null; };
+    const days = B ? B.days.slice(-130) : [], cut = (k) => (S[k] || []).slice(-130);
+    const lab = (v, labels) => { for (const [lim, t] of labels || []) if (v < lim) return t; return ""; };
+    // market read
+    const READ = [["momentum", "Momentum"], ["short_term", "Short-term"], ["big_trend", "Big trend"], ["breakouts", "Breakouts"], ["overdone", "Overdone?"], ["leadership", "Leadership"]];
+    const read = (U && U.read) || {};
+    const rd = READ.filter(([k]) => read[k]);
+    const readHTML = rd.length ? rd.map(([k, l], i) => `<div class="hr-row ${i >= 3 && !hs.more ? "more" : ""}" title="${esc(read[k].rule || "")}"><div><i class="hr-dot ${WORD_CLS[read[k].word] || "t-info"}"></i><b>${l}</b><span class="tag ${WORD_CLS[read[k].word] || "t-info"}">${esc(read[k].word)}</span></div><p>${esc(read[k].text)}</p></div>`).join("")
+      + (rd.length > 3 ? `<button type="button" class="sp-link" id="hrMore">${hs.more ? "Show less" : `Show ${rd.length - 3} more`}</button>` : "") : '<p class="muted small">Breadth data not built yet.</p>';
+    // participation + stages
+    const pk = `pct_above${hs.part === "20" ? "20" : hs.part === "200" ? "200" : "50"}`;
+    const pv = last(pk);
+    const n500 = B && B.indices && B.indices.NIFTY_500 ? B.indices.NIFTY_500.slice(-130) : [];
+    const nv = n500.filter((x) => x != null), nlo = Math.min(...nv), nhi = Math.max(...nv);
+    const n500s = n500.map((x) => (x == null ? null : 5 + ((x - nlo) / (nhi - nlo || 1)) * 90));
+    const xl = days.length ? [[0, shortDay(days[0])], [Math.floor(days.length / 2), shortDay(days[Math.floor(days.length / 2)])], [days.length - 1, shortDay(days[days.length - 1])]] : [];
+    const partHTML = B ? `<div class="hp-h"><small class="muted">PARTICIPATION</small>${seg("hpart", [["20", "20D"], ["50", "50D"], ["200", "200D"]], hs.part)}</div>
+      <div class="hp-v"><b>${pv == null ? "–" : pv.toFixed(1) + "%"}</b><span class="tag t-info">${esc(lab(pv, B.config.participation_labels))}</span><small class="muted">above the ${hs.part}-day average · latest ${shortDay(days[days.length - 1])}</small></div>
+      ${svgLines([{ vals: n500s, color: "var(--muted)", width: 1.2 }, { vals: cut(pk), color: "#2962ff", fill: "rgba(41,98,255,.12)" }], { lo: 0, hi: 100, ticks: [0, 20, 50, 80, 100], unit: "%", bands: [[80, 100, "rgba(219,39,119,.08)"]], xlabels: xl, label: "Participation" })}
+      <small class="muted">grey = Nifty 500 (scaled) · pink zone = more than 80 % (stretched)</small>
+      <div class="hp-h" style="margin-top:12px"><small class="muted">STAGE 2 · STAGE 4</small><span class="small"><b style="color:#2962ff">Stage 2 ${(last("stage2") ?? 0).toFixed(1)}%</b> · <b style="color:#db2777">Stage 4 ${(last("stage4") ?? 0).toFixed(1)}%</b></span></div>
+      ${svgLines([{ vals: cut("stage2"), color: "#2962ff" }, { vals: cut("stage4"), color: "#db2777" }], { lo: 0, hi: 70, ticks: [0, 35, 70], unit: "%", xlabels: xl, h: 120, label: "Stage 2 and stage 4" })}` : "";
+    // FII / DII + highs - lows
+    const fr = flows ? flows.rows.slice(-22) : [];
+    const sum = (k) => fr.reduce((a, r) => a + (r[k] || 0), 0);
+    const flowRow = (k, label) => { const lastR = fr[fr.length - 1]; return `<div class="hf-row"><div class="hf-t"><b>${label}</b><small class="muted">${lastR ? shortDay(lastR.date) : ""}</small><b class="${lastR && lastR[k] >= 0 ? "up" : "down"}">${lastR ? (lastR[k] > 0 ? "+" : "") + finNum(lastR[k]) : "–"}</b></div>
+      ${svgBars(fr.map((r) => r[k]))}<div class="hf-t"><small class="muted">${fr.length} session${fr.length === 1 ? "" : "s"} net</small><b class="${sum(k) >= 0 ? "up" : "down"}">${sum(k) > 0 ? "+" : ""}${finNum(sum(k))}</b></div></div>`; };
+    const hl = (S.nh20 || []).slice(-22).map((h, i) => h - ((S.nl20 || []).slice(-22)[i] || 0));
+    const flowHTML = `<div class="hp-h"><small class="muted">FII / DII CASH · LAST ${Math.max(fr.length, 1)} SESSION${fr.length === 1 ? "" : "S"}</small><small class="muted">₹ crore</small></div>
+      ${fr.length ? flowRow("fii_net", "FII") + flowRow("dii_net", "DII") + (fr.length < 22 ? `<p class="muted small">Collected daily from NSE since ${SD.fmtDate(flows.since)}; the bars fill up to 22 sessions.</p>` : "") : '<p class="muted small">FII / DII figures start with the next daily update.</p>'}
+      <div class="hp-h" style="margin-top:12px"><small class="muted">20-DAY HIGHS · LOWS · LAST 22 SESSIONS</small></div>
+      ${B ? `<div class="hf-row"><div class="hf-t"><b>Net highs − lows</b><small class="muted">${shortDay(days[days.length - 1])}</small><b class="${hl[hl.length - 1] >= 0 ? "up" : "down"}">${hl[hl.length - 1] > 0 ? "+" : ""}${hl[hl.length - 1] ?? "–"}</b></div>${svgBars(hl)}
+        <div class="hf-t"><span></span><span class="small"><b class="up">${last("nh20") ?? "–"} highs</b> · <b class="down">${last("nl20") ?? "–"} lows</b></span></div></div>` : ""}`;
+    // indices strip
+    const IDX = [["NIFTY_50", "Nifty 50"], ["NIFTY_500", "Nifty 500"], ["NIFTY_MIDCAP_150", "Midcap 150"], ["NIFTY_SMALLCAP_250", "Smallcap 250"], ["NIFTY_MICROCAP_250", "Microcap 250"], ["NIFTY_BANK", "Nifty Bank"], ["INDIA_VIX", "India VIX"]];
+    const idxHTML = IDX.map(([id, name]) => { const r = state.byKey.get("n:" + id); return r ? `<a class="hi-card" href="#/i/n/${id}" data-idx="${id}"><div class="hi-t"><span>${name}</span>${pct(r.chg_1d)}</div><b>${SD.fmtPrice(r.close)}</b>
+      <div class="hi-sp"><i class="skel"></i></div><div class="hi-f"><small class="muted">${r.from_hi52 == null ? "" : finNum(Math.abs(r.from_hi52), 1) + "% from high"}</small><small class="hi-ma"></small></div></a>` : ""; }).join("");
+    // today's setups: near pivot / VCP / flag / tight range, liquid, RS 70+, closest to the pivot first
+    const SET = [["near-pivot", "Near Pivot"], ["vcp", "VCP"], ["flag", "Flag"], ["tight-range", "Tight Range"]];
+    const seen = new Map();
+    if (state.screen && state.scanSpec) for (const [sid, tag] of SET) {
+      const sc = allScans().find((x) => x.id === sid); if (!sc) continue;
+      for (const r of SDS.run(state.screen, sc)) if ((r.liquid_day ?? r.liquid) && (r.rs_rating ?? 0) >= 70 && !seen.has(r.key)) seen.set(r.key, { r, tag, sid });
+    }
+    const setups = [...seen.values()].sort((a, b) => Math.abs(a.r.dist_pivot ?? 99) - Math.abs(b.r.dist_pivot ?? 99)).slice(0, 15);
+    const setHTML = setups.length ? `<div class="table-wrap hs-t"><table><thead><tr><th class="l">Stock</th><th>RS</th><th>Close</th><th>To pivot</th><th>1M</th><th>3M</th><th>52W high</th></tr></thead><tbody>`
+      + setups.map(({ r, tag }) => `<tr data-key="${esc(r.key)}"><td class="l name"><b>${esc(r.symbol)}</b><span><i class="hs-tag">${tag}</i> ${esc(r.basic_industry || r.industry || "")}</span></td><td class="num">${r.rs_rating ?? "–"}</td>`
+        + `<td class="num">${SD.fmtPrice(r.close)}</td><td class="num">${r.dist_pivot == null ? "–" : finNum(Math.abs(r.dist_pivot), 1) + "%"}</td><td class="num">${pct(r.ret_1m)}</td><td class="num">${pct(r.ret_3m)}</td><td class="num">${pct(r.from_hi52)}</td></tr>`).join("")
+      + "</tbody></table></div>" : '<p class="muted small">No liquid RS 70+ stock near a pivot today.</p>';
+    // where the money is: themes by 1-week average return
+    const th = state.groups && state.groups.levels && state.groups.levels.theme ? state.groups.levels.theme.filter((t) => t.avg_1w != null && !t.small) : [];
+    const ths = th.slice().sort((a, b) => b.avg_1w - a.avg_1w), lead = ths.slice(0, 5), lag = ths.slice(-3).reverse();
+    const mx = Math.max(1, ...ths.map((t) => Math.abs(t.avg_1w)));
+    const thRow = (t) => `<a class="hm-row" href="#/groups/theme/${encodeURIComponent(t.name)}"><span>${esc(t.name)}</span><i class="hm-bar"><i class="${t.avg_1w >= 0 ? "pos" : "neg"}" style="width:${(Math.abs(t.avg_1w) / mx) * 100}%"></i></i>${pct(t.avg_1w)}</a>`;
+    const moneyHTML = ths.length ? `<small class="muted hm-l">LEADING</small>${lead.map(thRow).join("")}<small class="muted hm-l">LAGGING</small>${lag.map(thRow).join("")}<a class="sp-link" href="#/groups/theme">Open themes →</a>` : '<p class="muted small">Theme ranks not built yet.</p>';
+    // events: results this week and next, expiries
+    const today = state.screenDate || state.dataDate;
+    const due = new Map();
+    for (const r of state.screen || []) if (r.next_result && r.next_result > today && r.days_to_result != null && r.days_to_result <= 10) { if (!due.has(r.next_result)) due.set(r.next_result, []); due.get(r.next_result).push(r); }
+    const dueHTML = [...due.keys()].sort().slice(0, 5).map((d) => { const list = due.get(d).sort((a, b) => (b.mcap_cr ?? 0) - (a.mcap_cr ?? 0)); return `<div class="he-d"><b>${shortDay(d)}</b><div>${list.slice(0, 6).map((r) => `<a href="#/i/s/${encodeURIComponent(r.id)}">${esc(r.symbol)}</a>`).join("")}${list.length > 6 ? `<span class="muted">+${list.length - 6} more</span>` : ""}</div></div>`; }).join("");
+    const evHTML = `<small class="muted hm-l">RESULTS</small>${dueHTML || '<p class="muted small">No results dates in the next 10 days.</p>'}
+      <small class="muted hm-l">CALENDAR</small>${expiries(today, 4).map(([d, t]) => `<div class="he-c"><b>${shortDay(d)}</b><span>${t}</span></div>`).join("")}<p class="muted small">Expiry days move earlier when the exchange is closed.</p>`;
+    // watchlist plan
+    const sig = (r) => [r.pocket_pivot && "Pocket pivot", r.high_volume && r.chg_1d > 0 && "Up on big volume", r.hve && "Highest volume ever", r.rs_line_52w_high && "RS line high",
+      r.breakout_days === 0 && "Breakout today", r.dist_pivot != null && r.dist_pivot > -3 && r.dist_pivot <= 0 && "Near pivot", r.dry_up && "Volume dry-up", r.new_low_20d && "New 20-day low"].filter(Boolean);
+    const wl = (state.screen || []).filter((r) => state.watch.has(r.key));
+    const groupsW = [["Good day", wl.filter((r) => r.chg_1d >= 1)], ["Weak day", wl.filter((r) => r.chg_1d <= -1)], ["Quiet", wl.filter((r) => r.chg_1d > -1 && r.chg_1d < 1)]];
+    const wlHTML = wl.length ? groupsW.filter(([, l]) => l.length).map(([g, l]) => `<small class="muted hm-l">${g.toUpperCase()} · ${l.length}</small>${l.map((r) => `<a class="hw-row" href="#/i/s/${encodeURIComponent(r.id)}"><div><b>${esc(r.symbol)}</b> <small class="muted">RS ${r.rs_rating ?? "–"}</small><span class="num">${SD.fmtPrice(r.close)} ${pct(r.chg_1d)}</span></div>`
+      + `<div class="hw-sig">${sig(r).map((x) => `<i>${x}</i>`).join("") || '<small class="muted">No new signals</small>'}</div></a>`).join("")}`).join("") : '<p class="muted small">Tap ★ on any stock to add it; its signals show here each day.</p>';
+    const nLiquid = U && U.series && U.series.n ? U.series.n[U.series.n.length - 1] : null;
+    view.innerHTML = `<div class="home">
+      <section class="hcard"><div class="hc-h"><h2>Market condition</h2><span class="muted small">${nLiquid ? nLiquid.toLocaleString("en-IN") + " liquid stocks · " : ""}as of ${B ? shortDay(B.data_date) : "–"}</span><a class="sp-link" href="#/breadth">Market breadth →</a></div>
+        <div class="hc-3"><div class="hc-read"><small class="muted">MARKET READ</small>${readHTML}</div><div class="hc-part">${partHTML}</div><div class="hc-flow">${flowHTML}</div></div></section>
+      <section class="hcard"><div class="hc-h"><h2>Indices</h2><a class="sp-link" href="#/breadth/indices">Major indices →</a></div><div class="hi-grid">${idxHTML}</div></section>
+      <div class="hc-2"><section class="hcard"><div class="hc-h"><h2>Today's setups</h2><span class="muted small">${setups.length} liquid stocks, RS 70+, nearest the pivot</span>
+          <button class="btn sm" id="hsCopy" type="button">Copy to TradingView</button><a class="sp-link" href="#/scanners/near-pivot">Open in Scanner →</a></div>${setHTML}</section>
+        <div class="hc-col"><section class="hcard"><div class="hc-h"><h2>Where the money is</h2><span class="muted small">themes · 1 week</span></div>${moneyHTML}</section>
+          <section class="hcard ev"><div class="hc-h"><h2>Coming up</h2><span class="muted small">results, expiries</span></div>${evHTML}</section></div></div>
+      <section class="hcard"><div class="hc-h"><h2>Your watchlist plan</h2><span class="muted small">${wl.length} stock${wl.length === 1 ? "" : "s"}</span><a class="sp-link" href="#/watchlist">Open watchlist →</a></div><div class="hw">${wlHTML}</div></section>
+      <p class="muted small">Our own simple rules on end-of-day data. Educational purpose only, not investment advice.</p></div>`;
+    $("#stPage").innerHTML = `<span>${setups.length} setups</span><span class="st-n">Data ${SD.fmtDate(state.screenDate || state.dataDate)}</span>`;
+    const hr = $("#hrMore"); if (hr) hr.onclick = () => { hs.more = !hs.more; saveHs(); renderHome(); };
+    const hp = view.querySelector("[data-seg=hpart]"); if (hp) hp.onclick = (e) => { const b = e.target.closest("button"); if (!b) return; hs.part = b.dataset.v; saveHs(); renderHome(); };
+    $("#hsCopy").onclick = async () => { const t = setups.map(({ r }) => "NSE:" + r.symbol).join(","); try { await navigator.clipboard.writeText(t); $("#hsCopy").textContent = `Copied ${setups.length}`; } catch (e) { prompt("Copy these symbols:", t); } };
+    view.querySelectorAll(".hs-t tr[data-key]").forEach((tr) => { tr.onclick = () => { location.hash = "#/i/" + tr.dataset.key.replace(":", "/"); }; });
+    // index sparklines (last 3 months) + above / below the 50 EMA and 200 SMA
+    for (const el of view.querySelectorAll("[data-idx]")) {
+      getJSON(`data/c/n/${el.dataset.idx}.json`).then((d) => {
+        const c = SD.candlesFromChart(d, "adjusted").map((b) => b.close), l3 = c.slice(-63);
+        const e50 = SD.ema(c, 50), s200 = c.length >= 200 ? c.slice(-200).reduce((a, x) => a + x, 0) / 200 : null, lc = c[c.length - 1];
+        el.querySelector(".hi-sp").innerHTML = spark(l3, l3[l3.length - 1] >= l3[0]);
+        const e = e50[e50.length - 1];
+        el.querySelector(".hi-ma").innerHTML = `<span class="${lc >= e ? "up" : "down"}">50E</span> · <span class="${s200 != null && lc >= s200 ? "up" : "down"}">200S</span>`;
+      }).catch(() => { el.querySelector(".hi-sp").innerHTML = ""; });
+    }
+  }
+
   /* ------------------------------------------------------------------ stock panel (Phase N4): price head + accordion
      Overview (tags, key ratios, pros & cons) · Financials (mini bars per line) · Peers (same basic industry) · Shareholding */
   const finCache = new Map();
@@ -1449,7 +1607,7 @@
   function route() {
     if (!state.rows.length) return;
     const parts = location.hash.replace(/^#\/?/, "").split("/").map(decodeURIComponent);
-    const tab = { "": "market", stocks: "stocks", scanners: "scanners", screener: "scanners", sectors: "groups", groups: "groups", breadth: "breadth", watchlist: "watchlist", fields: "fields", i: "" }[parts[0]] ?? "market";
+    const tab = { "": "home", market: "market", stocks: "stocks", scanners: "scanners", screener: "scanners", sectors: "groups", groups: "groups", breadth: "breadth", watchlist: "watchlist", fields: "fields", i: "" }[parts[0]] ?? "market";
     document.querySelectorAll(".rail [data-tab]").forEach((a) => a.classList.toggle("active", a.dataset.tab === tab));
     view.classList.remove("enter"); void view.offsetWidth; view.classList.add("enter");
     SDChart.close();
@@ -1466,7 +1624,8 @@
     else if (parts[0] === "sectors") renderSectors(parts[1], parts[2]);
     else if (parts[0] === "watchlist") renderWatchlist();
     else if (parts[0] === "i") renderDetail(parts[1], parts.slice(2).join("/"));
-    else renderMarket();
+    else if (parts[0] === "market") renderMarket();
+    else renderHome();
     window.scrollTo(0, 0);
   }
 

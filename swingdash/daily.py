@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import backfill, classification, config, fundamentals, groups, rebuild, snapshot, stock_master, store, themes
+from . import backfill, classification, config, fundamentals, groups, market_flows, rebuild, snapshot, stock_master, store, themes
 
 
 def recheck_start(days: set[date], n: int, fallback: date) -> date:
@@ -162,6 +162,12 @@ def run(ctx: backfill.Ctx, log=print) -> dict:
             res["fundamentals"] = {"stopped": f"{type(exc).__name__}: {str(exc)[:80]}"}
     else:
         res["fundamentals"] = "not started: run Backfill history with job fundamentals once"
+
+    # 4e. FII / DII cash flows of the latest session (home page); NSE gives only today, so the file grows day by day
+    try:
+        res["fii_dii"] = market_flows.update(data, ctx.http, log=log)
+    except Exception as exc:  # noqa: BLE001 - never stop the price update for this
+        res["fii_dii"] = {"stopped": f"{type(exc).__name__}: {str(exc)[:80]}"}
 
     # 5. snapshot
     latest, sectors = snapshot.build(data, log=log)

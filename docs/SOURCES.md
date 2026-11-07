@@ -66,3 +66,9 @@ Script: `scripts/probe_sources.py`.
 - Daily values for the ~110 BSE indices that Angel One does not list (BSE API refuses GitHub).
 - (answered) NSE's `ind_close_all` archive starts 21-Feb-2012 (30 indices that day).
 - BSE `ProduceCSVForDate` gives 2007 -> today in one call per index (PC only); 12 BSE bond indices return nothing.
+
+## FII / DII cash flows (Phase N5, from 2026-11-07)
+- `https://www.nseindia.com/api/fiidiiTradeReact` (Referer `https://www.nseindia.com/reports/fii-dii`, home-page cookies):
+  provisional FII / FPI and DII buy, sell and net values (Rs crore) of the LATEST session only. No history endpoint, so the
+  daily job (step 4e, swingdash/market_flows.py) adds one row per session to `data/market/fii_dii.csv`; the website gets
+  the last 60 rows as `data/fii_dii.json`. A failed call never stops the price update.

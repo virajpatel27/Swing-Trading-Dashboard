@@ -119,7 +119,8 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
     data = root / "data"
     cfg, stage_cfg, liquid_rule, pattern_cfg = _settings(root)
     master = pd.read_csv(data / "meta" / "stocks.csv", dtype=str).fillna("")
-    bench = _benchmarks(data, sorted(set(cfg.get("rs_lines", [])) | {cfg.get("beta_benchmark", "NIFTY_50")}))
+    bench = _benchmarks(data, sorted(set(cfg.get("rs_lines", [])) | {cfg.get("beta_benchmark", "NIFTY_50")}
+                                     | {(cfg.get("events") or {}).get("rsb_benchmark", "NIFTY_MIDSMALLCAP_400")}))
     as_of = pd.Timestamp(as_of) if as_of is not None else None
     days = {sid: earnings.result_days(data, sym) for sid, sym in zip(master["id"], master["symbol"])}
     jobs = [(sid, data, bench, cfg, stage_cfg, liquid_rule, as_of, pattern_cfg, days[sid]) for sid in master["id"]]

@@ -259,3 +259,14 @@ def test_base_levels_daily_and_ipo():
     f = engine.stock_fields(ipo, cfg=cfg)
     assert f["ipo_lvl"].iloc[-1] == 105 and f["ipo_base_bars"].iloc[-1] == 5     # 106 high on day 4 closed below 105: no move
     assert f["ipo_dist"].iloc[-1] == pytest.approx((105 / 98 - 1) * 100)
+
+
+def test_rs_before_price():
+    cfg = yaml.safe_load(open(ROOT / "config" / "indicators.yaml"))
+    n = 120
+    d = pd.bdate_range("2026-01-01", periods=n)
+    c = np.r_[np.linspace(100, 120, 60), np.linspace(120, 110, 59), [114.0]]       # price a few % under its 50-day close high
+    b = pd.Series(np.r_[np.full(60, 1000.0), np.linspace(1000, 850, 59), [860.0]], index=d)  # index fell harder
+    adj = pd.DataFrame({"date": d, "open": c, "high": c * 1.01, "low": c * 0.99, "close": c, "volume": np.full(n, 1000.0)})
+    last = engine.stock_fields(adj, bench={"NIFTY_MIDSMALLCAP_400": b}, cfg=cfg).iloc[-1]
+    assert bool(last["rsb_today"]) and last["rsb_px_below"] == pytest.approx((1 - 114 / c[-51:-1].max()) * 100)

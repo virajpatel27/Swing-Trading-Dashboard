@@ -175,6 +175,13 @@ Part C (same day; base levels are computed for the latest day only, engine.base_
 | Weekly Base | same on weekly candles (+-4 weeks, 17-71 weeks old), depth 10-45 % (<= 8.5 x ADR100), within 3 ADR | 0.28 / 0.24 | 0.96 / 0.79 |
 | IPO Base | <= 30 sessions listed; level = listing-day high, moved to a later high when a close gets above it; >= 3 sessions since, <= 25 % deep, 0-8 % under it | 0 / 0 | 0.93 / 0.70 |
 
-Still to do (part D): RS before Price (benchmark of their RS line not found yet; best
+Part D (same day):
+
+| scanner | rule | before | after (4 days) |
+|---|---|---|---|
+| RS before Price | today the RS line vs Nifty MidSmallcap 400 tops its previous 50-session high, close 0-10 % under its 50-session closing high (their RS index is not published; this one fits best of all NSE indices) | 0.08 / 0.06 | 0.68 / 0.93 |
+| VCP, Tight Setups | NOT changed: the reference's swing rules could not be matched (its VCP joins or splits small swings case by case; lists of 2-11 stocks). Their pullback depths ARE reproduced for some stocks (AARTIPHARM 22.0 / 10.8 / 4.9 %) | 0 / 0, 0.25 / 0.11 | unchanged |
+
+Earlier note - still to do: RS before Price (benchmark of their RS line not found yet; best
 Nifty MidSmallcap 400, 68 / 93 %), Shakeout, Daily / Weekly Base, Near Pivot, VCP, Tight Setups, IPO Base. Earnings
 scanners after the fundamentals are complete (~10-Nov). The reference's event scans keep an event 5 sessions ("age").

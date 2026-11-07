@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S9**. Fields: **294**.
+Current phase: **S9**. Fields: **296**.
 
 ## Sources
 
@@ -249,6 +249,8 @@ Current phase: **S9**. Fields: **294**.
 | `so_age` | Shakeout (sessions ago) | integer | Sessions since the recovery from an intraday drop >= the usual daily range that held within 3 % of SMA50, back to the close before the drop within 2 sessions, close above SMA50 and SMA200, SMA50 above SMA200; empty after 5 sessions | close, high, low | data/snapshot/screen.json |
 | `rb_age` | Recent breakout (sessions ago) | integer | Sessions since a close above an old resistance (swing high >= 26 sessions old after a 20 % rise, no close above it since) on >= 2 x the 20-day volume; today >= 5 % above it, Stage 2; empty after 4 sessions | close, high, low, volume, stage | data/snapshot/screen.json |
 | `rb_level` | Recent breakout level | rupees | The resistance level of the recent breakout | high | data/snapshot/screen.json |
+| `rsb_today` | RS line new high before price | boolean | Today the RS line vs Nifty MidSmallcap 400 is above its highest of the previous 50 sessions while the close is 0-10 % under its highest close of those 50 sessions | close | data/snapshot/screen.json |
+| `rsb_px_below` | Below 50-day closing high % | percent | % the close is under the highest close of the previous 50 sessions | close | data/snapshot/screen.json |
 | `adr100_pct` | ADR % (100 days) | percent | 100 x (average of high / low over 100 sessions - 1) | high, low | data/snapshot/screen.json |
 | `lvl_price` | Base level | rupees | Latest swing high (highest of +-16 sessions), 22-168 sessions old, reached after a 20 % rise, no close above it since (latest day only) | high, low, close | data/snapshot/screen.json |
 | `lvl_age` | Base level age (sessions) | integer | Sessions since the base level | lvl_price | data/snapshot/screen.json |

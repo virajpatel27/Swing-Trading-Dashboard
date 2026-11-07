@@ -836,3 +836,10 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - 4-day average recall / precision: Daily Base 0.96 / 0.97 (was 0.41 / 0.46), Near Pivot 0.92 / 0.91 (0.44 / 0.31),
   Weekly Base 0.96 / 0.79 (0.28 / 0.24), IPO Base 0.93 / 0.70 (0 / 0). Parts A and B unchanged.
 - Next (part D): RS before Price, VCP, Tight Setups. Earnings scans after ~10-Nov.
+
+### 2026-11-07: accuracy step 3, part D - RS before Price (VCP / Tight left as they were)
+- engine.stock_fields: rsb_today, rsb_px_below (RS line vs NIFTY_MIDSMALLCAP_400, config events.rsb_*); the index is loaded
+  by screen._benchmarks; rs_line_* columns only for config rs_lines + beta benchmark. Scanner new-rs-before-price uses it.
+- 4 days: recall / precision 0.68 / 0.93 (was 0.08 / 0.06). The reference's RS index could not be found exactly.
+- VCP and Tight Setups not changed (see docs/calibration.md). Tests 194 Python + 32 JS green.
+- Step 3 done for the price scanners. Open: earnings scanners after ~10-Nov; New Listing after the BSE step.

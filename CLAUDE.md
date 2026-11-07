@@ -156,3 +156,4 @@ BSE history (07-Nov, PAUSED by Viraj): code ready (bse_history.py, job bse-stock
 Scanners (07-Nov, step 3 part A): gainers/doublers/pullbacks/new-listing re-tuned; event scans via engine.events (hv_age, br_age; config indicators.yaml events). Part B open (breakouts, RS before price, shakeout, bases, VCP, tight, IPO base).
 Scanners part B (07-Nov): s2b_age / so_age / rb_age events (engine.events, recent_breakout last 30 rows only). Part C open: RS before price, bases, near pivot, VCP, tight, IPO base.
 Scanners part C (07-Nov): engine.base_levels (lvl_/wlvl_/ipo_ fields, latest day only) for daily/weekly base, near pivot, IPO base. Part D open: RS before price, VCP, tight setups.
+Scanners part D (07-Nov): rsb_today (RS line vs NIFTY_MIDSMALLCAP_400, events.rsb_*). VCP / Tight unchanged (not matchable). Step 3 done for price scans.

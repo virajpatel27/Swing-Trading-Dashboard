@@ -402,25 +402,20 @@
    "id": "new-rs-before-price",
    "folder": "Patterns",
    "name": "New RS before Price",
-   "description": "The RS line (vs Nifty Smallcap 250) reached a new 52-week high in the last 7 sessions while the price is not at its 52-week high: strength showing before a breakout.",
+   "description": "The RS line (vs Nifty MidSmallcap 400) made a new 50-session high today while the price is still 0-10 % under its 50-session closing high.",
    "universe": "all",
    "rule": {
     "all": [
      {
-      "field": "rs_high_days",
-      "op": "<=",
-      "value": 7
-     },
-     {
-      "field": "days_since_hi52",
-      "op": ">",
-      "value": 0
+      "field": "rsb_today",
+      "op": "is",
+      "value": true
      }
     ]
    },
    "sort": {
-    "field": "rs_rating",
-    "dir": "desc"
+    "field": "rsb_px_below",
+    "dir": "asc"
    }
   },
   {

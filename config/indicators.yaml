@@ -54,3 +54,6 @@ events:                           # event scans (engine.events), calibrated 07-N
   wbase_min_age: 17
   wbase_max_age: 71
   ipo_max_bars: 30                # IPO base: stocks with at most 30 sessions
+  rsb_benchmark: NIFTY_MIDSMALLCAP_400   # RS before price: RS line vs this index above its 50-session high today,
+  rsb_lookback: 50                #   close 0-10 % under its highest close of the previous 50 sessions
+  rsb_max_below: 10               #   (the reference's own index is unknown; this one fits best: 68 % / 93 % on 4 days)

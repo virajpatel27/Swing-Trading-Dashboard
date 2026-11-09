@@ -1,5 +1,5 @@
 {
- "date": "2026-11-08",
+ "date": "2026-11-09",
  "universe": 2633,
  "nifty500": {
   "stocks": 500,
@@ -7,21 +7,21 @@
  },
  "all": {
   "stocks": 2633,
-  "with_doc": 2121
+  "with_doc": 2534
  },
  "kinds": {
-  "company": 1748,
-  "nbfc": 130,
-  "?": 196,
-  "bank": 36,
+  "company": 2079,
+  "nbfc": 151,
+  "?": 252,
+  "bank": 41,
   "insurance": 11
  },
- "with_8_quarters": 1622,
- "with_5_years": 1299,
- "with_balance_sheet": 1892,
- "with_cash_flow": 1845,
- "with_shareholding": 1917,
- "latest_quarter_older_than_150_days": 222,
+ "with_8_quarters": 1915,
+ "with_5_years": 1520,
+ "with_balance_sheet": 2242,
+ "with_cash_flow": 2177,
+ "with_shareholding": 2269,
+ "latest_quarter_older_than_150_days": 283,
  "no_results": [
   "3BBLACKBIO",
   "ABBOTINDIA",

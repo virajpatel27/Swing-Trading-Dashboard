@@ -7,21 +7,21 @@
  },
  "all": {
   "stocks": 2633,
-  "with_doc": 2534
+  "with_doc": 2633
  },
  "kinds": {
-  "company": 2079,
-  "nbfc": 151,
-  "?": 252,
+  "company": 2160,
+  "nbfc": 156,
+  "?": 265,
   "bank": 41,
   "insurance": 11
  },
- "with_8_quarters": 1915,
- "with_5_years": 1520,
- "with_balance_sheet": 2242,
- "with_cash_flow": 2177,
- "with_shareholding": 2269,
- "latest_quarter_older_than_150_days": 283,
+ "with_8_quarters": 1982,
+ "with_5_years": 1574,
+ "with_balance_sheet": 2325,
+ "with_cash_flow": 2256,
+ "with_shareholding": 2354,
+ "latest_quarter_older_than_150_days": 298,
  "no_results": [
   "3BBLACKBIO",
   "ABBOTINDIA",

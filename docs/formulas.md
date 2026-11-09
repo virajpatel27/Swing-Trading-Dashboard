@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S9**. Fields: **302**.
+Current phase: **S9**. Fields: **312**.
 
 ## Sources
 
@@ -295,19 +295,19 @@ Current phase: **S9**. Fields: **302**.
 | `np_ttm` | Net profit TTM (Cr) | crore | Sum of the last 4 quarters' profit attributable to the owners | results_filings | data/snapshot/screen.json |
 | `eps_ttm` | EPS TTM | rupees | Sum of the last 4 quarters' basic EPS, each adjusted for splits / bonuses after its results day | results_filings, corporate_actions | data/snapshot/screen.json |
 | `eps_last_q` | EPS latest quarter | rupees | Basic EPS of the latest quarter (adjusted like eps_ttm) | eps_ttm | data/snapshot/screen.json |
-| `opm_ttm` | OPM TTM % | percent | Operating profit TTM / sales TTM x 100 (operating profit = sales - expenses without interest and depreciation; banks / NBFCs: minus interest = financing profit) | sales_ttm | data/snapshot/screen.json |
+| `opm_ttm` | OPM TTM % | percent | EBITDA without other income (PBT + interest + depreciation - other income) / sales, last 4 quarters x 100 | sales_ttm | data/snapshot/screen.json |
 | `npm_ttm` | Net margin TTM % | percent | np_ttm / sales_ttm x 100 | np_ttm, sales_ttm | data/snapshot/screen.json |
 | `pe` | P/E | number | close / eps_ttm (empty when EPS <= 0) | close, eps_ttm | data/snapshot/screen.json |
 | `pb` | P/B | number | Market cap / net worth (equity capital + reserves of the latest balance sheet) | mcap_cr, results_filings | data/snapshot/screen.json |
 | `book_value` | Book value / share | rupees | close / pb | pb, close | data/snapshot/screen.json |
-| `peg` | PEG | number | pe / 3-year EPS CAGR (profit CAGR when EPS history is missing); empty when growth <= 0 | pe, eps_cagr_3y, np_cagr_3y | data/snapshot/screen.json |
+| `peg` | PEG | number | PE / EPS growth of the latest quarter vs the same quarter a year ago (only when growth > 0) | pe, eps_cagr_3y, np_cagr_3y | data/snapshot/screen.json |
 | `div_yield` | Dividend yield % | percent | Dividends per share with ex-date in the last 365 days (split-adjusted) / close x 100 | corporate_actions, close | data/snapshot/screen.json |
 | `debt_equity` | Debt / Equity | number | Borrowings / net worth, latest balance sheet (companies and NBFCs) | results_filings | data/snapshot/screen.json |
-| `roe` | ROE % | percent | Last financial year: profit to owners / average net worth (start and end of the year) x 100 | results_filings | data/snapshot/screen.json |
+| `roe` | ROE % | percent | Latest year's net profit (incl. minority) / net worth at that year end x 100 (consolidated when filed) | results_filings | data/snapshot/screen.json |
 | `roe_3y` | ROE 3Y avg % | percent | Average of the last 3 yearly ROEs | roe | data/snapshot/screen.json |
 | `roe_5y` | ROE 5Y avg % | percent | Average of the last 5 yearly ROEs | roe | data/snapshot/screen.json |
 | `roe_10y` | ROE 10Y avg % | percent | Average of the last 10 yearly ROEs | roe | data/snapshot/screen.json |
-| `roce` | ROCE % | percent | Last financial year: (PBT + interest) / average (net worth + borrowings) x 100 (companies and NBFCs) | results_filings | data/snapshot/screen.json |
+| `roce` | ROCE % | percent | Latest year's EBIT (PBT + interest) / (net worth + borrowings) at that year end x 100 (companies and NBFCs) | results_filings | data/snapshot/screen.json |
 | `fin_year` | Latest financial year | date | End of the latest full financial year announced | results_filings | data/snapshot/screen.json |
 | `sales_g_yoy` | Sales growth YoY % | percent | Latest quarter's sales vs the same quarter a year before | results_filings | data/snapshot/screen.json |
 | `sales_g_qoq` | Sales growth QoQ % | percent | Latest quarter's sales vs the quarter before | results_filings | data/snapshot/screen.json |
@@ -357,6 +357,16 @@ Current phase: **S9**. Fields: **302**.
 | `eps_g_accel_qtrs` | EPS growth accelerating quarters | integer | Latest quarters in a row whose EPS growth YoY beat the previous quarter's EPS growth YoY | results_filings | data/snapshot/screen.json |
 | `sales_g_accel_qtrs` | Sales growth accelerating quarters | integer | Latest quarters in a row whose sales growth YoY beat the previous quarter's | results_filings | data/snapshot/screen.json |
 | `npm_up_qtrs` | Net margin rising quarters | integer | Latest quarters in a row with a higher net margin (profit / sales) than the quarter before | results_filings | data/snapshot/screen.json |
+| `sales_g_q1` | Sales growth YoY, Q1 | percent | Sales of two quarters before the latest vs the same quarter a year before | results_filings | data/snapshot/screen.json |
+| `eps_g_q1` | EPS growth YoY, Q1 | percent | EPS of two quarters before the latest vs the same quarter a year before | results_filings | data/snapshot/screen.json |
+| `npm_q1` | Net margin, Q1 | percent | Net profit / sales of two quarters before the latest | results_filings | data/snapshot/screen.json |
+| `sales_g_q2` | Sales growth YoY, Q2 | percent | Sales of the quarter before the latest vs the same quarter a year before | results_filings | data/snapshot/screen.json |
+| `eps_g_q2` | EPS growth YoY, Q2 | percent | EPS of the quarter before the latest vs the same quarter a year before | results_filings | data/snapshot/screen.json |
+| `npm_q2` | Net margin, Q2 | percent | Net profit / sales of the quarter before the latest | results_filings | data/snapshot/screen.json |
+| `sales_g_q3` | Sales growth YoY, Q3 | percent | Sales of the latest quarter vs the same quarter a year before | results_filings | data/snapshot/screen.json |
+| `eps_g_q3` | EPS growth YoY, Q3 | percent | EPS of the latest quarter vs the same quarter a year before | results_filings | data/snapshot/screen.json |
+| `npm_q3` | Net margin, Q3 | percent | Net profit / sales of the latest quarter | results_filings | data/snapshot/screen.json |
+| `eps_year_ago_q` | EPS, same quarter last year | number | EPS of the quarter a year before the latest | results_filings | data/snapshot/screen.json |
 | `np_qoq_up_qtrs` | Profit rising quarters (QoQ) | integer | Latest quarters in a row with higher profit than the quarter before | results_filings | data/snapshot/screen.json |
 | `sales_qoq_up_qtrs` | Sales rising quarters (QoQ) | integer | Latest quarters in a row with higher sales than the quarter before | results_filings | data/snapshot/screen.json |
 | `np_last_q` | Profit latest quarter (Cr) | crore | Profit to owners of the latest quarter | results_filings | data/snapshot/screen.json |

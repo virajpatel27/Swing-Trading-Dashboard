@@ -876,3 +876,12 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   tabs can be dragged to a new order. The visitor's list lives in the browser (localStorage "sd-pages").
 - The top bar's search box is gone (Viraj); press "/" anywhere for a small "Find a stock or index" dialog instead.
 - Checked in the preview: desktop + phone 375 px, remove / add / order saved, "/" find (INFY). JS tests 32 green.
+
+### 2026-11-09: accuracy step 6 - fundamentals formulas and earnings scanners
+- Fundamentals backfill finished (all 2,633 stocks, 08/09-Nov runs).
+- fundamentals.metrics: PAT incl. minority, ROE on year-end net worth (85 %), PEG = PE / EPS growth YoY (90 %), OPM =
+  EBITDA without other income (69 %), ROCE on year-end capital (45 %); quarter_trends: sales_g_q1..3, eps_g_q1..3,
+  npm_q1..3, eps_year_ago_q. Registry + formulas doc; ROE / ROCE test updated.
+- Scanners: Code 33 0.77 / 0.78, EPS Accelerators 0.81 / 0.82, Turnarounds 0.80 / 0.85, Earnings Explosion (renamed
+  eps-doublers) 0.71 / 0.75. Details docs/calibration.md. Tests 197 Python + 32 JS green.
+- Not matched: PB and debt / equity (their balance-sheet numbers differ), next result date (their calendar).

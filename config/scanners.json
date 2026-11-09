@@ -959,8 +959,8 @@
   {
    "id": "eps-doublers",
    "folder": "Earnings",
-   "name": "EPS Doublers",
-   "description": "Latest quarter vs the same quarter last year: EPS +100 % or more, sales +25 %+, profit +100 %+; results in the last 6 weeks.",
+   "name": "Earnings Explosion",
+   "description": "Latest quarter vs a year ago: EPS up 100 % or more, sales up 50 % or more, net profit up 75 % or more; results in the last 30 days.",
    "universe": "all",
    "rule": {
     "all": [
@@ -972,17 +972,17 @@
      {
       "field": "sales_g_yoy",
       "op": ">=",
-      "value": 25
+      "value": 50
      },
      {
       "field": "np_g_yoy",
       "op": ">=",
-      "value": 100
+      "value": 75
      },
      {
       "field": "days_since_result",
       "op": "<=",
-      "value": 42
+      "value": 30
      }
     ]
    },
@@ -996,34 +996,54 @@
    "id": "code-33",
    "folder": "Earnings",
    "name": "Code 33",
-   "description": "Sales growth YoY and EPS growth YoY rising and net margin rising, 3 quarters in a row; no tiny base (sales a year ago >= Rs 10 Cr) and profitable now.",
+   "description": "Code 33: in each of the last 3 quarters sales growth, EPS growth (both YoY, both positive) and net margin went up; results in the last 100 days.",
    "universe": "all",
    "rule": {
     "all": [
      {
-      "field": "sales_g_accel_qtrs",
-      "op": ">=",
-      "value": 2
+      "field": "sales_g_q1",
+      "op": "<",
+      "field2": "sales_g_q2"
      },
      {
-      "field": "eps_g_accel_qtrs",
-      "op": ">=",
-      "value": 2
+      "field": "sales_g_q2",
+      "op": "<",
+      "field2": "sales_g_q3"
      },
      {
-      "field": "npm_up_qtrs",
-      "op": ">=",
-      "value": 2
+      "field": "eps_g_q1",
+      "op": "<",
+      "field2": "eps_g_q2"
      },
      {
-      "field": "sales_year_ago_q",
-      "op": ">=",
-      "value": 10
+      "field": "eps_g_q2",
+      "op": "<",
+      "field2": "eps_g_q3"
      },
      {
-      "field": "np_last_q",
+      "field": "npm_q1",
+      "op": "<",
+      "field2": "npm_q2"
+     },
+     {
+      "field": "npm_q2",
+      "op": "<",
+      "field2": "npm_q3"
+     },
+     {
+      "field": "sales_g_q1",
       "op": ">",
       "value": 0
+     },
+     {
+      "field": "eps_g_q1",
+      "op": ">",
+      "value": 0
+     },
+     {
+      "field": "days_since_result",
+      "op": "<=",
+      "value": 100
      }
     ]
    },
@@ -1037,24 +1057,49 @@
    "id": "eps-accelerators",
    "folder": "Earnings",
    "name": "EPS Accelerators",
-   "description": "EPS growth YoY rising 3 quarters in a row while sales grew YoY in each of them (wider than Code 33).",
+   "description": "EPS growth (YoY) faster in each of the last 3 quarters, the latest at least 20 %, sales up YoY in all three; results in the last 100 days.",
    "universe": "all",
    "rule": {
     "all": [
      {
-      "field": "eps_g_accel_qtrs",
-      "op": ">=",
-      "value": 2
+      "field": "eps_g_q1",
+      "op": "<",
+      "field2": "eps_g_q2"
      },
      {
-      "field": "sales_up_qtrs",
-      "op": ">=",
-      "value": 3
+      "field": "eps_g_q2",
+      "op": "<",
+      "field2": "eps_g_q3"
      },
      {
-      "field": "np_last_q",
+      "field": "eps_g_q1",
       "op": ">",
       "value": 0
+     },
+     {
+      "field": "eps_g_q3",
+      "op": ">=",
+      "value": 20
+     },
+     {
+      "field": "sales_g_q1",
+      "op": ">",
+      "value": 0
+     },
+     {
+      "field": "sales_g_q2",
+      "op": ">",
+      "value": 0
+     },
+     {
+      "field": "sales_g_q3",
+      "op": ">",
+      "value": 0
+     },
+     {
+      "field": "days_since_result",
+      "op": "<=",
+      "value": 100
      }
     ]
    },
@@ -1068,13 +1113,13 @@
    "id": "turnarounds",
    "folder": "Earnings",
    "name": "Turnarounds",
-   "description": "A loss in the same quarter last year, a profit now, with sales and profit higher than the quarter before.",
+   "description": "Loss in the same quarter last year, profit now, profit up 2+ quarters in a row, sales up 10 % or more YoY; results in the last 100 days.",
    "universe": "all",
    "rule": {
     "all": [
      {
       "field": "np_year_ago_q",
-      "op": "<",
+      "op": "<=",
       "value": 0
      },
      {
@@ -1085,12 +1130,17 @@
      {
       "field": "np_qoq_up_qtrs",
       "op": ">=",
-      "value": 1
+      "value": 2
      },
      {
-      "field": "sales_qoq_up_qtrs",
+      "field": "sales_g_q3",
       "op": ">=",
-      "value": 1
+      "value": 10
+     },
+     {
+      "field": "days_since_result",
+      "op": "<=",
+      "value": 100
      }
     ]
    },

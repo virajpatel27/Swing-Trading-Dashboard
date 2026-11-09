@@ -777,11 +777,9 @@ def net_worth(b: dict, end: str) -> float | None:
 def year_roe(b: dict, years: list[str], i: int) -> float | None:
     end = years[i]
     v = b["y"][end]
-    np_ = v.get("np_owners", v.get("net_profit"))
-    nw1 = net_worth(b, end)
-    nw0 = net_worth(b, years[i - 1]) if i > 0 and _months(years[i - 1], end) == 12 else None
-    avg = (nw1 + nw0) / 2 if nw1 is not None and nw0 is not None else nw1
-    return None if np_ is None or not avg or avg <= 0 else np_ / avg * 100
+    np_ = v.get("net_profit", v.get("np_owners"))
+    nw1 = net_worth(b, end)                  # year-end net worth (calibrated 09-Nov: 86 % equal; average of two years 55 %)
+    return None if np_ is None or not nw1 or nw1 <= 0 else np_ / nw1 * 100
 
 
 def _streak(values: list) -> int:
@@ -809,8 +807,18 @@ def quarter_trends(q: dict, qe: list[str], eps, npo) -> dict:
     sales = lambda e, v: v.get("sales")
     npm = [(npo(q[e]) / q[e]["sales"] * 100) if q[e].get("sales") and q[e]["sales"] > 0 and npo(q[e]) is not None else None
            for e in run]
-    out = {"eps_g_accel_qtrs": _streak(yoy(eps)), "sales_g_accel_qtrs": _streak(yoy(sales)), "npm_up_qtrs": _streak(npm),
-           "np_qoq_up_qtrs": _streak([npo(q[e]) for e in run]), "sales_qoq_up_qtrs": _streak([sales(e, q[e]) for e in run])}
+    ye_eps, ye_sales = yoy(eps), yoy(sales)
+    out = {}
+    for i in (1, 2, 3):                                  # q3 = the latest quarter, q1 = two quarters before it
+        if len(run) >= 4 - i:
+            k = len(run) - (4 - i)
+            out[f"sales_g_q{i}"], out[f"eps_g_q{i}"] = ye_sales[k], ye_eps[k]
+            out[f"npm_q{i}"] = None if npm[k] is None else _r(npm[k])
+    a3 = ago(run[-1]) if run else None
+    if a3:
+        out["eps_year_ago_q"] = eps(a3, q[a3])
+    out.update({"eps_g_accel_qtrs": _streak(ye_eps), "sales_g_accel_qtrs": _streak(ye_sales), "npm_up_qtrs": _streak(npm),
+           "np_qoq_up_qtrs": _streak([npo(q[e]) for e in run]), "sales_qoq_up_qtrs": _streak([sales(e, q[e]) for e in run])})
     if run:
         last, a = run[-1], ago(run[-1])
         out["np_last_q"] = npo(q[last])
@@ -844,7 +852,7 @@ def metrics(doc: dict, close: float | None, mcap_cr: float | None, as_of: str | 
     qe = list(q)
     # a split / bonus before the results were approved is already in the reported EPS (Ind AS 33): adjust from that day
     eps = lambda e, v: None if v.get("eps") is None else v["eps"] * factor(v.get("ann") or e)
-    npo = lambda v: v.get("np_owners", v.get("net_profit"))
+    npo = lambda v: v.get("net_profit", v.get("np_owners"))   # PAT incl. minority (reference: 92 % equal, owners' 68 %)
     if qe:
         out["fin_qtr"] = qe[-1]
         ann = q[qe[-1]].get("ann")
@@ -857,14 +865,18 @@ def metrics(doc: dict, close: float | None, mcap_cr: float | None, as_of: str | 
             return None
         rows = [(e, q[e]) for e in ends[-4:]]
         tot = lambda f: None if any(f(e, r) is None for e, r in rows) else sum(f(e, r) for e, r in rows)
+        ebitda = lambda e, r: None if r.get("pbt") is None else \
+            r["pbt"] + (r.get("interest") or 0) + (r.get("depreciation") or 0) - (r.get("other_income") or 0)
         return {"sales": tot(lambda e, r: r.get("sales")), "np": tot(lambda e, r: npo(r)),
-                "op": tot(lambda e, r: r.get("op_profit")), "eps": tot(eps)}
+                "op": tot(ebitda), "eps": tot(eps)}
     t = ttm(qe)
     if t is None and y:                                   # quarters incomplete: the last full year
         ye0 = list(y)[-1]
         if not qe or ye0 >= qe[-1]:
             v = y[ye0]
-            t = {"sales": v.get("sales"), "np": npo(v), "op": v.get("op_profit"), "eps": eps(ye0, v)}
+            op = None if v.get("pbt") is None else \
+                v["pbt"] + (v.get("interest") or 0) + (v.get("depreciation") or 0) - (v.get("other_income") or 0)
+            t = {"sales": v.get("sales"), "np": npo(v), "op": op, "eps": eps(ye0, v)}
     if t:
         out["sales_ttm"], out["np_ttm"], out["eps_ttm"] = _r(t["sales"]), _r(t["np"]), _r(t["eps"])
         if t["sales"] and t["sales"] > 0:
@@ -921,8 +933,7 @@ def metrics(doc: dict, close: float | None, mcap_cr: float | None, as_of: str | 
             v = y[last]
             ebit = None if v.get("pbt") is None else v["pbt"] + (v.get("interest") or 0)
             c1 = cap_employed(last)
-            c0 = cap_employed(ye[-2]) if len(ye) > 1 and _months(ye[-2], last) == 12 else None
-            cap = (c1 + c0) / 2 if c1 is not None and c0 is not None else c1
+            cap = c1
             if ebit is not None and cap and cap > 0:
                 out["roce"] = _r(ebit / cap * 100)
     bse = sorted(e for e in b.get("bs", {})
@@ -939,7 +950,7 @@ def metrics(doc: dict, close: float | None, mcap_cr: float | None, as_of: str | 
         out["pb"] = _r(mcap_cr / nw_now)
         if close:
             out["book_value"] = _r(close / out["pb"]) if out["pb"] else None
-    growth = out.get("eps_cagr_3y") or out.get("np_cagr_3y")
+    growth = out.get("eps_g_yoy")                        # calibrated 09-Nov: PE / latest quarter's EPS growth YoY
     if out.get("pe") and growth and growth > 0:
         out["peg"] = _r(out["pe"] / growth)
     if dividends is not None and close:

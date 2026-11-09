@@ -208,3 +208,27 @@ fit their lists: pivot within 7 % of the 52-week high, 2nd pullback <= 0.6 x the
 Result (4 days, real pipeline): recall 0.875, precision 0.36 (was 0 / 0). For 21 of their 22 rows our age, three
 pullback depths and pivot are EXACTLY theirs (SURAKSHA's middle pullback differs: 5.62 vs 3.96 %); GLOBAL is missed.
 The extra stocks are valid VCPs by this rule that the reference does not list - its remaining filter is unknown.
+
+## Step 6 (09-Nov-2026): fundamentals and earnings scanners (all 2,633 stocks read; 06-Nov export / 4 days)
+
+| field | change | before | after |
+|---|---|---|---|
+| PAT used everywhere | net profit INCL. minority (their PAT = ours 92 %; owners' share 68 %) | | |
+| ROE | year's net profit / net worth at the YEAR END (was the two-year average) | 59 % within 1 pt | 85 % |
+| PEG | PE / latest quarter's EPS growth YoY (was 3-year EPS CAGR) | 2 % | 90 % |
+| OPM (TTM) | (PBT + interest + depreciation - other income) / sales (was reported operating profit) | 60 % | 69 % |
+| NP growth YoY / QoQ | PAT incl. minority | 69 % / 73 % | 85 % / 85 % |
+| ROCE | EBIT / capital employed at the year end | 38 % | 45 % (their capital employed differs) |
+| PB, debt / equity | unchanged: their net worth / debt come from another source (PB within 2 %: 21 %, median ratio 0.99) | 21 % / 34 % | unchanged |
+| PE, EPS TTM, sales growth, holdings | unchanged | 86-95 % | |
+
+Quarterly numbers of their earnings scans equal ours on the consolidated basis: EPS 91 %, sales 92 %, PAT 92 %.
+New fields sales_g_q1..3, eps_g_q1..3, npm_q1..3 (q3 = latest quarter), eps_year_ago_q.
+
+| scanner | rule | before | after (4 days) |
+|---|---|---|---|
+| Code 33 | sales growth, EPS growth (YoY, > 0) and net margin up in each of the last 3 quarters; results <= 100 days | 0.47 / 0.23 | 0.77 / 0.78 |
+| EPS Accelerators | EPS growth up in each of the last 3 quarters (> 0, latest >= 20 %), sales up YoY in all 3; <= 100 days | 0.58 / 0.43 | 0.81 / 0.82 |
+| Turnarounds | loss a year ago, profit now, profit up 2+ quarters in a row, sales +10 % YoY; <= 100 days | 0.21 / 0.21 | 0.80 / 0.85 |
+| Earnings Explosion (id eps-doublers) | EPS +100 %, sales +50 %, PAT +75 % YoY; results <= 30 days | (not compared) | 0.71 / 0.75 |
+| Earnings Gap | unchanged | 0.89 / 0.65 | 0.89 / 0.65 |

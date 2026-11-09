@@ -154,8 +154,8 @@ def test_metrics_ttm_growth_returns_and_holdings():
     assert m["eps_ttm"] == round(1.5 + 1.6 + 1.7 + 1.8, 2) and m["pe"] == round(100 / 6.6, 2)
     assert m["sales_g_yoy"] == round((180 / 140 - 1) * 100, 2) and m["eps_g_yoy"] == round((1.8 / 1.4 - 1) * 100, 2)
     assert m["eps_up_qtrs"] >= 4
-    assert m["roe"] == round(54 / 220 * 100, 2)                       # average net worth (200 + 240) / 2
-    assert m["roce"] == round(76 / ((300 + 300) / 2) * 100, 2)
+    assert m["roe"] == round(54 / 240 * 100, 2)                       # net worth at the year end (calibrated 09-Nov)
+    assert m["roce"] == round(76 / 300 * 100, 2)                      # capital employed at the year end
     assert m["debt_equity"] == round(60 / 240, 2) and m["pb"] == 10.0
     assert m["div_yield"] == 2.0                                        # only the dividend of the last 365 days
     assert m["prom_hold"] == 49 and m["prom_chg_1q"] == -1 and m["fii_chg_1q"] == 2 and m["shareholders_chg_1q"] == 10.0

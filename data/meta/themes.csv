@@ -165,7 +165,6 @@ Agrochemicals,MADRASFERT,reference list 2026-11-06
 Agrochemicals,MBAPL,reference list 2026-11-06
 Agrochemicals,MOL,reference list 2026-11-06
 Agrochemicals,NACLIND,reference list 2026-11-06
-Agrochemicals,NAGAFERT,reference list 2026-11-06
 Agrochemicals,NFL,reference list 2026-11-06
 Agrochemicals,NOVAAGRI,reference list 2026-11-06
 Agrochemicals,PARADEEP,reference list 2026-11-06
@@ -593,9 +592,7 @@ Data Centres,ANANTRAJ,reference list 2026-11-06
 Data Centres,AVALON,reference list 2026-11-06
 Data Centres,BHARTIARTL,reference list 2026-11-06
 Data Centres,BLUESTARCO,reference list 2026-11-06
-Data Centres,CEREBRAINT,reference list 2026-11-06
 Data Centres,CGPOWER,reference list 2026-11-06
-Data Centres,CMICABLES,reference list 2026-11-06
 Data Centres,COMPINFO,reference list 2026-11-06
 Data Centres,CONTROLPR,reference list 2026-11-06
 Data Centres,CORDSCABLE,reference list 2026-11-06
@@ -839,7 +836,6 @@ Education,APTECHT,reference list 2026-11-06
 Education,CLEDUCATE,reference list 2026-11-06
 Education,COMPUSOFT,reference list 2026-11-06
 Education,CPEDU,reference list 2026-11-06
-Education,EDUCOMP,reference list 2026-11-06
 Education,GLOBAL,reference list 2026-11-06
 Education,GTECJAINX,reference list 2026-11-06
 Education,JARO,reference list 2026-11-06
@@ -983,7 +979,6 @@ Engineering R&D,AURUM,reference list 2026-11-06
 Engineering R&D,AXISCADES,reference list 2026-11-06
 Engineering R&D,BBOX,reference list 2026-11-06
 Engineering R&D,BCG,reference list 2026-11-06
-Engineering R&D,BGLOBAL,reference list 2026-11-06
 Engineering R&D,BLSE,reference list 2026-11-06
 Engineering R&D,CYIENT,reference list 2026-11-06
 Engineering R&D,DATAMATICS,reference list 2026-11-06
@@ -1237,7 +1232,6 @@ Generics & APIs,JUBLPHARMA,reference list 2026-11-06
 Generics & APIs,KILITCH,reference list 2026-11-06
 Generics & APIs,KOPRAN,reference list 2026-11-06
 Generics & APIs,KREBSBIO,reference list 2026-11-06
-Generics & APIs,LASA,reference list 2026-11-06
 Generics & APIs,LAURUSLABS,reference list 2026-11-06
 Generics & APIs,LINCOLN,reference list 2026-11-06
 Generics & APIs,LUPIN,reference list 2026-11-06
@@ -1452,7 +1446,6 @@ Hotels & Tourism,TBOTEK,reference list 2026-11-06
 Hotels & Tourism,TGBHOTELS,reference list 2026-11-06
 Hotels & Tourism,THELEELA,reference list 2026-11-06
 Hotels & Tourism,THOMASCOOK,reference list 2026-11-06
-Hotels & Tourism,UNIVAFOODS,reference list 2026-11-06
 Hotels & Tourism,VENTIVE,reference list 2026-11-06
 Hotels & Tourism,VHLTD,reference list 2026-11-06
 Hotels & Tourism,WONDERLA,reference list 2026-11-06
@@ -1638,7 +1631,6 @@ Housing Finance,REPCOHOME,reference list 2026-11-06
 Housing Finance,RHFL,reference list 2026-11-06
 Housing Finance,SAMMAANCAP,reference list 2026-11-06
 Housing Finance,SRGHFL,reference list 2026-11-06
-IT Hardware,CEREBRAINT,reference list 2026-11-06
 IT Hardware,COMPINFO,reference list 2026-11-06
 IT Hardware,CONTROLPR,reference list 2026-11-06
 IT Hardware,DCI,reference list 2026-11-06
@@ -1666,7 +1658,6 @@ IT Services,AURUM,reference list 2026-11-06
 IT Services,AXISCADES,reference list 2026-11-06
 IT Services,BBOX,reference list 2026-11-06
 IT Services,BCG,reference list 2026-11-06
-IT Services,BGLOBAL,reference list 2026-11-06
 IT Services,BLSE,reference list 2026-11-06
 IT Services,BSOFT,reference list 2026-11-06
 IT Services,CALSOFT,reference list 2026-11-06
@@ -1936,7 +1927,6 @@ Industrial Machinery,SHAKTIPUMP,reference list 2026-11-06
 Industrial Machinery,SHANTIGEAR,reference list 2026-11-06
 Industrial Machinery,SIMPLEXINF,reference list 2026-11-06
 Industrial Machinery,SKFINDUS,reference list 2026-11-06
-Industrial Machinery,SKIL,reference list 2026-11-06
 Industrial Machinery,SMLMAH,reference list 2026-11-06
 Industrial Machinery,SOLARWORLD,reference list 2026-11-06
 Industrial Machinery,SOLEX,reference list 2026-11-06
@@ -2965,7 +2955,6 @@ Rare Earths,GOACARBON,reference list 2026-11-06
 Rare Earths,HINDCOPPER,reference list 2026-11-06
 Rare Earths,HINDZINC,reference list 2026-11-06
 Rare Earths,IMFA,reference list 2026-11-06
-Rare Earths,IMPEXFERRO,reference list 2026-11-06
 Rare Earths,MAITHANALL,reference list 2026-11-06
 Rare Earths,MOIL,reference list 2026-11-06
 Rare Earths,NATIONALUM,reference list 2026-11-06
@@ -3069,7 +3058,6 @@ Roads & Water Infra,SEPC,reference list 2026-11-06
 Roads & Water Infra,SETUINFRA,reference list 2026-11-06
 Roads & Water Infra,SGMART,reference list 2026-11-06
 Roads & Water Infra,SIMPLEXINF,reference list 2026-11-06
-Roads & Water Infra,SKIL,reference list 2026-11-06
 Roads & Water Infra,SKIPPER,reference list 2026-11-06
 Roads & Water Infra,SOLARWORLD,reference list 2026-11-06
 Roads & Water Infra,SPMLINFRA,reference list 2026-11-06
@@ -3131,7 +3119,6 @@ Rural Consumption,MADRASFERT,reference list 2026-11-06
 Rural Consumption,MBAPL,reference list 2026-11-06
 Rural Consumption,MOL,reference list 2026-11-06
 Rural Consumption,NACLIND,reference list 2026-11-06
-Rural Consumption,NAGAFERT,reference list 2026-11-06
 Rural Consumption,NFL,reference list 2026-11-06
 Rural Consumption,NIPPOBATRY,reference list 2026-11-06
 Rural Consumption,NOVAAGRI,reference list 2026-11-06
@@ -3361,7 +3348,6 @@ Steel,HISARMETAL,reference list 2026-11-06
 Steel,HITECH,reference list 2026-11-06
 Steel,IFGLEXPOR,reference list 2026-11-06
 Steel,IMFA,reference list 2026-11-06
-Steel,IMPEXFERRO,reference list 2026-11-06
 Steel,INCREDIBLE,reference list 2026-11-06
 Steel,JAIBALAJI,reference list 2026-11-06
 Steel,JAINREC,reference list 2026-11-06
@@ -3503,7 +3489,6 @@ Textiles & Apparel,CANTABIL,reference list 2026-11-06
 Textiles & Apparel,CELEBRITY,reference list 2026-11-06
 Textiles & Apparel,CENTENKA,reference list 2026-11-06
 Textiles & Apparel,CHEVIOT,reference list 2026-11-06
-Textiles & Apparel,CLCIND,reference list 2026-11-06
 Textiles & Apparel,DAMODARIND,reference list 2026-11-06
 Textiles & Apparel,DCMNVL,reference list 2026-11-06
 Textiles & Apparel,DCMSIL,reference list 2026-11-06
@@ -3582,7 +3567,6 @@ Textiles & Apparel,SANATHAN,reference list 2026-11-06
 Textiles & Apparel,SANGAMIND,reference list 2026-11-06
 Textiles & Apparel,SARLAPOLY,reference list 2026-11-06
 Textiles & Apparel,SBC,reference list 2026-11-06
-Textiles & Apparel,SELMC,reference list 2026-11-06
 Textiles & Apparel,SGL,reference list 2026-11-06
 Textiles & Apparel,SHEKHAWATI,reference list 2026-11-06
 Textiles & Apparel,SHIVAMILLS,reference list 2026-11-06
@@ -3768,7 +3752,6 @@ Wires & Cables,ADVAIT,reference list 2026-11-06
 Wires & Cables,AEPL,reference list 2026-11-06
 Wires & Cables,APARINDS,reference list 2026-11-06
 Wires & Cables,BBL,reference list 2026-11-06
-Wires & Cables,CMICABLES,reference list 2026-11-06
 Wires & Cables,CORDSCABLE,reference list 2026-11-06
 Wires & Cables,DIACABS,reference list 2026-11-06
 Wires & Cables,DYCL,reference list 2026-11-06

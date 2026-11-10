@@ -232,3 +232,10 @@ New fields sales_g_q1..3, eps_g_q1..3, npm_q1..3 (q3 = latest quarter), eps_year
 | Turnarounds | loss a year ago, profit now, profit up 2+ quarters in a row, sales +10 % YoY; <= 100 days | 0.21 / 0.21 | 0.80 / 0.85 |
 | Earnings Explosion (id eps-doublers) | EPS +100 %, sales +50 %, PAT +75 % YoY; results <= 30 days | (not compared) | 0.71 / 0.75 |
 | Earnings Gap | unchanged | 0.89 / 0.65 | 0.89 / 0.65 |
+
+## BSE history (10-Nov-2026)
+
+Joining BSE prices before a stock's first NSE day (706 clean joins) made RS within 3 points fall from 80 % to 74 % and,
+for the 2026 BSE->NSE stocks, the 52-week high match fall to 39 %: the reference uses NSE days only. BSE prices are
+therefore not used. The BSE list gives New Listing its filter: days_listed 28-365, not 60+ sessions on BSE before, not on
+NSE's SME board before -> 0.95 / 0.985 (was 0.83 / 1.00).

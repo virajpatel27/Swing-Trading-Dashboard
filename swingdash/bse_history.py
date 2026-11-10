@@ -9,7 +9,10 @@ and returns of these stocks are wrong. This module keeps BSE's daily prices of t
     data/meta/bse_actions.csv    symbol, ex_date, subject   (BSE corporate actions before the NSE start: bonus, split ...)
 
 Raw NSE data is never changed: `joined_raw` puts the BSE days in front of the NSE days when adjusted prices are built
-(rebuild.py, integrity.py). BSE's API refuses GitHub's servers, so fetching runs on the PC only
+(rebuild.py, integrity.py) - ONLY when config/settings.yaml bse_history.use_prices is true. It is FALSE (Viraj 10-Nov-2026):
+with BSE prices the site moved AWAY from the reference (RS within 3 points 80 -> 74 %, 52W high of the 2026 BSE->NSE
+stocks 39 %): the reference uses NSE days only. What is kept: data/meta/bse_history.csv (which stocks traded on BSE
+before NSE -> screen field bse_before -> New Listing scanner, recall 83 -> 95 %). BSE's API refuses GitHub's servers, so fetching runs on the PC only
 (`python scripts/backfill.py --job bse-stocks`, also part of "BSE update karo"); GitHub only reads the saved files.
 """
 from __future__ import annotations
@@ -22,6 +25,15 @@ import pandas as pd
 from . import corporate_actions as ca
 from . import store
 from .sources import bse
+
+def use_prices() -> bool:
+    """config/settings.yaml -> bse_history.use_prices (false: BSE prices are neither stored nor joined)."""
+    from . import config
+    try:
+        return bool((config.load("settings").get("bse_history") or {}).get("use_prices", False))
+    except Exception:  # noqa: BLE001 - no settings file (tests in a temp folder): off
+        return False
+
 
 META_COLS = ["symbol", "id", "isin", "bse_code", "nse_first", "bse_first", "bse_rows", "checked"]
 ACTION_COLS = ["symbol", "ex_date", "subject"]
@@ -101,13 +113,14 @@ def update(data: Path, http, master: pd.DataFrame, history_start: date, today: d
                 px = bse.stock_history(http, s.code, history_start, (nse_first - pd.Timedelta(days=1)).date())
                 px = px[px["date"] < nse_first]
                 new_acts = []
-                if len(px):
+                if len(px) and use_prices():
                     new_acts = bse.corp_actions(http, s.code, history_start, (nse_first - pd.Timedelta(days=1)).date())
             except Exception as exc:  # noqa: BLE001 - stop; the next run continues with this stock
                 stopped = f"{r.symbol}: {type(exc).__name__}: {str(exc)[:120]}"
                 break
             if len(px):
-                store.write(folder(data) / r.id, px, store.STOCK_COLS, today)
+                if use_prices():
+                    store.write(folder(data) / r.id, px, store.STOCK_COLS, today)
                 row.update(bse_first=px["date"].iat[0].strftime("%Y-%m-%d"), bse_rows=str(len(px)))
                 got += 1
             acts = acts[acts["symbol"] != r.symbol]
@@ -132,15 +145,43 @@ def _save(data: Path, meta: pd.DataFrame, acts: pd.DataFrame) -> None:
     acts[ACTION_COLS].sort_values(["symbol", "ex_date"]).to_csv(actions_path(data), index=False, lineterminator="\n")
 
 
-def joined_raw(data: Path, sid: str, raw: pd.DataFrame | None = None) -> pd.DataFrame:
-    """NSE raw prices with BSE's days before the first NSE session in front (raw itself unchanged)."""
-    raw = store.read(data / "stocks" / "raw" / sid, store.STOCK_COLS) if raw is None else raw
+MAX_REF_DIFF_PCT = 3.0    # NSE's previous close of its first day (= its reference price) vs the last BSE close
+
+
+def join_check(early: pd.DataFrame, raw: pd.DataFrame) -> tuple[bool, str]:
+    """(join?, why) for BSE days `early` (before the NSE start) and NSE raw prices. NSE lists a stock coming from BSE at
+    BSE's last close (its first previous close), so the two must meet: a long gap or a different reference price means a
+    capital change BSE's list does not describe - then the stock stays NSE-only. A gap of days is fine when the prices
+    meet (both exchanges suspended the stock: NSE's reference is still BSE's last close).
+    Calibrated 09-Nov-2026: 706 of 804 stocks meet within 3 %."""
+    if early.empty or raw.empty:
+        return False, "no days"
+    last_bse, first = early.iloc[-1], raw.iloc[0]
+    gap = int((first["date"] - last_bse["date"]).days)
+    ref = first.get("prev_close")
+    ref = float(ref) if ref == ref and ref is not None and float(ref) > 0 else float(first["close"])
+    diff = (ref / float(last_bse["close"]) - 1) * 100 if float(last_bse["close"]) > 0 else float("inf")
+    why = f"last BSE close {float(last_bse['close']):g} ({last_bse['date']:%Y-%m-%d}), NSE reference {ref:g} ({first['date']:%Y-%m-%d}): " \
+          f"{diff:+.1f} %, {gap} days apart"
+    return abs(diff) <= MAX_REF_DIFF_PCT, why
+
+
+def _early(data: Path, sid: str, raw: pd.DataFrame) -> pd.DataFrame:
     b = folder(data) / sid
     if raw.empty or not b.exists():
-        return raw
+        return pd.DataFrame(columns=store.STOCK_COLS)
     early = store.read(b, store.STOCK_COLS)
-    early = early[early["date"] < raw["date"].min()]
-    if early.empty:
+    return early[early["date"] < raw["date"].min()]
+
+
+def joined_raw(data: Path, sid: str, raw: pd.DataFrame | None = None) -> pd.DataFrame:
+    """NSE raw prices with BSE's days before the first NSE session in front (raw itself unchanged) - only when the BSE
+    history hands over cleanly to NSE (join_check); otherwise NSE's days alone."""
+    raw = store.read(data / "stocks" / "raw" / sid, store.STOCK_COLS) if raw is None else raw
+    if not use_prices():
+        return raw
+    early = _early(data, sid, raw)
+    if early.empty or not join_check(early, raw)[0]:
         return raw
     return pd.concat([early, raw], ignore_index=True).sort_values("date").reset_index(drop=True)
 
@@ -148,7 +189,7 @@ def joined_raw(data: Path, sid: str, raw: pd.DataFrame | None = None) -> pd.Data
 def actions(data: Path, symbols: list[str]) -> dict[str, pd.DataFrame]:
     """{symbol: BSE corporate actions before its NSE start} in corporate_actions.CA_COLS form (source 'BSE')."""
     p = actions_path(data)
-    if not p.exists():
+    if not use_prices() or not p.exists():
         return {}
     df = pd.read_csv(p, dtype=str).fillna("")
     df = df[df["symbol"].isin(set(symbols))]
@@ -170,4 +211,23 @@ def merge_actions(per: dict[str, pd.DataFrame], extra: dict[str, pd.DataFrame]) 
         b = b[[(e, t) not in have for e, t in zip(b["ex_date"], b["type"])]]
         if len(b):
             out[sym] = pd.concat([cur, b], ignore_index=True).sort_values(["ex_date", "type"]).reset_index(drop=True)
+    return out
+
+
+def join_issues(data: Path) -> list[dict]:
+    """Data check: stocks whose BSE history is NOT used because it does not hand over cleanly to NSE (see join_check).
+    Warnings only: those stocks keep their NSE days."""
+    from .validate import issue
+    if not use_prices():
+        return []
+    meta = read_meta(data)
+    out = []
+    for r in meta[pd.to_numeric(meta["bse_rows"], errors="coerce") > 0].itertuples():
+        raw = store.read(data / "stocks" / "raw" / r.id, store.STOCK_COLS)
+        early = _early(data, r.id, raw)
+        if early.empty:
+            continue
+        ok, why = join_check(early, raw)
+        if not ok:
+            out.append(issue(f"NSE {r.symbol}", "warn", "BSE history not joined", why, raw["date"].iat[0]))
     return out

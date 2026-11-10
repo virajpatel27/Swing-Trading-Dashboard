@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from . import breadth, earnings, engine, fundamentals, group_rank, groups, store
+from . import breadth, bse_history, earnings, engine, fundamentals, group_rank, groups, store
 from .adjust import ADJ_COLS
 from .config import ROOT
 
@@ -135,6 +135,8 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
     cross = cross_fields(hists, (cfg.get("rs_rating") or {}).get("universe", "all"))
     newest = max(pd.Timestamp(l["date"]) for l in lasts.values())
     m = master.set_index("id")
+    bse_meta = bse_history.read_meta(data)            # stocks that traded on BSE >= 60 sessions before their first NSE day
+    on_bse_before = set(bse_meta.loc[pd.to_numeric(bse_meta["bse_rows"], errors="coerce") >= 60, "id"])
     rows = []
     for sid, last in lasts.items():
         info = m.loc[sid]
@@ -145,6 +147,9 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
         row["days_listed"] = None if pd.isna(listed) else int((pd.Timestamp(last["date"]) - listed).days)
         ipo = pd.to_datetime(row.get("ipo_date") or None, errors="coerce")
         row["days_since_ipo"] = None if pd.isna(ipo) else int((pd.Timestamp(last["date"]) - ipo).days)
+        row["bse_before"] = sid in on_bse_before
+        first = pd.to_datetime(info.get("first_date") or None, errors="coerce")
+        row["nse_before"] = bool(pd.notna(first) and pd.notna(listed) and first < listed - pd.Timedelta(days=5))   # SME board days
         rows.append(row)
     # groups (Phase S9): rank / tag / returns per sector, industry, theme + each stock's group fields
     gcfg = yaml.safe_load(open(root / "config" / "group_rank.yaml", encoding="utf-8"))

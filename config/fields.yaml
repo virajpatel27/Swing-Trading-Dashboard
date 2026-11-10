@@ -192,6 +192,8 @@ fields:
   - {id: rs_rating_1m_ago, label: "RS rating 1M ago", type: integer, formula: "rs_rating 21 sessions ago", inputs: [rs_rating], provided_in_phase: 4, source: derived, file: [screen]}
   # ------------------------------------------------------------ website (phase 5): computed in the browser
   - {id: days_listed, label: "Days Since Listing", type: integer, formula: "Calendar days from the NSE listing date to the data date", inputs: [listed], provided_in_phase: 5, source: derived, file: [site, screen]}
+  - {id: bse_before, label: "Traded on BSE before NSE", type: boolean, formula: "The stock traded on BSE for 60+ sessions before its first NSE session (data/meta/bse_history.csv)", inputs: [listed], provided_in_phase: 5, source: derived, file: [screen]}
+  - {id: nse_before, label: "Traded on NSE before the listing date", type: boolean, formula: "First NSE trading day more than 5 days before the main-board listing date (e.g. on the SME board before)", inputs: [listed], provided_in_phase: 5, source: derived, file: [screen]}
   # ------------------------------------------------------------ scanner helper fields (phase 6)
   - {id: ipo_date, label: "IPO Listing Date", type: date, formula: "Listing day of the stock's IPO on NSE's main board (NSE past issues; renames followed)", inputs: [ipo_list], provided_in_phase: 6, source: NSE, file: [stocks, screen]}
   - {id: ipo_price, label: "IPO Price", type: rupees, formula: "Issue price of the IPO (as issued, not adjusted)", inputs: [ipo_list], provided_in_phase: 6, source: NSE, file: [stocks, screen]}

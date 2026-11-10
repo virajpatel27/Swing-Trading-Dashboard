@@ -330,22 +330,32 @@
    "id": "new-listing",
    "folder": "Classic",
    "name": "New Listing",
-   "description": "Came to NSE's main board through an IPO 28 to 365 days ago (NSE's IPO list).",
+   "description": "Listed on NSE's main board 28 to 365 days ago (IPO or demerger), not counting stocks that traded before on NSE's SME board or for 60+ sessions on BSE.",
    "universe": "all",
    "rule": {
     "all": [
      {
-      "field": "days_since_ipo",
+      "field": "days_listed",
       "op": "between",
       "value": [
        28,
        365
       ]
+     },
+     {
+      "field": "bse_before",
+      "op": "is",
+      "value": false
+     },
+     {
+      "field": "nse_before",
+      "op": "is",
+      "value": false
      }
     ]
    },
    "sort": {
-    "field": "days_since_ipo",
+    "field": "days_listed",
     "dir": "asc"
    }
   },

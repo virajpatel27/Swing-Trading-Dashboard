@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S9**. Fields: **312**.
+Current phase: **S9**. Fields: **314**.
 
 ## Sources
 
@@ -200,6 +200,8 @@ Current phase: **S9**. Fields: **312**.
 | field | label | type | formula | inputs | files |
 |---|---|---|---|---|---|
 | `days_listed` | Days Since Listing | integer | Calendar days from the NSE listing date to the data date | listed | site, data/snapshot/screen.json |
+| `bse_before` | Traded on BSE before NSE | boolean | The stock traded on BSE for 60+ sessions before its first NSE session (data/meta/bse_history.csv) | listed | data/snapshot/screen.json |
+| `nse_before` | Traded on NSE before the listing date | boolean | First NSE trading day more than 5 days before the main-board listing date (e.g. on the SME board before) | listed | data/snapshot/screen.json |
 
 ## Fields of phase S6
 

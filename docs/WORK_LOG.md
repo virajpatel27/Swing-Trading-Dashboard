@@ -885,3 +885,26 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Scanners: Code 33 0.77 / 0.78, EPS Accelerators 0.81 / 0.82, Turnarounds 0.80 / 0.85, Earnings Explosion (renamed
   eps-doublers) 0.71 / 0.75. Details docs/calibration.md. Tests 197 Python + 32 JS green.
 - Not matched: PB and debt / equity (their balance-sheet numbers differ), next result date (their calendar).
+
+### 2026-11-09: BSE history fetched on the PC - NOT committed yet (stopped for the day, Viraj)
+- `backfill.py --job bse-stocks` done: 1,966 stocks asked, 804 with BSE days before their NSE start (266 of them first on
+  NSE in 2026), 1.78 M rows, 60 MB in data/stocks/bse; 552 BSE actions kept (bonus 240, split 177, capital reduction 63,
+  scheme 32, consolidation 28, spin off 12). Files: data/stocks/bse/, data/meta/bse_history.csv, data/meta/bse_actions.csv.
+- Code (uncommitted): screen.py field bse_before + New Listing rule (days_listed 28-365 and not on BSE before),
+  bse_history.join_issues in validate_data.py, tests/test_bse_history.py, registry field bse_before.
+- PROBLEM to fix before any commit: 101 stocks jump > 10 % from the last BSE close to the first NSE close (e.g. 3IINFOLTD
+  +262 %, ACL +1064 %, CURAA +1283 %, CINELINE -54 %): mostly OLD NSE starts with a long gap between the last BSE day
+  and the first NSE day (suspensions, relistings, capital actions BSE does not describe). Next: join only when the last
+  BSE day is right before the NSE start (a few sessions) and the jump is small; otherwise leave that stock NSE-only.
+  Then rebuild adjusted + screens and compare stage / RS / New Listing with the reference.
+
+### 2026-11-10: BSE history checked - prices NOT used, only the list (Viraj: "Fakt New Listing")
+- Clean-join rule (NSE's first previous close within 3 % of the last BSE close): 706 of 804 stocks joined. With their BSE
+  prices the site moved AWAY from the reference: RS within 3 points 80 -> 74 %, Trend Template precision 97 -> 88 %, and for
+  the 2026 BSE->NSE stocks the 52W high matched only 39 % (ATH 10 %). The reference uses NSE days only.
+- So config/settings.yaml bse_history.use_prices: false - no BSE prices are stored or joined (the code stays, tested).
+  Kept: data/meta/bse_history.csv (130 KB; which stocks traded on BSE before NSE).
+- New screen fields bse_before (60+ BSE sessions before the NSE start) and nse_before (NSE days > 5 days before the
+  main-board listing = SME board). New Listing = days_listed 28-365, not bse_before, not nse_before: recall / precision
+  0.95 / 0.985 on 4 days (was 0.83 / 1.00).
+- Local rebuilds were undone (git checkout); the 60 MB of BSE price files were deleted. Tests 200 Python + 32 JS green.

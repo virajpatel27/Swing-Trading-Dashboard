@@ -24,3 +24,7 @@ liquid:                                 # "liquid" stock (Viraj's master prompt)
   min_price: 5.0                        # last close at least Rs 5 (and the stock traded in the last 10 days)
 
 fundamentals_refresh_days: 120         # the backfill reads a stock again after this many days (the daily step adds new filings)
+
+bse_history:                       # swingdash/bse_history.py (PC job bse-stocks)
+  use_prices: false                # false (Viraj 10-Nov): only data/meta/bse_history.csv is kept (New Listing filter);
+                                   # true would store BSE prices before the NSE start and join them (the reference does not)

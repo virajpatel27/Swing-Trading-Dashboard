@@ -152,7 +152,7 @@ N12 polish done 08-Nov: UI redesign N0-N12 COMPLETE. site_build always writes fi
 News (07-Nov): swingdash/announcements.py (daily step 4g, backfill job announcements, data/announcements/YYYY-MM/DD.csv), #/news, chart filing markers, panel filings, home deals + IPOs. IPO fix: NSE label 'Equity', ipos.csv never shrinks.
 Classes (07-Nov, Viraj 'Exact copy j'): config/reference_classes.csv (scripts/import_reference_classes.py <export>) wins in classification.load + themes.run; rule themes only for unlisted stocks.
 Stage/RS (07-Nov): stage rule re-tuned (96.4 %, config/stage.yaml incl. young rule; site/ind.js same), RS from the 11th session + floor percentile (80 %). Open: BSE history for ~204 BSE->NSE stocks of 2026.
-BSE history (07-Nov, PAUSED by Viraj): code ready (bse_history.py, job bse-stocks, PC only), no data fetched yet; see WORK_LOG.
+BSE history (10-Nov): fetched, but prices NOT used (settings bse_history.use_prices false: the reference uses NSE days only); data/meta/bse_history.csv -> screen fields bse_before / nse_before -> New Listing 0.95 / 0.985.
 Scanners (07-Nov, step 3 part A): gainers/doublers/pullbacks/new-listing re-tuned; event scans via engine.events (hv_age, br_age; config indicators.yaml events). Part B open (breakouts, RS before price, shakeout, bases, VCP, tight, IPO base).
 Scanners part B (07-Nov): s2b_age / so_age / rb_age events (engine.events, recent_breakout last 30 rows only). Part C open: RS before price, bases, near pivot, VCP, tight, IPO base.
 Scanners part C (07-Nov): engine.base_levels (lvl_/wlvl_/ipo_ fields, latest day only) for daily/weekly base, near pivot, IPO base. Part D open: RS before price, VCP, tight setups.

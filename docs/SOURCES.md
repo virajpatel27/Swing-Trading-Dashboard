@@ -97,3 +97,8 @@ Script: `scripts/probe_sources.py`.
 - `https://www.bseindia.com/download/BhavCopy/Equity/BhavCopy_BSE_CM_0_0_0_YYYYMMDD_F_0000.CSV` (UDiFF bhavcopy; ISIN,
   ClsPric, TtlTradgVol): daily step 4h compares liquid stocks' closes with ours (swingdash/crosscheck_bse.py). Only a
   check: our prices always come from NSE.
+
+## Weekend / holiday sessions (from 2026-11-10)
+- NSE publishes a bhavcopy, MTO file and index file for special sessions (Diwali Muhurat, budget Saturdays, DR drills).
+  config/special_sessions.csv lists the known ones (found from previous-close gaps); a run up to today also asks every day
+  of its last 7 days, so a new one is caught automatically. Add a row there when NSE announces another one in the past.

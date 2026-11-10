@@ -908,3 +908,16 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   main-board listing = SME board). New Listing = days_listed 28-365, not bse_before, not nse_before: recall / precision
   0.95 / 0.985 on 4 days (was 0.83 / 1.00).
 - Local rebuilds were undone (git checkout); the 60 MB of BSE price files were deleted. Tests 200 Python + 32 JS green.
+
+### 2026-11-10: daily-run check + missing weekend sessions
+- Checked on GitHub: FII/DII rows 06 / 08 (Muhurat) / 09-Nov OK; index_members.csv has 9 indices (NIFTY 50 ... BANK);
+  BSE price cross-check 09-Nov: 1,420 liquid stocks compared, 0 apart. The 09-Nov 17:10 "failure" was only the GitHub
+  Pages upload timing out (data saved; later deploys fine).
+- FOUND: weekend / holiday sessions were never fetched (the jobs asked Monday-Friday only). The Diwali Muhurat of Sun
+  08-Nov-2026 is missing (RELIANCE's 09-Nov previous close 1324 = Muhurat close, our last close 1320), and 20 more since
+  2007 (budget Saturdays 2015 / 2020 / 2025, Sun 01-Feb-2026, DR drills 2024, Muhurat 2009-2023, Saturday sessions
+  2010-2014): found where NSE's previous close differed from our last stored close for >= 15 of 30 big stocks.
+- Fix: backfill.weekdays also asks the days of config/special_sessions.csv and, in a run up to today, every day of the
+  last 7 days (a new weekend session is caught by the next daily run). One-time job `special-sessions` (Actions ->
+  Backfill history) fetches stock prices, delivery % and NSE index closes of the listed days, then rebuilds adjusted.
+- Tests 202 Python green.

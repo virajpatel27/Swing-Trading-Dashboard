@@ -84,10 +84,26 @@ def merge_write(folder: Path, new: pd.DataFrame, cols: list[str], today: date) -
     return len(both.drop_duplicates("date"))
 
 
-def weekdays(a: date, b: date):
+SPECIAL = Path(__file__).resolve().parents[1] / "config" / "special_sessions.csv"
+
+
+def special_days(path: Path = SPECIAL) -> set[date]:
+    """Weekend / holiday days on which NSE held a session (Muhurat, budget Saturdays, DR drills) or may have: tried like
+    weekdays (a day without a bhavcopy simply gives nothing). Found 10-Nov-2026 from NSE previous closes that did not
+    match our previous stored close (21 sessions since 2007)."""
+    if not path.exists():
+        return set()
+    return {as_date(x) for x in pd.read_csv(path, dtype=str)["date"]}
+
+
+def weekdays(a: date, b: date, recent_weekends: int = 7):
+    """Days to ask NSE for: Monday-Friday, every day of the last `recent_weekends` days before b (a weekend session such
+    as the Diwali Muhurat is caught by the next daily run) and the special days of config/special_sessions.csv."""
+    extra = special_days()
+    live = (date.today() - b).days <= 1                 # only a run up to today probes its last weekend (history: the list)
     d = a
     while d <= b:
-        if d.weekday() < 5:
+        if d.weekday() < 5 or d in extra or (live and (b - d).days < recent_weekends):
             yield d
         d += timedelta(days=1)
 
@@ -155,7 +171,7 @@ def carry_over_renames(ctx: Ctx, changes: pd.DataFrame, uni: pd.DataFrame) -> li
 
 
 def backfill_stocks(ctx: Ctx, until: date | None = None, only: list[str] | None = None, start: date | None = None,
-                    restart_from: date | None = None) -> dict:
+                    restart_from: date | None = None, days: list[date] | None = None) -> dict:
     """only + start = a small extra run for a few stocks (e.g. ones added to the list later), with its own checkpoint.
     restart_from = read again from this day even if the checkpoint is later (the daily job re-checks the last days)."""
     until = until or ctx.today
@@ -186,12 +202,12 @@ def backfill_stocks(ctx: Ctx, until: date | None = None, only: list[str] | None 
             new = pd.concat(parts, ignore_index=True).drop(columns="symbol")
             merge_write(ctx.data / "stocks" / "raw" / ids[sym], new, store.STOCK_COLS, ctx.today)
         write_trading_days(ctx, days_known)
-        if done_until:            # no date stamp in the file: a holiday run must leave it unchanged (nothing to commit)
+        if done_until and days is None:   # no date stamp: a holiday run must leave it unchanged (nothing to commit)
             save_json(cp_path, {"last_day": done_until.isoformat(), **({"symbols": sorted(symbols)} if only else {})})
         ctx.log(f"  saved up to {done_until}: {len(buffer)} stocks touched, {len(days_known)} trading days known")
         buffer, since_flush = {}, 0
 
-    for d in weekdays(first, until):
+    for d in (sorted(days) if days is not None else weekdays(first, until)):
         if ctx.out_of_time():
             stopped = "time limit"
             break
@@ -217,7 +233,8 @@ def backfill_stocks(ctx: Ctx, until: date | None = None, only: list[str] | None 
 
 
 # ---------------------------------------------------------------- delivery % (NSE MTO files)
-def backfill_delivery(ctx: Ctx, until: date | None = None, restart_from: date | None = None) -> dict:
+def backfill_delivery(ctx: Ctx, until: date | None = None, restart_from: date | None = None,
+                      only_days: list[date] | None = None) -> dict:
     """Deliverable quantity and delivery % per stock and day -> data/stocks/delivery/<ID>/ (date, deliv_qty, deliv_pct).
     Only known trading days are fetched (trading_days.csv, written by the stocks job). A day whose file is not out yet
     (it comes ~16:50 IST) stops the run without moving the checkpoint, so the next run asks again."""
@@ -232,7 +249,8 @@ def backfill_delivery(ctx: Ctx, until: date | None = None, restart_from: date | 
     first = as_date(cp["last_day"]) + timedelta(days=1) if cp.get("last_day") else ctx.start
     if restart_from and restart_from < first:
         first = restart_from
-    days = sorted(d for d in read_trading_days(ctx) if first <= d <= until)
+    days = sorted(d for d in read_trading_days(ctx) if first <= d <= until) if only_days is None \
+        else sorted(d for d in read_trading_days(ctx) if d in set(only_days))
     flush_every = int(ctx.settings.get("flush_every_days", 500))
     buffer: dict[str, list[pd.DataFrame]] = {}
     done_until, files, missing, since_flush, stopped = None, 0, [], 0, ""
@@ -242,7 +260,7 @@ def backfill_delivery(ctx: Ctx, until: date | None = None, restart_from: date | 
         for sym, parts in buffer.items():
             new = pd.concat(parts, ignore_index=True)
             merge_write(ctx.data / "stocks" / "delivery" / ids[sym], new, store.DELIVERY_COLS, ctx.today)
-        if done_until:
+        if done_until and only_days is None:
             save_json(cp_path, {"last_day": done_until.isoformat()})
         ctx.log(f"  delivery saved up to {done_until}: {len(buffer)} stocks touched")
         buffer, since_flush = {}, 0
@@ -257,7 +275,7 @@ def backfill_delivery(ctx: Ctx, until: date | None = None, restart_from: date | 
             stopped = f"{d}: {type(exc).__name__}: {str(exc)[:120]}"
             break
         if day is None:
-            if (until - d).days <= 3:
+            if only_days is None and (until - d).days <= 3:
                 break                                    # not published yet: try again next run
             missing.append(str(d))                       # an old day without a file: skip it
         else:
@@ -606,6 +624,36 @@ def backfill_bse_stocks(ctx: Ctx, until: date | None = None) -> dict:
     return bse_history.update(ctx.data, ctx.http, master, ctx.start, ctx.today, ctx.deadline, ctx.clock, ctx.log)
 
 
+def backfill_special_sessions(ctx: Ctx, until: date | None = None) -> dict:
+    """One-time fill (10-Nov-2026): the weekend / holiday sessions of config/special_sessions.csv - stock prices,
+    delivery % and NSE index closes of those days (days without an NSE file give nothing). Safe to run again."""
+    days = sorted(d for d in special_days() if d <= (until or ctx.today))
+    s = backfill_stocks(ctx, until, days=days)
+    known = read_trading_days(ctx)
+    found = [d for d in days if d in known]
+    dl = backfill_delivery(ctx, until, only_days=found) if found else {"files": 0}
+    lst = pd.read_csv(ctx.data / "meta" / "indices_nse.csv")
+    by_key = {index_key(n): i for n, i in zip(lst["name"], lst["id"])}
+    idx_files, touched = 0, set()
+    for d in found:
+        df = nse.index_close_file(ctx.http, d)
+        if df is None:
+            continue
+        df = df[df["date"].dt.date == d]
+        idx_files += 1
+        for name, g in df.groupby("name"):
+            iid = by_key.get(index_key(name))
+            if iid:
+                merge_write(ctx.data / "indices" / "nse" / iid, g.drop(columns="name"), store.INDEX_COLS, ctx.today)
+                touched.add(iid)
+    res = {"job": "special-sessions", "days_tried": len(days), "sessions_found": [str(d) for d in found],
+           "stock_files": s.get("files"), "delivery_files": dl.get("files"), "index_files": idx_files, "indices_touched": len(touched),
+           "stopped": s.get("stopped", "")}
+    ctx.log(f"special-sessions: {res}")
+    return res
+
+
 JOBS = {"stocks": backfill_stocks, "nse-indices": backfill_nse_indices, "bse-indices": backfill_bse_indices,
         "bse-update": update_bse_indices, "delivery": backfill_delivery, "fundamentals": backfill_fundamentals,
-        "announcements": backfill_announcements, "bse-stocks": backfill_bse_stocks}
+        "announcements": backfill_announcements, "bse-stocks": backfill_bse_stocks,
+        "special-sessions": backfill_special_sessions}

@@ -162,3 +162,4 @@ Step 5 (07-Nov): shrink_guard (validate_data error when a data file/folder shrin
 VCP (07-Nov): engine.vcp_setup (Trend Template universe, 2-session event, pivot->L1 + last two swing legs); 21/22 reference rows exact, precision 0.36.
 Nav (07-Nov): rail = Home / Scanners / Groups / Breadth; other pages = top 'Pages' tabs (app.js PAGES, localStorage sd-pages, add / remove / drag); top search removed, '/' opens a find dialog.
 Step 6 (09-Nov): fundamentals done (2,633); PAT incl. minority, ROE year-end NW, PEG = PE / EPS g YoY, OPM = EBITDA ex OI; sales/eps_g_q1..3 + npm_q1..3 for Code 33 / EPS acc / Turnarounds / Earnings Explosion (~0.8 / 0.8).
+Special sessions (10-Nov): weekend/holiday NSE sessions were missing (21 since 2007, Muhurat 08-Nov-2026); backfill.weekdays asks config/special_sessions.csv + the last 7 days of a live run; one-time Backfill job special-sessions.

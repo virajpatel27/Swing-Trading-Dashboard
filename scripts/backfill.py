@@ -7,6 +7,7 @@
     python scripts/backfill.py --job fundamentals [--new-only]   # NSE XBRL results / shareholding (Nifty 500 first)
     python scripts/backfill.py --job announcements             # company filings with NSE, last 365 days
     python scripts/backfill.py --job bse-stocks                # PC only: BSE days before each stock's NSE start
+    python scripts/backfill.py --job special-sessions          # weekend / holiday sessions of config/special_sessions.csv
     python scripts/backfill.py --job all
 
 Afterwards run scripts/validate_data.py (the workflow does it) before committing.

@@ -64,6 +64,9 @@ Angel One is used only by the Source probe (a check). The daily update does not 
 - [ ] **Once, after pushing the news code (07-Nov-2026):** Actions -> **Backfill history** -> Run workflow -> job
       **announcements** (fills the last 365 days of company filings, ~20-30 minutes; it can run again safely).
 
+- [ ] **Once, after pushing the special-sessions code (10-Nov-2026):** Actions -> **Backfill history** -> Run workflow ->
+      job **special-sessions** (fills the Muhurat / budget-Saturday sessions; a few minutes; not between 16:30 and 18:00 IST).
+
 ## Weekly
 - BSE indices: tell Claude **"BSE update karo"** (runs on the PC, BSE refuses GitHub); Pull origin first, then commit what it changed.
 

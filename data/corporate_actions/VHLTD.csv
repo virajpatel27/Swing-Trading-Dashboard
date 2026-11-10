@@ -1,3 +1,3 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
-2024-11-29,rights,7:10,,,rights without issue price,NOT APPLIED,Rights 7:10 @ Prm Rs 102/-,NSE
+2024-11-29,rights,7:10,0.9128931404,112,"TERP, issue price 112, close before 142.05",applied,Rights 7:10 @ Prm Rs 102/-,NSE
 2026-08-20,rights,6:7,0.9372063591,115,"TERP, issue price 115, close before 133.11",applied,Rights 6:7 @ Premium Rs 105/-,NSE

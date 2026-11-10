@@ -3,4 +3,4 @@ ex_date,type,ratio,factor,amount,method,status,subject,source
 2008-07-28,dividend,,1.0,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 10%,NSE
 2009-07-24,dividend,,1.0,0.3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Re.0.30 Per Share,NSE
 2012-09-04,dividend,,1.0,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.50 Per Share,NSE
-2022-11-04,rights,1:1,,,rights without issue price,NOT APPLIED,Rights 1:1,NSE
+2022-11-04,rights,1:1,0.9547325103,,rights without issue price: estimated from the ex-day open 11.6 / close before 12.15,applied,Rights 1:1,NSE

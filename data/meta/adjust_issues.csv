@@ -1,16 +1,4 @@
 instrument,level,check,date,detail
-NSE ANDHRAPAP,warn,corporate action without factor,2010-02-23,rights: rights without issue price
 NSE DVL,warn,corporate action not seen in prices,2021-08-05,bonus 1:2: no matching price change near the ex-date
-NSE EDUCOMP,warn,corporate action not seen in prices,2009-10-27,split FV 10->2: no matching price change near the ex-date
-NSE GTLINFRA,warn,corporate action without factor,2007-07-20,rights: rights without issue price
 NSE GULFPETRO,warn,corporate action not seen in prices,2013-07-09,bonus 23:19: no matching price change near the ex-date
-NSE KMSUGAR,warn,corporate action not seen in prices,2010-03-26,split FV 10->2: no matching price change near the ex-date
 NSE ORIENTPPR,warn,corporate action without factor,2007-06-08,rights: rights without issue price
-NSE PATINTLOG,warn,corporate action without factor,2021-02-17,rights: rights without issue price
-NSE PATINTLOG,warn,corporate action without factor,2021-10-28,rights: rights without issue price
-NSE RELTD,warn,corporate action without factor,2026-06-08,rights: rights without issue price
-NSE SIGMAADV,warn,corporate action without factor,2021-07-12,rights: rights without issue price
-NSE TATASTEEL,warn,corporate action without factor,2007-10-29,rights: rights without issue price
-NSE TFL,warn,corporate action without factor,2022-11-04,rights: rights without issue price
-NSE TMPV,warn,corporate action without factor,2008-09-09,rights: rights without issue price
-NSE VHLTD,warn,corporate action without factor,2024-11-29,rights: rights without issue price

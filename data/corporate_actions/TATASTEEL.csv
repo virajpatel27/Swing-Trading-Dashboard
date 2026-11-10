@@ -1,6 +1,6 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
 2007-06-08,dividend,,1,1.55,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div Fin-130%+Spl-25%,NSE
-2007-10-29,rights,1:5,,,rights without issue price,NOT APPLIED,Right-Eq1:5 & 9ccps:10eq,NSE
+2007-10-29,rights,1:5,0.90103771,,rights without issue price: estimated from the ex-day open 890 / close before 987.75,applied,Right-Eq1:5 & 9ccps:10eq,NSE
 2008-07-18,dividend,,1,1.6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 160%,NSE
 2009-07-06,dividend,,1,16,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Div-Rs.16/- Per Share,NSE
 2010-07-12,dividend,,1,8,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.8/- Per Share,NSE

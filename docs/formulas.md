@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S9**. Fields: **314**.
+Current phase: **S9**. Fields: **322**.
 
 ## Sources
 
@@ -240,6 +240,14 @@ Current phase: **S9**. Fields: **314**.
 | `breakout_rvol` | Breakout day RVol | number | Relative volume on the last breakout day | breakout_days, rvol | data/snapshot/screen.json |
 | `breakout_base_age` | Base length at breakout | integer | Sessions the base had lasted (pivot_age) the day before the last breakout | breakout_days, pivot_age | data/snapshot/screen.json |
 | `tight_pct` | Tight closes 5D % | percent | (highest / lowest of the last 5 closes - 1) x 100 | close | data/snapshot/screen.json |
+| `rti` | RTI (range tightness) | number | 100 x (today's high - low - smallest high - low of the last 5 sessions) / (biggest - smallest); 0 = quietest of the 5 | high, low | data/snapshot/screen.json |
+| `rti_bars` | Quiet sessions (RTI <= 18) | integer | Sessions in a row up to today with RTI <= 18 (config/patterns.yaml tight_setup) | rti | data/snapshot/screen.json |
+| `rti_range_pct` | Quiet run range % | percent | (highest high / lowest low of the rti_bars run - 1) x 100 | high, low, rti_bars | data/snapshot/screen.json |
+| `box_bars` | Tight box sessions | integer | Longest window up to today with high-low range <= 0.8 x ADR20 (4+ sessions) or <= 1 x ADR20 (5+) and net close change <= 25 % of the range; latest day only | high, low, close, adr_pct | data/snapshot/screen.json |
+| `box_range_pct` | Tight box range % | percent | (highest high / lowest low of the box - 1) x 100 | box_bars | data/snapshot/screen.json |
+| `box_drift_pct` | Tight box drift % | percent | /last close - first close of the box/ / (box high - box low) x 100 | box_bars | data/snapshot/screen.json |
+| `box_max_pct` | Tight box limit % | percent | The range limit used: 0.8 or 1 x ADR20 | adr_pct | data/snapshot/screen.json |
+| `box_mode` | Tight box kind | text | tight (<= 0.8 x ADR), long (<= 1 x ADR) or tight+long | box_bars | data/snapshot/screen.json |
 | `inside_day` | Inside day | boolean | Today's high and low inside yesterday's range | high, low | data/snapshot/screen.json |
 | `range_pct` | Day range % | percent | (high / low - 1) x 100 | high, low | data/snapshot/screen.json |
 | `new_low_20d` | New 20D low today | boolean | Today's low at or below the lowest low of the 20 sessions before | low | data/snapshot/screen.json |

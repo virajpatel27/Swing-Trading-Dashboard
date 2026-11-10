@@ -80,6 +80,61 @@ def contractions(c: np.ndarray, h: np.ndarray, start: int, pct: float) -> list[f
     return out
 
 
+def tight_setup(h: np.ndarray, l: np.ndarray, c: np.ndarray, adr: np.ndarray | None, cfg: dict) -> dict[str, np.ndarray]:
+    """Tight Setups (calibrated 10-Nov-2026 on the reference's 4 days; their own columns rti / bars / range_pct / drift_pct).
+
+    RTI (every day) = where today's high - low sits between the smallest and biggest high - low of the last 5 sessions,
+    0 = the quietest day of the 5, 100 = the widest (reproduced 14 / 14 of their values exactly).
+    rti_bars = the run of sessions up to today with RTI <= rti_max; rti_range_pct = (highest high / lowest low of that run - 1) %.
+    Box (latest day only): the LONGEST window up to today whose high-low range is <= k x ADR(20) and whose net close change is
+    <= drift_max % of the range: 'tight' k = 0.8 (>= 4 sessions), 'long' k = 1.0 (>= 5 sessions); box_* = the longer of the
+    two (the tight one on a tie). Reproduced their bars / range / drift for all 6 cases."""
+    n = len(c)
+    out = {k: np.full(n, np.nan) for k in ("rti", "rti_bars", "rti_range_pct", "box_bars", "box_range_pct", "box_drift_pct",
+                                           "box_max_pct")}
+    out["box_mode"] = np.full(n, None, dtype=object)
+    if n < 5:
+        return out
+    w = int(cfg.get("rti_days", 5))
+    r = pd.Series(h - l)
+    lo, hi = r.rolling(w).min(), r.rolling(w).max()
+    rti = ((r - lo) / (hi - lo) * 100).where(hi > lo, 0.0).to_numpy(copy=True)
+    rti[: w - 1] = np.nan
+    out["rti"] = rti
+    ok = np.nan_to_num(rti, nan=999) <= float(cfg.get("rti_max", 18))
+    run = np.zeros(n)
+    for t in range(n):
+        run[t] = run[t - 1] + 1 if ok[t] and t else (1.0 if ok[t] else 0.0)
+    out["rti_bars"] = run
+    for t in range(max(0, n - int(cfg.get("days", 300))), n):
+        b = int(run[t])
+        if b:
+            out["rti_range_pct"][t] = (h[t - b + 1:t + 1].max() / l[t - b + 1:t + 1].min() - 1) * 100
+    if adr is None or not adr[-1] > 0:
+        return out
+    t, a, drift_max = n - 1, adr[-1], float(cfg.get("drift_max", 25))
+    found = {}
+    for mode, k, minb in (("tight", float(cfg.get("tight_k", 0.8)), int(cfg.get("tight_min", 4))),
+                          ("long", float(cfg.get("long_k", 1.0)), int(cfg.get("long_min", 5)))):
+        best = None
+        for b in range(minb, min(n, int(cfg.get("max_bars", 60))) + 1):
+            hh, ll = h[t - b + 1:t + 1].max(), l[t - b + 1:t + 1].min()
+            rng = (hh / ll - 1) * 100
+            if not rng <= k * a:
+                break                                     # the range only grows with a longer window
+            drift = abs(c[t] - c[t - b + 1]) / (hh - ll) * 100 if hh > ll else 0.0
+            if drift <= drift_max:
+                best = (b, rng, drift, k * a)
+        if best:
+            found[mode] = best
+    if found:
+        mode = max(found, key=lambda m: (found[m][0], m == "tight"))
+        b, rng, drift, mx = found[mode]
+        out["box_bars"][t], out["box_range_pct"][t], out["box_drift_pct"][t], out["box_max_pct"][t] = b, rng, drift, mx
+        out["box_mode"][t] = "+".join(m for m in ("tight", "long") if m in found)
+    return out
+
+
 def fields(f: pd.DataFrame, cfg: dict) -> dict[str, np.ndarray]:
     """Pattern columns for the engine's frame f (date, high, low, close, rvol, adr_pct, from_sma50, hi52, ...)."""
     h, l, c = f["high"].to_numpy(float), f["low"].to_numpy(float), f["close"].to_numpy(float)
@@ -125,6 +180,7 @@ def fields(f: pd.DataFrame, cfg: dict) -> dict[str, np.ndarray]:
     k = int(cfg.get("tight", {}).get("days", 5))
     cs = pd.Series(c)
     out["tight_pct"] = ((cs.rolling(k).max() / cs.rolling(k).min() - 1) * 100).to_numpy()
+    out.update(tight_setup(h, l, c, f["adr_pct"].to_numpy(float) if "adr_pct" in f else None, cfg.get("tight_setup", {})))
     out["inside_day"] = np.r_[False, (h[1:] <= h[:-1]) & (l[1:] >= l[:-1])]
     out["range_pct"] = (h / l - 1) * 100
     out["new_low_20d"] = l <= pd.Series(l).shift(1).rolling(20, min_periods=20).min().to_numpy()

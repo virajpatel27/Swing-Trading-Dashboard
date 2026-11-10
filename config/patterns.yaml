@@ -17,3 +17,12 @@ flag:
   pole_days: 15         # the pole: the biggest rise over at most 15 sessions, ending within the last 20
 tight:
   days: 5               # tight closes: the last 5 closes
+tight_setup:            # Tight Setups scanner (calibrated 10-Nov-2026, see swingdash/patterns.tight_setup)
+  rti_days: 5           # RTI = today's high-low between the min and max high-low of the last 5 sessions (0-100)
+  rti_max: 18           # a quiet day: RTI <= 18 (their lowest excluded value was 19, highest included 17.3)
+  tight_k: 0.8          # tight box: range <= 0.8 x ADR(20), at least 4 sessions
+  tight_min: 4
+  long_k: 1.0           # long box: range <= 1 x ADR(20), at least 5 sessions
+  long_min: 5
+  drift_max: 25         # net close change across the box <= 25 % of its height (sideways, not a slow trend)
+  max_bars: 60

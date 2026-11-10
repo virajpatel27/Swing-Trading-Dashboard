@@ -940,3 +940,13 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   purpose. A stock with only lonely rows loses its raw / adjusted / delivery folders (= no data, as before the job).
   Checked on the PC: 164 rows dropped (8 of 08-Nov wait for their next day), only "adjusted/raw days differ" left, which
   build_adjusted in the same job fixes. Tests 211 Python green.
+
+### 2026-11-10: Tight Setups + RS before Price (task 3)
+- Tight Setups (scanner id tight-range kept, name now "Tight Setups"): new patterns.tight_setup fields rti, rti_bars,
+  rti_range_pct, box_bars, box_range_pct, box_drift_pct, box_max_pct, box_mode (config/patterns.yaml tight_setup).
+  4 days recall / precision 0.25 / 0.11 -> 0.82 / 0.90; every miss is CLCIND (frozen in the reference, no data here).
+- RS before Price: their benchmark is Nifty MidSmallcap 400 (rs_above_high reproduced); they used the previous index
+  close for today's point on 3 of 4 days. Viraj: "Reference jevu" -> config events.rsb_index_lag: 1. 0.68 / 0.93 -> 0.98 / 0.87.
+- Found on the way: SME -> main board stocks (VTMLTD) have no 3-month return and a low RS rating in the reference
+  (main-board days only); ours uses the SME history. Not changed.
+- Tests: tests/test_tight_setups.py (5). Details in docs/calibration.md.

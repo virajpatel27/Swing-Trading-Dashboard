@@ -239,3 +239,13 @@ Joining BSE prices before a stock's first NSE day (706 clean joins) made RS with
 for the 2026 BSE->NSE stocks, the 52-week high match fall to 39 %: the reference uses NSE days only. BSE prices are
 therefore not used. The BSE list gives New Listing its filter: days_listed 28-365, not 60+ sessions on BSE before, not on
 NSE's SME board before -> 0.95 / 0.985 (was 0.83 / 1.00).
+
+## Tight Setups + RS before Price (10-Nov-2026, the 4 export days 02 / 04 / 05 / 06-Nov)
+
+| scanner | rule | before | after (4 days) |
+|---|---|---|---|
+| Tight Setups | ANY of two modes. **rti**: RTI = (today's high-low - min) / (max - min) of the last 5 sessions' high-low x 100 (their `rti` column reproduced 14 / 14 exactly); 3-4 sessions in a row with RTI <= 18 (their lowest excluded 19, highest included 17.3), range of that run <= 5.5 % (their `max_range_pct`), SMA20 > EMA50 > SMA200, close > SMA200, close within +-5 % of SMA20, turnover today >= Rs 1 Cr (their `turnover_cr` = today's value). **box**: the longest window up to today with high-low range <= 0.8 x ADR20 (4+ sessions, 'tight') or <= 1 x ADR20 (5+, 'long') and net close change <= 25 % of the range (their `drift_pct`; bars / range / drift reproduced 6 / 6), 3-month return >= 20 %, SMA20 > EMA50, RS rating >= 80, listed 63+ sessions | 0.25 / 0.11 | 0.82 / 0.90 (every miss is CLCIND: frozen in their data, no prices here; without it recall 1.0) |
+| RS before Price | unchanged rule (RS line vs Nifty MidSmallcap 400 above its previous 50-session high, close 0-10 % under its 50-session closing high). Their `rs_above_high` / `px_below_high` reproduced: benchmark confirmed; on 3 of 4 days their TODAY point used the PREVIOUS session's index close (a constant per-day ratio = yesterday / today index). Viraj chose "Reference jevu": config events.rsb_index_lag: 1 | 0.68 / 0.93 | 0.98 / 0.87 (11-02, when they used the fresh index, gives the extra stocks) |
+
+Not matched: the reference's "spread" sub-mode (columns contraction / days_tight) - it only appears together with tight+long.
+SME migrants (VTMLTD): the reference counts only main-board days (no 3-month return, RS 46-48 vs our 96) - a wider topic.

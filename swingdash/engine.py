@@ -278,10 +278,15 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
         # RS before price (calibrated 07-Nov-2026): today the RS line vs rsb_benchmark is above its highest of the previous
         # rsb_lookback sessions while the close is 0..rsb_max_below % under its highest close of those sessions
         n_ = int(ev_cfg.get("rsb_lookback", 50))
-        rl = c / bench[rsb_id].reindex(d.values, method="ffill").reset_index(drop=True)
+        bx = bench[rsb_id].reindex(d.values, method="ffill").reset_index(drop=True)
+        rl = c / bx
+        # rsb_index_lag 1 (10-Nov-2026, Viraj: "Reference jevu"): the reference builds TODAY's RS point from the
+        # PREVIOUS session's index close (3 of its 4 exports; the history uses same-day closes) - recall 0.68 -> 0.98
+        lag = int(ev_cfg.get("rsb_index_lag", 0))
+        rl_today = c / bx.shift(lag) if lag else rl
         below = (1 - c / c.shift(1).rolling(n_, min_periods=1).max()) * 100
         f["rsb_px_below"] = below
-        f["rsb_today"] = (rl > rl.shift(1).rolling(n_, min_periods=1).max()) & (below > 0)             & (below <= float(ev_cfg.get("rsb_max_below", 10)))
+        f["rsb_today"] = (rl_today > rl.shift(1).rolling(n_, min_periods=1).max()) & (below > 0)             & (below <= float(ev_cfg.get("rsb_max_below", 10)))
     lines = set(cfg.get("rs_lines") or (bench or {}).keys())
     for bid, bs in (bench or {}).items():
         if bid not in lines and bid != cfg.get("beta_benchmark", "NIFTY_50"):

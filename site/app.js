@@ -1668,7 +1668,7 @@
     const idxHTML = IDX.map(([id, name]) => { const r = state.byKey.get("n:" + id); return r ? `<a class="hi-card" href="#/i/n/${id}" data-idx="${id}"><div class="hi-t"><span>${name}</span>${pct(r.chg_1d)}</div><b>${SD.fmtPrice(r.close)}</b>
       <div class="hi-sp"><i class="skel"></i></div><div class="hi-f"><small class="muted">${r.from_hi52 == null ? "" : finNum(Math.abs(r.from_hi52), 1) + "% from high"}</small><small class="hi-ma"></small></div></a>` : ""; }).join("");
     // today's setups: near pivot / VCP / flag / tight range, liquid, RS 70+, closest to the pivot first
-    const SET = [["near-pivot", "Near Pivot"], ["vcp", "VCP"], ["flag", "Flag"], ["tight-range", "Tight Range"]];
+    const SET = [["near-pivot", "Near Pivot"], ["vcp", "VCP"], ["flag", "Flag"], ["tight-range", "Tight Setups"]];
     const seen = new Map();
     if (state.screen && state.scanSpec) for (const [sid, tag] of SET) {
       const sc = allScans().find((x) => x.id === sid); if (!sc) continue;

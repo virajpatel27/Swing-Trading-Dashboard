@@ -633,31 +633,95 @@
   {
    "id": "tight-range",
    "folder": "Patterns",
-   "name": "Tight Range",
-   "description": "Very quiet trading inside an uptrend: the last 5 closes within 1.5 % of each other.",
+   "name": "Tight Setups",
+   "description": "Quiet price in an uptrend. Either 3-4 quiet sessions in a row (RTI <= 18) inside a 5.5 % range, SMA20 > EMA50 > SMA200, near the 20-day average, Rs 1 Cr+ traded today; or a sideways box of 4+ sessions no wider than 0.8-1 x the usual daily range in a leader (RS 80+, 20 %+ in 3 months, SMA20 > EMA50, listed 63+ sessions).",
    "universe": "all",
    "rule": {
-    "all": [
+    "any": [
      {
-      "field": "stage",
-      "op": "in",
-      "value": [
-       "2",
-       "2A"
+      "all": [
+       {
+        "field": "rti_bars",
+        "op": "between",
+        "value": [
+         3,
+         4
+        ]
+       },
+       {
+        "field": "rti_range_pct",
+        "op": "<=",
+        "value": 5.5
+       },
+       {
+        "field": "sma20",
+        "op": ">",
+        "field2": "ema50",
+        "mult": 1.0
+       },
+       {
+        "field": "ema50",
+        "op": ">",
+        "field2": "sma200",
+        "mult": 1.0
+       },
+       {
+        "field": "close",
+        "op": ">",
+        "field2": "sma200",
+        "mult": 1.0
+       },
+       {
+        "field": "from_sma20",
+        "op": "between",
+        "value": [
+         -5,
+         5
+        ]
+       },
+       {
+        "field": "turnover_cr",
+        "op": ">=",
+        "value": 1
+       }
       ]
      },
      {
-      "field": "tight_pct",
-      "op": "<=",
-      "value": 1.5
+      "all": [
+       {
+        "field": "box_bars",
+        "op": ">=",
+        "value": 4
+       },
+       {
+        "field": "ret_3m",
+        "op": ">=",
+        "value": 20
+       },
+       {
+        "field": "sma20",
+        "op": ">",
+        "field2": "ema50",
+        "mult": 1.0
+       },
+       {
+        "field": "rs_rating",
+        "op": ">=",
+        "value": 80
+       },
+       {
+        "field": "days_listed",
+        "op": ">=",
+        "value": 63
+       }
+      ]
      }
     ]
    },
    "sort": {
-    "field": "tight_pct",
+    "field": "rti_range_pct",
     "dir": "asc"
-   },
-   "phase": 7
+   }
   },
   {
    "id": "flag",

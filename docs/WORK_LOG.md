@@ -933,3 +933,10 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   before AND after is removed (rows of the last 10 days wait for their next day). Runs at the end of the special-sessions job.
 - Left alone: bad candles only in some indices (source quirks); DVL / GULFPETRO NSE records doubtful (no override yet).
 - Tests 209 Python + 32 JS green. Next: Viraj re-runs Actions -> Backfill history -> special-sessions (cleanup + adjusted).
+- First GitHub run failed at the Data check (nothing saved): the planned removals looked like failed downloads ("row
+  drop", e.g. EDUCOMP 20 -> 2) and RAJVIR (7 rows, all lonely) lost its folder ("instrument disappeared"). Fix: every
+  removed row is written to data/meta/dropped_rows.csv (removed_on, id, date, reason); meta.scan subtracts removals of the
+  last 2 days before the row-drop check and accepts a stock folder that is gone when all its rows were removed on
+  purpose. A stock with only lonely rows loses its raw / adjusted / delivery folders (= no data, as before the job).
+  Checked on the PC: 164 rows dropped (8 of 08-Nov wait for their next day), only "adjusted/raw days differ" left, which
+  build_adjusted in the same job fixes. Tests 211 Python green.

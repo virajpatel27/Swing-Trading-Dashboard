@@ -10,6 +10,7 @@ Jobs:
 from __future__ import annotations
 
 import json
+import shutil
 import time
 from dataclasses import dataclass, field
 from datetime import date, timedelta
@@ -629,7 +630,7 @@ def drop_lonely_special_rows(ctx: Ctx, max_gap_days: int = 10) -> int:
     suspended stock, or one without its history yet: EDUCOMP got 20 lonely rows over 17 years on 10-Nov-2026). Removed so
     such a stock's chart and returns are not built from scattered days. Returns the number of rows dropped."""
     sp = {pd.Timestamp(d) for d in special_days()}
-    dropped = 0
+    dropped, log_rows = 0, []
     for folder in sorted(p for p in (ctx.data / "stocks" / "raw").glob("*") if p.is_dir()):
         r = store.read(folder, store.STOCK_COLS)
         if r.empty or not r["date"].isin(sp).any():
@@ -640,11 +641,31 @@ def drop_lonely_special_rows(ctx: Ctx, max_gap_days: int = 10) -> int:
         lonely = r["date"].isin(sp) & ((gap_before.isna() | (gap_before > max_gap_days)) | (gap_after.isna() | (gap_after > max_gap_days)))
         lonely &= ~(r["date"] >= pd.Timestamp(ctx.today) - pd.Timedelta(days=max_gap_days))   # a fresh session waits for its next day
         if lonely.any():
-            store.write(folder, r[~lonely].reset_index(drop=True), store.STOCK_COLS, ctx.today)
+            if lonely.all():               # nothing but lonely rows (RAJVIR: 7 rows 2009-2020): back to "no data" as before
+                for kind in ("raw", "adjusted", "delivery"):
+                    shutil.rmtree(ctx.data / "stocks" / kind / folder.name, ignore_errors=True)
+            else:
+                store.write(folder, r[~lonely].reset_index(drop=True), store.STOCK_COLS, ctx.today)
             dropped += int(lonely.sum())
+            log_rows += [{"removed_on": str(ctx.today), "id": folder.name, "date": d.strftime("%Y-%m-%d"),
+                          "reason": "lonely special-session row"} for d in r.loc[lonely, "date"]]
     if dropped:
+        record_dropped_rows(ctx.data, log_rows)
         ctx.log(f"  special sessions: {dropped} lonely rows dropped")
     return dropped
+
+
+DROPPED_ROWS = "dropped_rows.csv"
+
+
+def record_dropped_rows(data: Path, rows: list[dict]) -> None:
+    """data/meta/dropped_rows.csv: every row removed on purpose (date, stock, reason). The data check (meta.scan) reads it,
+    so a planned removal is not reported as a failed download ("row drop")."""
+    path = data / "meta" / DROPPED_ROWS
+    path.parent.mkdir(parents=True, exist_ok=True)
+    old = pd.read_csv(path, dtype=str) if path.exists() else pd.DataFrame(columns=["removed_on", "id", "date", "reason"])
+    out = pd.concat([old, pd.DataFrame(rows, dtype=str)], ignore_index=True).drop_duplicates(["id", "date"], keep="last")
+    out.sort_values(["removed_on", "id", "date"]).to_csv(path, index=False, lineterminator="\n")
 
 
 def backfill_special_sessions(ctx: Ctx, until: date | None = None) -> dict:

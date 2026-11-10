@@ -3,7 +3,7 @@ everything stored. A check 'error' means: do not commit this data."""
 from __future__ import annotations
 
 import json
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
 import pandas as pd
@@ -21,10 +21,21 @@ GROUPS = [  # (kind, exchange, folder under data/, columns, list file in data/me
 INSTRUMENT_COLS = ["kind", "exchange", "id", "name", "category", "path", "first_date", "last_date", "rows", "source"]
 
 
+def planned_drops(data: Path, days: int = 2) -> dict[str, int]:
+    """{stock id: rows removed on purpose} from data/meta/dropped_rows.csv, removals of the last `days` days only."""
+    path = data / "meta" / "dropped_rows.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path, dtype=str)
+    recent = df[pd.to_datetime(df["removed_on"]) >= pd.Timestamp(date.today()) - pd.Timedelta(days=days)]
+    return recent.groupby("id").size().to_dict()
+
+
 def scan(data: Path, trading_days: pd.DatetimeIndex | None, jump_pct: float, old: pd.DataFrame | None,
          max_drop_pct: float) -> tuple[pd.DataFrame, list[dict]]:
     rows, issues = [], []
     old_rows = {} if old is None or old.empty else dict(zip(old["path"], old["rows"]))
+    planned = planned_drops(data)          # rows removed on purpose in the last 2 days (data/meta/dropped_rows.csv)
     for kind, exch, sub, cols, list_file, id_col, name_col, source in GROUPS:
         base = data / sub
         lst = data / "meta" / list_file
@@ -49,7 +60,10 @@ def scan(data: Path, trading_days: pd.DatetimeIndex | None, jump_pct: float, old
             else:
                 issues += validate.check_series(label, df, trading_days if exch == "NSE" and kind != "stock-adjusted" else None,
                                                 jump)
-            issues += validate.check_row_drop(label, int(old_rows.get(rel, 0)), len(df), max_drop_pct)
+            before = int(old_rows.get(rel, 0))
+            if kind in ("stock", "stock-adjusted"):
+                before = max(0, before - planned.get(folder.name, 0))
+            issues += validate.check_row_drop(label, before, len(df), max_drop_pct)
             if kind == "stock-adjusted":
                 issues += check_adjusted_vs_raw(label, df, store.read(data / "stocks" / "raw" / folder.name, store.STOCK_COLS))
             rows.append({"kind": kind, "exchange": exch, "id": folder.name, "name": names.get(folder.name, folder.name),
@@ -60,7 +74,10 @@ def scan(data: Path, trading_days: pd.DatetimeIndex | None, jump_pct: float, old
     # an instrument that was there before and is now gone
     now = {r["path"] for r in rows}
     for path in old_rows:
-        if path not in now:
+        sid = path.split("/")[-1]
+        whole_stock_dropped = (path.startswith("stocks/") and f"stocks/raw/{sid}" not in now
+                               and 0 < int(old_rows.get(f"stocks/raw/{sid}", 0)) <= planned.get(sid, 0))   # all its rows removed on purpose
+        if path not in now and not whole_stock_dropped:
             issues.append(validate.issue(path, "error", "instrument disappeared", "folder is gone"))
     issues += check_snapshot(data, rows)
     adj_issues = data / "meta" / "adjust_issues.csv"

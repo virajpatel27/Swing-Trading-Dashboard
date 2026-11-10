@@ -921,3 +921,15 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   last 7 days (a new weekend session is caught by the next daily run). One-time job `special-sessions` (Actions ->
   Backfill history) fetches stock prices, delivery % and NSE index closes of the listed days, then rebuilds adjusted.
 - Tests 202 Python green.
+
+### 2026-11-10: corporate action review
+- Rights texts: the parser now reads "@ Premium 91" (no Rs), "@ Prm Rs 102/-" and "At Par" (issue price = face value).
+  Rights with no issue price at all (8 records) are estimated from the ex-day open / close before, only when the price
+  really fell and stays inside the possible range (issue price 0 .. market price); method says "estimated".
+- Split / bonus / consolidation whose ex-date falls in a data gap (> 30 days without prices, e.g. KMSUGAR suspended) is
+  applied by its ratio; before, the "price did not move" check left it NOT APPLIED.
+- The special-sessions job had added lonely rows (172 rows, 36 suspended / delisted stocks: EDUCOMP, BGLOBAL, CMICABLES,
+  AARVI 2020-02-01, ...). New backfill.drop_lonely_special_rows: a special-session row with no other price within 10 days
+  before AND after is removed (rows of the last 10 days wait for their next day). Runs at the end of the special-sessions job.
+- Left alone: bad candles only in some indices (source quirks); DVL / GULFPETRO NSE records doubtful (no override yet).
+- Tests 209 Python + 32 JS green. Next: Viraj re-runs Actions -> Backfill history -> special-sessions (cleanup + adjusted).

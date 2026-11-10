@@ -25,7 +25,8 @@ SPLIT = re.compile(r"(?:SPLI?T|\bSPL\b|SPL-|SUB-?\s*DIVISION|\bFV\b)[^/]*?R[SE]\
 CONSOLIDATION = re.compile(r"CONSOLIDAT.*?R[SE]\.?\s*([\d.]+).*?\bTO\s*R[SE]\.?\s*([\d.]+)", re.I)
 BONUS = re.compile(r"\bBON(?:US)?(?:\s*SHARES\s*IN\s*THE\s*RATIO\s*OF)?\s*(?:-|ISSUE)?\s*(\d+)\s*:\s*(\d+)", re.I)
 RIGHTS = re.compile(r"\bRIGHTS?(?:\s*-?\s*(?:EQ|ISSUE|EQUITY|AT))?\s*-?\s*(\d+)\s*:\s*(\d+)"
-                    r"(?:.*?PREM\w*\s*(?:OF\s*)?@?\s*R[SE]\.?\s*([\d.]+))?", re.I)
+                    r"(?:.*?PRE?M\w*\s*(?:OF\s*)?@?\s*(?:R[SE]\.?)?\s*([\d.]+))?", re.I)   # "Premium Rs 50", "Premium 91", "Prm Rs 102"
+AT_PAR = re.compile(r"\bAT\s+PAR\b", re.I)                                               # issue price = face value
 DIVIDEND_AMOUNT = re.compile(r"R[SE]\.?\s*-?\s*([\d.]+)\s*/?-?\s*P(?:E)?R\s*(?:EQUITY\s*)?(?:SH|UNIT)", re.I)
 DIVIDEND_PCT = re.compile(r"([\d.]+)\s*%")                           # "Dividend - 40%", "Div Fin-40% + Spl-20%": % of face value
 
@@ -58,7 +59,7 @@ def parse_subject(subject: str, face_value: float | None = None) -> list[dict]:
             out.append({"type": "bonus", "ratio": f"{a}:{b}", "factor": b / (a + b)})
     if m := RIGHTS.search(s):
         a, b = int(m.group(1)), int(m.group(2))
-        premium = _num(m.group(3)) if m.group(3) else None
+        premium = _num(m.group(3)) if m.group(3) else (0.0 if AT_PAR.search(s) else None)
         price = (premium or 0.0) + (face_value or 0.0) if premium is not None else None
         if a > 0 and b > 0:
             out.append({"type": "rights", "ratio": f"{a}:{b}", "factor": None,

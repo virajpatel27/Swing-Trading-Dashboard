@@ -200,3 +200,33 @@ def test_manual_override_is_added_and_applied(tmp_path):
     r = raw([("2020-01-01", 100, 100, 100, 100, 10), ("2020-01-02", 25, 25, 25, 25, 40)])      # x0.25 = bonus 1:1 x split 0.5
     adj, acts, issues = adjust.adjust(r, per["X"])
     assert issues == [] and adj["close"].iat[0] == pytest.approx(25)
+
+
+# ---------------------------------------------------------------- corporate action review (10-Nov-2026)
+@pytest.mark.parametrize("subject,fv,price", [
+    ("Rights 1:5 @ Premium 91", 10, 101.0),                 # no "Rs" before the premium
+    ("Rights 1:4 @ Prm Rs 102/-", 10, 112.0),               # "Prm" = premium
+    ("Rights 2:7 At Par", 10, 10.0),                         # at par = face value, no premium
+    ("Rights 1:3", 10, None),                                # no issue price in the text
+])
+def test_parse_more_rights_texts(subject, fv, price):
+    r = ca.parse_subject(subject, fv)[0]
+    assert r["type"] == "rights" and r["amount"] == price
+
+
+def test_rights_without_price_estimated_from_ex_day_open():
+    adj, acts, _ = adjust.adjust(RELIANCE_DEMERGER, actions(("2023-07-20", "Rights 1:5", 10)))
+    assert acts.loc[0, "factor"] == pytest.approx(2580.0 / 2841.85) and "estimated" in acts.loc[0, "method"]
+    up = RELIANCE_DEMERGER.copy()
+    up.loc[3, "open"] = 2900.0                                                       # price rose: nothing to estimate
+    _, acts2, _ = adjust.adjust(up, actions(("2023-07-20", "Rights 1:5", 10)))
+    assert acts2.loc[0, "status"].startswith("NOT APPLIED")
+
+
+def test_split_inside_a_data_gap_is_applied():
+    # suspended for months; the split happened meanwhile, so the first row after the gap is already at the new price
+    r = raw([("2019-01-01", 100, 100, 100, 100, 10), ("2019-01-02", 101, 101, 101, 101, 10),
+             ("2019-08-01", 30, 30, 30, 30, 10), ("2019-08-02", 31, 31, 31, 31, 10)])
+    adj, acts, issues = adjust.adjust(r, actions(("2019-05-01", "Face Value Split From Rs 10 To Re 1", 10)))
+    assert acts.loc[0, "status"].startswith("applied") and adj["close"].iat[1] == pytest.approx(10.1)
+    assert not any(i["check"] == "corporate action not seen in prices" for i in issues)

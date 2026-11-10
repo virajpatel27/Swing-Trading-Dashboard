@@ -624,6 +624,29 @@ def backfill_bse_stocks(ctx: Ctx, until: date | None = None) -> dict:
     return bse_history.update(ctx.data, ctx.http, master, ctx.start, ctx.today, ctx.deadline, ctx.clock, ctx.log)
 
 
+def drop_lonely_special_rows(ctx: Ctx, max_gap_days: int = 10) -> int:
+    """Raw rows on special-session days of stocks that have no other price within max_gap_days before or after it (a
+    suspended stock, or one without its history yet: EDUCOMP got 20 lonely rows over 17 years on 10-Nov-2026). Removed so
+    such a stock's chart and returns are not built from scattered days. Returns the number of rows dropped."""
+    sp = {pd.Timestamp(d) for d in special_days()}
+    dropped = 0
+    for folder in sorted(p for p in (ctx.data / "stocks" / "raw").glob("*") if p.is_dir()):
+        r = store.read(folder, store.STOCK_COLS)
+        if r.empty or not r["date"].isin(sp).any():
+            continue
+        r = r.sort_values("date").reset_index(drop=True)
+        gap_before = r["date"].diff().dt.days
+        gap_after = -r["date"].diff(-1).dt.days
+        lonely = r["date"].isin(sp) & ((gap_before.isna() | (gap_before > max_gap_days)) | (gap_after.isna() | (gap_after > max_gap_days)))
+        lonely &= ~(r["date"] >= pd.Timestamp(ctx.today) - pd.Timedelta(days=max_gap_days))   # a fresh session waits for its next day
+        if lonely.any():
+            store.write(folder, r[~lonely].reset_index(drop=True), store.STOCK_COLS, ctx.today)
+            dropped += int(lonely.sum())
+    if dropped:
+        ctx.log(f"  special sessions: {dropped} lonely rows dropped")
+    return dropped
+
+
 def backfill_special_sessions(ctx: Ctx, until: date | None = None) -> dict:
     """One-time fill (10-Nov-2026): the weekend / holiday sessions of config/special_sessions.csv - stock prices,
     delivery % and NSE index closes of those days (days without an NSE file give nothing). Safe to run again."""
@@ -646,7 +669,8 @@ def backfill_special_sessions(ctx: Ctx, until: date | None = None) -> dict:
             if iid:
                 merge_write(ctx.data / "indices" / "nse" / iid, g.drop(columns="name"), store.INDEX_COLS, ctx.today)
                 touched.add(iid)
-    res = {"job": "special-sessions", "days_tried": len(days), "sessions_found": [str(d) for d in found],
+    dropped = drop_lonely_special_rows(ctx)
+    res = {"job": "special-sessions", "days_tried": len(days), "sessions_found": [str(d) for d in found], "lonely_rows_dropped": dropped,
            "stock_files": s.get("files"), "delivery_files": dl.get("files"), "index_files": idx_files, "indices_touched": len(touched),
            "stopped": s.get("stopped", "")}
     ctx.log(f"special-sessions: {res}")

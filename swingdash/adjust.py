@@ -42,6 +42,12 @@ def factor_for(raw: pd.DataFrame, i: int, act: dict, adjust_dividends: bool) -> 
         price = act.get("amount")
         a, b = (int(x) for x in str(act["ratio"]).split(":"))
         if price is None or pd.isna(price) or pc <= 0:
+            # no issue price in NSE's text: the ex-day open shows the drop; used only between the possible bounds
+            # (issue price 0 .. market price) and when the price really fell (calibrated 10-Nov-2026: 8 such records)
+            o = float(raw["open"].iat[i])
+            f = o / pc if pc > 0 and o > 0 else None
+            if f is not None and b / (a + b) <= f < 0.98:
+                return f, f"rights without issue price: estimated from the ex-day open {o:g} / close before {pc:g}"
             return None, "rights without issue price"
         if price >= pc:
             return 1.0, "rights above market price: no change"
@@ -88,7 +94,8 @@ def adjust(raw: pd.DataFrame, actions: pd.DataFrame, name: str = "", adjust_divi
             # a bonus and a split on the same day move the price together
             same_day = acts[(acts["ex_date"] == act["ex_date"]) & acts["type"].isin(EXACT)]
             combo = float(pd.to_numeric(same_day["factor"]).prod())
-            if not _moved_as_expected(raw, i, combo):
+            in_gap = (raw["date"].iat[i] - raw["date"].iat[i - 1]).days > 30     # suspended: no prices around the ex-date
+            if not in_gap and not _moved_as_expected(raw, i, combo):
                 near = [j for j in range(max(1, i - 5), min(len(raw), i + 6))
                         if j != i and _moved_as_expected(raw, j, combo)]
                 if not near:

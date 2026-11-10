@@ -2,8 +2,8 @@ ex_date,type,ratio,factor,amount,method,status,subject,source
 2007-08-31,dividend,,,0.4,,before our data,Agm/Final Dividend-20% Bc Start Date Revised,NSE
 2008-06-26,dividend,,,0.5,,before our data,Agm/Dividend - 25%,NSE
 2009-09-17,dividend,,,2.5,,before our data,Agm/Div-Rs.2.50 Per Share,NSE
-2009-10-27,split,FV 10->2,0.2,,,before our data,Fv Split Rs.10/- To Rs.2/,NSE
-2010-02-04,dividend,,,1,,before our data,Int Div-Re.1/- Per Share Purpose Revised,NSE
-2010-09-16,dividend,,,1.75,,before our data,Annual General Meeting And Dividend Rs.1.75 Per Share,NSE
-2011-09-15,dividend,,,0.6,,before our data,Annual General Meeting And Dividend Re.0.60 Per Share,NSE
-2012-09-20,dividend,,,0.3,,before our data,Annual General Meeting And Dividend Re.0.30 Per Share,NSE
+2009-10-27,split,FV 10->2,0.2,,,NOT APPLIED: price did not move,Fv Split Rs.10/- To Rs.2/,NSE
+2010-02-04,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Int Div-Re.1/- Per Share Purpose Revised,NSE
+2010-09-16,dividend,,1,1.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Rs.1.75 Per Share,NSE
+2011-09-15,dividend,,1,0.6,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.60 Per Share,NSE
+2012-09-20,dividend,,1,0.3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting And Dividend Re.0.30 Per Share,NSE

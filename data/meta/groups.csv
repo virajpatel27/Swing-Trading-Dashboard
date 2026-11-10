@@ -22,7 +22,7 @@ industry,cement-and-cement-products,Cement & Cement Products,Construction Materi
 industry,ceramics,Ceramics,Consumer Durables,8,False,2016-07-15,2026-11-09
 industry,cigarettes-and-tobacco-products,Cigarettes & Tobacco Products,Fast Moving Consumer Goods,3,True,,
 industry,civil-construction,Civil Construction,Construction,95,False,2007-01-16,2026-11-09
-industry,coal,Coal,"Oil, Gas & Consumable Fuels",4,True,2026-02-03,2026-11-09
+industry,coal,Coal,"Oil, Gas & Consumable Fuels",4,True,2026-02-02,2026-11-09
 industry,commercial-vehicles,Commercial Vehicles,Capital Goods,4,True,2014-09-11,2026-11-09
 industry,commodity-chemicals,Commodity Chemicals,Chemicals,32,False,2007-01-16,2026-11-09
 industry,compressors-pumps-and-diesel-engines,"Compressors, Pumps & Diesel Engines",Capital Goods,14,False,2007-12-17,2026-11-09
@@ -84,7 +84,7 @@ industry,household-products,Household Products,Fast Moving Consumer Goods,5,Fals
 industry,houseware,Houseware,Consumer Durables,3,True,2026-07-10,2026-11-09
 industry,housing-finance-company,Housing Finance Company,Financial Services,15,False,2010-07-21,2026-11-09
 industry,it-enabled-services,IT Enabled Services,Information Technology,61,False,2007-01-16,2026-11-09
-industry,industrial-gases,Industrial Gases,Chemicals,4,True,2025-02-06,2026-11-09
+industry,industrial-gases,Industrial Gases,Chemicals,4,True,2025-02-05,2026-11-09
 industry,industrial-minerals,Industrial Minerals,Metals & Mining,9,False,2008-03-18,2026-11-09
 industry,industrial-products,Industrial Products,Capital Goods,80,False,2007-01-16,2026-11-09
 industry,insurance-distributors,Insurance Distributors,Financial Services,1,True,,
@@ -103,14 +103,14 @@ industry,lubricants,Lubricants,"Oil, Gas & Consumable Fuels",7,False,2014-08-14,
 industry,meat-products-including-poultry,Meat Products including Poultry,Fast Moving Consumer Goods,3,True,2023-07-18,2026-11-09
 industry,media-and-entertainment,Media & Entertainment,"Media, Entertainment & Publication",13,False,2007-01-16,2026-11-09
 industry,medical-equipment-and-supplies,Medical Equipment & Supplies,Healthcare,7,False,2021-12-10,2026-11-09
-industry,microfinance-institutions,Microfinance Institutions,Financial Services,5,False,2019-10-29,2026-11-09
+industry,microfinance-institutions,Microfinance Institutions,Financial Services,5,False,2019-10-27,2026-11-09
 industry,non-banking-financial-company-nbfc,Non Banking Financial Company (NBFC),Financial Services,75,False,2007-11-14,2026-11-09
 industry,offshore-support-solution-drilling,Offshore Support Solution Drilling,"Oil, Gas & Consumable Fuels",6,False,2009-09-11,2026-11-09
 industry,oil-equipment-and-services,Oil Equipment & Services,"Oil, Gas & Consumable Fuels",2,True,,
 industry,oil-exploration-and-production,Oil Exploration & Production,"Oil, Gas & Consumable Fuels",7,False,2007-08-13,2026-11-09
 industry,oil-storage-and-transportation,Oil Storage & Transportation,"Oil, Gas & Consumable Fuels",2,True,,
 industry,other-agricultural-products,Other Agricultural Products,Fast Moving Consumer Goods,25,False,2010-09-30,2026-11-09
-industry,other-bank,Other Bank,Financial Services,9,False,2020-11-17,2026-11-09
+industry,other-bank,Other Bank,Financial Services,9,False,2020-11-14,2026-11-09
 industry,other-beverages,Other Beverages,Fast Moving Consumer Goods,1,True,,
 industry,other-capital-market-related-services,Other Capital Market related Services,Financial Services,2,True,,
 industry,other-construction-materials,Other Construction Materials,Construction Materials,3,True,2025-09-25,2026-11-09
@@ -164,7 +164,7 @@ industry,shipping,Shipping,Services,6,False,2007-07-17,2026-11-09
 industry,software-products,Software Products,Information Technology,18,False,2007-01-19,2026-11-09
 industry,speciality-retail,Speciality Retail,Consumer Services,16,False,2016-06-02,2026-11-09
 industry,specialty-chemicals,Specialty Chemicals,Chemicals,73,False,2007-01-16,2026-11-09
-industry,sponge-iron,Sponge Iron,Metals & Mining,5,False,2024-03-04,2026-11-09
+industry,sponge-iron,Sponge Iron,Metals & Mining,5,False,2024-03-02,2026-11-09
 industry,stationary,Stationary,Fast Moving Consumer Goods,5,False,2018-01-11,2026-11-09
 industry,stockbroking-and-allied,Stockbroking & Allied,Financial Services,31,False,2007-10-10,2026-11-09
 industry,sugar,Sugar,Fast Moving Consumer Goods,29,False,2007-01-16,2026-11-09
@@ -262,7 +262,7 @@ theme,housing-and-home-imp,Housing & Home Imp,,166,False,2007-01-16,2026-11-09
 theme,housing-finance,Housing Finance,,15,False,2010-07-21,2026-11-09
 theme,it-hardware,IT Hardware,,12,False,2007-12-24,2026-11-09
 theme,it-services,IT Services,,109,False,2007-01-16,2026-11-09
-theme,industrial-gases,Industrial Gases,,4,True,2025-02-06,2026-11-09
+theme,industrial-gases,Industrial Gases,,4,True,2025-02-05,2026-11-09
 theme,industrial-machinery,Industrial Machinery,,219,False,2007-01-16,2026-11-09
 theme,insurance,Insurance,,13,False,2017-10-17,2026-11-09
 theme,leather-and-footwear,Leather & Footwear,,13,False,2010-09-16,2026-11-09
@@ -270,7 +270,7 @@ theme,logistics,Logistics,,44,False,2007-01-16,2026-11-09
 theme,lubricants,Lubricants,,7,False,2014-08-14,2026-11-09
 theme,media-and-gaming,Media & Gaming,,52,False,2007-01-16,2026-11-09
 theme,medical-devices,Medical Devices,,4,True,2021-12-10,2026-11-09
-theme,microfinance,Microfinance,,5,False,2019-10-29,2026-11-09
+theme,microfinance,Microfinance,,5,False,2019-10-27,2026-11-09
 theme,mining-and-minerals,Mining & Minerals,,16,False,2007-07-20,2026-11-09
 theme,nbfc,NBFC,,94,False,2007-01-16,2026-11-09
 theme,oil-e-and-p,Oil E&P,,23,False,2007-01-16,2026-11-09

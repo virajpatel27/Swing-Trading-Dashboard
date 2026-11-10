@@ -1,3 +1,3 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
 2008-06-10,dividend,,1.0,1.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Agm/Dividend - 12% Bc Dates Revised,NSE
-2021-07-12,rights,2:3,,,rights without issue price,NOT APPLIED,Rights 2:3,NSE
+2021-07-12,rights,2:3,0.8103975535,,rights without issue price: estimated from the ex-day open 13.25 / close before 16.35,applied,Rights 2:3,NSE

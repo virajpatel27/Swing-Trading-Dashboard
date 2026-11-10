@@ -8,7 +8,7 @@ NSE AAKASH,warn,missing dates,2018-05-10,"390 trading days without a row (first 
 NSE AARON,warn,missing dates,2018-10-01,"67 trading days without a row (first 2018-10-01, last 2020-09-08)"
 NSE AARTIDRUGS,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE AARTIIND,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
-NSE AARVI,warn,missing dates,2017-11-01,"294 trading days without a row (first 2017-11-01, last 2020-07-29)"
+NSE AARVI,warn,missing dates,2017-11-01,"295 trading days without a row (first 2017-11-01, last 2020-07-29)"
 NSE ABAN,warn,missing dates,2026-03-12,"50 trading days without a row (first 2026-03-12, last 2026-08-10)"
 NSE ABCIND,warn,missing dates,2022-04-05,"258 trading days without a row (first 2022-04-05, last 2025-06-16)"
 NSE ABCOTS,warn,missing dates,2022-04-05,"263 trading days without a row (first 2022-04-05, last 2026-02-01)"
@@ -34,7 +34,7 @@ NSE AHLUCONT,warn,missing dates,2013-05-11,"2 trading days without a row (first 
 NSE AHLWEST,warn,missing dates,2012-01-07,"1091 trading days without a row (first 2012-01-07, last 2026-04-02)"
 NSE AIAENG,warn,missing dates,2012-03-03,"3 trading days without a row (first 2012-03-03, last 2012-09-08)"
 NSE AIRAN,warn,missing dates,2017-07-17,"42 trading days without a row (first 2017-07-17, last 2019-04-08)"
-NSE AIROLAM,warn,missing dates,2017-12-06,"461 trading days without a row (first 2017-12-06, last 2021-09-17)"
+NSE AIROLAM,warn,missing dates,2017-12-06,"462 trading days without a row (first 2017-12-06, last 2021-09-17)"
 NSE AJOONI,warn,missing dates,2018-02-05,"331 trading days without a row (first 2018-02-05, last 2021-04-19)"
 NSE AKASH,warn,missing dates,2017-04-05,"331 trading days without a row (first 2017-04-05, last 2020-06-25)"
 NSE AKG,warn,missing dates,2018-10-11,"294 trading days without a row (first 2018-10-11, last 2020-11-26)"
@@ -59,7 +59,7 @@ NSE ANDHRAPAP,warn,missing dates,2007-08-22,"22 trading days without a row (firs
 NSE ANDHRSUGAR,warn,missing dates,2009-05-18,"2 trading days without a row (first 2009-05-18, last 2013-05-11)"
 NSE ANDREWYU,warn,missing dates,2023-10-26,"696 trading days without a row (first 2023-10-26, last 2026-08-14)"
 NSE ANIKINDS,warn,missing dates,2008-06-03,"98 trading days without a row (first 2008-06-03, last 2017-07-10)"
-NSE ANKITMETAL,warn,missing dates,2013-03-22,"374 trading days without a row (first 2013-03-22, last 2026-11-04)"
+NSE ANKITMETAL,warn,missing dates,2013-03-22,"375 trading days without a row (first 2013-03-22, last 2026-11-04)"
 NSE ANSALAPI,warn,missing dates,2022-12-13,"223 trading days without a row (first 2022-12-13, last 2026-06-25)"
 NSE ANSALBU,warn,missing dates,2026-08-19,"2 trading days without a row (first 2026-08-19, last 2026-11-08)"
 NSE ANTGRAPHIC,warn,missing dates,2009-05-18,"374 trading days without a row (first 2009-05-18, last 2021-12-10)"
@@ -107,7 +107,6 @@ NSE AVROIND,warn,missing dates,2018-08-01,"670 trading days without a row (first
 NSE AVTNPL,warn,missing dates,2007-04-02,"28 trading days without a row (first 2007-04-02, last 2010-06-09)"
 NSE AXISCADES,warn,missing dates,2008-12-02,"12 trading days without a row (first 2008-12-02, last 2014-03-22)"
 NSE BAFNAPH,warn,missing dates,2020-04-17,"168 trading days without a row (first 2020-04-17, last 2025-04-09)"
-NSE BAHETI,warn,missing dates,2023-11-13,"728 trading days without a row (first 2023-11-13, last 2026-10-28)"
 NSE BAJAJFINSV,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE BAJFINANCE,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE BALAMINES,warn,missing dates,2007-04-10,"12 trading days without a row (first 2007-04-10, last 2009-05-18)"
@@ -136,7 +135,7 @@ NSE BEPL,warn,missing dates,2008-09-02,"74 trading days without a row (first 200
 NSE BESTAGRO,warn,missing dates,2023-07-27,"175 trading days without a row (first 2023-07-27, last 2024-04-09)"
 NSE BETA,warn,missing dates,2018-03-09,"146 trading days without a row (first 2018-03-09, last 2022-08-05)"
 NSE BFINVEST,warn,missing dates,2013-07-11,"16 trading days without a row (first 2013-07-11, last 2013-12-04)"
-NSE BGLOBAL,warn,missing dates,2012-01-09,"3667 trading days without a row (first 2012-01-09, last 2026-11-08)"
+NSE BGLOBAL,warn,missing dates,2026-11-03,"5 trading days without a row (first 2026-11-03, last 2026-11-08)"
 NSE BHARATGEAR,warn,missing dates,2008-02-15,"28 trading days without a row (first 2008-02-15, last 2013-12-16)"
 NSE BHARATRAS,warn,missing dates,2007-01-10,"343 trading days without a row (first 2007-01-10, last 2014-06-18)"
 NSE BIGBLOC,warn,missing dates,2020-01-03,"3 trading days without a row (first 2020-01-03, last 2020-03-25)"
@@ -161,7 +160,7 @@ NSE BSL,warn,missing dates,2007-03-29,"26 trading days without a row (first 2007
 NSE BTML,warn,missing dates,2020-10-29,"208 trading days without a row (first 2020-10-29, last 2022-11-11)"
 NSE BURNPUR,warn,missing dates,2021-05-27,"403 trading days without a row (first 2021-05-27, last 2026-08-10)"
 NSE BVCL,warn,missing dates,2009-05-18,"115 trading days without a row (first 2009-05-18, last 2021-02-22)"
-NSE CALSOFT,warn,missing dates,2008-10-15,"709 trading days without a row (first 2008-10-15, last 2021-09-09)"
+NSE CALSOFT,warn,missing dates,2008-10-15,"710 trading days without a row (first 2008-10-15, last 2021-09-09)"
 NSE CANFINHOME,warn,missing dates,2008-11-28,"2 trading days without a row (first 2008-11-28, last 2009-05-18)"
 NSE CAPTRUST,warn,missing dates,2019-10-27,"2 trading days without a row (first 2019-10-27, last 2019-11-18)"
 NSE CARBORUNIV,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
@@ -175,16 +174,16 @@ NSE CENTEXT,warn,missing dates,2009-05-18,"64 trading days without a row (first 
 NSE CENTUM,warn,missing dates,2008-08-13,"120 trading days without a row (first 2008-08-13, last 2014-01-02)"
 NSE CENTURYPLY,warn,missing dates,2009-01-22,"2 trading days without a row (first 2009-01-22, last 2009-05-18)"
 NSE CERA,warn,missing dates,2007-11-09,"71 trading days without a row (first 2007-11-09, last 2009-12-04)"
-NSE CEREBRAINT,warn,missing dates,2014-03-24,"3112 trading days without a row (first 2014-03-24, last 2026-11-08)"
+NSE CEREBRAINT,warn,missing dates,2026-11-03,"5 trading days without a row (first 2026-11-03, last 2026-11-08)"
 NSE CGCL,warn,missing dates,2012-06-12,"58 trading days without a row (first 2012-06-12, last 2014-03-22)"
 NSE CHOLAFIN,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE CIEINDIA,warn,missing dates,2008-11-28,"4 trading days without a row (first 2008-11-28, last 2009-05-18)"
 NSE CINELINE,warn,missing dates,2013-07-08,"27 trading days without a row (first 2013-07-08, last 2015-09-23)"
 NSE CINEVISTA,warn,missing dates,2009-05-18,"237 trading days without a row (first 2009-05-18, last 2019-06-20)"
-NSE CLCIND,warn,missing dates,2009-10-20,"4217 trading days without a row (first 2009-10-20, last 2026-11-08)"
-NSE CMICABLES,warn,missing dates,2019-10-29,"1744 trading days without a row (first 2019-10-29, last 2026-11-08)"
+NSE CLCIND,warn,missing dates,2026-11-03,"5 trading days without a row (first 2026-11-03, last 2026-11-08)"
+NSE CMICABLES,warn,missing dates,2026-11-03,"5 trading days without a row (first 2026-11-03, last 2026-11-08)"
 NSE CNL,warn,missing dates,2017-10-17,"247 trading days without a row (first 2017-10-17, last 2020-05-08)"
-NSE COFFEEDAY,warn,missing dates,2020-02-03,"336 trading days without a row (first 2020-02-03, last 2025-02-28)"
+NSE COFFEEDAY,warn,missing dates,2020-02-01,"337 trading days without a row (first 2020-02-01, last 2025-02-28)"
 NSE COMPEAU,warn,missing dates,2026-10-22,"1 trading days without a row (first 2026-10-22, last 2026-10-22)"
 NSE COMPINFO,warn,missing dates,2024-04-09,"183 trading days without a row (first 2024-04-09, last 2025-08-29)"
 NSE COMSYN,warn,missing dates,2025-03-12,"1 trading days without a row (first 2025-03-12, last 2025-03-12)"
@@ -204,7 +203,7 @@ NSE CYBERTECH,warn,missing dates,2008-12-11,"8 trading days without a row (first
 NSE CYIENT,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE DALMIASUG,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE DAMODARIND,warn,missing dates,2016-09-01,"2 trading days without a row (first 2016-09-01, last 2016-12-01)"
-NSE DANGEE,warn,missing dates,2018-11-30,"323 trading days without a row (first 2018-11-30, last 2020-11-12)"
+NSE DANGEE,warn,missing dates,2018-11-30,"324 trading days without a row (first 2018-11-30, last 2020-11-12)"
 NSE DATAMATICS,warn,missing dates,2012-01-07,"16 trading days without a row (first 2012-01-07, last 2013-12-09)"
 NSE DBCORP,warn,missing dates,2012-04-28,"1 trading days without a row (first 2012-04-28, last 2012-04-28)"
 NSE DBSTOCKBRO,warn,missing dates,2015-11-11,"378 trading days without a row (first 2015-11-11, last 2020-11-14)"
@@ -245,7 +244,7 @@ NSE DYNAMATECH,warn,missing dates,2007-03-08,"126 trading days without a row (fi
 NSE E2E,warn,missing dates,2018-06-15,"282 trading days without a row (first 2018-06-15, last 2022-04-08)"
 NSE EASTSILK,warn,missing dates,2013-04-01,"624 trading days without a row (first 2013-04-01, last 2026-04-30)"
 NSE ECLERX,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
-NSE EDUCOMP,warn,missing dates,2009-10-20,"4213 trading days without a row (first 2009-10-20, last 2026-11-08)"
+NSE EDUCOMP,warn,missing dates,2026-11-03,"5 trading days without a row (first 2026-11-03, last 2026-11-08)"
 NSE EIDPARRY,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE EIFFL,warn,missing dates,2020-03-30,"111 trading days without a row (first 2020-03-30, last 2021-10-04)"
 NSE EIHAHOTELS,warn,missing dates,2009-05-18,"14 trading days without a row (first 2009-05-18, last 2017-10-18)"
@@ -304,7 +303,7 @@ NSE GEEKAYWIRE,warn,missing dates,2017-09-12,"473 trading days without a row (fi
 NSE GENESYS,warn,missing dates,2007-02-12,"27 trading days without a row (first 2007-02-12, last 2016-04-29)"
 NSE GENSOL,warn,missing dates,2025-07-08,"141 trading days without a row (first 2025-07-08, last 2026-07-31)"
 NSE GFLLIMITED,warn,missing dates,2009-05-18,"3 trading days without a row (first 2009-05-18, last 2026-11-02)"
-NSE GICL,warn,missing dates,2016-11-02,"1251 trading days without a row (first 2016-11-02, last 2025-03-13)"
+NSE GICL,warn,missing dates,2016-11-02,"1252 trading days without a row (first 2016-11-02, last 2025-03-13)"
 NSE GILLANDERS,warn,missing dates,2013-04-09,"43 trading days without a row (first 2013-04-09, last 2020-05-06)"
 NSE GILLETTE,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE GINNIFILA,warn,missing dates,2009-02-11,"48 trading days without a row (first 2009-02-11, last 2013-12-03)"
@@ -350,7 +349,7 @@ NSE HBLENGINE,warn,missing dates,2009-01-19,"2 trading days without a row (first
 NSE HBSL,warn,missing dates,2019-07-11,"129 trading days without a row (first 2019-07-11, last 2024-03-02)"
 NSE HDIL,warn,missing dates,2022-05-24,"334 trading days without a row (first 2022-05-24, last 2026-03-27)"
 NSE HEALTHX,warn,missing dates,2013-07-10,"14 trading days without a row (first 2013-07-10, last 2020-05-20)"
-NSE HECPROJECT,warn,missing dates,2016-04-08,"1220 trading days without a row (first 2016-04-08, last 2023-07-21)"
+NSE HECPROJECT,warn,missing dates,2016-04-08,"1221 trading days without a row (first 2016-04-08, last 2023-07-21)"
 NSE HERITGFOOD,warn,missing dates,2008-08-18,"12 trading days without a row (first 2008-08-18, last 2011-02-03)"
 NSE HEXATRADEX,warn,missing dates,2018-12-11,"2 trading days without a row (first 2018-12-11, last 2019-08-05)"
 NSE HGS,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
@@ -381,7 +380,7 @@ NSE IGPL,warn,missing dates,2007-06-21,"14 trading days without a row (first 200
 NSE IITL,warn,missing dates,2010-09-30,"714 trading days without a row (first 2010-09-30, last 2023-08-17)"
 NSE IL&FSENGG,warn,missing dates,2024-03-02,"1 trading days without a row (first 2024-03-02, last 2024-03-02)"
 NSE IMPAL,warn,missing dates,2008-08-14,"34 trading days without a row (first 2008-08-14, last 2016-12-19)"
-NSE IMPEXFERRO,warn,missing dates,2009-10-20,"4212 trading days without a row (first 2009-10-20, last 2026-11-08)"
+NSE IMPEXFERRO,warn,missing dates,2026-11-03,"5 trading days without a row (first 2026-11-03, last 2026-11-08)"
 NSE INCREDIBLE,warn,missing dates,2017-08-08,"31 trading days without a row (first 2017-08-08, last 2018-04-24)"
 NSE INDBANK,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE INDIANCARD,warn,missing dates,2008-11-18,"86 trading days without a row (first 2008-11-18, last 2020-02-01)"
@@ -440,7 +439,7 @@ NSE KABRAEXTRU,warn,missing dates,2008-02-20,"25 trading days without a row (fir
 NSE KAJARIACER,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE KAKATCEM,warn,missing dates,2009-05-18,"74 trading days without a row (first 2009-05-18, last 2014-03-22)"
 NSE KALYANI,warn,missing dates,2022-03-03,"1110 trading days without a row (first 2022-03-03, last 2026-08-27)"
-NSE KALYANIFRG,warn,missing dates,2008-02-08,"575 trading days without a row (first 2008-02-08, last 2022-07-20)"
+NSE KALYANIFRG,warn,missing dates,2008-02-08,"576 trading days without a row (first 2008-02-08, last 2022-07-20)"
 NSE KAMAHOLD,warn,missing dates,2026-10-30,"1 trading days without a row (first 2026-10-30, last 2026-10-30)"
 NSE KAMANWALA,warn,missing dates,2026-09-25,"2 trading days without a row (first 2026-09-25, last 2026-10-08)"
 NSE KAMATHOTEL,warn,missing dates,2012-09-08,"13 trading days without a row (first 2012-09-08, last 2015-05-12)"
@@ -499,7 +498,7 @@ NSE LAL,warn,missing dates,2023-09-25,"1 trading days without a row (first 2023-
 NSE LANCER,warn,missing dates,2023-05-02,"818 trading days without a row (first 2023-05-02, last 2026-08-14)"
 NSE LANDSMILL,warn,missing dates,2020-05-07,"2 trading days without a row (first 2020-05-07, last 2020-05-12)"
 NSE LAOPALA,warn,missing dates,2007-06-01,"27 trading days without a row (first 2007-06-01, last 2009-07-10)"
-NSE LASA,warn,missing dates,2019-10-29,"1738 trading days without a row (first 2019-10-29, last 2026-11-08)"
+NSE LASA,warn,missing dates,2026-11-03,"5 trading days without a row (first 2026-11-03, last 2026-11-08)"
 NSE LATTEYS,warn,missing dates,2018-06-13,"913 trading days without a row (first 2018-06-13, last 2023-05-05)"
 NSE LAXMICOT,warn,missing dates,2017-04-18,"683 trading days without a row (first 2017-04-18, last 2021-11-04)"
 NSE LCCINFOTEC,warn,missing dates,2007-11-09,"1000 trading days without a row (first 2007-11-09, last 2025-07-11)"
@@ -545,7 +544,6 @@ NSE MAZDA,warn,missing dates,2016-11-29,"2 trading days without a row (first 201
 NSE MBAPL,warn,missing dates,2016-10-28,"371 trading days without a row (first 2016-10-28, last 2020-12-03)"
 NSE MBECL,warn,missing dates,2020-05-11,"527 trading days without a row (first 2020-05-11, last 2026-08-31)"
 NSE MCL,warn,missing dates,2017-03-01,"197 trading days without a row (first 2017-03-01, last 2020-08-13)"
-NSE MELSTAR,warn,missing dates,2009-10-20,"4219 trading days without a row (first 2009-10-20, last 2026-11-03)"
 NSE MEP,warn,missing dates,2024-08-06,"61 trading days without a row (first 2024-08-06, last 2024-12-31)"
 NSE MERCANTILE,warn,missing dates,2026-08-31,"1 trading days without a row (first 2026-08-31, last 2026-08-31)"
 NSE MGEL,warn,missing dates,2019-12-09,"13 trading days without a row (first 2019-12-09, last 2020-12-09)"
@@ -579,7 +577,7 @@ NSE MUNJALAU,warn,missing dates,2007-06-08,"10 trading days without a row (first
 NSE MURUDCERA,warn,missing dates,2009-05-18,"63 trading days without a row (first 2009-05-18, last 2014-04-07)"
 NSE MWL,warn,missing dates,2022-10-07,"60 trading days without a row (first 2022-10-07, last 2025-08-18)"
 NSE MYSORPETRO,warn,missing dates,2026-10-29,"1 trading days without a row (first 2026-10-29, last 2026-10-29)"
-NSE NAGAFERT,warn,missing dates,2016-11-01,"2475 trading days without a row (first 2016-11-01, last 2026-11-08)"
+NSE NAGAFERT,warn,missing dates,2026-11-03,"5 trading days without a row (first 2026-11-03, last 2026-11-08)"
 NSE NAGREEKCAP,warn,missing dates,2008-01-22,"650 trading days without a row (first 2008-01-22, last 2024-04-04)"
 NSE NAGREEKEXP,warn,missing dates,2008-07-14,"197 trading days without a row (first 2008-07-14, last 2018-11-07)"
 NSE NAHARCAP,warn,missing dates,2009-03-19,"79 trading days without a row (first 2009-03-19, last 2016-04-25)"
@@ -629,7 +627,6 @@ NSE ORIENTBELL,warn,missing dates,2007-02-27,"101 trading days without a row (fi
 NSE ORIENTCER,warn,missing dates,2008-12-31,"1 trading days without a row (first 2008-12-31, last 2008-12-31)"
 NSE ORIENTHOT,warn,missing dates,2007-02-26,"8 trading days without a row (first 2007-02-26, last 2015-01-19)"
 NSE ORIENTLTD,warn,missing dates,2010-08-27,"575 trading days without a row (first 2010-08-27, last 2020-11-04)"
-NSE ORTEL,warn,missing dates,2016-11-01,"2480 trading days without a row (first 2016-11-01, last 2026-11-06)"
 NSE OSIAHYPER,warn,missing dates,2019-05-09,"407 trading days without a row (first 2019-05-09, last 2022-11-24)"
 NSE OSWALSEEDS,warn,missing dates,2018-07-26,"460 trading days without a row (first 2018-07-26, last 2022-08-25)"
 NSE PACIFICI,warn,missing dates,2026-10-15,"2 trading days without a row (first 2026-10-15, last 2026-10-23)"
@@ -700,7 +697,6 @@ NSE RAJPALAYAM,warn,missing dates,2010-02-03,"2814 trading days without a row (f
 NSE RAJRILTD,warn,missing dates,2022-03-31,"73 trading days without a row (first 2022-03-31, last 2022-12-30)"
 NSE RAJSREESUG,warn,missing dates,2013-07-18,"6 trading days without a row (first 2013-07-18, last 2013-10-18)"
 NSE RAJTV,warn,missing dates,2019-04-09,"6 trading days without a row (first 2019-04-09, last 2019-09-06)"
-NSE RAJVIR,warn,missing dates,2009-10-20,"2546 trading days without a row (first 2009-10-20, last 2020-01-31)"
 NSE RAMANEWS,warn,missing dates,2009-05-18,"2 trading days without a row (first 2009-05-18, last 2014-03-22)"
 NSE RAMCOIND,warn,missing dates,2009-05-18,"2 trading days without a row (first 2009-05-18, last 2012-04-28)"
 NSE RAMCOSYS,warn,missing dates,2009-05-18,"3 trading days without a row (first 2009-05-18, last 2013-05-11)"
@@ -713,7 +709,7 @@ NSE REGENCERAM,warn,missing dates,2007-06-19,"1361 trading days without a row (f
 NSE RELAXO,warn,missing dates,2011-11-28,"3 trading days without a row (first 2011-11-28, last 2012-03-03)"
 NSE RELIABLE,warn,missing dates,2017-11-16,"862 trading days without a row (first 2017-11-16, last 2024-07-08)"
 NSE RELINFRA,warn,missing dates,2025-12-22,"79 trading days without a row (first 2025-12-22, last 2026-07-31)"
-NSE REMSONSIND,warn,missing dates,2007-01-25,"1314 trading days without a row (first 2007-01-25, last 2020-01-29)"
+NSE REMSONSIND,warn,missing dates,2007-01-25,"1315 trading days without a row (first 2007-01-25, last 2020-01-29)"
 NSE REPL,warn,missing dates,2018-08-29,"202 trading days without a row (first 2018-08-29, last 2020-10-26)"
 NSE REPRO,warn,missing dates,2009-03-03,"2 trading days without a row (first 2009-03-03, last 2009-05-18)"
 NSE RESPONIND,warn,missing dates,2011-05-27,"20 trading days without a row (first 2011-05-27, last 2016-08-09)"
@@ -767,7 +763,7 @@ NSE SCHAEFFLER,warn,missing dates,2008-07-16,"3 trading days without a row (firs
 NSE SECMARK,warn,missing dates,2024-03-02,"5 trading days without a row (first 2024-03-02, last 2026-07-20)"
 NSE SECURKLOUD,warn,missing dates,2014-03-22,"185 trading days without a row (first 2014-03-22, last 2020-09-04)"
 NSE SEJALLTD,warn,missing dates,2021-12-15,"58 trading days without a row (first 2021-12-15, last 2024-09-27)"
-NSE SELMC,warn,missing dates,2023-11-13,"735 trading days without a row (first 2023-11-13, last 2026-11-08)"
+NSE SELMC,warn,missing dates,2026-11-03,"5 trading days without a row (first 2026-11-03, last 2026-11-08)"
 NSE SEMAC,warn,missing dates,2007-04-27,"187 trading days without a row (first 2007-04-27, last 2026-09-02)"
 NSE SEPC,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE SERVOTECH,warn,missing dates,2017-10-16,"554 trading days without a row (first 2017-10-16, last 2021-08-30)"
@@ -794,7 +790,7 @@ NSE SHREERAMA,warn,missing dates,2009-01-30,"36 trading days without a row (firs
 NSE SHREYANIND,warn,missing dates,2007-01-17,"679 trading days without a row (first 2007-01-17, last 2016-05-23)"
 NSE SHRIKRISH,warn,missing dates,2026-06-11,"7 trading days without a row (first 2026-06-11, last 2026-10-15)"
 NSE SHRIPISTON,warn,missing dates,2016-12-21,"17 trading days without a row (first 2016-12-21, last 2022-06-28)"
-NSE SHYAMTEL,warn,missing dates,2009-05-18,"665 trading days without a row (first 2009-05-18, last 2024-03-06)"
+NSE SHYAMTEL,warn,missing dates,2009-05-18,"666 trading days without a row (first 2009-05-18, last 2024-03-06)"
 NSE SICAGEN,warn,missing dates,2009-05-18,"1182 trading days without a row (first 2009-05-18, last 2026-04-17)"
 NSE SICALLOG,warn,missing dates,2024-07-01,"123 trading days without a row (first 2024-07-01, last 2026-06-30)"
 NSE SIEL,warn,missing dates,2026-09-17,"8 trading days without a row (first 2026-09-17, last 2026-11-08)"
@@ -803,7 +799,7 @@ NSE SIGMAADV,warn,missing dates,2009-05-18,"3 trading days without a row (first 
 NSE SIKKO,warn,missing dates,2017-05-17,"731 trading days without a row (first 2017-05-17, last 2021-10-20)"
 NSE SIL,warn,missing dates,2009-05-18,"98 trading days without a row (first 2009-05-18, last 2020-05-21)"
 NSE SILGO,warn,missing dates,2018-10-19,"526 trading days without a row (first 2018-10-19, last 2021-03-01)"
-NSE SILINV,warn,missing dates,2008-04-03,"398 trading days without a row (first 2008-04-03, last 2026-11-04)"
+NSE SILINV,warn,missing dates,2008-04-03,"399 trading days without a row (first 2008-04-03, last 2026-11-04)"
 NSE SILVERTUC,warn,missing dates,2018-02-16,"398 trading days without a row (first 2018-02-16, last 2022-04-13)"
 NSE SIMBHALS,warn,missing dates,2026-04-27,"19 trading days without a row (first 2026-04-27, last 2026-05-29)"
 NSE SIMPLEXINF,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
@@ -813,7 +809,7 @@ NSE SIRCA,warn,missing dates,2018-07-09,"18 trading days without a row (first 20
 NSE SITINET,warn,missing dates,2023-07-03,"69 trading days without a row (first 2023-07-03, last 2024-05-31)"
 NSE SIYSIL,warn,missing dates,2007-06-20,"43 trading days without a row (first 2007-06-20, last 2014-02-17)"
 NSE SKFINDIA,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
-NSE SKIL,warn,missing dates,2009-10-20,"4218 trading days without a row (first 2009-10-20, last 2026-11-08)"
+NSE SKIL,warn,missing dates,2026-11-03,"5 trading days without a row (first 2026-11-03, last 2026-11-08)"
 NSE SKMEGGPROD,warn,missing dates,2009-05-18,"59 trading days without a row (first 2009-05-18, last 2014-03-22)"
 NSE SMLMAH,warn,missing dates,2007-01-10,"64 trading days without a row (first 2007-01-10, last 2013-05-11)"
 NSE SMLT,warn,missing dates,2023-07-11,"8 trading days without a row (first 2023-07-11, last 2023-07-21)"
@@ -884,7 +880,7 @@ NSE TCIFINANCE,warn,missing dates,2007-03-08,"491 trading days without a row (fi
 NSE TDPOWERSYS,warn,missing dates,2012-03-03,"8 trading days without a row (first 2012-03-03, last 2014-05-28)"
 NSE TEAMGTY,warn,missing dates,2007-01-03,"557 trading days without a row (first 2007-01-03, last 2025-10-17)"
 NSE TECILCHEM,warn,missing dates,2023-07-28,"54 trading days without a row (first 2023-07-28, last 2025-11-24)"
-NSE TEMBO,warn,missing dates,2018-08-21,"409 trading days without a row (first 2018-08-21, last 2021-01-08)"
+NSE TEMBO,warn,missing dates,2018-08-21,"410 trading days without a row (first 2018-08-21, last 2021-01-08)"
 NSE TERAI,warn,missing dates,2026-08-19,"6 trading days without a row (first 2026-08-19, last 2026-10-01)"
 NSE TFL,warn,missing dates,2008-12-01,"440 trading days without a row (first 2008-12-01, last 2021-05-12)"
 NSE TGBHOTELS,warn,missing dates,2009-05-18,"5 trading days without a row (first 2009-05-18, last 2020-05-27)"
@@ -936,7 +932,7 @@ NSE UNIENTER,warn,missing dates,2007-06-04,"133 trading days without a row (firs
 NSE UNIINFO,warn,missing dates,2018-04-19,"270 trading days without a row (first 2018-04-19, last 2023-06-21)"
 NSE UNITEDPOLY,warn,missing dates,2016-06-15,"1003 trading days without a row (first 2016-06-15, last 2021-12-30)"
 NSE UNITEDTEA,warn,missing dates,2010-05-17,"344 trading days without a row (first 2010-05-17, last 2019-11-18)"
-NSE UNIVAFOODS,warn,missing dates,2009-10-20,"4221 trading days without a row (first 2009-10-20, last 2026-11-08)"
+NSE UNIVAFOODS,warn,missing dates,2026-11-03,"5 trading days without a row (first 2026-11-03, last 2026-11-08)"
 NSE UNIVASTU,warn,missing dates,2017-08-30,"479 trading days without a row (first 2017-08-30, last 2020-06-18)"
 NSE UNIVCABLES,warn,missing dates,2008-12-23,"102 trading days without a row (first 2008-12-23, last 2015-11-26)"
 NSE UNIVPHOTO,warn,missing dates,2026-11-08,"1 trading days without a row (first 2026-11-08, last 2026-11-08)"
@@ -965,7 +961,7 @@ NSE VESUVIUS,warn,missing dates,2007-06-08,"6 trading days without a row (first 
 NSE VETO,warn,missing dates,2013-01-18,"324 trading days without a row (first 2013-01-18, last 2015-06-05)"
 NSE VGL,warn,missing dates,2008-09-05,"51 trading days without a row (first 2008-09-05, last 2016-02-19)"
 NSE VGUARD,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
-NSE VHL,warn,missing dates,2007-01-23,"389 trading days without a row (first 2007-01-23, last 2025-11-04)"
+NSE VHL,warn,missing dates,2007-01-23,"390 trading days without a row (first 2007-01-23, last 2025-11-04)"
 NSE VHLTD,warn,missing dates,2024-04-15,"55 trading days without a row (first 2024-04-15, last 2024-07-31)"
 NSE VIJIFIN,warn,missing dates,2017-05-30,"77 trading days without a row (first 2017-05-30, last 2017-10-17)"
 NSE VIJSOLX,warn,missing dates,2026-09-25,"2 trading days without a row (first 2026-09-25, last 2026-10-15)"
@@ -1150,8 +1146,7 @@ NSE AMRUTANJAN (adjusted),warn,unexplained jump,2010-12-13,close moved 20.0% (to
 NSE AMRUTANJAN (adjusted),warn,unexplained jump,2014-09-05,close moved 20.0% (to 145.8)
 NSE ANANTRAJ (adjusted),warn,unexplained jump,2008-01-23,close moved 20.0% (to 176.25903448275864)
 NSE ANANTRAJ (adjusted),warn,unexplained jump,2008-12-11,close moved 20.0% (to 36.71282758620689)
-NSE ANDHRAPAP (adjusted),warn,unexplained jump,2009-03-04,close moved 20.1% (to 8.85)
-NSE ANDHRAPAP (adjusted),warn,unexplained jump,2010-02-23,close moved 20.4% (to 18.28)
+NSE ANDHRAPAP (adjusted),warn,unexplained jump,2009-03-04,close moved 20.1% (to 8.082948606271778)
 NSE ANDHRAPAP (adjusted),warn,unexplained jump,2011-03-30,close moved 20.0% (to 47.39)
 NSE ANDHRAPAP (adjusted),warn,unexplained jump,2011-03-31,close moved 20.0% (to 56.870000000000005)
 NSE ANIKINDS (adjusted),warn,unexplained jump,2009-08-14,close moved 20.0% (to 40.15)
@@ -1268,8 +1263,6 @@ NSE AYMSYNTEX (adjusted),warn,unexplained jump,2020-06-08,close moved 20.0% (to 
 NSE BAGFILMS (adjusted),warn,unexplained jump,2007-01-15,close moved 20.2% (to 15.75)
 NSE BAGFILMS (adjusted),warn,unexplained jump,2009-04-22,close moved 20.1% (to 17.95)
 NSE BAGFILMS (adjusted),warn,unexplained jump,2012-07-09,close moved 20.0% (to 5.4)
-NSE BAHETI (adjusted),warn,unexplained jump,2025-02-01,close moved 85.0% (to 424.0)
-NSE BAHETI (adjusted),warn,unexplained jump,2026-02-01,close moved 43.3% (to 607.45)
 NSE BAJAJELEC (adjusted),warn,unexplained jump,2009-04-06,close moved 20.0% (to 31.423391001030524)
 NSE BAJAJELEC (adjusted),warn,unexplained jump,2009-04-08,close moved 20.0% (to 37.71326029005838)
 NSE BAJAJFINSV (adjusted),warn,unexplained jump,2011-03-03,close moved 20.0% (to 52.071204219509305)
@@ -1337,14 +1330,6 @@ NSE BESTAGRO (adjusted),warn,unexplained jump,2024-04-10,close moved 42.0% (to 4
 NSE BFINVEST (adjusted),warn,unexplained jump,2011-02-03,close moved 20.0% (to 93.75)
 NSE BFUTILITIE (adjusted),warn,unexplained jump,2009-11-16,close moved 20.0% (to 905.8645391274825)
 NSE BFUTILITIE (adjusted),warn,unexplained jump,2011-02-03,close moved 20.0% (to 844.9)
-NSE BGLOBAL (adjusted),warn,unexplained jump,2012-03-03,close moved 22.7% (to 9.2)
-NSE BGLOBAL (adjusted),warn,unexplained jump,2012-04-28,close moved 22.3% (to 7.15)
-NSE BGLOBAL (adjusted),warn,unexplained jump,2014-03-22,close moved 26.7% (to 7.35)
-NSE BGLOBAL (adjusted),warn,unexplained jump,2015-02-28,close moved 54.4% (to 3.35)
-NSE BGLOBAL (adjusted),warn,unexplained jump,2016-10-30,close moved 89.6% (to 6.35)
-NSE BGLOBAL (adjusted),warn,unexplained jump,2019-10-27,close moved 70.9% (to 1.85)
-NSE BGLOBAL (adjusted),warn,unexplained jump,2020-02-01,close moved 21.6% (to 1.45)
-NSE BGLOBAL (adjusted),warn,unexplained jump,2026-11-02,close moved 131.7% (to 3.36)
 NSE BGRENERGY (adjusted),warn,unexplained jump,2010-11-29,close moved 21.3% (to 690.0)
 NSE BGRENERGY (adjusted),warn,unexplained jump,2019-12-13,close moved 20.0% (to 35.7)
 NSE BHAGYANGR (adjusted),warn,unexplained jump,2018-02-27,close moved 20.0% (to 4.350016499835002)
@@ -1467,14 +1452,6 @@ NSE CENTEXT (adjusted),warn,unexplained jump,2007-11-13,close moved 20.8% (to 5.
 NSE CENTEXT (adjusted),warn,unexplained jump,2010-03-15,close moved 20.5% (to 6.416540008940545)
 NSE CENTEXT (adjusted),warn,unexplained jump,2018-08-23,close moved 20.0% (to 6.280017881090746)
 NSE CERA (adjusted),warn,unexplained jump,2008-01-25,close moved 20.0% (to 83.75)
-NSE CEREBRAINT (adjusted),warn,unexplained jump,2015-02-28,close moved 145.5% (to 16.2)
-NSE CEREBRAINT (adjusted),warn,unexplained jump,2016-10-30,close moved 50.9% (to 24.45)
-NSE CEREBRAINT (adjusted),warn,unexplained jump,2020-02-01,close moved 59.3% (to 33.85)
-NSE CEREBRAINT (adjusted),warn,unexplained jump,2023-11-12,close moved 75.8% (to 6.8)
-NSE CEREBRAINT (adjusted),warn,unexplained jump,2024-01-20,close moved 33.1% (to 9.05)
-NSE CEREBRAINT (adjusted),warn,unexplained jump,2025-02-01,close moved 21.1% (to 8.54)
-NSE CEREBRAINT (adjusted),warn,unexplained jump,2026-02-01,close moved 31.6% (to 5.84)
-NSE CEREBRAINT (adjusted),warn,unexplained jump,2026-11-02,close moved 61.5% (to 2.25)
 NSE CGCL (adjusted),warn,unexplained jump,2010-11-24,close moved 20.1% (to 25.241396362992006)
 NSE CGCL (adjusted),warn,unexplained jump,2011-11-28,close moved 20.0% (to 4.877575936385586)
 NSE CGCL (adjusted),warn,unexplained jump,2024-03-05,close moved 20.0% (to 289.25)
@@ -1506,17 +1483,6 @@ NSE CINEVISTA (adjusted),warn,unexplained jump,2008-08-05,close moved 20.0% (to 
 NSE CINEVISTA (adjusted),warn,unexplained jump,2010-05-26,close moved 20.2% (to 6.25)
 NSE CINEVISTA (adjusted),warn,unexplained jump,2011-04-07,close moved 21.0% (to 4.9)
 NSE CINEVISTA (adjusted),warn,unexplained jump,2011-08-02,close moved 20.9% (to 5.2)
-NSE CLCIND (adjusted),warn,unexplained jump,2012-01-07,close moved 44.3% (to 6.55)
-NSE CLCIND (adjusted),warn,unexplained jump,2014-03-22,close moved 20.9% (to 3.6)
-NSE CLCIND (adjusted),warn,unexplained jump,2016-10-30,close moved 69.0% (to 7.1)
-NSE CLCIND (adjusted),warn,unexplained jump,2020-02-01,close moved 96.5% (to 0.25)
-NSE CLCIND (adjusted),warn,unexplained jump,2020-11-14,close moved 120.0% (to 0.55)
-NSE CLCIND (adjusted),warn,unexplained jump,2023-11-12,close moved 363.6% (to 2.55)
-NSE CLCIND (adjusted),warn,unexplained jump,2026-02-01,close moved 268.6% (to 9.4)
-NSE CLCIND (adjusted),warn,unexplained jump,2026-11-02,close moved 346.8% (to 42.0)
-NSE CMICABLES (adjusted),warn,unexplained jump,2020-02-01,close moved 21.0% (to 44.3)
-NSE CMICABLES (adjusted),warn,unexplained jump,2020-11-14,close moved 31.0% (to 30.55)
-NSE CMICABLES (adjusted),warn,unexplained jump,2026-11-02,close moved 93.3% (to 2.05)
 NSE COASTCORP (adjusted),warn,unexplained jump,2022-01-13,close moved 20.0% (to 73.46284422556816)
 NSE COFFEEDAY (adjusted),warn,unexplained jump,2021-04-26,close moved 75.0% (to 46.1)
 NSE COFORGE (adjusted),warn,unexplained jump,2007-01-18,close moved 20.0% (to 54.699999999999996)
@@ -1637,16 +1603,6 @@ NSE EDELWEISS (adjusted),warn,unexplained jump,2008-01-22,close moved 22.6% (to 
 NSE EDELWEISS (adjusted),warn,unexplained jump,2008-01-23,close moved 28.1% (to 57.94736842105263)
 NSE EDELWEISS (adjusted),warn,unexplained jump,2008-03-25,close moved 23.7% (to 37.94736842105263)
 NSE EDELWEISS (adjusted),warn,unexplained jump,2008-11-03,close moved 24.4% (to 17.652631578947368)
-NSE EDUCOMP (adjusted),warn,unexplained jump,2010-02-06,close moved 86.2% (to 663.65)
-NSE EDUCOMP (adjusted),warn,unexplained jump,2012-01-07,close moved 69.9% (to 199.95)
-NSE EDUCOMP (adjusted),warn,unexplained jump,2012-09-08,close moved 21.7% (to 150.45)
-NSE EDUCOMP (adjusted),warn,unexplained jump,2013-05-11,close moved 51.7% (to 72.65)
-NSE EDUCOMP (adjusted),warn,unexplained jump,2013-11-03,close moved 66.2% (to 24.55)
-NSE EDUCOMP (adjusted),warn,unexplained jump,2016-10-30,close moved 45.2% (to 12.2)
-NSE EDUCOMP (adjusted),warn,unexplained jump,2019-10-27,close moved 90.2% (to 1.2)
-NSE EDUCOMP (adjusted),warn,unexplained jump,2020-11-14,close moved 121.7% (to 2.55)
-NSE EDUCOMP (adjusted),warn,unexplained jump,2023-11-12,close moved 23.5% (to 1.95)
-NSE EDUCOMP (adjusted),warn,unexplained jump,2024-01-20,close moved 125.6% (to 4.4)
 NSE EICHERMOT (adjusted),warn,unexplained jump,2008-10-31,close moved 20.0% (to 19.485)
 NSE EIDPARRY (adjusted),warn,unexplained jump,2009-05-19,close moved 20.0% (to 123.425)
 NSE EIHAHOTELS (adjusted),warn,unexplained jump,2010-08-31,close moved 20.0% (to 86.41816313334259)
@@ -1835,7 +1791,7 @@ NSE GROBTEA (adjusted),warn,unexplained jump,2019-11-25,close moved 20.0% (to 35
 NSE GTECJAINX (adjusted),warn,unexplained jump,2020-07-20,close moved 69.4% (to 25.0)
 NSE GTL (adjusted),warn,unexplained jump,2011-06-20,close moved 62.2% (to 127.95)
 NSE GTL (adjusted),warn,unexplained jump,2011-09-09,close moved 32.9% (to 70.05)
-NSE GTLINFRA (adjusted),warn,unexplained jump,2007-07-20,close moved 29.0% (to 38.7)
+NSE GTLINFRA (adjusted),warn,unexplained jump,2007-07-20,close moved 20.0% (to 38.7)
 NSE GTLINFRA (adjusted),warn,unexplained jump,2011-06-20,close moved 42.7% (to 16.95)
 NSE GTLINFRA (adjusted),warn,unexplained jump,2012-12-14,close moved 20.0% (to 5.6)
 NSE GTLINFRA (adjusted),warn,unexplained jump,2020-03-25,close moved 25.0% (to 0.25)
@@ -1976,16 +1932,6 @@ NSE IL&FSENGG (adjusted),warn,unexplained jump,2007-10-31,close moved 20.0% (to 
 NSE IL&FSENGG (adjusted),warn,unexplained jump,2011-04-20,close moved 20.0% (to 213.75)
 NSE IMPAL (adjusted),warn,unexplained jump,2010-04-30,close moved 20.0% (to 194.88333333333333)
 NSE IMPAL (adjusted),warn,unexplained jump,2013-10-30,close moved 20.0% (to 304.0)
-NSE IMPEXFERRO (adjusted),warn,unexplained jump,2012-01-07,close moved 42.2% (to 6.65)
-NSE IMPEXFERRO (adjusted),warn,unexplained jump,2013-05-11,close moved 33.6% (to 3.95)
-NSE IMPEXFERRO (adjusted),warn,unexplained jump,2013-11-03,close moved 60.8% (to 6.35)
-NSE IMPEXFERRO (adjusted),warn,unexplained jump,2014-03-22,close moved 48.8% (to 3.25)
-NSE IMPEXFERRO (adjusted),warn,unexplained jump,2015-02-28,close moved 21.5% (to 2.55)
-NSE IMPEXFERRO (adjusted),warn,unexplained jump,2016-10-30,close moved 33.3% (to 1.7)
-NSE IMPEXFERRO (adjusted),warn,unexplained jump,2019-10-27,close moved 85.3% (to 0.25)
-NSE IMPEXFERRO (adjusted),warn,unexplained jump,2020-02-01,close moved 60.0% (to 0.4)
-NSE IMPEXFERRO (adjusted),warn,unexplained jump,2020-11-14,close moved 75.0% (to 0.7)
-NSE IMPEXFERRO (adjusted),warn,unexplained jump,2023-11-12,close moved 378.6% (to 3.35)
 NSE INDBANK (adjusted),warn,unexplained jump,2009-04-15,close moved 20.2% (to 11.9)
 NSE INDBANK (adjusted),warn,unexplained jump,2010-10-28,close moved 20.1% (to 21.55)
 NSE INDIANB (adjusted),warn,unexplained jump,2017-10-25,close moved 21.1% (to 327.2)
@@ -2179,8 +2125,8 @@ NSE KIRLOSENG (adjusted),warn,unexplained jump,2018-08-28,close moved 20.0% (to 
 NSE KIRLOSENG (adjusted),warn,unexplained jump,2026-06-22,close moved 20.0% (to 2389.8)
 NSE KITEX (adjusted),warn,unexplained jump,2018-07-04,close moved 20.0% (to 39.93333333333333)
 NSE KKCL (adjusted),warn,unexplained jump,2008-01-04,close moved 20.0% (to 98.79)
-NSE KMSUGAR (adjusted),warn,unexplained jump,2007-09-19,close moved 20.0% (to 20.23649049881235)
-NSE KMSUGAR (adjusted),warn,unexplained jump,2010-08-30,close moved 69.2% (to 3.982927553444181)
+NSE KMSUGAR (adjusted),warn,unexplained jump,2007-09-19,close moved 20.0% (to 4.047298099762471)
+NSE KMSUGAR (adjusted),warn,unexplained jump,2010-08-30,close moved 54.2% (to 3.982927553444181)
 NSE KOHINOOR (adjusted),warn,unexplained jump,2007-12-28,close moved 20.0% (to 102.55)
 NSE KOHINOOR (adjusted),warn,unexplained jump,2013-07-15,close moved 20.0% (to 46.2)
 NSE KOKUYOCMLN (adjusted),warn,unexplained jump,2009-05-11,close moved 20.2% (to 13.7)
@@ -2225,13 +2171,6 @@ NSE LAOPALA (adjusted),warn,unexplained jump,2007-09-12,close moved 20.0% (to 5.
 NSE LAOPALA (adjusted),warn,unexplained jump,2009-09-09,close moved 20.1% (to 2.54)
 NSE LAOPALA (adjusted),warn,unexplained jump,2010-01-13,close moved 20.1% (to 4.0600000000000005)
 NSE LAOPALA (adjusted),warn,unexplained jump,2011-09-06,close moved 20.0% (to 12.445)
-NSE LASA (adjusted),warn,unexplained jump,2020-02-01,close moved 69.1% (to 30.35)
-NSE LASA (adjusted),warn,unexplained jump,2020-11-14,close moved 159.1% (to 78.65)
-NSE LASA (adjusted),warn,unexplained jump,2023-11-12,close moved 66.9% (to 26.05)
-NSE LASA (adjusted),warn,unexplained jump,2024-01-20,close moved 27.6% (to 33.25)
-NSE LASA (adjusted),warn,unexplained jump,2024-05-18,close moved 20.1% (to 23.7)
-NSE LASA (adjusted),warn,unexplained jump,2026-02-01,close moved 64.0% (to 9.26)
-NSE LASA (adjusted),warn,unexplained jump,2026-11-02,close moved 52.1% (to 4.44)
 NSE LAXMICOT (adjusted),warn,unexplained jump,2020-12-21,close moved 20.0% (to 8.2)
 NSE LAXMIINDIA (adjusted),warn,unexplained jump,2025-08-07,close moved 20.0% (to 148.62)
 NSE LCCINFOTEC (adjusted),warn,unexplained jump,2010-10-27,close moved 25.0% (to 1.0)
@@ -2320,12 +2259,6 @@ NSE MCLEODRUSS (adjusted),warn,unexplained jump,2008-02-26,close moved 20.0% (to
 NSE MCLOUD (adjusted),warn,unexplained jump,2025-11-20,close moved 20.0% (to 53.52)
 NSE MCLOUD (adjusted),warn,unexplained jump,2025-11-26,close moved 20.0% (to 36.96)
 NSE MEDICO (adjusted),warn,unexplained jump,2025-02-27,close moved 20.0% (to 50.54)
-NSE MELSTAR (adjusted),warn,unexplained jump,2015-02-28,close moved 36.5% (to 454.52830188679246)
-NSE MELSTAR (adjusted),warn,unexplained jump,2019-10-27,close moved 87.7% (to 56.03773584905661)
-NSE MELSTAR (adjusted),warn,unexplained jump,2020-02-01,close moved 394.4% (to 277.07547169811323)
-NSE MELSTAR (adjusted),warn,unexplained jump,2020-11-14,close moved 55.1% (to 124.52830188679246)
-NSE MELSTAR (adjusted),warn,unexplained jump,2023-11-12,close moved 42.5% (to 177.45283018867926)
-NSE MELSTAR (adjusted),warn,unexplained jump,2024-01-20,close moved 112.3% (to 376.6981132075472)
 NSE MFSL (adjusted),warn,unexplained jump,2020-03-23,close moved 29.2% (to 288.55)
 NSE MFSL (adjusted),warn,unexplained jump,2020-03-26,close moved 20.2% (to 423.2)
 NSE MGEL (adjusted),warn,unexplained jump,2022-10-18,close moved 20.0% (to 14.526233183856501)
@@ -2386,12 +2319,6 @@ NSE MURUDCERA (adjusted),warn,unexplained jump,2009-11-05,close moved 20.1% (to 
 NSE M&M (adjusted),warn,unexplained jump,2008-10-31,close moved 24.0% (to 93.625)
 NSE M&M (adjusted),warn,unexplained jump,2009-05-18,close moved 23.9% (to 158.9875)
 NSE M&MFIN (adjusted),warn,unexplained jump,2020-03-23,close moved 28.6% (to 88.89556972113188)
-NSE NAGAFERT (adjusted),warn,unexplained jump,2019-10-27,close moved 77.0% (to 2.8)
-NSE NAGAFERT (adjusted),warn,unexplained jump,2020-02-01,close moved 71.4% (to 4.8)
-NSE NAGAFERT (adjusted),warn,unexplained jump,2023-11-12,close moved 113.4% (to 8.75)
-NSE NAGAFERT (adjusted),warn,unexplained jump,2024-01-20,close moved 68.6% (to 14.75)
-NSE NAGAFERT (adjusted),warn,unexplained jump,2026-02-01,close moved 42.6% (to 4.94)
-NSE NAGAFERT (adjusted),warn,unexplained jump,2026-11-02,close moved 73.1% (to 1.33)
 NSE NAGREEKCAP (adjusted),warn,unexplained jump,2007-09-27,close moved 20.0% (to 103.0)
 NSE NAGREEKCAP (adjusted),warn,unexplained jump,2007-10-11,close moved 20.0% (to 102.55)
 NSE NAGREEKCAP (adjusted),warn,unexplained jump,2007-12-04,close moved 20.0% (to 119.8)
@@ -2517,10 +2444,6 @@ NSE ORIENTLTD (adjusted),warn,unexplained jump,2010-03-04,close moved 20.0% (to 
 NSE ORIENTLTD (adjusted),warn,unexplained jump,2010-03-05,close moved 20.0% (to 95.65)
 NSE ORISSAMINE (adjusted),warn,unexplained jump,2011-04-04,close moved 20.0% (to 6247.825000000001)
 NSE ORISSAMINE (adjusted),warn,unexplained jump,2011-05-31,close moved 20.0% (to 5363.93)
-NSE ORTEL (adjusted),warn,unexplained jump,2020-02-01,close moved 99.7% (to 0.5)
-NSE ORTEL (adjusted),warn,unexplained jump,2020-11-14,close moved 70.0% (to 0.85)
-NSE ORTEL (adjusted),warn,unexplained jump,2025-02-01,close moved 120.0% (to 1.87)
-NSE ORTEL (adjusted),warn,unexplained jump,2026-02-01,close moved 25.7% (to 1.39)
 NSE OSWALGREEN (adjusted),warn,unexplained jump,2008-01-21,close moved 31.1% (to 40.3)
 NSE OSWALGREEN (adjusted),warn,unexplained jump,2008-01-22,close moved 30.5% (to 28.0)
 NSE OSWALGREEN (adjusted),warn,unexplained jump,2008-01-23,close moved 36.6% (to 38.25)
@@ -2555,9 +2478,10 @@ NSE PASHUPATI (adjusted),warn,unexplained jump,2021-04-12,close moved 20.0% (to 
 NSE PASHUPATI (adjusted),warn,unexplained jump,2021-07-26,close moved 20.0% (to 9.090000000000002)
 NSE PATELENG (adjusted),warn,unexplained jump,2008-10-28,close moved 20.0% (to 94.66744936462342)
 NSE PATELENG (adjusted),warn,unexplained jump,2009-05-19,close moved 24.6% (to 208.16119262270695)
-NSE PATINTLOG (adjusted),warn,unexplained jump,2010-01-04,close moved 20.1% (to 33.78484047957732)
-NSE PATINTLOG (adjusted),warn,unexplained jump,2010-07-08,close moved 20.1% (to 36.43655761024182)
-NSE PATINTLOG (adjusted),warn,unexplained jump,2021-10-28,close moved 40.8% (to 16.15583214793741)
+NSE PATINTLOG (adjusted),warn,unexplained jump,2010-01-04,close moved 20.1% (to 15.869880390237231)
+NSE PATINTLOG (adjusted),warn,unexplained jump,2010-07-08,close moved 20.1% (to 17.115481467377947)
+NSE PATINTLOG (adjusted),warn,unexplained jump,2013-07-17,close moved 20.0% (to 6.2280053857035655)
+NSE PATINTLOG (adjusted),warn,unexplained jump,2018-04-24,close moved 20.0% (to 33.07762860407005)
 NSE PATINTLOG (adjusted),warn,unexplained jump,2023-12-11,close moved 20.0% (to 19.740560861613496)
 NSE PAYTM (adjusted),warn,unexplained jump,2024-02-02,close moved 20.0% (to 487.2)
 NSE PCBL (adjusted),warn,unexplained jump,2009-05-19,close moved 20.0% (to 7.220000000000001)
@@ -2669,9 +2593,6 @@ NSE RAJTV (adjusted),warn,unexplained jump,2010-03-08,close moved 20.1% (to 16.2
 NSE RAJTV (adjusted),warn,unexplained jump,2010-09-07,close moved 20.1% (to 16.525)
 NSE RAJTV (adjusted),warn,unexplained jump,2011-04-11,close moved 20.1% (to 15.4875)
 NSE RAJTV (adjusted),warn,unexplained jump,2011-05-13,close moved 20.1% (to 15.925)
-NSE RAJVIR (adjusted),warn,unexplained jump,2010-02-06,close moved 47.0% (to 88.25)
-NSE RAJVIR (adjusted),warn,unexplained jump,2016-10-30,close moved 40.6% (to 44.7)
-NSE RAJVIR (adjusted),warn,unexplained jump,2020-02-01,close moved 76.7% (to 10.4)
 NSE RALLIS (adjusted),warn,unexplained jump,2007-09-20,close moved 20.0% (to 28.17)
 NSE RAMANEWS (adjusted),warn,unexplained jump,2007-12-13,close moved 20.1% (to 38.85)
 NSE RAMANEWS (adjusted),warn,unexplained jump,2008-02-15,close moved 20.0% (to 31.45)
@@ -2836,8 +2757,6 @@ NSE SDBL (adjusted),warn,unexplained jump,2017-03-23,close moved 20.0% (to 28.24
 NSE SEAMECLTD (adjusted),warn,unexplained jump,2009-02-25,close moved 20.1% (to 47.55)
 NSE SECURKLOUD (adjusted),warn,unexplained jump,2018-07-02,close moved 20.0% (to 392.2)
 NSE SECURKLOUD (adjusted),warn,unexplained jump,2024-10-09,close moved 20.0% (to 42.36)
-NSE SELMC (adjusted),warn,unexplained jump,2025-02-01,close moved 49.2% (to 35.28)
-NSE SELMC (adjusted),warn,unexplained jump,2026-11-02,close moved 28.0% (to 20.76)
 NSE SEMAC (adjusted),warn,unexplained jump,2007-11-23,close moved 20.0% (to 750.3493653877051)
 NSE SESHAPAPER (adjusted),warn,unexplained jump,2009-07-27,close moved 20.0% (to 22.19)
 NSE SESHAPAPER (adjusted),warn,unexplained jump,2010-10-27,close moved 20.0% (to 52.32000000000001)
@@ -2904,7 +2823,8 @@ NSE SICAGEN (adjusted),warn,unexplained jump,2008-11-20,close moved 20.0% (to 3.
 NSE SICAGEN (adjusted),warn,unexplained jump,2009-03-23,close moved 20.3% (to 3.85)
 NSE SICAGEN (adjusted),warn,unexplained jump,2026-04-20,close moved 124.0% (to 54.55)
 NSE SIGMA (adjusted),warn,unexplained jump,2025-05-23,close moved 20.0% (to 38.010000000000005)
-NSE SIGMAADV (adjusted),warn,unexplained jump,2007-10-22,close moved 20.0% (to 125.8)
+NSE SIGMAADV (adjusted),warn,unexplained jump,2007-10-22,close moved 20.0% (to 101.94801223241589)
+NSE SIGMAADV (adjusted),warn,unexplained jump,2019-12-26,close moved 20.0% (to 7.293577981651376)
 NSE SIKKO (adjusted),warn,unexplained jump,2020-08-17,close moved 20.0% (to 0.542760841884503)
 NSE SIKKO (adjusted),warn,unexplained jump,2022-08-19,close moved 20.0% (to 2.2582727885551646)
 NSE SIKKO (adjusted),warn,unexplained jump,2025-02-13,close moved 20.0% (to 3.5869999999999997)
@@ -2924,16 +2844,6 @@ NSE SITINET (adjusted),warn,unexplained jump,2009-02-04,close moved 76.8% (to 17
 NSE SITINET (adjusted),warn,unexplained jump,2011-10-13,close moved 20.4% (to 8.55)
 NSE SIYSIL (adjusted),warn,unexplained jump,2007-12-11,close moved 20.0% (to 44.46000000000001)
 NSE SIYSIL (adjusted),warn,unexplained jump,2009-11-11,close moved 20.0% (to 31.960000000000004)
-NSE SKIL (adjusted),warn,unexplained jump,2012-01-07,close moved 31.3% (to 240.5)
-NSE SKIL (adjusted),warn,unexplained jump,2012-09-08,close moved 23.4% (to 200.0)
-NSE SKIL (adjusted),warn,unexplained jump,2013-05-11,close moved 63.3% (to 73.35)
-NSE SKIL (adjusted),warn,unexplained jump,2013-11-03,close moved 23.6% (to 90.65)
-NSE SKIL (adjusted),warn,unexplained jump,2014-03-22,close moved 39.1% (to 126.05)
-NSE SKIL (adjusted),warn,unexplained jump,2015-02-28,close moved 64.6% (to 44.6)
-NSE SKIL (adjusted),warn,unexplained jump,2016-10-30,close moved 42.4% (to 25.7)
-NSE SKIL (adjusted),warn,unexplained jump,2019-10-27,close moved 84.4% (to 4.0)
-NSE SKIL (adjusted),warn,unexplained jump,2020-11-14,close moved 47.1% (to 2.3)
-NSE SKIL (adjusted),warn,unexplained jump,2026-11-02,close moved 51.7% (to 1.11)
 NSE SKIPPER (adjusted),warn,unexplained jump,2020-06-18,close moved 20.0% (to 37.808438434761314)
 NSE SKIPPER (adjusted),warn,unexplained jump,2020-06-23,close moved 20.0% (to 46.01492119579477)
 NSE SKIPPER (adjusted),warn,unexplained jump,2023-06-19,close moved 20.0% (to 168.8190739412598)
@@ -3080,10 +2990,10 @@ NSE TCIFINANCE (adjusted),warn,unexplained jump,2010-07-22,close moved 20.1% (to
 NSE TECHM (adjusted),warn,unexplained jump,2009-06-09,close moved 25.6% (to 186.0)
 NSE TEJASNET (adjusted),warn,unexplained jump,2019-02-20,close moved 20.0% (to 153.3)
 NSE TEXMOPIPES (adjusted),warn,unexplained jump,2011-04-06,close moved 20.1% (to 43.6)
-NSE TFL (adjusted),warn,unexplained jump,2007-03-22,close moved 20.1% (to 40.0)
-NSE TFL (adjusted),warn,unexplained jump,2007-11-06,close moved 20.1% (to 36.4)
-NSE TFL (adjusted),warn,unexplained jump,2008-06-17,close moved 20.2% (to 24.4)
-NSE TFL (adjusted),warn,unexplained jump,2016-11-02,close moved 20.0% (to 10.8)
+NSE TFL (adjusted),warn,unexplained jump,2007-03-22,close moved 20.1% (to 38.18930041152263)
+NSE TFL (adjusted),warn,unexplained jump,2007-11-06,close moved 20.1% (to 34.752263374485594)
+NSE TFL (adjusted),warn,unexplained jump,2008-06-17,close moved 20.2% (to 23.295473251028806)
+NSE TFL (adjusted),warn,unexplained jump,2016-11-02,close moved 20.0% (to 10.311111111111112)
 NSE TGBHOTELS (adjusted),warn,unexplained jump,2010-01-05,close moved 20.1% (to 61.35)
 NSE TGBHOTELS (adjusted),warn,unexplained jump,2010-05-24,close moved 20.0% (to 91.15)
 NSE TGBHOTELS (adjusted),warn,unexplained jump,2013-02-26,close moved 20.0% (to 50.4)
@@ -3197,13 +3107,6 @@ NSE UNITECH (adjusted),warn,unexplained jump,2009-01-07,close moved 20.9% (to 36
 NSE UNITECH (adjusted),warn,unexplained jump,2009-04-17,close moved 22.0% (to 52.7)
 NSE UNITECH (adjusted),warn,unexplained jump,2009-05-18,close moved 26.6% (to 64.5)
 NSE UNITECH (adjusted),warn,unexplained jump,2015-06-03,close moved 35.7% (to 8.65)
-NSE UNIVAFOODS (adjusted),warn,unexplained jump,2012-01-07,close moved 44.5% (to 4.3)
-NSE UNIVAFOODS (adjusted),warn,unexplained jump,2012-04-28,close moved 192.7% (to 14.05)
-NSE UNIVAFOODS (adjusted),warn,unexplained jump,2012-09-08,close moved 121.0% (to 31.05)
-NSE UNIVAFOODS (adjusted),warn,unexplained jump,2013-05-11,close moved 76.8% (to 7.2)
-NSE UNIVAFOODS (adjusted),warn,unexplained jump,2013-11-03,close moved 33.3% (to 4.8)
-NSE UNIVAFOODS (adjusted),warn,unexplained jump,2016-10-30,close moved 38.5% (to 6.65)
-NSE UNIVAFOODS (adjusted),warn,unexplained jump,2026-11-02,close moved 47.0% (to 9.48)
 NSE UNIVCABLES (adjusted),warn,unexplained jump,2007-05-28,close moved 20.0% (to 115.6)
 NSE UNIVCABLES (adjusted),warn,unexplained jump,2009-07-28,close moved 20.0% (to 70.7)
 NSE UNOMINDA (adjusted),warn,unexplained jump,2010-01-05,close moved 20.0% (to 9.598380010645702)
@@ -3522,18 +3425,6 @@ BSE BSE REALTY,warn,unexplained jump,2009-05-18,close moved 23.4% (to 2968.75)
 BSE BSE SME IPO,warn,bad candle,2013-05-24,O 255.07 H 256.07 L 254.85 C 256.08
 BSE BSE SME IPO,warn,bad candle,2015-10-08,O 806.81 H 809.6 L 806.33 C 809.61
 BSE BSE SME IPO,warn,bad candle,2023-06-30,O 26094.94 H 26377.13 L 26082.26 C 26082.25
-NSE ANDHRAPAP,warn,corporate action without factor,2010-02-23,rights: rights without issue price
 NSE DVL,warn,corporate action not seen in prices,2021-08-05,bonus 1:2: no matching price change near the ex-date
-NSE EDUCOMP,warn,corporate action not seen in prices,2009-10-27,split FV 10->2: no matching price change near the ex-date
-NSE GTLINFRA,warn,corporate action without factor,2007-07-20,rights: rights without issue price
 NSE GULFPETRO,warn,corporate action not seen in prices,2013-07-09,bonus 23:19: no matching price change near the ex-date
-NSE KMSUGAR,warn,corporate action not seen in prices,2010-03-26,split FV 10->2: no matching price change near the ex-date
 NSE ORIENTPPR,warn,corporate action without factor,2007-06-08,rights: rights without issue price
-NSE PATINTLOG,warn,corporate action without factor,2021-02-17,rights: rights without issue price
-NSE PATINTLOG,warn,corporate action without factor,2021-10-28,rights: rights without issue price
-NSE RELTD,warn,corporate action without factor,2026-06-08,rights: rights without issue price
-NSE SIGMAADV,warn,corporate action without factor,2021-07-12,rights: rights without issue price
-NSE TATASTEEL,warn,corporate action without factor,2007-10-29,rights: rights without issue price
-NSE TFL,warn,corporate action without factor,2022-11-04,rights: rights without issue price
-NSE TMPV,warn,corporate action without factor,2008-09-09,rights: rights without issue price
-NSE VHLTD,warn,corporate action without factor,2024-11-29,rights: rights without issue price

@@ -1,2 +1,2 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
-2007-07-20,rights,1:1,,,rights without issue price,NOT APPLIED,Rights 1:1 At Par,NSE
+2007-07-20,rights,1:1,0.5917431193,10,"TERP, issue price 10, close before 54.5",applied,Rights 1:1 At Par,NSE

@@ -1,2 +1,2 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
-2026-06-08,rights,1:9,,,rights without issue price,NOT APPLIED,Rights 1:9 @ Premium 91,NSE
+2026-06-08,rights,1:9,0.9788384982,101,"TERP, issue price 101, close before 128.11",applied,Rights 1:9 @ Premium 91,NSE

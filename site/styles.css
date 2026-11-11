@@ -1,33 +1,35 @@
-/* Swing Trading Dashboard - one stylesheet, light + dark via tokens. Phase N0: app frame (rail, top bar, card, status bar). */
+/* Swing Trading Dashboard - one stylesheet, light + dark via tokens. Phase N0: app frame (rail, top bar, card, status bar).
+   Look (11-Nov-2026, Viraj): light = "Airy Light" (white canvas on a soft blue frame, blue up / pink down, hairlines),
+   dark = "Midnight Pro" (the same layout in deep navy). Overrides at the end of the file. */
 :root {
-  --bg: #eef2f0; --panel: #ffffff; --panel-2: #f3f6f5; --text: #0f1a17; --muted: #5a6b66; --line: #e1e8e5;
-  --accent: #059669; --accent-soft: #dcf5ea; --on-accent: #ffffff; --up: #0f8a4a; --down: #d03a3a; --warn: #a15c00;
-  --heat-n4: #b42323; --heat-n3: #d04646; --heat-n2: #e47e7e; --heat-n1: #f2b8b8; --heat-0: #e5e7eb;
-  --heat-p1: #b9e3c8; --heat-p2: #7cc99a; --heat-p3: #3aa767; --heat-p4: #16803f;
-  --rail: #0c1a16; --rail-text: #93aaa2; --rail-on: #4ade80; --rail-on-bg: rgba(74, 222, 128, .14);
-  --radius: 10px; --shadow: 0 1px 2px rgba(15, 40, 30, .05);
-  --card-shadow: 0 1px 2px rgba(15, 40, 30, .04), 0 8px 28px rgba(15, 40, 30, .06);
+  --bg: #e8edfb; --panel: #ffffff; --panel-2: #f5f7fc; --text: #1c2533; --muted: #6b7686; --line: #e7eaf0;
+  --accent: #2f6fe4; --accent-soft: #eaf1fd; --on-accent: #ffffff; --up: #2f6fe4; --down: #d6336c; --warn: #b45309; --accent-2: #d6336c;
+  --heat-n4: #b8245a; --heat-n3: #d6336c; --heat-n2: #e98aab; --heat-n1: #f6cddc; --heat-0: #eceef3;
+  --heat-p1: #cfe0fb; --heat-p2: #93b8f5; --heat-p3: #4f86ea; --heat-p4: #2458c4;
+  --rail: linear-gradient(180deg, #4f7fe8 0%, #6d8ef1 100%); --rail-tip: #1c2b4a; --rail-text: rgba(255, 255, 255, .9); --rail-on: #ffffff; --rail-on-bg: rgba(255, 255, 255, .22);
+  --radius: 10px; --shadow: 0 1px 2px rgba(30, 50, 90, .05);
+  --card-shadow: 0 1px 3px rgba(30, 50, 90, .04), 0 12px 34px rgba(70, 90, 170, .08);
   --rail-w: 64px; --top-h: 58px; --status-h: 28px;
   --font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #070c0b; --panel: #0f1715; --panel-2: #15201d; --text: #e6efec; --muted: #93a7a1; --line: #22302c;
-    --accent: #34d399; --accent-soft: #123328; --on-accent: #04201a; --up: #34c27a; --down: #f06363; --warn: #e9a23b;
-    --heat-n4: #8f1d1d; --heat-n3: #b02e2e; --heat-n2: #c95757; --heat-n1: #5c2b33; --heat-0: #24302d;
-    --heat-p1: #1f4a37; --heat-p2: #227a4c; --heat-p3: #239a5b; --heat-p4: #20b866;
-    --rail: #040807; --rail-text: #7f958e; --rail-on: #4ade80; --rail-on-bg: rgba(74, 222, 128, .12);
-    --shadow: none; --card-shadow: 0 0 0 1px rgba(255, 255, 255, .02); color-scheme: dark;
+    --bg: #0a1020; --panel: #0f1726; --panel-2: #141e31; --text: #e4eaf4; --muted: #8592a8; --line: #1f2a3d;
+    --accent: #4ea1ff; --accent-soft: #17233a; --on-accent: #06101f; --up: #4ea1ff; --down: #ff5d8f; --warn: #f0b54a; --accent-2: #ff5d8f;
+    --heat-n4: #a3204f; --heat-n3: #c8366a; --heat-n2: #7a2d4a; --heat-n1: #3d2233; --heat-0: #1c2536;
+    --heat-p1: #1d3357; --heat-p2: #24508f; --heat-p3: #2f74c9; --heat-p4: #4ea1ff;
+    --rail: #0b1220; --rail-tip: #1a2438; --rail-text: #6f86ad; --rail-on: #4ea1ff; --rail-on-bg: rgba(78, 161, 255, .14);
+    --shadow: none; --card-shadow: 0 0 0 1px rgba(255, 255, 255, .03); color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #070c0b; --panel: #0f1715; --panel-2: #15201d; --text: #e6efec; --muted: #93a7a1; --line: #22302c;
-  --accent: #34d399; --accent-soft: #123328; --on-accent: #04201a; --up: #34c27a; --down: #f06363; --warn: #e9a23b;
-  --heat-n4: #8f1d1d; --heat-n3: #b02e2e; --heat-n2: #c95757; --heat-n1: #5c2b33; --heat-0: #24302d;
-  --heat-p1: #1f4a37; --heat-p2: #227a4c; --heat-p3: #239a5b; --heat-p4: #20b866;
-  --rail: #040807; --rail-text: #7f958e; --rail-on: #4ade80; --rail-on-bg: rgba(74, 222, 128, .12);
-  --shadow: none; --card-shadow: 0 0 0 1px rgba(255, 255, 255, .02); color-scheme: dark;
+  --bg: #0a1020; --panel: #0f1726; --panel-2: #141e31; --text: #e4eaf4; --muted: #8592a8; --line: #1f2a3d;
+    --accent: #4ea1ff; --accent-soft: #17233a; --on-accent: #06101f; --up: #4ea1ff; --down: #ff5d8f; --warn: #f0b54a; --accent-2: #ff5d8f;
+    --heat-n4: #a3204f; --heat-n3: #c8366a; --heat-n2: #7a2d4a; --heat-n1: #3d2233; --heat-0: #1c2536;
+    --heat-p1: #1d3357; --heat-p2: #24508f; --heat-p3: #2f74c9; --heat-p4: #4ea1ff;
+    --rail: #0b1220; --rail-tip: #1a2438; --rail-text: #6f86ad; --rail-on: #4ea1ff; --rail-on-bg: rgba(78, 161, 255, .14);
+    --shadow: none; --card-shadow: 0 0 0 1px rgba(255, 255, 255, .03); color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -60,7 +62,7 @@ img.logo { display: block; width: 30px; height: auto; }
 }
 .rail a[data-tab] span, .rail button span {
   position: absolute; left: 52px; top: 50%; transform: translate(-4px, -50%); opacity: 0; pointer-events: none; white-space: nowrap;
-  background: var(--rail); color: #e6efec; font-size: 12.5px; font-weight: 500; padding: 4px 9px; border-radius: 7px;
+  background: var(--rail-tip); color: #e6efec; font-size: 12.5px; font-weight: 500; padding: 4px 9px; border-radius: 7px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, .25); transition: opacity .12s, transform .12s;
 }
 .rail a[data-tab]:hover, .rail button:hover { background: rgba(255, 255, 255, .06); color: #e6efec; text-decoration: none; }
@@ -1134,3 +1136,28 @@ td.small { font-size: 12px; white-space: normal; min-width: 140px; }
   .pg-add span { display: none; }
   .pg-add { padding: 0 9px; }
 }
+
+
+/* ---------------------------------------------------------------- Look: Airy Light (light) + Midnight Pro (dark), 11-Nov-2026
+   Like the reference's Warm-up page: the content is one white (navy) canvas, sections are not boxed, a hairline under each
+   section title with a short pink underline, pill toggles, small uppercase labels, lots of white space. */
+main.card { border: 0; border-radius: 18px; padding: 22px 26px 26px; }
+.rail a[data-tab]:hover, .rail button:hover { background: rgba(255, 255, 255, .14); color: #ffffff; }
+.rail a.active::before { background: var(--rail-on); }
+.pages { background: color-mix(in srgb, var(--panel) 55%, transparent); border-color: color-mix(in srgb, var(--line) 70%, transparent); }
+.pg-tab.on { background: var(--panel); color: var(--text); }
+.pg-tab.on .ic { color: var(--accent); }
+.asof { background: color-mix(in srgb, var(--panel) 70%, transparent); }
+.seg { border-radius: 9px; padding: 2px; gap: 2px; background: var(--panel); }
+.seg button { border-radius: 7px; }
+.seg button.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.home { gap: 30px; }
+.hcard, .hcard.ev { border: 0; border-radius: 0; padding: 0; background: transparent; }
+.hc-h { position: relative; padding-bottom: 10px; margin-bottom: 14px; }
+.hc-h::after { content: ""; position: absolute; left: 0; bottom: -1px; width: 28px; height: 2px; border-radius: 2px; background: var(--accent-2); }
+.hc-h h2 { font-size: 15px; font-weight: 600; }
+.hc-3 > div { padding: 0 22px; }
+.table-wrap { box-shadow: none; }
+th { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; }
+.statusbar { background: var(--bg); border-top-color: transparent; }
+@media (max-width: 720px) { main.card { padding: 14px 12px; } .hc-3 > div { padding: 0; } }

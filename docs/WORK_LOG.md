@@ -964,3 +964,17 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - site/app.js chartHover(): a dashed vertical line (+ dots on line charts) on the day under the pointer. The header shows
   that day's date and values: participation % and its label, stage 2 / 4 %, FII / DII net, net highs-lows with highs
   and lows. The latest day comes back on leave; the hovered bar is drawn darker. Checked in the preview; JS tests green.
+
+### 2026-11-11: new look - Airy Light (light mode) + Midnight Pro (dark mode)
+- Viraj picked two of six templates (https://claude.ai/artifact/LvwmLcU1xWRWa2dk6nq2Cj), modelled on the reference's
+  Warm-up page: light = Airy Light, dark = Midnight Pro, switched with the moon button as before.
+- site/styles.css tokens:
+  - light: soft blue frame #e8edfb, white canvas, hairlines #e7eaf0, blue accent / up #2f6fe4, pink down #d6336c,
+    blue-gradient rail with white icons;
+  - dark: navy #0a1020 / #0f1726, blue #4ea1ff, pink #ff5d8f.
+  - The heatmap scale is pink-blue too. Charts were already blue / pink (chart style "Default").
+- Overrides at the end of the file:
+  - unboxed Home sections; a hairline plus a short pink underline under each section title;
+  - pill toggles, uppercase table headers, a softer Pages bar;
+  - more white space (Home gap 30 px).
+- Checked Home, Scanners and Heatmap in both modes and on a phone; no console errors; JS tests green.

@@ -772,6 +772,10 @@ td.small { font-size: 12px; white-space: normal; min-width: 140px; }
 .hl-bars { width: 100%; height: 34px; display: block; margin: 4px 0; }
 .hl-bars rect.pos { fill: color-mix(in srgb, #2962ff 40%, transparent); } .hl-bars rect.neg { fill: color-mix(in srgb, #db2777 40%, transparent); }
 .hl-bars rect.pos.last { fill: #2962ff; } .hl-bars rect.neg.last { fill: #db2777; }
+.hl-svg, .hl-bars { touch-action: pan-y; cursor: crosshair; }
+.hl-x line { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; }
+.hl-x circle { stroke: var(--panel); stroke-width: 1.5; }
+.hl-bars rect.pos.hov { fill: #2962ff; } .hl-bars rect.neg.hov { fill: #db2777; }
 .hf-row { padding: 6px 0 8px; border-bottom: 1px solid var(--line); }
 .hf-t { display: flex; align-items: baseline; gap: 8px; font-size: 12.5px; }
 .hf-t > :nth-child(2) { margin-left: auto; }

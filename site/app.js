@@ -1584,7 +1584,7 @@
     const lo = o.lo ?? 0, hi = o.hi ?? 100;
     const X = (i) => padL + (i / (n - 1)) * pw, Y = (v) => 6 + ph - ((v - lo) / (hi - lo || 1)) * ph;
     const path = (vals) => vals.map((v, i) => (v == null ? null : `${X(i).toFixed(1)},${Y(v).toFixed(1)}`)).filter(Boolean);
-    let s = `<svg class="hl-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(o.label || "chart")}">`;
+    let s = `<svg class="hl-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(o.label || "chart")}"${o.id ? ` id="${o.id}" data-n="${n}" data-padl="${padL}" data-pw="${pw}" data-top="6" data-ph="${ph}" data-lo="${lo}" data-hi="${hi}"` : ""}>`;
     for (const [a, b, c] of o.bands || []) s += `<rect x="${padL}" y="${Y(b)}" width="${pw}" height="${Y(a) - Y(b)}" fill="${c}"/>`;
     for (const t of o.ticks || []) s += `<line x1="${padL}" x2="${W - 4}" y1="${Y(t)}" y2="${Y(t)}" class="hl-grid"/><text x="${padL - 4}" y="${Y(t) + 3}" text-anchor="end" class="hl-ax">${t}${o.unit || ""}</text>`;
     for (const l of lines) {
@@ -1599,11 +1599,40 @@
   /** bars around zero (FII / DII, highs - lows); the last bar darker */
   function svgBars(vals, o = {}) {
     const W = o.w || 300, H = o.h || 34, n = Math.max(vals.length, 1), m = Math.max(1, ...vals.map((v) => Math.abs(v || 0))), bw = W / n, mid = H / 2;
-    return `<svg class="hl-bars" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><line x1="0" x2="${W}" y1="${mid}" y2="${mid}" class="hl-grid"/>${vals.map((v, i) => {
+    return `<svg class="hl-bars" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"${o.id ? ` id="${o.id}" data-n="${n}"` : ""}><line x1="0" x2="${W}" y1="${mid}" y2="${mid}" class="hl-grid"/>${vals.map((v, i) => {
       if (v == null) return "";
       const h = Math.max(1, (Math.abs(v) / m) * (mid - 1)), last = i === n - 1;
-      return `<rect x="${(i * bw + bw * 0.12).toFixed(1)}" y="${v >= 0 ? mid - h : mid}" width="${(bw * 0.76).toFixed(1)}" height="${h.toFixed(1)}" class="${v >= 0 ? "pos" : "neg"} ${last ? "last" : ""}"/>`;
+      return `<rect data-i="${i}" x="${(i * bw + bw * 0.12).toFixed(1)}" y="${v >= 0 ? mid - h : mid}" width="${(bw * 0.76).toFixed(1)}" height="${h.toFixed(1)}" class="${v >= 0 ? "pos" : "neg"} ${last ? "last" : ""}"/>`;
     }).join("")}</svg>`;
+  }
+  /** hover on a Home chart (Viraj 11-Nov, like the reference's Warm-up page): a vertical line (+ dots on line charts) on the
+      day under the pointer, and onMove(i) / onLeave() update the header text; the latest day comes back on leave */
+  function chartHover(svg, series, onMove, onLeave) {
+    if (!svg) return;
+    const NS = "http://www.w3.org/2000/svg", W = svg.viewBox.baseVal.width, H = svg.viewBox.baseVal.height, n = Number(svg.dataset.n) || 1;
+    const bars = svg.classList.contains("hl-bars");
+    const padL = Number(svg.dataset.padl) || 0, pw = Number(svg.dataset.pw) || W, top = Number(svg.dataset.top) || 0, ph = Number(svg.dataset.ph) || H;
+    const lo = Number(svg.dataset.lo) || 0, hi = Number(svg.dataset.hi) || 100;
+    const X = (i) => (bars ? (i + 0.5) * (W / n) : padL + (i / Math.max(1, n - 1)) * pw), Y = (v) => top + ph - ((v - lo) / (hi - lo || 1)) * ph;
+    const g = document.createElementNS(NS, "g"); g.setAttribute("class", "hl-x"); g.style.display = "none";
+    const ln = document.createElementNS(NS, "line"); ln.setAttribute("y1", bars ? 0 : top); ln.setAttribute("y2", bars ? H : top + ph);
+    ln.setAttribute("vector-effect", "non-scaling-stroke"); g.appendChild(ln);
+    const dots = (series || []).map((sr) => { const c = document.createElementNS(NS, "circle"); c.setAttribute("r", 3.2); c.style.fill = sr.color; g.appendChild(c); return { c, sr }; });
+    svg.appendChild(g);
+    const rects = bars ? [...svg.querySelectorAll("rect")] : [];
+    let last = -1;
+    const at = (ev) => {
+      const b = svg.getBoundingClientRect(), x = ((ev.clientX - b.left) / (b.width || 1)) * W;
+      return Math.max(0, Math.min(n - 1, bars ? Math.floor(x / (W / n)) : Math.round(((x - padL) / (pw || 1)) * (n - 1))));
+    };
+    svg.addEventListener("pointermove", (ev) => {
+      const i = at(ev); if (i === last) return; last = i;
+      g.style.display = ""; const x = X(i); ln.setAttribute("x1", x); ln.setAttribute("x2", x);
+      for (const { c, sr } of dots) { const v = sr.vals[i]; if (v == null) { c.style.display = "none"; continue; } c.style.display = ""; c.setAttribute("cx", x); c.setAttribute("cy", Y(v)); }
+      rects.forEach((r) => r.classList.toggle("hov", Number(r.dataset.i) === i));
+      onMove(i);
+    });
+    svg.addEventListener("pointerleave", () => { last = -1; g.style.display = "none"; rects.forEach((r) => r.classList.remove("hov")); onLeave(); });
   }
   const spark = (vals, up, w = 180, h = 36) => {
     const v = vals.filter((x) => x != null);
@@ -1657,22 +1686,22 @@
     const n500s = n500.map((x) => (x == null ? null : 5 + ((x - nlo) / (nhi - nlo || 1)) * 90));
     const xl = days.length ? [[0, shortDay(days[0])], [Math.floor(days.length / 2), shortDay(days[Math.floor(days.length / 2)])], [days.length - 1, shortDay(days[days.length - 1])]] : [];
     const partHTML = B ? `<div class="hp-h"><small class="muted">PARTICIPATION</small>${seg("hpart", [["20", "20D"], ["50", "50D"], ["200", "200D"]], hs.part)}</div>
-      <div class="hp-v"><b>${pv == null ? "–" : pv.toFixed(1) + "%"}</b><span class="tag t-info">${esc(lab(pv, B.config.participation_labels))}</span><small class="muted">above the ${hs.part}-day average · latest ${shortDay(days[days.length - 1])}</small></div>
-      ${svgLines([{ vals: n500s, color: "var(--muted)", width: 1.2 }, { vals: cut(pk), color: "#2962ff", fill: "rgba(41,98,255,.12)" }], { lo: 0, hi: 100, ticks: [0, 20, 50, 80, 100], unit: "%", bands: [[80, 100, "rgba(219,39,119,.08)"]], xlabels: xl, label: "Participation" })}
+      <div class="hp-v"><b id="hpVal">${pv == null ? "–" : pv.toFixed(1) + "%"}</b><span class="tag t-info" id="hpTag">${esc(lab(pv, B.config.participation_labels))}</span><small class="muted">above the ${hs.part}-day average · <span id="hpDay">latest ${shortDay(days[days.length - 1])}</span></small></div>
+      ${svgLines([{ vals: n500s, color: "var(--muted)", width: 1.2 }, { vals: cut(pk), color: "#2962ff", fill: "rgba(41,98,255,.12)" }], { lo: 0, hi: 100, ticks: [0, 20, 50, 80, 100], unit: "%", bands: [[80, 100, "rgba(219,39,119,.08)"]], xlabels: xl, label: "Participation", id: "hpPart" })}
       <small class="muted">grey = Nifty 500 (scaled) · pink zone = more than 80 % (stretched)</small>
-      <div class="hp-h" style="margin-top:12px"><small class="muted">STAGE 2 · STAGE 4</small><span class="small"><b style="color:#2962ff">Stage 2 ${(last("stage2") ?? 0).toFixed(1)}%</b> · <b style="color:#db2777">Stage 4 ${(last("stage4") ?? 0).toFixed(1)}%</b></span></div>
-      ${svgLines([{ vals: cut("stage2"), color: "#2962ff" }, { vals: cut("stage4"), color: "#db2777" }], { lo: 0, hi: 70, ticks: [0, 35, 70], unit: "%", xlabels: xl, h: 120, label: "Stage 2 and stage 4" })}` : "";
+      <div class="hp-h" style="margin-top:12px"><small class="muted">STAGE 2 · STAGE 4 <span id="hsDay"></span></small><span class="small"><b style="color:#2962ff" id="hsS2">Stage 2 ${(last("stage2") ?? 0).toFixed(1)}%</b> · <b style="color:#db2777" id="hsS4">Stage 4 ${(last("stage4") ?? 0).toFixed(1)}%</b></span></div>
+      ${svgLines([{ vals: cut("stage2"), color: "#2962ff" }, { vals: cut("stage4"), color: "#db2777" }], { lo: 0, hi: 70, ticks: [0, 35, 70], unit: "%", xlabels: xl, h: 120, label: "Stage 2 and stage 4", id: "hpStage" })}` : "";
     // FII / DII + highs - lows
     const fr = flows ? flows.rows.slice(-22) : [];
     const sum = (k) => fr.reduce((a, r) => a + (r[k] || 0), 0);
-    const flowRow = (k, label) => { const lastR = fr[fr.length - 1]; return `<div class="hf-row"><div class="hf-t"><b>${label}</b><small class="muted">${lastR ? shortDay(lastR.date) : ""}</small><b class="${lastR && lastR[k] >= 0 ? "up" : "down"}">${lastR ? (lastR[k] > 0 ? "+" : "") + finNum(lastR[k]) : "–"}</b></div>
-      ${svgBars(fr.map((r) => r[k]))}<div class="hf-t"><small class="muted">${fr.length} session${fr.length === 1 ? "" : "s"} net</small><b class="${sum(k) >= 0 ? "up" : "down"}">${sum(k) > 0 ? "+" : ""}${finNum(sum(k))}</b></div></div>`; };
+    const flowRow = (k, label) => { const lastR = fr[fr.length - 1]; return `<div class="hf-row"><div class="hf-t"><b>${label}</b><small class="muted" id="hf-${k}-d">${lastR ? shortDay(lastR.date) : ""}</small><b id="hf-${k}-v" class="${lastR && lastR[k] >= 0 ? "up" : "down"}">${lastR ? (lastR[k] > 0 ? "+" : "") + finNum(lastR[k]) : "–"}</b></div>
+      ${svgBars(fr.map((r) => r[k]), { id: `hf-${k}` })}<div class="hf-t"><small class="muted">${fr.length} session${fr.length === 1 ? "" : "s"} net</small><b class="${sum(k) >= 0 ? "up" : "down"}">${sum(k) > 0 ? "+" : ""}${finNum(sum(k))}</b></div></div>`; };
     const hl = (S.nh20 || []).slice(-22).map((h, i) => h - ((S.nl20 || []).slice(-22)[i] || 0));
     const flowHTML = `<div class="hp-h"><small class="muted">FII / DII CASH · ${fr.length > 1 ? `LAST ${fr.length} SESSIONS` : "LATEST SESSION"}</small><small class="muted">₹ crore</small></div>
       ${fr.length ? flowRow("fii_net", "FII") + flowRow("dii_net", "DII") + (fr.length < 22 ? `<p class="muted small">Collected daily from NSE since ${SD.fmtDate(flows.since)}; the bars fill up to 22 sessions.</p>` : "") : '<p class="muted small">FII / DII figures start with the next daily update.</p>'}
       <div class="hp-h" style="margin-top:12px"><small class="muted">20-DAY HIGHS · LOWS · LAST 22 SESSIONS</small></div>
-      ${B ? `<div class="hf-row"><div class="hf-t"><b>Net highs − lows</b><small class="muted">${shortDay(days[days.length - 1])}</small><b class="${hl[hl.length - 1] >= 0 ? "up" : "down"}">${hl[hl.length - 1] > 0 ? "+" : ""}${hl[hl.length - 1] ?? "–"}</b></div>${svgBars(hl)}
-        <div class="hf-t"><span></span><span class="small"><b class="up">${last("nh20") ?? "–"} highs</b> · <b class="down">${last("nl20") ?? "–"} lows</b></span></div></div>` : ""}`;
+      ${B ? `<div class="hf-row"><div class="hf-t"><b>Net highs − lows</b><small class="muted" id="hhl-d">${shortDay(days[days.length - 1])}</small><b id="hhl-v" class="${hl[hl.length - 1] >= 0 ? "up" : "down"}">${hl[hl.length - 1] > 0 ? "+" : ""}${hl[hl.length - 1] ?? "–"}</b></div>${svgBars(hl, { id: "hhl" })}
+        <div class="hf-t"><span></span><span class="small"><b class="up" id="hhl-h">${last("nh20") ?? "–"} highs</b> · <b class="down" id="hhl-l">${last("nl20") ?? "–"} lows</b></span></div></div>` : ""}`;
     // indices strip
     const IDX = [["NIFTY_50", "Nifty 50"], ["NIFTY_500", "Nifty 500"], ["NIFTY_MIDCAP_150", "Midcap 150"], ["NIFTY_SMALLCAP_250", "Smallcap 250"], ["NIFTY_MICROCAP_250", "Microcap 250"], ["NIFTY_BANK", "Nifty Bank"], ["INDIA_VIX", "India VIX"]];
     const idxHTML = IDX.map(([id, name]) => { const r = state.byKey.get("n:" + id); return r ? `<a class="hi-card" href="#/i/n/${id}" data-idx="${id}"><div class="hi-t"><span>${name}</span>${pct(r.chg_1d)}</div><b>${SD.fmtPrice(r.close)}</b>
@@ -1735,6 +1764,24 @@
       <p class="muted small">Our own simple rules on end-of-day data. Educational purpose only, not investment advice.</p></div>`;
     $("#stPage").innerHTML = `<span>${setups.length} setups</span><span class="st-n">Data ${SD.fmtDate(state.screenDate || state.dataDate)}</span>`;
     const hr = $("#hrMore"); if (hr) hr.onclick = () => { hs.more = !hs.more; saveHs(); renderHome(); };
+    if (B) {   // hover: the day under the pointer in the header, the latest day again on leave
+      const setTxt = (id, t, cls) => { const e = document.getElementById(id); if (!e) return; e.textContent = t; if (cls) e.className = cls; };
+      const sgn = (v, f = (x) => String(x)) => (v == null ? "–" : (v > 0 ? "+" : "") + f(v));
+      const pa = cut(pk), s2 = cut("stage2"), s4 = cut("stage4");
+      chartHover(document.getElementById("hpPart"), [{ vals: pa, color: "#2962ff" }], (i) => {
+        const v = pa[i]; setTxt("hpVal", v == null ? "–" : v.toFixed(1) + "%"); setTxt("hpTag", lab(v, B.config.participation_labels)); setTxt("hpDay", shortDay(days[i]));
+      }, () => { setTxt("hpVal", pv == null ? "–" : pv.toFixed(1) + "%"); setTxt("hpTag", lab(pv, B.config.participation_labels)); setTxt("hpDay", "latest " + shortDay(days[days.length - 1])); });
+      chartHover(document.getElementById("hpStage"), [{ vals: s2, color: "#2962ff" }, { vals: s4, color: "#db2777" }], (i) => {
+        setTxt("hsDay", "· " + shortDay(days[i])); setTxt("hsS2", `Stage 2 ${(s2[i] ?? 0).toFixed(1)}%`); setTxt("hsS4", `Stage 4 ${(s4[i] ?? 0).toFixed(1)}%`);
+      }, () => { setTxt("hsDay", ""); setTxt("hsS2", `Stage 2 ${(last("stage2") ?? 0).toFixed(1)}%`); setTxt("hsS4", `Stage 4 ${(last("stage4") ?? 0).toFixed(1)}%`); });
+      for (const k of ["fii_net", "dii_net"]) {
+        const show = (r) => { setTxt(`hf-${k}-d`, r ? shortDay(r.date) : ""); setTxt(`hf-${k}-v`, r ? sgn(r[k], finNum) : "–", r && r[k] >= 0 ? "up" : "down"); };
+        chartHover(document.getElementById(`hf-${k}`), null, (i) => show(fr[i]), () => show(fr[fr.length - 1]));
+      }
+      const hd = B.days.slice(-22), nh = (S.nh20 || []).slice(-22), nl = (S.nl20 || []).slice(-22);
+      const showHL = (i) => { setTxt("hhl-d", shortDay(hd[i])); setTxt("hhl-v", sgn(hl[i]), hl[i] >= 0 ? "up" : "down"); setTxt("hhl-h", `${nh[i] ?? "–"} highs`); setTxt("hhl-l", `${nl[i] ?? "–"} lows`); };
+      chartHover(document.getElementById("hhl"), null, showHL, () => showHL(hl.length - 1));
+    }
     const hp = view.querySelector("[data-seg=hpart]"); if (hp) hp.onclick = (e) => { const b = e.target.closest("button"); if (!b) return; hs.part = b.dataset.v; saveHs(); renderHome(); };
     $("#hsCopy").onclick = async () => { const t = setups.map(({ r }) => "NSE:" + r.symbol).join(","); try { await navigator.clipboard.writeText(t); $("#hsCopy").textContent = `Copied ${setups.length}`; } catch (e) { prompt("Copy these symbols:", t); } };
     view.querySelectorAll(".hs-t tr[data-key]").forEach((tr) => { tr.onclick = () => { location.hash = "#/i/" + tr.dataset.key.replace(":", "/"); }; });

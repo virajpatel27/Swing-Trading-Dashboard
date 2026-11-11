@@ -957,3 +957,10 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   of 18 (Daily Base 46 of 281, Shakeout 16 of 58).
 - Fix (site/app.js, styles.css): when a filter is on, the header shows "shown / all" and a chip ("Nifty 500 ✕") that
   clears it. The footer names the filter too. Checked in the preview; JS tests 32 green.
+
+### 2026-11-11: hover on the Home charts
+- Viraj: the Participation, Stage 2 / Stage 4, FII / DII and Net highs - lows charts must show each day's value under
+  the mouse, like the reference's Warm-up page (checked in his 09-Nov video).
+- site/app.js chartHover(): a dashed vertical line (+ dots on line charts) on the day under the pointer. The header shows
+  that day's date and values: participation % and its label, stage 2 / 4 %, FII / DII net, net highs-lows with highs
+  and lows. The latest day comes back on leave; the hovered bar is drawn darker. Checked in the preview; JS tests green.

@@ -997,3 +997,5 @@ Newest at the bottom. Each entry: what was done, why, what is next.
     at today, the panel goes below.
 - Checked in the preview: light, dark, phone, hover, filters; no console errors (local 404s are only the old local
   data/f copy). JS tests 32 / 32, Python tests 216 passed.
+- Follow-up (same day): on laptop widths up to 1399 px the letter badges are hidden and the right panel is 280 px,
+  so symbols fit (1093 px: 15 of 465 symbols still cut, 1440 px: 1); below 136 px a column, the columns scroll sideways.

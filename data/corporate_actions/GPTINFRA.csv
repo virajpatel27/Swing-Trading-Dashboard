@@ -23,4 +23,4 @@ ex_date,type,ratio,factor,amount,method,status,subject,source
 2025-08-11,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1 Per Share,NSE
 2026-02-03,dividend,,1,0.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 0.75 Per Share,NSE
 2026-05-26,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1 Per Share,NSE
-2026-11-11,dividend,,,1,,future,Interim Dividend - Re 1 Per Share,NSE
+2026-11-11,dividend,,1,1,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 1 Per Share,NSE

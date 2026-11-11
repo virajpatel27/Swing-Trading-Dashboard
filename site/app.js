@@ -1433,147 +1433,256 @@
     window.addEventListener("resize", hmResize);
   }
 
-  /* ------------------------------------------------------------------ earnings calendar (Phase N6) */
+  /* ------------------------------------------------------------------ earnings calendar (Phase N6; new look 11-Nov-2026) */
   /* Our own grade of the latest quarter vs the same quarter a year before (screen fields, fundamentals.py):
      Excellent = sales +15 % or more AND net profit +25 % or more (profit positive), or a turnaround with sales +15 %
      Good      = sales +5 % or more AND profit +5 % or more (profit positive), or any turnaround (loss -> profit)
      Weak      = a loss this quarter, or sales AND profit both lower
-     Mixed     = everything else with numbers */
+     Mixed     = everything else with numbers
+     Layout (Viraj 11-Nov, like the reference video): five day columns with today in the middle (Sat / Sun only when a
+     result is on them), one hover card per stock, "Recent earnings" on the right, which becomes "Matching stocks" while
+     a filter is on. */
   const GRADE_RULE = "Our rule on the latest quarter vs a year before: Excellent = sales ≥ +15 % and net profit ≥ +25 % (or a turnaround with sales ≥ +15 %); "
     + "Good = sales ≥ +5 % and profit ≥ +5 % (or any loss-to-profit turnaround); Weak = a loss, or sales and profit both down; Mixed = the rest.";
   const earnGrade = (r) => SD.earnGrade(r);
   const GRADE_CLS = { Excellent: "g-ex", Good: "g-good", Mixed: "g-mix", Weak: "g-weak" };
   const GRADE_ORDER = { Excellent: 0, Good: 1, Mixed: 2, Weak: 3 };
-  const EARN_SIGNALS = [["eps100", "EPS YoY > 100%", (r) => r.eps_g_yoy > 100], ["pat50", "Profit YoY > 50%", (r) => r.np_g_yoy > 50],
-    ["sales25", "Sales YoY > 25%", (r) => r.sales_g_yoy > 25], ["accel", "EPS growth speeding up", (r) => r.eps_g_accel_qtrs >= 1],
-    ["margin", "Net margin up", (r) => r.npm_up_qtrs >= 1], ["turn", "Turnaround", (r) => r.np_year_ago_q != null && r.np_year_ago_q <= 0 && r.np_last_q > 0],
+  const EARN_SIGNALS = [["eps100", "EPS YoY > 100%", (r) => r.eps_g_yoy > 100], ["pat50", "PAT YoY > 50%", (r) => r.np_g_yoy > 50],
+    ["sales25", "Sales YoY > 25%", (r) => r.sales_g_yoy > 25], ["accel", "Accelerating", (r) => r.eps_g_accel_qtrs >= 1],
+    ["margin", "Margin up", (r) => r.npm_up_qtrs >= 1], ["turn", "Turnaround", (r) => r.np_year_ago_q != null && r.np_year_ago_q <= 0 && r.np_last_q > 0],
     ["rs70", "RS ≥ 70", (r) => r.rs_rating >= 70]];
+  const EARN_SORTS = [["eps", "EPS growth", (r) => r.eps_g_yoy], ["sales", "Sales growth", (r) => r.sales_g_yoy], ["np", "Profit growth", (r) => r.np_g_yoy],
+    ["react", "Results-day move", (r) => r.earn_chg_pct], ["mcap", "Market cap", (r) => r.mcap_cr]];
   const isoDay = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   const mondayOf = (iso) => { const d = new Date(iso + "T00:00:00"); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return isoDay(d); };
   const addDays = (iso, n) => { const d = new Date(iso + "T00:00:00"); d.setDate(d.getDate() + n); return isoDay(d); };
+  const WD3 = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], MO3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const dLbl = (iso, yr) => { const t = new Date(iso + "T00:00:00"); return `${WD3[t.getDay()]} ${t.getDate()} ${MO3[t.getMonth()]}${yr ? " " + t.getFullYear() : ""}`; };
+  /** a round letter badge per stock (we have no logos): the colour comes from the symbol, so a stock always looks the same */
+  const monoHue = (s) => { let h = 7; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) % 360; return h; };
+  const mono = (sym, big) => `<i class="mono${big ? " big" : ""}" style="--h:${monoHue(sym)}" aria-hidden="true">${esc(String(sym).replace(/[^A-Z0-9]/gi, "").slice(0, big ? 2 : 1))}</i>`;
+  const sgnPct = (x, d = 0, unit = "%") => (x == null || !isFinite(x) ? '<span class="muted">—</span>'
+    : `<span class="${x >= 0 ? "up" : "down"}">${x > 0 ? "+" : x < 0 ? "−" : ""}${finNum(Math.abs(x), d)}${unit}</span>`);
+  const sig3 = (v) => (v == null || !isFinite(v) ? "–" : finNum(v, Math.abs(v) < 10 ? 2 : Math.abs(v) < 100 ? 1 : 0));
+  const crore = (v) => (v == null || !isFinite(v) ? "–" : `${v < 0 ? "−" : ""}₹${finNum(Math.abs(v), Math.abs(v) < 10 ? 1 : 0)} Cr`);
 
-  async function renderEarnings(weekArg) {
+  async function renderEarnings(arg) {
     if (!state.screen) view.innerHTML = SKEL("Loading the earnings calendar");
     try { await loadScreen(); } catch (e) { view.innerHTML = `<p class="empty">Could not load the stock table (${esc(e.message)}).</p>`; return; }
+    try { if (!state.breadth) state.breadth = await getJSON("data/breadth.json"); } catch (e) { /* holidays are then just not marked */ }
     if (routeName() !== "earnings") return;
-    const today = state.screenDate;
-    const mon = /^\d{4}-\d{2}-\d{2}$/.test(weekArg || "") ? mondayOf(weekArg) : mondayOf(today);
-    const days = [0, 1, 2, 3, 4, 5].map((k) => addDays(mon, k)), sun = addDays(mon, 6);
-    const flt = Object.assign({ mcap: ["", ""], eps: ["", ""], sales: ["", ""], np: ["", ""], grades: [], sig: [], q: "" }, store.get("sd-earn-f", {}));
-    const n = (x) => (x === "" || x == null ? null : Number(x));
-    const inR = (v, [a, b]) => (n(a) == null || (v != null && v >= n(a))) && (n(b) == null || (v != null && v <= n(b)));
-    const nf = () => ["mcap", "eps", "sales", "np"].filter((k) => n(flt[k][0]) != null || n(flt[k][1]) != null).length + flt.grades.length + flt.sig.length;
-    const pass = (r, g) => inR(r.mcap_cr, flt.mcap) && inR(r.eps_g_yoy, flt.eps) && inR(r.sales_g_yoy, flt.sales) && inR(r.np_g_yoy, flt.np)
-      && (!flt.grades.length || flt.grades.includes(g)) && flt.sig.every((k) => { const s = EARN_SIGNALS.find((x) => x[0] === k); return s && s[2](r); });
+    const today = isoDay(new Date());
     const rows = state.screen.filter((r) => !r.stale);
     // season: the latest quarter most stocks report
     const qs = new Map(); for (const r of rows) if (r.fin_qtr) qs.set(r.fin_qtr, (qs.get(r.fin_qtr) || 0) + 1);
     const qEnd = [...qs.keys()].sort().pop() || "", reported = qs.get(qEnd) || 0;
     const fqLabel = qEnd ? fq(qEnd) : "";
-    const col = (d) => {
-      const key = d === days[5] ? [d, sun] : [d];
-      const done = rows.filter((r) => key.includes(r.last_result) && r.fin_qtr === qEnd), due = rows.filter((r) => key.includes(r.next_result) && !key.includes(r.last_result));
-      const items = done.map((r) => ({ r, g: earnGrade(r), done: true })).concat(due.map((r) => ({ r, g: null, done: false })))
-        .filter((x) => (x.done ? pass(x.r, x.g) : !nf() || (flt.grades.length === 0 && pass(x.r, null))))
+    const byDone = new Map(), byDue = new Map(), put = (m, d, r) => { if (!m.has(d)) m.set(d, []); m.get(d).push(r); };
+    for (const r of rows) {
+      if (r.last_result && r.fin_qtr === qEnd) put(byDone, r.last_result, r);
+      if (r.next_result && r.next_result !== r.last_result) put(byDue, r.next_result, r);
+    }
+    // the five columns: weekdays always, Sat / Sun only with something on them
+    const wkend = (d) => { const g = new Date(d + "T00:00:00").getDay(); return g === 0 || g === 6; };
+    const shows = (d) => !wkend(d) || byDone.has(d) || byDue.has(d) || d === today;
+    const step = (d, k) => { let x = d; do { x = addDays(x, k); } while (!shows(x)); return x; };
+    let start;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(arg || "")) start = shows(arg) ? arg : step(arg, 1);
+    else { const c = shows(today) ? today : step(today, 1); start = step(step(c, -1), -1); }
+    const days = [start]; while (days.length < 5) days.push(step(days[days.length - 1], 1));
+    let prev = start; for (let i = 0; i < 5; i++) prev = step(prev, -1);
+    const next = step(days[4], 1);
+    const TD = state.breadth && state.breadth.days ? state.breadth.days : [], tdSet = new Set(TD);
+    const holiday = (d) => TD.length && !wkend(d) && d >= TD[0] && d <= TD[TD.length - 1] && !tdSet.has(d);
+    // filters (saved in the browser)
+    const flt = Object.assign({ mcap: ["", ""], eps: ["", ""], sales: ["", ""], np: ["", ""], grades: [], sig: [], q: "", sort: "eps" }, store.get("sd-earn-f", {}));
+    const n = (x) => (x === "" || x == null ? null : Number(x));
+    const inR = (v, [a, b]) => (n(a) == null || (v != null && v >= n(a))) && (n(b) == null || (v != null && v <= n(b)));
+    const nf = () => ["mcap", "eps", "sales", "np"].filter((k) => n(flt[k][0]) != null || n(flt[k][1]) != null).length + flt.grades.length + flt.sig.length;
+    const pass = (r, g) => inR(r.mcap_cr, flt.mcap) && inR(r.eps_g_yoy, flt.eps) && inR(r.sales_g_yoy, flt.sales) && inR(r.np_g_yoy, flt.np)
+      && (!flt.grades.length || flt.grades.includes(g)) && flt.sig.every((k) => { const s = EARN_SIGNALS.find((x) => x[0] === k); return s && s[2](r); });
+    const qq = flt.q.trim().toLowerCase(), hit = (r) => !qq || r.symbol.toLowerCase().includes(qq) || String(r.name || "").toLowerCase().includes(qq);
+    const NF = nf();
+    let weekDone = 0;
+    const matching = [];
+    const col = (d, i) => {
+      const done = byDone.get(d) || [], due = byDue.get(d) || [];
+      weekDone += done.length;
+      const all = done.map((r) => ({ r, g: earnGrade(r), done: true })).concat(due.map((r) => ({ r, g: null, done: false })));
+      const items = all.filter((x) => (x.done ? pass(x.r, x.g) : !NF))
         .sort((a, b) => (a.done === b.done ? 0 : a.done ? -1 : 1) || (GRADE_ORDER[a.g] ?? 9) - (GRADE_ORDER[b.g] ?? 9) || (b.r.mcap_cr ?? 0) - (a.r.mcap_cr ?? 0));
+      for (const x of items) if (x.done) matching.push({ ...x, d });
       const up = done.filter((r) => r.eps_g_yoy > 0).length, dn = done.filter((r) => r.eps_g_yoy < 0).length;
-      const isToday = d === today, label = new Date(d + "T00:00:00").toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
-      return `<div class="ec ${isToday ? "today" : ""}"><div class="ec-h"><b>${label}${d === days[5] ? " – Sun" : ""}</b>${isToday ? '<span class="tag t-info">TODAY</span>' : ""}
-        <small class="muted">${done.length ? `${done.length} results · EPS YoY <span class="up">▲${up}</span> <span class="down">▼${dn}</span>` : ""}${due.length ? `${done.length ? " · " : ""}${due.length} due` : ""}${!done.length && !due.length ? "nothing listed" : ""}</small></div>
-        <div class="ec-l">${items.length ? items.slice(0, 120).map(({ r, g, done: dn2 }) => `<a class="ec-r" href="#/i/s/${encodeURIComponent(r.id)}" data-k="${esc(r.key)}"><b>${esc(r.symbol)}</b>${dn2 ? `<span class="gr ${GRADE_CLS[g] || ""}">${g || "–"}</span>` : '<small class="muted">due</small>'}</a>`).join("")
-          + (items.length > 120 ? `<small class="muted ec-more">+${items.length - 120} more (use the filters)</small>` : "") : '<p class="muted small ec-none">No stock.</p>'}</div></div>`;
+      const isT = d === today, hol = holiday(d);
+      const line = [done.length ? `${done.length} result${done.length === 1 ? "" : "s"} <span class="ec-eps">EPS YoY <span class="up">▲${up}</span> <span class="down">▼${dn}</span></span>` : "",
+        due.length ? `${due.length} due` : ""].filter(Boolean).join(" · ") || "No results";
+      return `<section class="ec${isT ? " today" : ""}${hol ? " hol" : ""}" style="--i:${i}"><div class="ec-h"><div class="ec-t"><b>${dLbl(d)}</b>${isT ? '<span class="ec-tag t">TODAY</span>' : ""}${hol ? '<span class="ec-tag h">HOLIDAY</span>' : ""}${NF && all.length ? `<span class="ec-n">${items.length}/${all.length}</span>` : ""}</div>
+        <small>${line}</small></div>
+        <div class="ec-l">${items.length ? items.map(({ r, g, done: ok }) => `<a class="ec-r${ok ? "" : " due"}" href="#/i/s/${encodeURIComponent(r.id)}" data-k="${esc(r.key)}" data-d="${d}">${mono(r.symbol)}<b>${esc(r.symbol)}</b>${ok ? `<span class="egt ${GRADE_CLS[g] || ""}">${g || "–"}</span>` : ""}</a>`).join("")
+          : `<p class="ec-none">${NF && all.length ? "None match" : "Nothing listed"}</p>`}</div></section>`;
     };
-    const rangeTxt = `${new Date(days[0] + "T00:00:00").toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })} – ${new Date(days[5] + "T00:00:00").toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}`;
-    // recent earnings: announced in the 14 days up to the end of this week, newest first
-    const recentFrom = addDays(days[5] > today ? today : sun, -14), recentTo = days[5] > today ? today : sun;
-    const recent = rows.filter((r) => r.last_result && r.last_result > recentFrom && r.last_result <= recentTo && r.fin_qtr === qEnd)
-      .map((r) => ({ r, g: earnGrade(r) })).filter(({ r, g }) => pass(r, g) && (!flt.q || r.symbol.toLowerCase().includes(flt.q.toLowerCase()) || String(r.name).toLowerCase().includes(flt.q.toLowerCase())))
+    const cols = days.map(col).join("");
+    const rangeTxt = `${dLbl(days[0])} – ${dLbl(days[4], true)}`;
+    const isNow = days.includes(today);
+    // right panel: recent earnings (no filter) or the stocks of these five days that pass the filters
+    const recentTo = days[4] > today ? today : days[4], recentFrom = addDays(recentTo, -14);
+    const recent = NF ? [] : rows.filter((r) => r.last_result && r.last_result > recentFrom && r.last_result <= recentTo && r.fin_qtr === qEnd && hit(r))
+      .map((r) => ({ r, g: earnGrade(r) }))
       .sort((a, b) => (a.r.last_result < b.r.last_result ? 1 : a.r.last_result > b.r.last_result ? -1 : (GRADE_ORDER[a.g] ?? 9) - (GRADE_ORDER[b.g] ?? 9) || (b.r.mcap_cr ?? 0) - (a.r.mcap_cr ?? 0)));
-    const rng = (k, l) => `<div class="ef-r"><label><input type="checkbox" data-fon="${k}" ${n(flt[k][0]) != null || n(flt[k][1]) != null ? "checked" : ""}> ${l}</label>between <input type="number" data-f="${k}" data-i="0" value="${esc(flt[k][0])}" placeholder="Any"> and <input type="number" data-f="${k}" data-i="1" value="${esc(flt[k][1])}" placeholder="Any"></div>`;
+    const sortF = (EARN_SORTS.find((s) => s[0] === flt.sort) || EARN_SORTS[0])[2];
+    const match = matching.filter((x) => hit(x.r)).sort((a, b) => (sortF(b.r) ?? -1e12) - (sortF(a.r) ?? -1e12));
+    const rng = (k, l) => `<div class="ef-r"><label><input type="checkbox" data-fon="${k}" ${n(flt[k][0]) != null || n(flt[k][1]) != null ? "checked" : ""}><span>${l}</span></label>
+      <span class="ef-w">between</span><input type="number" data-f="${k}" data-i="0" value="${esc(flt[k][0])}" placeholder="Any"><span class="ef-w">and</span><input type="number" data-f="${k}" data-i="1" value="${esc(flt[k][1])}" placeholder="Any"></div>`;
+    const FUNNEL = '<svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M2 3h12M4.5 8h7M7 13h2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>';
+    const SEARCH = '<svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><circle cx="7" cy="7" r="4.6" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M10.5 10.5 14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
     view.innerHTML = `<div class="earn">
-      <div class="eh"><h1>Earnings <span class="pk-i" title="${esc(GRADE_RULE)}">i</span></h1>
-        <a class="btn sm" href="#/earnings/${addDays(mon, -7)}" title="Previous week">‹</a><b class="eh-r">${rangeTxt}</b><a class="btn sm" href="#/earnings/${addDays(mon, 7)}" title="Next week">›</a>
-        <a class="btn sm ${mon === mondayOf(today) ? "on" : ""}" href="#/earnings">Today</a>
-        <span class="eh-s">${fqLabel} season <b>${reported.toLocaleString("en-IN")}</b> / ${rows.length.toLocaleString("en-IN")} stocks announced</span></div>
-      <div class="eg"><div class="ecs">${days.map(col).join("")}</div>
-        <aside class="er"><div class="er-h"><b>Recent earnings</b><div class="er-tools"><input type="search" id="erQ" placeholder="Search stock" value="${esc(flt.q)}">
-          <div class="menu-wrap"><button class="btn sm ${nf() ? "on" : ""}" id="efBtn" type="button">Filters${nf() ? ` · ${nf()}` : ""}</button>
-          <div class="menu right ef" id="efM" hidden><div class="ef-h"><b>Filters</b><small class="muted">${nf() ? nf() + " on" : "No filters on"}</small></div>
-            <h5>EARNINGS</h5>${rng("mcap", "Market cap ₹ Cr")}${rng("eps", "EPS growth %")}${rng("sales", "Sales growth %")}${rng("np", "Profit growth %")}
-            <h5>GRADE</h5><div class="ef-g">${Object.keys(GRADE_ORDER).map((g) => `<label><input type="checkbox" data-grade="${g}" ${flt.grades.includes(g) ? "checked" : ""}> ${g}</label>`).join("")}</div>
-            <h5>SIGNALS</h5><div class="ef-g">${EARN_SIGNALS.map(([k, l]) => `<label><input type="checkbox" data-sig="${k}" ${flt.sig.includes(k) ? "checked" : ""}> ${l}</label>`).join("")}</div>
-            <div class="ef-f"><small class="muted" id="efN">${nf()} filters active</small><button class="btn sm" type="button" data-ef="reset">Reset</button><button class="btn sm primary" type="button" data-ef="apply">Apply filters</button></div></div></div></div></div>
-          <div class="er-l" id="erL"></div></aside></div>
-      <p class="muted small">Grades and signals are our own simple rules on NSE filings (${esc(GRADE_RULE)}) Not investment advice.</p></div>
-      <div class="ehov" id="eHov" hidden></div>`;
-    $("#stPage").innerHTML = `<span>${days.reduce((a, d) => a + rows.filter((r) => r.last_result === d || (d === days[5] && r.last_result === sun)).length, 0)} results this week</span><span class="st-n">${rangeTxt}</span>`;
-    // recent earnings cards: quarterly numbers from data/f (12 at a time)
+      <div class="eh"><h1>Earnings</h1>
+        <div class="menu-wrap ei"><button class="ei-b" type="button" id="eiB" aria-label="How to read this page">i</button>
+          <div class="ei-p" id="eiP" hidden><b>How to read this page</b>
+            <p>Point at a stock to see its sales, profit (PAT), EPS and net margin against the same quarter a year ago (YoY) and the quarter before (QoQ).</p>
+            <p>The grade is our own rule on the company's NSE filing, not on analyst estimates. ${esc(GRADE_RULE.replace(/^Our rule on the latest quarter vs a year before: /, ""))}</p>
+            <p>"Due" stocks have a board meeting for results on that day. Click a stock to open its chart.</p>
+            <p class="muted">For information only, not a recommendation.</p></div></div>
+        <div class="eh-nav"><a class="eh-a" href="#/earnings/${prev}" title="Earlier days" aria-label="Earlier days">‹</a><b class="eh-r">${rangeTxt}</b><a class="eh-a" href="#/earnings/${next}" title="Later days" aria-label="Later days">›</a></div>
+        <a class="eh-today${isNow ? " on" : ""}" href="#/earnings">Today</a>
+        <span class="eh-s">${esc(fqLabel)} season <b>${reported.toLocaleString("en-IN")}</b> <i>/</i> ${rows.length.toLocaleString("en-IN")} stocks announced</span></div>
+      <div class="eg"><div class="ecs">${cols}</div>
+        <aside class="er"><div class="er-h"><div class="er-t"><b>${NF ? "Matching stocks" : "Recent earnings"}</b>${NF ? `<small class="muted">${match.length} of ${weekDone} in these days</small>` : ""}</div>
+          <div class="er-tools"><label class="er-q">${SEARCH}<input type="search" id="erQ" placeholder="Search stock" value="${esc(flt.q)}" autocomplete="off"></label>
+          <div class="menu-wrap"><button class="er-fb${NF ? " on" : ""}" id="efBtn" type="button">${FUNNEL} Filters${NF ? `<i>${NF}</i>` : ""}</button>
+          <div class="ef" id="efM" hidden><div class="ef-h"><b>Filters</b><small>${NF ? NF + " on" : "No filters on"}</small></div>
+            <div class="ef-b"><h5>EARNINGS</h5>${rng("mcap", "Market Cap ₹ Cr")}${rng("eps", "EPS Growth %")}${rng("sales", "Sales Growth %")}${rng("np", "Profit Growth %")}
+            <h5>GRADE</h5><div class="ef-g">${Object.keys(GRADE_ORDER).map((g) => `<label><input type="checkbox" data-grade="${g}" ${flt.grades.includes(g) ? "checked" : ""}><span>${g}</span></label>`).join("")}</div>
+            <h5>SIGNALS</h5><div class="ef-g">${EARN_SIGNALS.map(([k, l]) => `<label><input type="checkbox" data-sig="${k}" ${flt.sig.includes(k) ? "checked" : ""}><span>${l}</span></label>`).join("")}</div></div>
+            <div class="ef-f"><small id="efN">${NF} filter${NF === 1 ? "" : "s"} active</small><button class="ef-x" type="button" data-ef="reset">Reset</button><button class="ef-ok" type="button" data-ef="apply">Apply filters</button></div></div></div></div>
+          ${NF ? `<label class="er-sort">Sort <select id="erS">${EARN_SORTS.map(([k, l]) => `<option value="${k}" ${flt.sort === k ? "selected" : ""}>${l}</option>`).join("")}</select></label>` : ""}</div>
+          <div class="er-l" id="erL"></div></aside></div></div>
+      <div class="ehc" id="eHov" hidden></div>`;
+    $("#stPage").innerHTML = `<span>${weekDone} results</span><span class="st-n">${rangeTxt}</span>${NF ? `<span class="st-n">${NF} filter${NF === 1 ? "" : "s"}</span>` : ""}`;
+
+    // right panel cards
+    const box = $("#erL");
     let shown = 0;
-    const card = ({ r, g }) => `<div class="erc" data-id="${esc(r.id)}"><div class="erc-h"><a href="#/i/s/${encodeURIComponent(r.id)}"><b>${esc(r.symbol)}</b> ↗</a><span class="gr ${GRADE_CLS[g] || ""}">${g || "–"}</span>
-        <small class="muted">Price ₹${SD.fmtPrice(r.close)} · MCap ₹${finNum(r.mcap_cr)} Cr</small></div><div class="erc-t"><i class="skel"></i></div></div>`;
+    const dayHead = (d) => `<div class="er-d">${d === today ? "TODAY" : d === addDays(today, -1) ? "YESTERDAY" : dLbl(d).toUpperCase()}</div>`;
+    const priceLine = (r) => `<span class="erc-p">Price <b>₹${SD.fmtPrice(r.close)}</b>${r.mcap_cr != null ? `<span>M.Cap <b>₹${finNum(r.mcap_cr)} Cr</b></span>` : ""}</span>`;
+    const card = ({ r }) => `<div class="erc" data-id="${esc(r.id)}"><div class="erc-h"><a href="#/i/s/${encodeURIComponent(r.id)}">${esc(r.symbol)} <span class="arr">↗</span></a>${priceLine(r)}</div>
+      <div class="erc-t"><i class="skel"></i></div></div>`;
     const fillCard = async (el) => {
       const doc = await getFin(el.dataset.id);
       const t = el.querySelector(".erc-t");
-      if (!doc) { t.innerHTML = '<small class="muted">No quarterly numbers.</small>'; return; }
+      if (!doc) { t.innerHTML = '<small class="muted erc-no">No quarterly numbers.</small>'; return; }
       const q = SDF.quarterTable(doc, SDF.basisOf(doc), 5), m = q.ends.length;
-      if (m < 2) { t.innerHTML = '<small class="muted">Not enough quarters.</small>'; return; }
-      const cols = [m - 1, m - 2, m - 5].filter((i) => i >= 0);
-      const line = (k, l, d) => { const v = (q.rows.find((x) => x[1] === k) || [0, 0, []])[2]; const yo = m >= 5 ? chgPct(v[m - 1], v[m - 5]) : null;
-        return `<tr><td class="l">${l}</td><td>${yo == null ? "–" : `<span class="${yo >= 0 ? "up" : "down"}">${yo >= 0 ? "↑" : "↓"} ${finNum(Math.abs(yo))}%</span>`}</td>${cols.map((i) => `<td class="${v[i] < 0 ? "down" : ""}">${v[i] == null ? "–" : (k === "eps" ? "₹" + finNum(v[i], 2) : finNum(v[i], Math.abs(v[i]) < 100 ? 1 : 0))}</td>`).join("")}</tr>`; };
-      t.innerHTML = `<table class="sp-t2"><thead><tr><th class="l"></th><th>YoY</th>${cols.map((i) => `<th>${shortLbl(q.ends[i])}</th>`).join("")}</tr></thead><tbody>
-        ${line("sales", "Sales")}${line("op_profit", doc.kind === "bank" || doc.kind === "nbfc" ? "Fin. profit" : "Op. profit")}${line("net_profit", "Net profit")}${line("eps", "EPS")}</tbody></table>`;
+      if (m < 2) { t.innerHTML = '<small class="muted erc-no">Not enough quarters.</small>'; return; }
+      const cs = [m - 1, m - 2, m - 5].filter((i) => i >= 0);
+      const line = (k, l) => {
+        const v = (q.rows.find((x) => x[1] === k) || [0, 0, []])[2], yo = m >= 5 ? chgPct(v[m - 1], v[m - 5]) : null;
+        return `<tr><td class="l">${l}</td><td>${yo == null ? '<span class="muted">–</span>' : `<span class="${yo >= 0 ? "up" : "down"}">${yo >= 0 ? "↑" : "↓"} ${finNum(Math.abs(yo))}%</span>`}</td>`
+          + cs.map((i) => `<td${i === m - 1 ? ' class="now"' : ""}>${v[i] == null ? "–" : k === "eps" ? (v[i] < 0 ? "−₹" : "₹") + finNum(Math.abs(v[i]), 2) : sig3(v[i]).replace("-", "−")}</td>`).join("") + "</tr>";
+      };
+      t.innerHTML = `<table class="erc-tb"><thead><tr><th class="l"></th><th>YoY</th>${cs.map((i) => `<th>${shortLbl(q.ends[i])}</th>`).join("")}</tr></thead><tbody>
+        ${line("sales", "Sales")}${line("op_profit", doc.kind === "bank" || doc.kind === "nbfc" ? "Fin. profit" : "EBITDA")}${line("net_profit", "Net profit")}${line("eps", "EPS")}</tbody></table>`;
     };
+    const mcard = ({ r, g, d }) => {
+      const k = (l, v) => `<span><small>${l}</small>${v}</span>`;
+      return `<a class="emc" href="#/i/s/${encodeURIComponent(r.id)}" data-k="${esc(r.key)}" data-d="${d}"><div class="emc-h">${mono(r.symbol)}<b>${esc(r.symbol)}</b><span class="gp ${GRADE_CLS[g] || ""}">${g || "–"}</span></div>
+        <small class="emc-s">${dLbl(d)} · ${esc(fqLabel)}${r.mcap_cr != null ? ` · ₹${finNum(r.mcap_cr)} Cr` : ""}</small>
+        <div class="emc-k">${k("SALES", sgnPct(r.sales_g_yoy))}${k("PAT", sgnPct(r.np_g_yoy))}${k("EPS", sgnPct(r.eps_g_yoy))}${k("MARGIN", r.npm_last_q == null ? '<span class="muted">—</span>' : finNum(r.npm_last_q, 1) + "%")}${k("REACTION", r.earn_sessions != null && r.earn_sessions <= 10 ? sgnPct(r.earn_chg_pct, 1) : '<span class="muted">—</span>')}</div></a>`;
+    };
+    const list = NF ? match : recent, per = NF ? 30 : 10;
     const more = () => {
-      const box = $("#erL"), part = recent.slice(shown, shown + 12);
-      let lastDay = shown ? recent[shown - 1].r.last_result : null, html = "";
+      if (shown >= list.length) return;
+      const part = list.slice(shown, shown + per);
+      let lastDay = shown ? (NF ? list[shown - 1].d : list[shown - 1].r.last_result) : null, html = "";
       for (const x of part) {
-        if (x.r.last_result !== lastDay) { lastDay = x.r.last_result; html += `<small class="muted er-d">${lastDay === addDays(today, -1) ? "YESTERDAY" : lastDay === today ? "TODAY" : shortDay(lastDay).toUpperCase()}</small>`; }
-        html += card(x);
+        if (!NF) { if (x.r.last_result !== lastDay) { lastDay = x.r.last_result; html += dayHead(lastDay); } html += card(x); } else html += mcard(x);
       }
-      box.querySelector(".er-more")?.remove();
-      box.insertAdjacentHTML("beforeend", html + (recent.length > shown + 12 ? `<button class="btn sm er-more" type="button">Show more (${recent.length - shown - 12} left)</button>` : ""));
-      box.querySelectorAll(".erc:not([data-done])").forEach((el) => { el.dataset.done = "1"; fillCard(el); });
+      box.insertAdjacentHTML("beforeend", html);
+      if (!NF) box.querySelectorAll(".erc:not([data-done])").forEach((el) => { el.dataset.done = "1"; fillCard(el); });
       shown += part.length;
-      if (!recent.length) box.innerHTML = '<p class="muted small">No results in the last 14 days match.</p>';
     };
-    more();
-    $("#erL").onclick = (e) => { if (e.target.closest(".er-more")) more(); };
+    if (!list.length) box.innerHTML = `<p class="er-none">${NF ? "No stock of these days passes the filters." : qq ? "No recent result for this search." : "No results in the last 14 days."}</p>`;
+    else more();
+    box.addEventListener("scroll", () => { if (box.scrollTop + box.clientHeight > box.scrollHeight - 300) more(); });
+
+    // filters
     const saveF = () => store.set("sd-earn-f", flt);
-    $("#erQ").oninput = (e) => { flt.q = e.target.value; saveF(); clearTimeout(state.erT); state.erT = setTimeout(() => renderEarnings(weekArg), 250); };
-    $("#efBtn").onclick = (e) => { e.stopPropagation(); $("#efM").hidden = !$("#efM").hidden; };
-    $("#efM").onclick = (e) => {
+    $("#erQ").oninput = (e) => { flt.q = e.target.value; saveF(); clearTimeout(state.erT); state.erT = setTimeout(() => { renderEarnings(arg); setTimeout(() => { const q = $("#erQ"); if (q) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); } }, 0); }, 250); };
+    if ($("#erS")) $("#erS").onchange = (e) => { flt.sort = e.target.value; saveF(); renderEarnings(arg); };
+    const efM = $("#efM"), eiP = $("#eiP");
+    const countF = () => {
+      const k = ["mcap", "eps", "sales", "np"].filter((f) => efM.querySelector(`[data-fon="${f}"]`).checked).length + efM.querySelectorAll("[data-grade]:checked, [data-sig]:checked").length;
+      $("#efN").textContent = `${k} filter${k === 1 ? "" : "s"} active`;
+    };
+    $("#efBtn").onclick = (e) => { e.stopPropagation(); eiP.hidden = true; efM.hidden = !efM.hidden; };
+    efM.onclick = (e) => {
       e.stopPropagation();
       const a = e.target.closest("[data-ef]"); if (!a) return;
       if (a.dataset.ef === "reset") Object.assign(flt, { mcap: ["", ""], eps: ["", ""], sales: ["", ""], np: ["", ""], grades: [], sig: [] });
       else {
-        const m = $("#efM");
         for (const k of ["mcap", "eps", "sales", "np"]) {
-          const on = m.querySelector(`[data-fon="${k}"]`).checked;
-          flt[k] = on ? [0, 1].map((i) => m.querySelector(`[data-f="${k}"][data-i="${i}"]`).value) : ["", ""];
+          const on = efM.querySelector(`[data-fon="${k}"]`).checked;
+          flt[k] = on ? [0, 1].map((i) => efM.querySelector(`[data-f="${k}"][data-i="${i}"]`).value) : ["", ""];
         }
-        flt.grades = [...m.querySelectorAll("[data-grade]:checked")].map((x) => x.dataset.grade);
-        flt.sig = [...m.querySelectorAll("[data-sig]:checked")].map((x) => x.dataset.sig);
+        flt.grades = [...efM.querySelectorAll("[data-grade]:checked")].map((x) => x.dataset.grade);
+        flt.sig = [...efM.querySelectorAll("[data-sig]:checked")].map((x) => x.dataset.sig);
       }
-      saveF(); renderEarnings(weekArg);
+      saveF(); renderEarnings(arg);
     };
-    $("#efM").addEventListener("input", (e) => { const f = e.target.dataset.f; if (f) $("#efM").querySelector(`[data-fon="${f}"]`).checked = true; });
-    view.onclick = (e) => { if (!e.target.closest(".menu-wrap")) { const m = $("#efM"); if (m) m.hidden = true; } };
-    // hover card on a calendar entry
+    efM.addEventListener("input", (e) => { const f = e.target.dataset.f; if (f) efM.querySelector(`[data-fon="${f}"]`).checked = e.target.closest(".ef-r").querySelectorAll("input[type=number]")[0].value !== "" || e.target.closest(".ef-r").querySelectorAll("input[type=number]")[1].value !== ""; countF(); });
+    efM.addEventListener("change", countF);
+    $("#eiB").onclick = (e) => { e.stopPropagation(); efM.hidden = true; eiP.hidden = !eiP.hidden; };
+    eiP.onclick = (e) => e.stopPropagation();
+    view.onclick = () => { efM.hidden = true; eiP.hidden = true; };
+
+    // phone / narrow screens: the columns scroll sideways, start at today
+    const tc = view.querySelector(".ec.today"), ecs0 = view.querySelector(".ecs");
+    if (tc && ecs0.scrollWidth > ecs0.clientWidth) ecs0.scrollLeft = Math.max(0, tc.offsetLeft - ecs0.offsetLeft - 8);
+
+    // hover card: the quarter in numbers, beside the column
     const hov = $("#eHov");
-    view.querySelector(".ecs").addEventListener("mouseover", (e) => {
-      const a = e.target.closest(".ec-r"); if (!a) return;
+    const hovHTML = (r, d, done) => {
+      const g = done ? earnGrade(r) : null;
+      const npmYa = r.sales_year_ago_q > 0 && r.np_year_ago_q != null ? (r.np_year_ago_q / r.sales_year_ago_q) * 100 : null;
+      const mYoY = r.npm_last_q != null && npmYa != null ? r.npm_last_q - npmYa : null, mQoQ = r.npm_last_q != null && r.npm_q2 != null ? r.npm_last_q - r.npm_q2 : null;
+      const tr = (l, a, y, q) => `<tr><td class="l">${l}</td><td class="a">${a}</td><td>${y}</td><td>${q}</td></tr>`;
+      const lastQ = r.fin_qtr ? fq(r.fin_qtr) : "";
+      return `<div class="ehc-h">${mono(r.symbol, true)}<div><b>${esc(r.symbol)}</b><small>${done ? `${esc(lastQ)} · ${dLbl(d)}` : `Results due ${dLbl(d)}`}</small></div>
+        ${done ? `<span class="gp solid ${GRADE_CLS[g] || ""}">${g || "–"}</span>` : '<span class="gp due">Due</span>'}</div>
+        ${done ? "" : `<small class="ehc-c">Last reported quarter${lastQ ? ` · ${esc(lastQ)}` : ""}</small>`}
+        <table class="ehc-t"><thead><tr><th class="l"></th><th>ACTUAL</th><th>YOY</th><th>QOQ</th></tr></thead><tbody>
+        ${tr("Sales", crore(r.sales_last_q), sgnPct(r.sales_g_yoy), sgnPct(r.sales_g_qoq))}
+        ${tr("PAT", crore(r.np_last_q), sgnPct(r.np_g_yoy), sgnPct(r.np_g_qoq))}
+        ${tr("EPS", r.eps_last_q == null ? "–" : (r.eps_last_q < 0 ? "−₹" : "₹") + finNum(Math.abs(r.eps_last_q), 2), sgnPct(r.eps_g_yoy), sgnPct(r.eps_g_qoq))}
+        ${tr("Margin", r.npm_last_q == null ? "–" : finNum(r.npm_last_q, 1) + "%", sgnPct(mYoY, 1, "pp"), sgnPct(mQoQ, 1, "pp"))}</tbody></table>
+        ${done && r.earn_sessions != null && r.earn_sessions <= 10 && r.earn_chg_pct != null ? `<div class="ehc-f"><span>Results-day move</span>${sgnPct(r.earn_chg_pct, 1)}</div>` : ""}`;
+    };
+    let hovOn = null;
+    const place = (a) => {
+      const c = (a.closest(".ec") || a).getBoundingClientRect(), b = a.getBoundingClientRect(), w = 300, h = hov.offsetHeight || 230;
+      let left = c.right - 4; if (left + w > innerWidth - 8) left = c.left - w + 4;
+      if (left < 8) left = Math.min(innerWidth - w - 8, b.left + 24);
+      const top = Math.max(8, Math.min(b.top - 12, innerHeight - h - 12));
+      hov.style.left = `${left}px`; hov.style.top = `${top}px`;
+    };
+    const showHov = (a) => {
+      if (a === hovOn) return;
       const r = state.screenByKey.get(a.dataset.k); if (!r) return;
-      const g = a.querySelector(".gr") ? earnGrade(r) : null;
-      hov.innerHTML = `<b>${esc(r.symbol)}</b> <small class="muted">${esc(r.name || "")}</small>${g ? ` <span class="gr ${GRADE_CLS[g]}">${g}</span>` : ""}
-        <div class="eh-k">${g ? `<span>Sales YoY ${pctTag(r.sales_g_yoy)}</span><span>Profit YoY ${pctTag(r.np_g_yoy)}</span><span>EPS YoY ${pctTag(r.eps_g_yoy)}</span>`
-          + `${r.earn_chg_pct != null && r.earn_sessions != null && r.earn_sessions <= 10 ? `<span>Results-day move ${pctTag(r.earn_chg_pct, 1)}</span>` : ""}` : `<span>Results due ${esc(SD.fmtDate(r.next_result || ""))}</span>`}
-        <span>RS ${r.rs_rating ?? "–"}</span><span>MCap ₹${finNum(r.mcap_cr)} Cr</span></div><small class="muted">${esc(r.basic_industry || r.sector || "")}</small>`;
-      const b = a.getBoundingClientRect();
-      hov.hidden = false;
-      hov.style.left = `${Math.min(b.left, innerWidth - 300)}px`; hov.style.top = `${b.bottom + 4}px`;
-    });
-    view.querySelector(".ecs").addEventListener("mouseleave", () => { hov.hidden = true; });
-    view.querySelector(".ecs").addEventListener("scroll", () => { hov.hidden = true; }, true);
+      const first = hov.hidden;
+      hov.innerHTML = hovHTML(r, a.dataset.d, !a.classList.contains("due"));
+      hov.hidden = false; hov.classList.toggle("move", !first);
+      if (first) { hov.classList.remove("in"); void hov.offsetWidth; hov.classList.add("in"); }
+      place(a); hovOn = a;
+    };
+    const hideHov = () => { hov.hidden = true; hovOn = null; };
+    if (matchMedia("(hover: hover)").matches) {
+      const ecs = view.querySelector(".ecs");
+      ecs.addEventListener("mouseover", (e) => { const a = e.target.closest(".ec-r"); if (a) showHov(a); });
+      ecs.addEventListener("mouseleave", hideHov);
+      ecs.addEventListener("scroll", hideHov, true);
+      box.addEventListener("mouseover", (e) => { const a = e.target.closest(".emc"); if (a) showHov(a); else if (!e.target.closest(".ehc")) hideHov(); });
+      box.addEventListener("mouseleave", hideHov);
+      box.addEventListener("scroll", hideHov);
+    }
   }
 
   /* ------------------------------------------------------------------ home / warm-up page (Phase N5) */

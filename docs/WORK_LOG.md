@@ -978,3 +978,22 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   - pill toggles, uppercase table headers, a softer Pages bar;
   - more white space (Home gap 30 px).
 - Checked Home, Scanners and Heatmap in both modes and on a phone; no console errors; JS tests green.
+
+### 2026-11-11: Earnings page in the reference's layout
+- Viraj (video 09-Nov "Earning 09-11-2026.mp4"): the Earnings page must look and work like the reference's.
+- site/app.js renderEarnings() rewritten, site/styles.css "Phase N6" block replaced:
+  - five day columns with today in the middle (weekdays always, Sat / Sun only when a result is on them);
+    ‹ › move five days, "Today" comes back; the route is #/earnings/<first day>;
+  - column header: date, TODAY pill (blue top line + tint), HOLIDAY pill for a past weekday that was no trading
+    day (breadth.json days), "N results EPS YoY ▲ ▼" / "N due"; with filters on a "matching / all" badge;
+  - rows: a coloured letter badge (we have no logos), symbol, grade as coloured text;
+  - hover card beside the column: Sales / PAT / EPS / Margin with ACTUAL, YOY, QOQ (margin in pp), grade pill,
+    results-day move; due stocks show their last reported quarter;
+  - right panel: "Recent earnings" (search, cards by day, YoY + 3 quarters from data/f, loads more on scroll);
+    with a filter on it becomes "Matching stocks" (N of M, sort by EPS / sales / profit growth, move, market cap);
+  - filters popover restyled (ranges "between Any and Any", grade + signals in two columns, live count, Apply);
+    an (i) "How to read this page" popover in our own words;
+  - the page fills the card edge to edge, each column scrolls on its own; phone: columns scroll sideways and open
+    at today, the panel goes below.
+- Checked in the preview: light, dark, phone, hover, filters; no console errors (local 404s are only the old local
+  data/f copy). JS tests 32 / 32, Python tests 216 passed.

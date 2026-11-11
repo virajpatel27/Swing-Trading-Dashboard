@@ -641,7 +641,7 @@
       ${desc}
       <div class="ws-main ${ui.view} ${isWide ? "wide" : ""} ${ui.panel && isWide ? "withp" : ""}" id="wsMain" style="--list-w:${ui.listW}px">
         <section class="results">
-          <div class="res-h"><b>Results</b><span class="count" id="resN"></span>
+          <div class="res-h"><b>Results</b><span class="res-c"><span class="count" id="resN"></span><button class="flt-chip" id="fltChip" type="button" hidden></button></span>
             <button class="icon-btn sm ${ui.filters ? "on" : ""}" id="fltBtn" type="button" title="Search and filters">${ICON.filter}</button>
             <div class="menu-wrap"><button class="icon-btn sm" id="sortBtn" type="button" title="Sort: ${esc(sortName)}">${ICON.sort}</button>
               <div class="menu right" id="sortMenu" hidden><small class="menu-h">Sort by · now ${esc(sortName)} ${st.dir === "asc" ? "▲" : "▼"}</small>${SD.SORTS.map(([k, label]) => `<button type="button" data-sort="${k}" class="${k === st.sort ? "on" : ""}">${label}</button>`).join("")}
@@ -664,7 +664,16 @@
       stPage.innerHTML = `<button class="st-btn" id="copy" type="button" title="Copy symbols as NSE:SYMBOL (TradingView watchlist)">Copy</button>`
         + `<button class="st-btn" id="csv" type="button">CSV</button><span>${esc(name)} · ${state.selected.size} of ${rows.length.toLocaleString("en-IN")} selected</span>`
         + `<span class="st-n">${rows.length.toLocaleString("en-IN")} stocks · ${state.screen.length.toLocaleString("en-IN")} scanned</span>`;
-      $("#resN").textContent = rows.length.toLocaleString("en-IN");
+      // a remembered filter (universe / sector / search, shared with the Stocks page) must never hide stocks silently:
+      // show it as a chip with "shown / all" (Viraj 11-Nov: Big Reversal showed 1 of 18 under a forgotten "Nifty 500")
+      const on = [st.universe !== "all" ? { liquid: "Liquid", n500: "Nifty 500", fno: "F&O" }[st.universe] || st.universe : "",
+        st.sector, st.text.trim() ? `"${st.text.trim()}"` : ""].filter(Boolean);
+      $("#resN").textContent = on.length ? `${rows.length.toLocaleString("en-IN")} / ${base.length.toLocaleString("en-IN")}` : rows.length.toLocaleString("en-IN");
+      const chip = $("#fltChip");
+      chip.hidden = !on.length;
+      chip.textContent = on.length ? `${on.join(" · ")} ✕` : "";
+      chip.title = on.length ? `Filter on: ${on.join(", ")}. ${(base.length - rows.length).toLocaleString("en-IN")} stocks hidden. Click to show all.` : "";
+      if (on.length) stPage.querySelector(".st-n").textContent = `${rows.length.toLocaleString("en-IN")} of ${base.length.toLocaleString("en-IN")} stocks (filter: ${on.join(", ")}) · ${state.screen.length.toLocaleString("en-IN")} scanned`;
       $("#copy").onclick = copySel;
       $("#csv").onclick = csvSel;
     };
@@ -771,6 +780,7 @@
     $("[data-seg=uni]").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; st.universe = b.dataset.v; st.limit = PAGE; setOn(e.currentTarget, b); draw(); };
     $("#sector").onchange = (e) => { st.sector = e.target.value; st.limit = PAGE; draw(); };
     $("#q").oninput = (e) => { st.text = e.target.value; st.limit = PAGE; draw(); };
+    $("#fltChip").onclick = () => { st.universe = "all"; st.sector = ""; st.text = ""; st.limit = PAGE; renderStocks(); };
     $("#fltBtn").onclick = () => { ui.filters = !ui.filters; saveUi(); $(".res-f").hidden = !ui.filters; $("#fltBtn").classList.toggle("on", ui.filters); if (ui.filters) $("#q").focus(); };
     const toggleMenu = (id) => { const m = $(id); const open = m.hidden; view.querySelectorAll(".menu").forEach((x) => { x.hidden = true; }); m.hidden = !open; return open; };
     $("#sortBtn").onclick = () => toggleMenu("#sortMenu");

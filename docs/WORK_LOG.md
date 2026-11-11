@@ -950,3 +950,10 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Found on the way: SME -> main board stocks (VTMLTD) have no 3-month return and a low RS rating in the reference
   (main-board days only); ours uses the SME history. Not changed.
 - Tests: tests/test_tight_setups.py (5). Details in docs/calibration.md.
+
+### 2026-11-11: scanner list showed fewer stocks than the picker count
+- Cause: the results list also applies the remembered Stocks-page filter (All / Liquid / Nifty 500 / F&O, sector,
+  search; localStorage "sd-stocks"). Its bar is hidden by default, so a forgotten "Nifty 500" made Big Reversal show 1
+  of 18 (Daily Base 46 of 281, Shakeout 16 of 58).
+- Fix (site/app.js, styles.css): when a filter is on, the header shows "shown / all" and a chip ("Nifty 500 ✕") that
+  clears it. The footer names the filter too. Checked in the preview; JS tests 32 green.

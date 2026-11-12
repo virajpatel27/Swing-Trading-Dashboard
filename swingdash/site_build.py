@@ -106,6 +106,12 @@ def build(root: Path, out: Path, log=print) -> dict:
     syms = set(pd.read_csv(uni)["symbol"].astype(str)) if uni.exists() else set()
     latest = json.loads((data / "snapshot" / "latest.json").read_text(encoding="utf-8")).get("data_date") or datetime.now().strftime("%Y-%m-%d")
     announcements.site_files(data, out, syms, latest)
+    # company descriptions in our own words (chart header): data/meta/company_about.csv -> data/about.json
+    about = data / "meta" / "company_about.csv"
+    if about.exists():
+        ab = pd.read_csv(about, dtype=str, keep_default_na=False)
+        (out / "data" / "about.json").write_text(json.dumps({r.symbol: r.about for r in ab.itertuples() if r.about}, separators=(",", ":"), ensure_ascii=False),
+                                                 encoding="utf-8")
     # IPOs (home page): listings of the last 45 days + main-board issues not listed yet
     ipo = {"recent": [], "upcoming": []}
     if (data / "meta" / "ipos.csv").exists():

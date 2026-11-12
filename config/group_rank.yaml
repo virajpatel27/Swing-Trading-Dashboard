@@ -21,3 +21,10 @@ tail_points: 10                # strength / momentum points kept per group for a
 tail_daily: 20                 # RRG page (Phase N9): daily points per tail
 tail_weekly: 10                # RRG page: points 5 sessions apart ("weekly")
 rrg_benchmarks: [NIFTY_50, NIFTY_500, NIFTY_SMALLCAP_250, NIFTY_MIDSMALLCAP_400]   # RRG page: also against these indices (default = equal-weight market)
+# RRG page only (Viraj 12-Nov-2026): the reference's RRG chart moves faster than its sector table. Fitted on its 11-Nov and
+# 06-Nov daily charts (22 sectors): the table rule above puts 11 / 13 of 22 in the reference's quadrant, this one 18 / 14
+# (rank correlation of the positions 0.48-0.74 -> 0.78-0.86). Viraj's choice: smoothing 5, strength 30, momentum 10.
+rrg:
+  smooth: 5                    # RS = average of the last 5 sessions first
+  ratio_window: 30             # strength = 100 x RS / its 30-session average
+  momentum_lag: 10             # momentum = 100 + (strength today - strength 10 sessions ago)

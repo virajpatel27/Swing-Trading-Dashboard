@@ -30,6 +30,14 @@
   state.screener.limit = PAGE;
 
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  /** a stock's logo = its company's own website icon (scripts/fetch_logos.py -> site/logos/<id>.png, list in logos/index.json);
+      without one, a round letter badge whose colour comes from the symbol, so a stock always looks the same */
+  const monoHue = (s) => { let h = 7; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) % 360; return h; };
+  const logo = (r, big) => {
+    const sym = String((r && r.symbol) || ""), id = r && r.id;
+    if (id && state.logos && state.logos.has(id)) return `<i class="slogo${big ? " big" : ""}" aria-hidden="true"><img src="logos/${encodeURIComponent(id)}.png" alt="" loading="lazy" decoding="async"></i>`;
+    return `<i class="mono${big ? " big" : ""}" style="--h:${monoHue(sym)}" aria-hidden="true">${esc(sym.replace(/[^A-Z0-9]/gi, "").slice(0, big ? 2 : 1))}</i>`;
+  };
   const SKEL = (label) => `<div class="skel-page" aria-label="${label}"><i class="skel h"></i><i class="skel s"></i><i class="skel bar"></i>`
     + '<i class="skel row"></i>'.repeat(6) + "</div>";
   const pct = (x) => `<span class="${SD.colorClass(x)}">${SD.fmtPct(x)}</span>`;
@@ -37,7 +45,7 @@
 
   const COLS = [
     { k: "name", label: "Name", cls: "l sticky", td: "name", html: (r) => r.kind === "stock"
-      ? `<b>${esc(r.symbol)}</b><span>${esc(r.name)}</span>` : `<b>${esc(r.name)}</b><span>${r.exchange} index</span>` },
+      ? `<div class="nm">${logo(r)}<div><b>${esc(r.symbol)}</b><span>${esc(r.name)}</span></div></div>` : `<b>${esc(r.name)}</b><span>${r.exchange} index</span>` },
     { k: "close", label: "LTP", html: (r) => SD.fmtPrice(r.close) },
     { k: "chg_1d", label: "1D", html: (r) => pct(r.chg_1d) }, { k: "chg_1w", label: "1W", html: (r) => pct(r.chg_1w) },
     { k: "chg_1m", label: "1M", html: (r) => pct(r.chg_1m) }, { k: "chg_3m", label: "3M", html: (r) => pct(r.chg_3m) },
@@ -63,6 +71,7 @@
     try {
       const [snap, sectors, health] = await Promise.all([getJSON("data/latest.json"), getJSON("data/sectors.json"),
         getJSON("data/health.json").catch(() => null)]);
+      state.logos = new Set(((await getJSON("logos/index.json").catch(() => null)) || {}).ids || []);
       state.rows = SD.rowsFromSnapshot(snap);
       state.rows.forEach((r) => state.byKey.set(r.key, r));
       state.sectors = sectors;
@@ -290,7 +299,7 @@
     const th = (k, l, cls = "") => `<th class="${cls} ${gs.sort === k ? "sorted" : ""}" data-gs="${k}">${l}${gs.sort === k ? (gs.dir === "asc" ? " ▲" : " ▼") : ""}</th>`;
     const resTitle = stockGroup ? (level === "sector" ? `${esc(g.name)}${subG ? " › " + esc(subG.name) : " · All stocks"}` : esc(g.name)) : "Stocks";
     const colR = col("res", resTitle, stockGroup ? `${stocks.length} stocks` : null, stockGroup ? `<table class="gt gs"><thead><tr>${th("symbol", "Symbol", "l")}${th("close", "LTP")}${th("ret", p.toUpperCase() + " %")}${th("from_hi52", "52W HI")}${th("rs_rating", "RS")}<th class="l">Themes</th></tr></thead><tbody>`
-      + stocks.map((r) => `<tr class="${state.gStock === r.key ? "on" : ""}" data-stock="${esc(r.key)}"><td class="l"><b>${esc(r.symbol)}</b>${r.high >= r.high_20d ? ' <span class="tag t-up">20H</span>' : ""}${r.low <= r.low_20d ? ' <span class="tag t-down">20L</span>' : ""}</td>`
+      + stocks.map((r) => `<tr class="${state.gStock === r.key ? "on" : ""}" data-stock="${esc(r.key)}"><td class="l"><b class="wl">${logo(r)}${esc(r.symbol)}</b>${r.high >= r.high_20d ? ' <span class="tag t-up">20H</span>' : ""}${r.low <= r.low_20d ? ' <span class="tag t-down">20L</span>' : ""}</td>`
         + `<td class="num">${SD.fmtPrice(r.close)}</td><td class="num">${pct(r[retKey])}</td><td class="num">${pct(r.from_hi52)}</td><td class="num">${r.rs_rating ?? "–"}</td><td class="l small gs-th">${esc(r.themes || "—")}</td></tr>`).join("")
       + "</tbody></table>" : `<p class="empty">Pick a ${label.toLowerCase()} on the left.</p>`, "gc-grow");
     const colC = chartOn ? col("chart", "Chart", null, '<div id="gChart" class="g-chart"></div>', "gc-grow2") : "";
@@ -695,7 +704,7 @@
         + cols.map((c) => `<th data-col="${c}" class="${SD.COLUMNS[c].fmt === "text" ? "l " : ""}${st.sort === c ? "sorted" : ""}">${esc(SD.COLUMNS[c].label)}${mark(c)}</th>`).join("");
       const body = rows.slice(0, st.limit).map((r) => `<tr data-key="${esc(r.key)}" class="${state.current === r.key ? "cur" : ""}">`
         + `<td class="l ck"><input type="checkbox" data-sel="${esc(r.key)}" ${state.selected.has(r.key) ? "checked" : ""} aria-label="Select ${esc(r.symbol)}"></td>`
-        + `<td class="l sticky name"><b>${esc(r.symbol)}</b><span>${esc(r.name)}</span></td><td class="num">${SD.fmtPrice(r.close)}</td>`
+        + `<td class="l sticky name"><div class="nm">${logo(r)}<div><b>${esc(r.symbol)}</b><span>${esc(r.name)}</span></div></div></td><td class="num">${SD.fmtPrice(r.close)}</td>`
         + cols.map((c) => `<td class="${SD.COLUMNS[c].fmt === "text" ? "l" : "num"}">${cellHTML(r, c)}</td>`).join("") + "</tr>").join("");
       const more = rows.length > st.limit ? `<button class="btn more" data-more type="button">Show more (${rows.length - st.limit} left)</button>` : "";
       $("#tbl").innerHTML = rows.length ? `<div class="table-wrap"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>${more}</div>`
@@ -710,7 +719,7 @@
       const list = gridSorted(rows, ui.gridSort);
       const box = $("#grid");
       box.innerHTML = list.length ? list.slice(0, gridLimit).map((r) => `<article class="gcard" data-key="${esc(r.key)}" tabindex="0">
-          <div class="g-h"><b>${esc(r.symbol)}</b>${pct(r.chg_1d)}<span class="g-px num">${SD.fmtPrice(r.close)}</span></div>
+          <div class="g-h"><b class="wl">${logo(r)}${esc(r.symbol)}</b>${pct(r.chg_1d)}<span class="g-px num">${SD.fmtPrice(r.close)}</span></div>
           <div class="g-s muted">M ${r.mcap_cr == null ? "–" : "₹" + SD.fmtInt(r.mcap_cr) + " Cr"} · F ${r.float_mcap_cr == null ? "–" : "₹" + SD.fmtInt(r.float_mcap_cr) + " Cr"}${r.rs_rating == null ? "" : " · RS " + r.rs_rating}</div>
           <div class="g-ch" data-id="${esc(r.id)}"><i class="skel"></i></div>
           <div class="g-f muted">Vol ${SD.fmtVol(r.volume)} · Avg 20D ${SD.fmtVol(r.avg_vol20)} · RVol ${r.rvol == null ? "–" : Number(r.rvol).toFixed(2) + "x"}</div></article>`).join("")
@@ -1040,32 +1049,37 @@
     $("#fq").oninput = (e) => draw(e.target.value.trim().toLowerCase());
   }
 
-  function columnSettings(done) {
+  /** column drawer. o (optional, Leaders page): { get, set, def, extra: [[id, label]], name } - its own column list;
+      default = the Stocks / Scanners list (state.stocks.cols, saved in sd-stocks) */
+  function columnSettings(done, o) {
     const st = state.stocks;
+    o = o || { get: () => st.cols, set: (v) => { st.cols = v; store.set("sd-stocks", { ...store.get("sd-stocks", {}), cols: v }); }, def: SD.DEFAULT_COLUMNS, extra: [] };
+    const lab = (c) => ((o.extra || []).find((x) => x[0] === c) || [])[1] || (SD.COLUMNS[c] ? SD.COLUMNS[c].label : c);
+    const cats = (o.extra && o.extra.length ? [[o.name || "This page", o.extra]] : []).concat(SD.COLUMN_GROUPS);
     const m = document.createElement("div");
     m.className = "modal-bg drawer";
-    const groups = SD.COLUMN_GROUPS.map(([g, cols]) => `<details ${g === "General" ? "open" : ""}><summary>${g} <small>${cols.length}</small></summary>`
-      + cols.map(([id, label]) => `<label class="f-row" data-t="${esc(label.toLowerCase())}"><input type="checkbox" value="${id}" ${st.cols.includes(id) ? "checked" : ""}> ${esc(label)}</label>`).join("") + "</details>").join("");
-    const mine = () => st.cols.map((c, i) => `<div class="mine-row"><span>${esc(SD.COLUMNS[c].label)}</span><span>`
+    const groups = () => cats.map(([g, cols]) => `<details ${g === cats[0][0] ? "open" : ""}><summary>${g} <small>${cols.filter(([id]) => o.get().includes(id)).length}/${cols.length}</small></summary>`
+      + cols.map(([id, label]) => `<label class="f-row" data-t="${esc(label.toLowerCase())}"><input type="checkbox" value="${id}" ${o.get().includes(id) ? "checked" : ""}> ${esc(label)}</label>`).join("") + "</details>").join("");
+    const mine = () => o.get().map((c, i) => `<div class="mine-row"><span>${esc(lab(c))}</span><span>`
       + `<button class="btn sm" data-up="${i}" type="button" aria-label="Move up">↑</button><button class="btn sm" data-down="${i}" type="button" aria-label="Move down">↓</button>`
       + `<button class="btn sm" data-rm="${c}" type="button" aria-label="Remove">✕</button></span></div>`).join("");
     m.innerHTML = `<div class="modal wide" role="dialog" aria-label="Column settings"><div class="modal-h"><b>Column settings</b>
-      <button class="icon-btn" data-x type="button" aria-label="Close">✕</button></div><div class="modal-b cols-grid">
-      <div><h4>Your columns <small id="nCols">${st.cols.length}</small> <button class="btn sm" id="colReset" type="button">Reset</button></h4><div id="mine">${mine()}</div>
+      <small class="muted cs-saved">✓ Changes saved automatically</small><button class="icon-btn" data-x type="button" aria-label="Close">✕</button></div><div class="modal-b cols-grid">
+      <div><h4>Your columns <small id="nCols">${o.get().length}</small> <button class="btn sm" id="colReset" type="button">Reset</button></h4><div id="mine">${mine()}</div>
       <p class="muted small">Changes show at once and are saved in this browser. Make the list wider to see more of them.</p></div>
-      <div><h4>Add columns</h4><input type="search" id="colQ" placeholder="Search columns" aria-label="Search columns"><div id="colGroups">${groups}</div></div></div></div>`;
+      <div><h4>Add columns</h4><input type="search" id="colQ" placeholder="Find a column, e.g. RSI" aria-label="Search columns"><div id="colGroups">${groups()}</div></div></div></div>`;
     document.body.appendChild(m);
     const refresh = () => {
       m.querySelector("#mine").innerHTML = mine();
-      m.querySelector("#nCols").textContent = st.cols.length;
-      m.querySelectorAll("#colGroups input").forEach((i) => { i.checked = st.cols.includes(i.value); });
-      store.set("sd-stocks", { ...store.get("sd-stocks", {}), cols: st.cols });
+      m.querySelector("#nCols").textContent = o.get().length;
+      m.querySelectorAll("#colGroups input").forEach((i) => { i.checked = o.get().includes(i.value); });
+      m.querySelectorAll("#colGroups details").forEach((d, k) => { const sm = d.querySelector("summary small"); if (sm) sm.textContent = `${cats[k][1].filter(([id]) => o.get().includes(id)).length}/${cats[k][1].length}`; });
       done();
     };
     m.addEventListener("change", (e) => {
       if (!e.target.matches("#colGroups input")) return;
-      const v = e.target.value;
-      st.cols = e.target.checked ? [...st.cols.filter((c) => c !== v), v] : st.cols.filter((c) => c !== v);
+      const v = e.target.value, cur = o.get();
+      o.set(e.target.checked ? [...cur.filter((c) => c !== v), v] : cur.filter((c) => c !== v));
       refresh();
     });
     const shut = () => { m.remove(); document.removeEventListener("keydown", onKey); };
@@ -1074,11 +1088,12 @@
     m.addEventListener("click", (e) => {
       if (e.target === m || e.target.closest("[data-x]")) return shut();
       const t = e.target.closest("button"); if (!t) return;
-      if (t.id === "colReset") st.cols = SD.DEFAULT_COLUMNS.slice();
-      else if (t.dataset.rm) st.cols = st.cols.filter((c) => c !== t.dataset.rm);
+      const cur = o.get().slice();
+      if (t.id === "colReset") o.set(o.def.slice());
+      else if (t.dataset.rm) o.set(cur.filter((c) => c !== t.dataset.rm));
       else if (t.dataset.up != null || t.dataset.down != null) {
         const i = Number(t.dataset.up != null ? t.dataset.up : t.dataset.down), j = t.dataset.up != null ? i - 1 : i + 1;
-        if (j >= 0 && j < st.cols.length) [st.cols[i], st.cols[j]] = [st.cols[j], st.cols[i]];
+        if (j >= 0 && j < cur.length) { [cur[i], cur[j]] = [cur[j], cur[i]]; o.set(cur); }
       } else return;
       refresh();
     });
@@ -1100,7 +1115,7 @@
     const lr = state.byKey.get(key) || {};
     const stat = (label, val) => `<div class="stat"><small>${label}</small><b>${val}</b></div>`;
     view.innerHTML = `<div class="crumbs"><a href="${isStock ? "#/stocks" : "#/market"}">${isStock ? "Stocks" : "Market"}</a> › ${esc(r.symbol)}</div>
-      <div class="d-head"><h1>${esc(r.name || r.symbol)}</h1><span class="muted">${esc(r.symbol)} · ${esc(r.exchange || "NSE")}${isStock ? (r.sector ? " · " + esc(r.sector) : "") + (r.basic_industry ? " › " + esc(r.basic_industry) : "") : " index"}</span>
+      <div class="d-head"><h1>${isStock ? logo(r, true) : ""}${esc(r.name || r.symbol)}</h1><span class="muted">${esc(r.symbol)} · ${esc(r.exchange || "NSE")}${isStock ? (r.sector ? " · " + esc(r.sector) : "") + (r.basic_industry ? " › " + esc(r.basic_industry) : "") : " index"}</span>
         <button class="star ${state.watch.has(key) ? "on" : ""}" data-star="${esc(key)}" aria-label="Watchlist" style="font-size:20px">★</button></div>
       ${isStock ? `<div class="seg view-tog" id="viewTog"><button type="button" data-v="chart" class="on">Chart</button><button type="button" data-v="fin">Financials</button></div>` : ""}
       <div class="d-main ${isStock ? "withp" : ""}" id="dMain"><div class="chart-box big" id="chartBox"></div>${isStock ? '<aside class="side-panel" id="side"></aside>' : ""}</div><div id="finBox" hidden></div>
@@ -1180,58 +1195,207 @@
     if ($("#nwMore")) $("#nwMore").onclick = () => { state.newsLimit = ns.limit + 150; renderNews(); };
   }
 
-  /* ------------------------------------------------------------------ leaders (Phase N11): top stocks by our leader score */
+  /* ------------------------------------------------------------------ leaders (Phase N11; new look 12-Nov-2026): top stocks by our leader score
+     Like the reference video (Viraj 12-Nov): the scanner workspace - "Top Leaders" list grouped by theme / industry with
+     a count per group, a chart beside it, a divider to drag (a wider list shows more columns, the Catalyst first), a
+     sort menu (stocks + groups), the column drawer, search; rows glide to their new place when the order changes. */
+  const LD_EXTRA = [["catalyst", "Catalyst (latest order / deal / fund raising filing)"], ["score", "Leader score"]];
+  const LD_DEF = ["catalyst", "chg_1d", "ret_1w", "rs_rating", "mcap_cr", "vs_sector_1m"];
+  const LD_SHORT = { catalyst: "Catalyst", score: "Score", chg_1d: "1D %", ret_1w: "1W %", ret_1m: "1M %", ret_3m: "3M %", ret_6m: "6M %", rs_rating: "RS",
+    mcap_cr: "Mcap", vs_sector_1m: "vs Sect", from_hi52: "52W hi", turnover_cr: "Turnover", rvol: "RVol" };
+  const LD_SORTS = [["score", "Leader score", "desc"], ["az", "A - Z", "asc"], ["close", "Price", "desc"], ["turnover_cr", "Price × Volume", "desc"],
+    ["mcap_cr", "Market cap", "desc"], ["rs_rating", "RS rating", "desc"], ["from_hi52", "From 52W high", "desc"], ["perf", "Performance", "desc"]];
+  const LD_PERF = [["chg_1d", "1D %"], ["ret_1w", "1W %"], ["ret_1m", "1M %"], ["ret_3m", "3M %"]];
+  const LD_GSORT = [["score", "Leader score"], ["az", "Name A → Z"], ["za", "Name Z → A"], ["most", "Most stocks"], ["few", "Fewest stocks"]];
+  const LD_BY = [["theme", "Theme"], ["industry", "Industry"], ["sector", "Sector"]];
+  const LD_RULE = "Leader score (0-100, our own rule): 40 % RS rating, 20 % nearness to the 52-week high (0 % = full, -25 % or lower = none), 15 % trend (close > 50 > 150 > 200-day average, rising 200-day), 15 % industry rank, 10 % latest results (EPS and sales growth). Only stocks with enough daily turnover and without 2 % / 5 % price bands.";
+  const shortD = (iso) => { const t = new Date(iso + "T00:00:00"); return `${t.getDate()} ${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][t.getMonth()]}`; };
+
   async function renderLeaders() {
     if (!state.screen) view.innerHTML = SKEL("Loading leaders");
-    try { await loadScreen(); } catch (e) { view.innerHTML = `<p class="empty">Could not load the stock table (${esc(e.message)}).</p>`; return; }
+    try {
+      await loadScreen();
+      if (!state.catalysts) state.catalysts = await getJSON("data/catalysts.json").catch(() => ({}));
+    } catch (e) { view.innerHTML = `<p class="empty">Could not load the stock table (${esc(e.message)}).</p>`; return; }
     if (routeName() !== "leaders") return;
-    const ls = Object.assign({ by: "theme", top: 160, minTurn: 5, open: {} }, store.get("sd-leaders", {}));
+    const ls = Object.assign({ by: "theme", top: 150, minTurn: 5, sort: "score", dir: "desc", perf: "chg_1d", gsort: "score", cols: LD_DEF.slice(), listW: 330, q: "", open: {} },
+      store.get("sd-leaders", {}));
+    if (!Array.isArray(ls.cols)) ls.cols = LD_DEF.slice();
+    ls.cols = ls.cols.filter((c) => c === "catalyst" || c === "score" || SD.COLUMNS[c]);
     const save = () => store.set("sd-leaders", ls);
     const nInd = new Set(state.screen.map((r) => r.industry_rank).filter((x) => x != null)).size || 100;
     const pool = state.screen.filter((r) => !r.stale && (r.turnover_avg20_cr ?? 0) >= ls.minTurn && !["2", "5"].includes(String(r.price_band)));
     const scored = pool.map((r) => ({ r, s: SD.leaderScore(r, nInd) })).filter((x) => x.s != null).sort((a, b) => b.s - a.s);
     const top = scored.slice(0, ls.top);
     const keyOf = (r) => (ls.by === "theme" ? r.theme || r.basic_industry || "Other" : ls.by === "industry" ? r.basic_industry || r.industry || "Other" : r.sector || "Other");
-    const groupsL = new Map();
-    for (const x of top) { const k = keyOf(x.r); if (!groupsL.has(k)) groupsL.set(k, []); groupsL.get(k).push(x); }
-    const secs = [...groupsL].sort((a, b) => b[1].length - a[1].length || b[1][0].s - a[1][0].s);
     const isWide = wide();
     if (state.ldStock && !top.some((x) => x.r.key === state.ldStock)) state.ldStock = null;
     if (!state.ldStock && isWide && top.length) state.ldStock = top[0].r.key;
-    const tags = (r) => [r.stage === "2" || r.stage === "2A" ? "Stage 2" : "", r.dist_pivot != null && r.dist_pivot > -5 && r.dist_pivot <= 0 ? "Near pivot" : "",
-      r.vcp_contractions >= 2 ? "VCP" : "", r.rs_line_52w_high ? "RS high" : "", r.pocket_pivot ? "Pocket pivot" : ""].filter(Boolean);
-    const row = ({ r, s }) => `<tr data-key="${esc(r.key)}" class="${state.ldStock === r.key ? "on" : ""}"><td class="l"><b>${esc(r.symbol)}</b><span class="ld-sub">${esc(ls.by === "theme" ? r.basic_industry || "" : r.theme || "")}${tags(r).map((t) => ` <i class="hs-tag">${t}</i>`).join("")}</span></td>
-      <td class="num"><span class="ld-score" style="--s:${s}">${s}</span></td><td class="num">${r.rs_rating ?? "–"}</td><td class="num">${pct(r.chg_1d)}</td><td class="num">${pct(r.ret_1w)}</td>
-      <td class="num">${pct(r.ret_1m)}</td><td class="num">${pct(r.from_hi52)}</td><td class="num">${finNum(r.mcap_cr)}</td></tr>`;
-    const head = `<thead><tr><th class="l">Stock</th><th title="Our leader score 0-100">Score</th><th>RS</th><th>1D</th><th>1W</th><th>1M</th><th>52W high</th><th>MCap Cr</th></tr></thead>`;
-    const body = secs.map(([k, list]) => { const shut = ls.open[k] === false;
-      return `<tbody class="ld-sec ${shut ? "shut" : ""}"><tr class="ld-h" data-sec="${esc(k)}"><td colspan="8"><span class="caret">▾</span> <b>${esc(k)}</b> <small class="muted">${list.length}</small>
-        <small class="muted ld-avg">avg score ${Math.round(list.reduce((a, x) => a + x.s, 0) / list.length)}</small></td></tr>${shut ? "" : list.map(row).join("")}</tbody>`; }).join("");
-    const rule = "Leader score (0-100, our own rule): 40 % RS rating, 20 % nearness to the 52-week high (0 % = full, -25 % or lower = none), 15 % trend (close > 50 > 150 > 200-day average, rising 200-day), 15 % industry rank, 10 % latest results (EPS and sales growth). Only stocks with enough daily turnover and without 2 % / 5 % price bands.";
-    view.innerHTML = `<div class="ld"><div class="ld-bar"><h1>Top leaders <span class="pk-i" title="${esc(rule)}">i</span></h1>
-        <label class="muted small">Group by ${`<select id="ldBy"><option value="theme" ${ls.by === "theme" ? "selected" : ""}>Theme</option><option value="industry" ${ls.by === "industry" ? "selected" : ""}>Industry</option><option value="sector" ${ls.by === "sector" ? "selected" : ""}>Sector</option></select>`}</label>
-        <label class="muted small">Show <select id="ldTop">${[50, 100, 160, 250].map((n) => `<option ${n === ls.top ? "selected" : ""}>${n}</option>`).join("")}</select></label>
-        <label class="muted small">Turnover ≥ <select id="ldTurn">${[1, 5, 10, 25].map((n) => `<option value="${n}" ${n === ls.minTurn ? "selected" : ""}>₹${n} Cr</option>`).join("")}</select></label>
-        <span class="ld-r"><button class="btn sm" id="ldAll" type="button">Fold all</button><button class="btn sm" id="ldCopy" type="button">Copy to TradingView</button></span></div>
-      <div class="ld-main ${isWide ? "wide" : ""}"><div class="ld-list"><table class="gt ld-t">${head}${body}</table></div>${isWide ? '<div class="chart-pane ld-chart" id="ldPane"></div>' : ""}</div>
-      <p class="muted small">${esc(rule)} Not investment advice.</p></div>`;
-    $("#stPage").innerHTML = `<span>${top.length} of ${pool.length.toLocaleString("en-IN")} stocks</span><span class="st-n">top ${ls.top} by leader score · ₹${ls.minTurn} Cr+ turnover · excl. 2% / 5% bands</span>`;
-    const lm = view.querySelector(".ld-main");
-    if (isWide) lm.style.height = Math.max(460, innerHeight - (lm.getBoundingClientRect().top + scrollY) - 64) + "px";
-    const openChart = (key) => { const r = state.screenByKey.get(key); if (r && $("#ldPane")) SDChart.open($("#ldPane"), r, { kind: "s" }); };
-    if (isWide && state.ldStock) openChart(state.ldStock);
-    view.querySelector(".ld-t").onclick = (e) => {
-      const h = e.target.closest(".ld-h"); if (h) { const k = h.dataset.sec; ls.open[k] = ls.open[k] === false; save(); renderLeaders(); return; }
-      const tr = e.target.closest("tr[data-key]"); if (!tr) return;
-      if (!isWide) { location.hash = "#/i/" + tr.dataset.key.replace(":", "/"); return; }
-      state.ldStock = tr.dataset.key; view.querySelectorAll(".ld-t tr.on").forEach((x) => x.classList.remove("on")); tr.classList.add("on"); openChart(tr.dataset.key);
+    const I = (d) => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
+    view.innerHTML = `<div class="ws-main list ldx ${isWide ? "wide" : ""}" id="ldMain" style="--list-w:${ls.listW}px">
+      <section class="results ld-res"><div class="res-h"><b>Top Leaders</b><span class="pk-i" title="${esc(LD_RULE)}">i</span><span class="res-c"><span class="count" id="ldN"></span></span>
+          <button class="icon-btn sm ${ls.q ? "on" : ""}" id="ldQB" type="button" title="Search">${ICON.filter}</button>
+          <div class="menu-wrap"><button class="icon-btn sm" id="ldSB" type="button" title="Sort">${ICON.sort}</button><div class="menu right ld-sm" id="ldSM" hidden></div></div>
+          <button class="icon-btn sm" id="ldCB" type="button" title="Columns">${ICON.cols}</button></div>
+        <div class="ld-q" ${ls.q ? "" : "hidden"}><input type="search" id="ldQ" placeholder="Search leaders" value="${esc(ls.q)}" autocomplete="off"></div>
+        <div class="res-list" id="ldL"></div></section>
+      <div class="res-drag" id="ldDrag" role="separator" aria-orientation="vertical" title="Drag to make the list wider (more columns)"></div>
+      <div class="chart-pane" id="ldPane"><p class="empty">Select a stock to chart it.</p></div></div>`;
+    const list = $("#ldL"), main = $("#ldMain");
+
+    // --- the list
+    const valOf = (x, k) => (k === "score" ? x.s : k === "az" || k === "symbol" ? x.r.symbol : k === "perf" ? x.r[ls.perf] : k === "catalyst" ? (state.catalysts[x.r.symbol] || [""])[0] : x.r[k]);
+    const cmp = (k, dir) => (a, b) => {
+      const va = valOf(a, k), vb = valOf(b, k);
+      if (typeof va === "string" || typeof vb === "string") return String(va ?? "").localeCompare(String(vb ?? "")) * (dir === "asc" ? 1 : -1);
+      return ((va ?? -Infinity) - (vb ?? -Infinity)) * (dir === "asc" ? 1 : -1) || b.s - a.s;
     };
-    $("#ldBy").onchange = (e) => { ls.by = e.target.value; ls.open = {}; save(); renderLeaders(); };
-    $("#ldTop").onchange = (e) => { ls.top = Number(e.target.value); save(); renderLeaders(); };
-    $("#ldTurn").onchange = (e) => { ls.minTurn = Number(e.target.value); save(); renderLeaders(); };
-    $("#ldAll").textContent = secs.every(([k]) => ls.open[k] === false) ? "Open all" : "Fold all";
-    $("#ldAll").onclick = () => { const fold = !secs.every(([k]) => ls.open[k] === false); ls.open = {}; if (fold) secs.forEach(([k]) => { ls.open[k] = false; }); save(); renderLeaders(); };
-    $("#ldCopy").onclick = async () => { const t = top.map(({ r }) => "NSE:" + r.symbol).join(","); try { await navigator.clipboard.writeText(t); $("#ldCopy").textContent = `Copied ${top.length}`; } catch (e) { prompt("Copy these symbols:", t); } };
+    const fitCols = () => {
+      if (!isWide) return ls.cols;
+      let w = list.clientWidth - 236; const out = [];
+      for (const c of ls.cols) { const need = c === "catalyst" ? 340 : 84; if (w < need) break; out.push(c); w -= need; }
+      return out;
+    };
+    let shownCols = [], rowsNow = [];
+    const cell = (x, c) => {
+      const r = x.r;
+      if (c === "catalyst") { const k = state.catalysts[r.symbol]; return `<td class="l ld-cat">${k ? `<span class="ld-cd">${esc(shortD(k[0]))}</span>${esc(k[2])}` : '<span class="muted">—</span>'}</td>`; }
+      if (c === "score") return `<td class="num"><span class="ld-score" style="--s:${x.s}">${x.s}</span></td>`;
+      if (c === "rs_rating") return `<td class="num ld-rs">${r.rs_rating ?? "–"}</td>`;
+      if (c === "mcap_cr") return `<td class="num">${finNum(r.mcap_cr)}</td>`;
+      return `<td class="${SD.COLUMNS[c] && SD.COLUMNS[c].fmt === "text" ? "l" : "num"}">${cellHTML(r, c)}</td>`;
+    };
+    const flipFrom = () => { const m = new Map(); list.querySelectorAll("tr[data-f]").forEach((tr) => m.set(tr.dataset.f, tr.getBoundingClientRect().top)); return m; };
+    const flipTo = (old, newCols) => {
+      const lb = list.getBoundingClientRect();
+      list.querySelectorAll("tr[data-f]").forEach((tr) => {
+        const b = tr.getBoundingClientRect(); if (b.bottom < lb.top - 200 || b.top > lb.bottom + 200) return;
+        const o = old.get(tr.dataset.f);
+        if (o == null) tr.animate([{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], { duration: 320, easing: "cubic-bezier(.2,.8,.2,1)" });
+        else if (Math.abs(o - b.top) > 1) tr.animate([{ transform: `translateY(${o - b.top}px)` }, { transform: "none" }], { duration: 420, easing: "cubic-bezier(.2,.8,.2,1)" });
+      });
+      if (newCols.length) list.querySelectorAll(newCols.map((i) => `tr > :nth-child(${i + 4})`).join(",")).forEach((el) => el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 260, easing: "ease-out" }));
+    };
+    const draw = (anim) => {
+      const old = anim ? flipFrom() : null;
+      const q = ls.q.trim().toLowerCase();
+      const items = q ? top.filter(({ r }) => r.symbol.toLowerCase().includes(q) || String(r.name || "").toLowerCase().includes(q) || keyOf(r).toLowerCase().includes(q)) : top;
+      const groups = new Map();
+      for (const x of items) { const k = keyOf(x.r); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(x); }
+      // group strength = sum of its best 3 leader scores (a group with several leaders beats a lone one)
+      const gl = [...groups].map(([k, l]) => ({ k, l: l.sort(cmp(ls.sort, ls.dir)), avg: l.map((x) => x.s).sort((p, q) => q - p).slice(0, 3).reduce((a, v) => a + v, 0) }));
+      const gs = { score: (a, b) => b.avg - a.avg, az: (a, b) => a.k.localeCompare(b.k), za: (a, b) => b.k.localeCompare(a.k), most: (a, b) => b.l.length - a.l.length || b.avg - a.avg, few: (a, b) => a.l.length - b.l.length || b.avg - a.avg }[ls.gsort] || ((a, b) => b.avg - a.avg);
+      gl.sort(gs);
+      const cols = fitCols(), added = cols.map((c, i) => (shownCols.includes(c) ? -1 : i)).filter((i) => i >= 0 && shownCols.length);
+      shownCols = cols;
+      rowsNow = gl.flatMap((g) => (ls.open[g.k] === false ? [] : g.l)).map((x) => x.r);
+      const sortK = ls.sort === "az" ? "symbol" : ls.sort;
+      const arrow = (k) => (sortK === k || (k === "symbol" && ls.sort === "az") ? `<i class="ld-ar">${ls.dir === "asc" ? "↑" : "↓"}</i>` : '<i class="ld-ar off">↕</i>');
+      const head = `<tr><th class="l ck"><input type="checkbox" id="ldAll" aria-label="Select all"></th><th class="l sticky" data-col="symbol">${arrow("symbol")}Symbol</th><th data-col="close">${arrow("close")}LTP</th>`
+        + cols.map((c) => `<th data-col="${c}" class="${c === "catalyst" ? "l ld-cath" : ""}">${c === "catalyst" ? "" : arrow(c)}${esc(LD_SHORT[c] || (SD.COLUMNS[c] ? SD.COLUMNS[c].label : c))}</th>`).join("") + "</tr>";
+      const n = 3 + cols.length;
+      const body = gl.map((g) => {
+        const shut = ls.open[g.k] === false;
+        return `<tr class="ld-g${shut ? " shut" : ""}" data-f="g:${esc(g.k)}" data-g="${esc(g.k)}"><td colspan="${n}"><span class="ld-gt"><i class="ld-dot"></i>${esc(g.k)}<i class="ld-chev">▾</i></span><span class="ld-gn">${g.l.length}</span></td></tr>`
+          + (shut ? "" : g.l.map((x) => `<tr class="ld-r${state.ldStock === x.r.key ? " cur" : ""}" data-f="${esc(x.r.key)}" data-key="${esc(x.r.key)}"><td class="l ck"><input type="checkbox" data-sel="${esc(x.r.key)}" ${state.selected.has(x.r.key) ? "checked" : ""} aria-label="Select ${esc(x.r.symbol)}"></td>`
+            + `<td class="l sticky name"><div class="nm">${logo(x.r)}<b>${esc(x.r.symbol)}</b><button type="button" class="ld-w${state.watch.has(x.r.key) ? " on" : ""}" data-w="${esc(x.r.key)}" title="${state.watch.has(x.r.key) ? "In your watchlist" : "Add to watchlist"}">${state.watch.has(x.r.key) ? "★" : "+"}</button></div></td>`
+            + `<td class="num">${SD.fmtPrice(x.r.close)}</td>${cols.map((c) => cell(x, c)).join("")}</tr>`).join(""));
+      }).join("");
+      list.innerHTML = items.length ? `<div class="table-wrap"><table class="ld-t"><thead>${head}</thead><tbody>${body}</tbody></table></div>` : '<div class="empty">No leader matches.</div>';
+      $("#ldN").textContent = q ? `${items.length} / ${top.length}` : String(top.length);
+      footer();
+      if (old) flipTo(old, added);
+    };
+    const footer = () => {
+      $("#stPage").innerHTML = `<button class="st-btn" id="ldCopy" type="button" title="Copy symbols as NSE:SYMBOL (TradingView watchlist)">Copy</button><button class="st-btn" id="ldCsv" type="button">CSV</button>`
+        + `<span>Top Leaders · ${state.selected.size ? [...state.selected].filter((k) => top.some((x) => x.r.key === k)).length : 0} of ${top.length} selected</span>`
+        + `<span class="st-n">${top.length} of ${pool.length.toLocaleString("en-IN")} stocks · top ${ls.top} by leader score · ₹${ls.minTurn} Cr+ turnover · excl. 2% / 5% bands · ${state.screen.length.toLocaleString("en-IN")} scanned</span>`;
+      const picked = () => { const s = top.filter((x) => state.selected.has(x.r.key)).map((x) => x.r); return s.length ? s : rowsNow; };
+      $("#ldCopy").onclick = async () => { const l = picked(), t = l.map((r) => "NSE:" + r.symbol).join(","); try { await navigator.clipboard.writeText(t); $("#ldCopy").textContent = `Copied ${l.length}`; } catch (e) { prompt("Copy these symbols:", t); } setTimeout(() => { const b = $("#ldCopy"); if (b) b.textContent = "Copy"; }, 2000); };
+      $("#ldCsv").onclick = () => { const blob = new Blob([SD.toCSV(picked(), ["symbol", "name", "close", ...ls.cols.filter((c) => SD.COLUMNS[c])])], { type: "text/csv" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `leaders-${state.screenDate}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); };
+    };
+    const fitH = () => { if (isWide) main.style.height = Math.max(480, innerHeight - main.getBoundingClientRect().top - 46) + "px"; };
+    fitH();
+    draw(false);
+
+    // --- chart beside the list
+    const openRow = (key, scroll) => {
+      const r = state.screenByKey.get(key); if (!r) return;
+      if (!isWide) { location.hash = "#/i/s/" + r.id; return; }
+      state.ldStock = key;
+      list.querySelectorAll("tr.cur").forEach((x) => x.classList.remove("cur"));
+      const tr = list.querySelector(`tr[data-key="${CSS.escape(key)}"]`);
+      if (tr) { tr.classList.add("cur"); if (scroll) tr.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
+      const pane = $("#ldPane");
+      pane.classList.remove("ld-swap"); void pane.offsetWidth; pane.classList.add("ld-swap");
+      SDChart.open(pane, r, { kind: "s" });
+    };
+    if (isWide && state.ldStock) openRow(state.ldStock, true);
+    list.onclick = (e) => {
+      const th = e.target.closest("th[data-col]");
+      if (th) { const c = th.dataset.col === "symbol" ? "az" : th.dataset.col; ls.dir = ls.sort === c ? (ls.dir === "asc" ? "desc" : "asc") : c === "az" ? "asc" : "desc"; ls.sort = c; save(); return draw(true); }
+      if (e.target.id === "ldAll") { rowsNow.forEach((r) => (e.target.checked ? state.selected.add(r.key) : state.selected.delete(r.key))); list.querySelectorAll("[data-sel]").forEach((i) => { i.checked = e.target.checked; }); return footer(); }
+      const sel = e.target.closest("[data-sel]");
+      if (sel) { if (sel.checked) state.selected.add(sel.dataset.sel); else state.selected.delete(sel.dataset.sel); return footer(); }
+      const w = e.target.closest("[data-w]");
+      if (w) { toggleWatch(w.dataset.w); const on = state.watch.has(w.dataset.w); w.classList.toggle("on", on); w.textContent = on ? "★" : "+"; w.title = on ? "In your watchlist" : "Add to watchlist"; return; }
+      const g = e.target.closest("tr.ld-g");
+      if (g) { const k = g.dataset.g; ls.open[k] = ls.open[k] === false; save(); return draw(true); }
+      const tr = e.target.closest("tr[data-key]");
+      if (tr) openRow(tr.dataset.key, false);
+    };
+    view.onkeydown = (e) => {
+      if (!isWide || !state.ldStock || !["ArrowDown", "ArrowUp"].includes(e.key) || e.target.matches("input, select, textarea")) return;
+      const i = rowsNow.findIndex((r) => r.key === state.ldStock), j = i + (e.key === "ArrowDown" ? 1 : -1);
+      if (rowsNow[j]) { e.preventDefault(); openRow(rowsNow[j].key, true); }
+    };
+
+    // --- search, sort menu, columns
+    $("#ldQB").onclick = () => { const b = view.querySelector(".ld-q"); b.hidden = !b.hidden; $("#ldQB").classList.toggle("on", !b.hidden || !!ls.q); if (!b.hidden) $("#ldQ").focus(); };
+    $("#ldQ").oninput = (e) => { ls.q = e.target.value; save(); draw(true); };
+    const sm = $("#ldSM");
+    const menuHTML = () => `<div class="ld-mh"><b>Sort by</b><button type="button" data-reset title="Back to leader score">↺</button></div>`
+      + LD_SORTS.map(([k, l]) => `<div class="ld-mi${ls.sort === k ? " on" : ""}"><button type="button" data-s="${k}">${l}</button>${k === "perf" ? `<select id="ldPerf" aria-label="Performance period">${LD_PERF.map(([p, pl]) => `<option value="${p}" ${p === ls.perf ? "selected" : ""}>${pl}</option>`).join("")}</select>` : ""}${ls.sort === k ? `<i>${ls.dir === "asc" ? "↑" : "↓"}</i>` : ""}</div>`).join("")
+      + `<small class="menu-h">SORT GROUPS BY</small>` + LD_GSORT.map(([k, l]) => `<div class="ld-mi${ls.gsort === k ? " on" : ""}"><button type="button" data-gs="${k}">${l}</button>${ls.gsort === k ? "<i>✓</i>" : ""}</div>`).join("")
+      + `<small class="menu-h">GROUP BY</small><div class="ld-seg">${LD_BY.map(([k, l]) => `<button type="button" data-by="${k}" class="${ls.by === k ? "on" : ""}">${l}</button>`).join("")}</div>`
+      + `<small class="menu-h">SHOW</small><div class="ld-sel"><select id="ldTop" aria-label="How many">${[50, 100, 150, 250].map((n) => `<option value="${n}" ${n === ls.top ? "selected" : ""}>Top ${n}</option>`).join("")}</select>`
+      + `<select id="ldTurn" aria-label="Turnover">${[1, 5, 10, 25].map((n) => `<option value="${n}" ${n === ls.minTurn ? "selected" : ""}>₹${n} Cr+ turnover</option>`).join("")}</select></div>`;
+    $("#ldSB").onclick = (e) => { e.stopPropagation(); const open = sm.hidden; view.querySelectorAll(".menu").forEach((x) => { x.hidden = true; }); if (open) { sm.innerHTML = menuHTML(); sm.hidden = false; } $("#ldSB").classList.toggle("on", open); };
+    sm.onclick = (e) => {
+      e.stopPropagation();
+      const b = e.target.closest("button"); if (!b) return;
+      if (b.dataset.reset != null) { ls.sort = "score"; ls.dir = "desc"; ls.gsort = "score"; }
+      else if (b.dataset.s) { const s = LD_SORTS.find((x) => x[0] === b.dataset.s); if (ls.sort === s[0]) ls.dir = ls.dir === "asc" ? "desc" : "asc"; else { ls.sort = s[0]; ls.dir = s[2]; } }
+      else if (b.dataset.gs) ls.gsort = b.dataset.gs;
+      else if (b.dataset.by) { ls.by = b.dataset.by; ls.open = {}; }
+      else return;
+      save(); sm.innerHTML = menuHTML(); draw(true);
+    };
+    sm.onchange = (e) => {
+      if (e.target.id === "ldPerf") { ls.perf = e.target.value; ls.sort = "perf"; ls.dir = "desc"; save(); sm.innerHTML = menuHTML(); draw(true); }
+      else if (e.target.id === "ldTop" || e.target.id === "ldTurn") { ls[e.target.id === "ldTop" ? "top" : "minTurn"] = Number(e.target.value); save(); renderLeaders(); }
+    };
+    view.onclick = () => { sm.hidden = true; const b = $("#ldSB"); if (b) b.classList.remove("on"); };
+    $("#ldCB").onclick = () => columnSettings(() => { save(); draw(true); },
+      { get: () => ls.cols, set: (v) => { ls.cols = v; }, def: LD_DEF, extra: LD_EXTRA, name: "Leaders" });
+
+    // --- drag the divider: a wider list shows more columns (they fade in)
+    const drag = $("#ldDrag");
+    drag.onpointerdown = (e) => {
+      if (!isWide) return;
+      e.preventDefault(); drag.setPointerCapture(e.pointerId); main.classList.add("dragging");
+      const left = main.getBoundingClientRect().left, max = main.clientWidth - 380;
+      drag.onpointermove = (ev) => {
+        ls.listW = Math.round(Math.min(Math.max(ev.clientX - left, 260), max));
+        main.style.setProperty("--list-w", ls.listW + "px");
+        if (fitCols().join() !== shownCols.join()) draw(true);
+      };
+      drag.onpointerup = () => { drag.onpointermove = null; main.classList.remove("dragging"); save(); window.dispatchEvent(new Event("resize")); };
+    };
+    drag.ondblclick = () => { ls.listW = 330; save(); main.style.setProperty("--list-w", "330px"); draw(true); window.dispatchEvent(new Event("resize")); };
+    if (state.ldResize) window.removeEventListener("resize", state.ldResize);
+    state.ldResize = () => { if (routeName() !== "leaders" || !document.body.contains(main)) { window.removeEventListener("resize", state.ldResize); return; } fitH(); if (fitCols().join() !== shownCols.join()) draw(false); };
+    window.addEventListener("resize", state.ldResize);
   }
 
   /* ------------------------------------------------------------------ RRG (Phase N9; new look 12-Nov-2026): strength x momentum with tails
@@ -1600,7 +1764,7 @@
       const main = hm.color === "rs_rating" ? `RS ${v ?? "–"}` : hm.color === "from_hi52" ? `${fmtV(v)} from high` : fmtV(v);
       const k = (l, x) => `<span><small>${l}</small>${x}</span>`;
       const p = (x) => (x == null || !isFinite(x) ? '<i class="muted">–</i>' : `<i class="${x >= 0 ? "up" : "down"}">${x > 0 ? "+" : x < 0 ? "−" : ""}${Math.abs(x).toFixed(1)}%</i>`);
-      return `<div class="hm-tip-h"><b>${esc(r.symbol)}</b><span class="${tone}">${main}</span></div>
+      return `<div class="hm-tip-h"><b class="wl">${logo(r)}${esc(r.symbol)}</b><span class="${tone}">${main}</span></div>
         <div class="hm-tip-n">${esc(r.name || "")}</div>
         <div class="hm-tip-s">${esc(r.sector || "")}${r.basic_industry || r.industry ? " · " + esc(r.basic_industry || r.industry) : ""}</div>
         <div class="hm-tip-g">${k("Price", `₹${SD.fmtPrice(r.close)}`)}${k("1D", p(r.chg_1d))}${k("1M", p(r.ret_1m))}${k("RS", r.rs_rating ?? "–")}</div>
@@ -1659,8 +1823,6 @@
   const WD3 = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], MO3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const dLbl = (iso, yr) => { const t = new Date(iso + "T00:00:00"); return `${WD3[t.getDay()]} ${t.getDate()} ${MO3[t.getMonth()]}${yr ? " " + t.getFullYear() : ""}`; };
   /** a round letter badge per stock (we have no logos): the colour comes from the symbol, so a stock always looks the same */
-  const monoHue = (s) => { let h = 7; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) % 360; return h; };
-  const mono = (sym, big) => `<i class="mono${big ? " big" : ""}" style="--h:${monoHue(sym)}" aria-hidden="true">${esc(String(sym).replace(/[^A-Z0-9]/gi, "").slice(0, big ? 2 : 1))}</i>`;
   const sgnPct = (x, d = 0, unit = "%") => (x == null || !isFinite(x) ? '<span class="muted">—</span>'
     : `<span class="${x >= 0 ? "up" : "down"}">${x > 0 ? "+" : x < 0 ? "−" : ""}${finNum(Math.abs(x), d)}${unit}</span>`);
   const sig3 = (v) => (v == null || !isFinite(v) ? "–" : finNum(v, Math.abs(v) < 10 ? 2 : Math.abs(v) < 100 ? 1 : 0));
@@ -1718,7 +1880,7 @@
         due.length ? `${due.length} due` : ""].filter(Boolean).join(" · ") || "No results";
       return `<section class="ec${isT ? " today" : ""}${hol ? " hol" : ""}" style="--i:${i}"><div class="ec-h"><div class="ec-t"><b>${dLbl(d)}</b>${isT ? '<span class="ec-tag t">TODAY</span>' : ""}${hol ? '<span class="ec-tag h">HOLIDAY</span>' : ""}${NF && all.length ? `<span class="ec-n">${items.length}/${all.length}</span>` : ""}</div>
         <small>${line}</small></div>
-        <div class="ec-l">${items.length ? items.map(({ r, g, done: ok }) => `<a class="ec-r${ok ? "" : " due"}" href="#/i/s/${encodeURIComponent(r.id)}" data-k="${esc(r.key)}" data-d="${d}">${mono(r.symbol)}<b>${esc(r.symbol)}</b>${ok ? `<span class="egt ${GRADE_CLS[g] || ""}">${g || "–"}</span>` : ""}</a>`).join("")
+        <div class="ec-l">${items.length ? items.map(({ r, g, done: ok }) => `<a class="ec-r${ok ? "" : " due"}" href="#/i/s/${encodeURIComponent(r.id)}" data-k="${esc(r.key)}" data-d="${d}">${logo(r)}<b>${esc(r.symbol)}</b>${ok ? `<span class="egt ${GRADE_CLS[g] || ""}">${g || "–"}</span>` : ""}</a>`).join("")
           : `<p class="ec-none">${NF && all.length ? "None match" : "Nothing listed"}</p>`}</div></section>`;
     };
     const cols = days.map(col).join("");
@@ -1765,7 +1927,7 @@
     let shown = 0;
     const dayHead = (d) => `<div class="er-d">${d === today ? "TODAY" : d === addDays(today, -1) ? "YESTERDAY" : dLbl(d).toUpperCase()}</div>`;
     const priceLine = (r) => `<span class="erc-p">Price <b>₹${SD.fmtPrice(r.close)}</b>${r.mcap_cr != null ? `<span>M.Cap <b>₹${finNum(r.mcap_cr)} Cr</b></span>` : ""}</span>`;
-    const card = ({ r }) => `<div class="erc" data-id="${esc(r.id)}"><div class="erc-h"><a href="#/i/s/${encodeURIComponent(r.id)}">${esc(r.symbol)} <span class="arr">↗</span></a>${priceLine(r)}</div>
+    const card = ({ r }) => `<div class="erc" data-id="${esc(r.id)}"><div class="erc-h"><a href="#/i/s/${encodeURIComponent(r.id)}">${logo(r)}${esc(r.symbol)} <span class="arr">↗</span></a>${priceLine(r)}</div>
       <div class="erc-t"><i class="skel"></i></div></div>`;
     const fillCard = async (el) => {
       const doc = await getFin(el.dataset.id);
@@ -1784,7 +1946,7 @@
     };
     const mcard = ({ r, g, d }) => {
       const k = (l, v) => `<span><small>${l}</small>${v}</span>`;
-      return `<a class="emc" href="#/i/s/${encodeURIComponent(r.id)}" data-k="${esc(r.key)}" data-d="${d}"><div class="emc-h">${mono(r.symbol)}<b>${esc(r.symbol)}</b><span class="gp ${GRADE_CLS[g] || ""}">${g || "–"}</span></div>
+      return `<a class="emc" href="#/i/s/${encodeURIComponent(r.id)}" data-k="${esc(r.key)}" data-d="${d}"><div class="emc-h">${logo(r)}<b>${esc(r.symbol)}</b><span class="gp ${GRADE_CLS[g] || ""}">${g || "–"}</span></div>
         <small class="emc-s">${dLbl(d)} · ${esc(fqLabel)}${r.mcap_cr != null ? ` · ₹${finNum(r.mcap_cr)} Cr` : ""}</small>
         <div class="emc-k">${k("SALES", sgnPct(r.sales_g_yoy))}${k("PAT", sgnPct(r.np_g_yoy))}${k("EPS", sgnPct(r.eps_g_yoy))}${k("MARGIN", r.npm_last_q == null ? '<span class="muted">—</span>' : finNum(r.npm_last_q, 1) + "%")}${k("REACTION", r.earn_sessions != null && r.earn_sessions <= 10 ? sgnPct(r.earn_chg_pct, 1) : '<span class="muted">—</span>')}</div></a>`;
     };
@@ -1846,7 +2008,7 @@
       const mYoY = r.npm_last_q != null && npmYa != null ? r.npm_last_q - npmYa : null, mQoQ = r.npm_last_q != null && r.npm_q2 != null ? r.npm_last_q - r.npm_q2 : null;
       const tr = (l, a, y, q) => `<tr><td class="l">${l}</td><td class="a">${a}</td><td>${y}</td><td>${q}</td></tr>`;
       const lastQ = r.fin_qtr ? fq(r.fin_qtr) : "";
-      return `<div class="ehc-h">${mono(r.symbol, true)}<div><b>${esc(r.symbol)}</b><small>${done ? `${esc(lastQ)} · ${dLbl(d)}` : `Results due ${dLbl(d)}`}</small></div>
+      return `<div class="ehc-h">${logo(r, true)}<div><b>${esc(r.symbol)}</b><small>${done ? `${esc(lastQ)} · ${dLbl(d)}` : `Results due ${dLbl(d)}`}</small></div>
         ${done ? `<span class="gp solid ${GRADE_CLS[g] || ""}">${g || "–"}</span>` : '<span class="gp due">Due</span>'}</div>
         ${done ? "" : `<small class="ehc-c">Last reported quarter${lastQ ? ` · ${esc(lastQ)}` : ""}</small>`}
         <table class="ehc-t"><thead><tr><th class="l"></th><th>ACTUAL</th><th>YOY</th><th>QOQ</th></tr></thead><tbody>
@@ -2024,7 +2186,7 @@
     }
     const setups = [...seen.values()].sort((a, b) => Math.abs(a.r.dist_pivot ?? 99) - Math.abs(b.r.dist_pivot ?? 99)).slice(0, 15);
     const setHTML = setups.length ? `<div class="table-wrap hs-t"><table><thead><tr><th class="l">Stock</th><th>RS</th><th>Close</th><th>To pivot</th><th>1M</th><th>3M</th><th>52W high</th></tr></thead><tbody>`
-      + setups.map(({ r, tag }) => `<tr data-key="${esc(r.key)}"><td class="l name"><b>${esc(r.symbol)}</b><span><i class="hs-tag">${tag}</i> ${esc(r.basic_industry || r.industry || "")}</span></td><td class="num">${r.rs_rating ?? "–"}</td>`
+      + setups.map(({ r, tag }) => `<tr data-key="${esc(r.key)}"><td class="l name"><div class="nm">${logo(r)}<div><b>${esc(r.symbol)}</b><span><i class="hs-tag">${tag}</i> ${esc(r.basic_industry || r.industry || "")}</span></div></div></td><td class="num">${r.rs_rating ?? "–"}</td>`
         + `<td class="num">${SD.fmtPrice(r.close)}</td><td class="num">${r.dist_pivot == null ? "–" : finNum(Math.abs(r.dist_pivot), 1) + "%"}</td><td class="num">${pct(r.ret_1m)}</td><td class="num">${pct(r.ret_3m)}</td><td class="num">${pct(r.from_hi52)}</td></tr>`).join("")
       + "</tbody></table></div>" : '<p class="muted small">No liquid RS 70+ stock near a pivot today.</p>';
     // where the money is: themes by 1-week average return
@@ -2057,7 +2219,7 @@
       r.breakout_days === 0 && "Breakout today", r.dist_pivot != null && r.dist_pivot > -3 && r.dist_pivot <= 0 && "Near pivot", r.dry_up && "Volume dry-up", r.new_low_20d && "New 20-day low"].filter(Boolean);
     const wl = (state.screen || []).filter((r) => state.watch.has(r.key));
     const groupsW = [["Good day", wl.filter((r) => r.chg_1d >= 1)], ["Weak day", wl.filter((r) => r.chg_1d <= -1)], ["Quiet", wl.filter((r) => r.chg_1d > -1 && r.chg_1d < 1)]];
-    const wlHTML = wl.length ? groupsW.filter(([, l]) => l.length).map(([g, l]) => `<small class="muted hm-l">${g.toUpperCase()} · ${l.length}</small>${l.map((r) => `<a class="hw-row" href="#/i/s/${encodeURIComponent(r.id)}"><div><b>${esc(r.symbol)}</b> <small class="muted">RS ${r.rs_rating ?? "–"}</small><span class="num">${SD.fmtPrice(r.close)} ${pct(r.chg_1d)}</span></div>`
+    const wlHTML = wl.length ? groupsW.filter(([, l]) => l.length).map(([g, l]) => `<small class="muted hm-l">${g.toUpperCase()} · ${l.length}</small>${l.map((r) => `<a class="hw-row" href="#/i/s/${encodeURIComponent(r.id)}"><div><b class="wl">${logo(r)}${esc(r.symbol)}</b> <small class="muted">RS ${r.rs_rating ?? "–"}</small><span class="num">${SD.fmtPrice(r.close)} ${pct(r.chg_1d)}</span></div>`
       + `<div class="hw-sig">${sig(r).map((x) => `<i>${x}</i>`).join("") || '<small class="muted">No new signals</small>'}</div></a>`).join("")}`).join("") : '<p class="muted small">Tap ★ on any stock to add it; its signals show here each day.</p>';
     const nLiquid = U && U.series && U.series.n ? U.series.n[U.series.n.length - 1] : null;
     view.innerHTML = `<div class="home">
@@ -2135,7 +2297,7 @@
     const sec = (k, title, sum, body) => `<details class="sp-sec" data-sec="${k}" ${open[k] ? "open" : ""}><summary><b>${title}</b><span class="sp-sum">${sum}</span></summary><div class="sp-b">${body}</div></details>`;
     const kv = (l, v) => `<div class="sp-kv"><small>${l}</small><b>${v}</b></div>`;
     const pctv = (v, d = 1) => (v == null || !isFinite(v) ? "–" : finNum(v, d) + "%");
-    const head = `<div class="sp-h"><div class="sp-t"><b title="${esc(r.name)}">${esc(r.name || r.symbol)}</b><small class="muted">NSE:${esc(r.symbol)}${r.series && r.series !== "EQ" ? " · " + esc(r.series) : ""}</small></div>
+    const head = `<div class="sp-h">${logo(r, true)}<div class="sp-t"><b title="${esc(r.name)}">${esc(r.name || r.symbol)}</b><small class="muted">NSE:${esc(r.symbol)}${r.series && r.series !== "EQ" ? " · " + esc(r.series) : ""}</small></div>
         <span class="sp-act"><button type="button" class="icon-btn sm" data-sp="full" title="Full financials page">⤢</button>
         <button type="button" class="icon-btn sm star ${state.watch.has(watchKey) ? "on" : ""}" data-sp="watch" title="Watchlist">★</button></span></div>
       <div class="sp-px"><b>₹${SD.fmtPrice(r.close)}</b>${pct(r.chg_1d)}<span class="sp-rt">1M ${pct(r.ret_1m)} · 3M ${pct(r.ret_3m)}</span></div>`;
@@ -2160,7 +2322,7 @@
     if (rank > 7) peers = peers.slice(0, 6).concat([peersAll[rank - 1]]);
     const peerSum = peersAll.length > 1 ? `#${rank || "–"} of ${peersAll.length} by size${medPE != null && r.pe != null ? ` · P/E ${finNum(r.pe, 1)} vs ${finNum(medPE, 1)} median` : ""}` : "no peers";
     const peerBody = peersAll.length > 1 ? `<div class="sp-tw"><table class="sp-t2"><thead><tr><th class="l">Stock</th><th>MCap Cr</th><th>P/E</th><th>Sales Cr</th><th>Profit Cr</th><th>ROCE</th></tr></thead><tbody>`
-      + peers.map((x) => `<tr class="${x.id === id ? "me" : ""}" data-peer="${esc(x.id)}"><td class="l"><b>${esc(x.symbol)}</b></td><td>${finNum(x.mcap_cr)}</td><td>${finNum(x.pe, 1)}</td><td>${finNum(x.sales_ttm)}</td>`
+      + peers.map((x) => `<tr class="${x.id === id ? "me" : ""}" data-peer="${esc(x.id)}"><td class="l"><b class="wl">${logo(x)}${esc(x.symbol)}</b></td><td>${finNum(x.mcap_cr)}</td><td>${finNum(x.pe, 1)}</td><td>${finNum(x.sales_ttm)}</td>`
         + `<td class="${x.np_ttm < 0 ? "down" : ""}">${finNum(x.np_ttm)}</td><td>${pctv(x.roce)}</td></tr>`).join("")
       + `</tbody></table></div><button type="button" class="sp-link" data-sp="peers">Compare all ${peersAll.length} peers →</button><small class="muted"> ${esc(r[grp])} · TTM figures</small>` : '<p class="muted small">No other stock in this industry.</p>';
     box.innerHTML = `<div class="sp">${head}${sec("ov", "Overview", ovSum, ov)}${sec("fin", "Financials", '<i class="skel sp-sk"></i>', SKEL("Loading financials"))}

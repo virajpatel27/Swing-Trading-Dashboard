@@ -36,3 +36,17 @@ def test_group_table_has_tails_for_market_and_benchmarks():
         assert len(a["tails"][k]["s"]["d"]) == 6 and len(a["tails"][k]["m"]["w"]) == 4
     assert a["tails"]["mkt"]["s"]["d"][-1] == round(a["strength"], 1)
     assert a["tails"]["NIFTY_50"]["s"]["d"] != a["tails"]["mkt"]["s"]["d"]          # a different yardstick
+
+
+def test_rrg_settings_only_change_the_tails():
+    """The RRG page's own settings (`rrg:`) smooth the RS first; the Groups table keeps ratio_window / momentum_lag."""
+    cfg = {"ratio_window": 20, "momentum_lag": 5, "rrg": {"smooth": 5, "ratio_window": 10, "momentum_lag": 3}}
+    rc = group_rank.rrg_cfg(cfg)
+    assert (rc["smooth"], rc["ratio_window"], rc["momentum_lag"]) == (5, 10, 3)
+    assert group_rank.rrg_cfg({"ratio_window": 20, "momentum_lag": 5})["smooth"] == 1
+    idx = pd.bdate_range("2026-01-01", periods=60)
+    closes = pd.DataFrame({"a": np.linspace(100, 160, 60), "b": np.linspace(100, 90, 60), "c": 100 + 5 * np.sin(np.arange(60))}, index=idx)
+    s1, _ = group_rank.rrg(closes, {"G": ["a", "c"]}, cfg)
+    s2, _ = group_rank.rrg(closes, {"G": ["a", "c"]}, rc)
+    assert s1["G"].notna().sum() > 0 and s2["G"].notna().sum() > 0
+    assert not np.allclose(s1["G"].iloc[-5:], s2["G"].iloc[-5:])

@@ -1036,3 +1036,67 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - config/group_rank.yaml rrg_benchmarks + NIFTY_SMALLCAP_250, NIFTY_MIDSMALLCAP_400 (the reference offers Smallcap 250):
   the menu shows them once the next site build writes their tails.
 - Checked in the preview (hover card, weekly, chips, themes, no console errors); JS 32 / 32, Python 216 passed.
+
+### 2026-11-12: stock logos (website side ready, icons not fetched yet)
+- Viraj: a logo before every stock name, like the reference. The reference's round logos come from TradingView, whose
+  terms do not allow using them elsewhere; Viraj chose each company's OWN website icon instead.
+- scripts/fetch_logos.py (PC only, BSE refuses GitHub): ISIN -> BSE code (BSE bhavcopy) -> company website (BSE
+  CorpInfoNew Table1.sURL) -> data/meta/company_sites.csv; the home page's apple-touch-icon / icon links or
+  /favicon.ico, re-encoded with Pillow as 64 x 64 PNG -> site/logos/<id>.png + site/logos/index.json. NSE-only stocks
+  have no BSE page -> letter badge. requirements-dev: pillow, beautifulsoup4.
+- site/app.js: logo(r, big) (global; the Earnings letter badge moved here) used in the stock tables, scanner grid,
+  groups, leaders, home lists, watchlist, chart header, stock panel + peers, earnings, heatmap card. A stock without
+  a logo keeps its coloured letter badge. Logo = white circle (also in dark mode).
+- Checked in the preview with temporary test icons (only in _site); JS 32 / 32, Python 216 passed.
+- NEXT: run `<python> scripts/fetch_logos.py` on the PC (Viraj's OK needed: it visits ~2,600 company websites), then
+  commit site/logos/ and data/meta/company_sites.csv.
+
+### 2026-11-12: RRG page gets its own formula (smoothing 5, strength 30, momentum 10)
+- Viraj compared our RRG with the reference's (11-Nov, daily, vs equal-weight): Leading 4 / Improving 6 / Weakening 3 /
+  Lagging 9 here vs 9 / 2 / 3 / 8 there. Cause: the formula, not the data. Our strength / momentum (63-session ratio,
+  no smoothing, 10-session momentum) was fitted to the reference's sector TABLE (05-Nov), never to its RRG chart.
+- Fit on the reference's 11-Nov chart (22 sector positions from his screenshot) and checked on the video's 06-Nov
+  chart: ~1,000 variants; the good ones all smooth RS over 2-5 sessions, compare with a 26-30 session average and use
+  a 10-14 session momentum. Viraj chose smoothing 5, strength 30, momentum 10.
+  - same quadrant as the reference: 11-Nov 11 -> 18 of 22, 06-Nov 13 -> 14 of 22; rank correlation of the positions
+    0.54 / 0.65 -> 0.86 / 0.86 (11-Nov), 0.48 / 0.74 -> 0.78 / 0.82 (06-Nov). Still different on 11-Nov: Metals, Media,
+    Cons Durables, Telecom.
+- config/group_rank.yaml `rrg:` (smooth, ratio_window, momentum_lag); group_rank.rrg_cfg() + smoothing in rrg(); only
+  the tails (RRG page, all benchmarks) use it. Groups page rank / tag and the per-stock group fields are unchanged.
+  Test tests/test_n9_rrg.py::test_rrg_settings_only_change_the_tails. Live after the next site build.
+- PAUSED 12-Nov 08:00 IST (Viraj: continue in the evening). fetch_logos.py stopped during the icon step: BSE part saved
+  for 2,600 of 2,634 stocks (2,411 with a website), 389 icons in site/logos/. The script now resumes (saved icons count
+  as done). NEXT: run it again, check the icon quality in the preview, then ONE commit: RRG formula + logos
+  (site/logos/, data/meta/company_sites.csv, scripts/fetch_logos.py, config, swingdash/group_rank.py, site/, tests, docs).
+
+### 2026-11-12: Leaders page in the reference's look
+- Viraj (video 09-Nov "Leaders 09-11-2026.mp4"): layout, formatting, sizes and smooth animation like the reference.
+- The reference's Top Leaders is the scanner workspace: site/app.js renderLeaders() rewritten on the same frame
+  (ws-main list + chart, the divider, the column drawer), site/styles.css "Phase N11" block replaced:
+  - group rows "• Theme   n" (click = fold), 46 px rows with logo, symbol, a "+" (watchlist) on hover, LTP;
+  - a wider list shows more columns: Catalyst first, then 1D %, 1W %, RS, Mcap, vs Sect (own column list, saved
+    in sd-leaders; the column drawer now takes options: columnSettings(done, {get, set, def, extra, name}));
+  - sort menu like the reference: Leader score, A-Z, Price, Price x Volume, Market cap, RS, From 52W high,
+    Performance (1D / 1W / 1M / 3M); SORT GROUPS BY (leader score = sum of the best 3 scores, names, most /
+    fewest stocks); group by theme / industry / sector; top 50-250; turnover floor;
+  - animation: rows and groups glide to their new place on every sort / search / fold (FLIP), new rows fade in,
+    columns fade in while the divider is dragged, the chart fades in on a new stock; arrow keys move the chart;
+  - status bar: Copy / CSV, "x of 150 selected", "150 of N stocks · top 150 by leader score · ₹5 Cr+ turnover ·
+    excl. 2% / 5% bands · N scanned".
+- Catalyst (ours, from NSE filings): swingdash/announcements.catalysts() -> data/catalysts.json at site build:
+  newest Orders / Deals & expansion / Fund raising filing of the last 120 days, NSE's own words without the
+  "X Limited has informed the Exchange regarding" start, staff share plans and bare rule numbers skipped, SHOUTED
+  text in sentence case (~1,500 stocks). tests/test_catalysts.py.
+- Checked in the preview: narrow + wide list, sort / fold animations, light + dark, phone. JS 32 / 32, Python 219.
+
+### 2026-11-12 (evening): logos done + company descriptions (Nifty 500)
+- Logos: fetch_logos.py resumed and finished: 1,854 icons; cleaning step (`--clean-only`, also at the end of a full
+  run) drops almost-white icons and the same picture shared by 3+ unrelated companies (WordPress / website-builder
+  icons) -> 1,808 logos, 9.5 MB in site/logos/ (+ index.json). The rest keep the letter badge.
+- Company descriptions (Viraj: like the reference's line under the chart header, but NOT its words - its text is
+  its own work and our repo is public): data/meta/company_about.csv (symbol, about, source "own words", written)
+  for all 500 Nifty 500 stocks, one sentence starting with a verb, main businesses and brands, no prices or advice.
+  site_build writes data/about.json; site/chart.js shows it under the OHLC line (.ch-about, up to 3 lines).
+  NEXT (Viraj's choice later): the other ~2,100 stocks, e.g. from each company's own website text.
+- index.html loads every file with ?v=<build>, so a deploy never mixes old and new files (the local preview needs a
+  manual bump of the version to see edits).

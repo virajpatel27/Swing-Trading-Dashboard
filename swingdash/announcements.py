@@ -150,6 +150,38 @@ def load(data: Path, since: str) -> pd.DataFrame:
     return df[df["dt"] >= since].sort_values("dt", ascending=False).reset_index(drop=True)
 
 
+CATALYST_CATS = ("O", "D", "F")          # orders & business, deals & expansion, fund raising
+_BOILER = re.compile(r"^.{0,160}?has informed the Exchange (?:regarding|about|that)\s*(?:an?\s+)?", re.I)
+# filings that say nothing about the business (staff share plans, bare rule numbers, trading windows)
+_DULL = re.compile(r"^(?:disclosure under regulation|regulation 30|intimation under regulation)|stock ownership plan|\besop\b|employee stock"
+                   r"|stock option|trading window|loss of share certificate|^general updates?$|^updates?$", re.I)
+
+
+def catalysts(df: pd.DataFrame, today: str, days: int = 120, max_len: int = 240) -> dict[str, list]:
+    """Leaders page "Catalyst" column (Viraj 12-Nov-2026): per symbol the newest filing of the last `days` days about
+    orders, deals / expansion or fund raising -> {SYMBOL: [date, cat, text]}. Text = the filing's own words (NSE's
+    "about", else its subject) without the "X Limited has informed the Exchange regarding" start."""
+    if df.empty:
+        return {}
+    since = (pd.Timestamp(today) - pd.Timedelta(days=days)).strftime("%Y-%m-%d")
+    d = df[(df["dt"] >= since) & df["cat"].isin(CATALYST_CATS)].sort_values("dt")
+    out: dict[str, list] = {}
+    for r in d.itertuples():
+        about = str(r.about or "").strip() if isinstance(r.about, str) else ""
+        text = _BOILER.sub("", about).strip(" .,:;-'\"")
+        if not text or _DULL.search(text):
+            text = str(r.desc or "").strip(" .,:;-'\"")
+        if not text or _DULL.search(text):
+            continue
+        if sum(ch.isupper() for ch in text) > 0.6 * max(1, sum(ch.isalpha() for ch in text)):
+            text = text.lower()                  # SHOUTED filings read better in sentence case
+        text = text[0].upper() + text[1:]
+        if len(text) > max_len:
+            text = text[:max_len].rsplit(" ", 1)[0] + "…"
+        out[r.symbol] = [str(r.dt)[:10], r.cat, text]
+    return out
+
+
 def site_files(data: Path, out: Path, symbols: set[str], today: str, recent_days: int = 10, stock_days: int = 400) -> dict:
     """data/news.json (all filings of the last `recent_days` days) and data/a/<SYMBOL>.json (one stock's last `stock_days`)."""
     since = (pd.Timestamp(today) - pd.Timedelta(days=stock_days)).strftime("%Y-%m-%d")
@@ -160,6 +192,8 @@ def site_files(data: Path, out: Path, symbols: set[str], today: str, recent_days
     (out / "data").mkdir(parents=True, exist_ok=True)
     (out / "data" / "news.json").write_text(json.dumps({"cats": CATS, "pdf": PDF_BASE, "rows": rec(recent)}, separators=(",", ":"), ensure_ascii=False),
                                             encoding="utf-8")
+    cat = catalysts(df, today)
+    (out / "data" / "catalysts.json").write_text(json.dumps(cat, separators=(",", ":"), ensure_ascii=False), encoding="utf-8")
     adir = out / "data" / "a"
     adir.mkdir(parents=True, exist_ok=True)
     n = 0

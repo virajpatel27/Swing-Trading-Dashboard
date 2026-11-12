@@ -3,7 +3,8 @@
 group_table() -> {"sector": [...], "industry": [...], "theme": [...]} one dict per group:
   name, parent (industry: its sector), n, ids (member stock ids), rank, rank_chg, tag, strength, momentum, tail,
   tails = {benchmark: {"d": last `tail_daily` daily points, "w": last `tail_weekly` points 5 sessions apart}} for the RRG
-  page (benchmark "mkt" = equal-weight market, plus each index of `rrg_benchmarks`),
+  page (benchmark "mkt" = equal-weight market, plus each index of `rrg_benchmarks`), made with the RRG page's own
+  settings (`rrg:` in the config: smoothing, strength window, momentum lag),
   med_<p> and avg_<p> for p in 1d / 1w / 1m / 3m / 1y / ytd (median / average member return %), hi20 / lo20 (members
   whose high / low today is the 20-day high / low), above50 (% of members above their 50-day SMA), small
 stock_fields() -> per stock id: sector_rank, sector_tag, industry_rank, industry_tag, sector_rank_1m / industry_rank_1m
@@ -45,6 +46,9 @@ def rrg(closes: pd.DataFrame, members: dict[str, list[str]], cfg: dict, bench: p
     if not idx:
         return pd.DataFrame(), pd.DataFrame()
     rs = 100 * pd.DataFrame(idx).div(market, axis=0)
+    sm = int(cfg.get("smooth", 1))
+    if sm > 1:                                   # RRG page only: average of the last `sm` sessions (rrg_settings)
+        rs = rs.rolling(sm, min_periods=sm).mean()
     n = int(cfg.get("ratio_window", 63))
     strength = 100 * rs / rs.rolling(n, min_periods=n).mean()
     momentum = 100 + (strength - strength.shift(int(cfg.get("momentum_lag", 10))))
@@ -61,6 +65,14 @@ def tail_dates(index: pd.Index, n_daily: int, n_weekly: int) -> dict:
     s = pd.Series(range(len(index)), index=index)
     w = s.iloc[::-1].iloc[::5].iloc[:n_weekly].iloc[::-1]
     return {"d": [d.strftime("%Y-%m-%d") for d in index[-n_daily:]], "w": [d.strftime("%Y-%m-%d") for d in w.index]}
+
+
+def rrg_cfg(cfg: dict) -> dict:
+    """The RRG page's own settings (Viraj 12-Nov-2026: smoothing 5, strength 30, momentum 10 sessions, fitted to the
+    reference's RRG chart); the Groups table keeps ratio_window / momentum_lag (fitted to the reference's sector table)."""
+    r = cfg.get("rrg") or {}
+    return dict(cfg, ratio_window=int(r.get("ratio_window", cfg.get("ratio_window", 63))),
+                momentum_lag=int(r.get("momentum_lag", cfg.get("momentum_lag", 10))), smooth=int(r.get("smooth", 1)))
 
 
 def group_table(rows: pd.DataFrame, closes: pd.DataFrame, membership: pd.DataFrame, cfg: dict,
@@ -83,7 +95,9 @@ def group_table(rows: pd.DataFrame, closes: pd.DataFrame, membership: pd.DataFra
         parent = dict(zip(m["name"], m["parent"]))
         big = {g: ids for g, ids in members.items() if len(ids) >= min_n}
         strength, momentum = rrg(closes, big, cfg)
-        other = {k: rrg(closes, big, cfg, b) for k, b in (benches or {}).items() if b is not None and len(b)}
+        rc = rrg_cfg(cfg)
+        r_s, r_m = rrg(closes, big, rc)
+        other = {k: rrg(closes, big, rc, b) for k, b in (benches or {}).items() if b is not None and len(b)}
         ranks = (-strength).rank(axis=1, method="min") if len(strength) else pd.DataFrame()
         groups = []
         for g, ids in members.items():
@@ -101,7 +115,8 @@ def group_table(rows: pd.DataFrame, closes: pd.DataFrame, membership: pd.DataFra
                 if len(ranks) > back and np.isfinite(ranks[g].iloc[-1 - back]):
                     d["rank_chg"] = int(ranks[g].iloc[-1 - back] - ranks[g].iloc[-1])
                 d["tail"] = [[_r(a), _r(b)] for a, b in zip(strength[g].iloc[-tail:], momentum[g].iloc[-tail:])]
-                d["tails"] = {"mkt": {"s": tail_points(strength[g], nd, nw), "m": tail_points(momentum[g], nd, nw)}}
+                if g in r_s.columns:
+                    d["tails"] = {"mkt": {"s": tail_points(r_s[g], nd, nw), "m": tail_points(r_m[g], nd, nw)}}
                 for k, (bs, bm) in other.items():
                     if g in bs.columns and np.isfinite(bs[g].iloc[-1]):
                         d["tails"][k] = {"s": tail_points(bs[g], nd, nw), "m": tail_points(bm[g], nd, nw)}

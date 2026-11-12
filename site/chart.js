@@ -132,8 +132,12 @@
   const indLabel = (k) => { const x = IND_MENU.flatMap((g) => g[1]).find((y) => y[0] === k); return x ? x[1] : k; };
   const indDesc = (k) => { const x = IND_MENU.flatMap((g) => g[1]).find((y) => y[0] === k); return x ? x[2] : ""; };
 
+  /* one-line company descriptions in our own words (data/meta/company_about.csv -> data/about.json, Viraj 12-Nov-2026) */
+  let ABOUT = {}, aboutP = null;
   async function open(box, row, opts = {}) {
     close();
+    if (!aboutP) aboutP = fetch("data/about.json").then((x) => (x.ok ? x.json() : {})).catch(() => ({})).then((j) => { ABOUT = j || {}; return ABOUT; });
+    await aboutP;
     box.innerHTML = `<div class="ch-top" id="chTools"></div><div class="ch-head" id="chHead"></div><div class="legend" id="chLegend"></div>
       <div class="ch-wrap"><div class="ch-canvas" id="chCanvas"><i class="skel ch-skel"></i></div>
       <svg class="ch-pat" id="chPat"></svg><svg class="ch-svg" id="chSvg"></svg><div class="ch-dbar" id="chDraw"></div>
@@ -521,6 +525,7 @@
       <span>O <b>${fmt(b.open)}</b></span><span>H <b>${fmt(b.high)}</b></span><span>L <b>${fmt(b.low)}</b></span><span>C <b>${fmt(b.close)}</b></span>
       <span class="${S.colorClass(chg)}">${chgAbs == null ? "" : (chgAbs > 0 ? "+" : "") + fmt(chgAbs)} (${S.fmtPct(chg)})</span>
       <span class="ch-r"><span>1M <b class="${S.colorClass(back(w ? 4 : 21))}">${S.fmtPct(back(w ? 4 : 21))}</b></span><span>3M <b class="${S.colorClass(back(w ? 13 : 63))}">${S.fmtPct(back(w ? 13 : 63))}</b></span></span></div>
+      ${cfg.show.desc !== false && ABOUT[r.symbol] ? `<p class="ch-about">${esc(ABOUT[r.symbol])}</p>` : ""}
       ${cfg.show.desc !== false ? `<div class="ch-desc muted">${esc(r.name || "")}${r.sector ? ` · ${esc(r.sector)} › ${esc(r.basic_industry || r.industry || "")}` : ""}${due}</div>` : due ? `<div class="ch-desc">${due}</div>` : ""}`;
     const vl = cur.box.querySelector("#chVol");
     if (vl) {

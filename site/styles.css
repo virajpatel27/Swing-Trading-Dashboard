@@ -1012,27 +1012,99 @@ main.card:has(> .earn) { padding: 0; overflow: hidden; }
 .ehov { position: fixed; z-index: 70; width: 290px; padding: 8px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 30px rgba(0, 0, 0, .16); font-size: 12.5px; pointer-events: none; animation: drop .1s ease-out; }
 .ehov[hidden] { display: none; }
 
-/* ---------------------------------------------------------------- Phase N7: heatmap */
-.hmx-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-bottom: 10px; }
-.hmx-bar label { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted); }
-.hmx-bar select { font-size: 13px; color: var(--text); }
-.hm-crumb { display: flex; align-items: center; gap: 8px; }
-.hm-n { margin-left: auto; }
-.hm-box { position: relative; width: 100%; border-radius: 10px; overflow: hidden; background: var(--line); }
-.hm-g { position: absolute; box-sizing: border-box; border: 1px solid var(--panel); }
-.hm-gh { position: absolute; left: 0; top: 0; right: 0; height: 16px; border: 0; background: var(--panel-2); color: var(--text); font: 600 10.5px/16px var(--font);
-  text-align: left; padding: 0 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; cursor: pointer; }
-.hm-gh:hover { background: var(--accent-soft); color: var(--accent); }
-.hm-t { position: absolute; box-sizing: border-box; border: 1px solid color-mix(in srgb, var(--panel) 70%, transparent); display: flex; flex-direction: column; align-items: center; justify-content: center;
-  color: var(--text); text-align: center; overflow: hidden; line-height: 1.15; transition: filter .12s; }
-.hm-t:hover { filter: brightness(1.12); text-decoration: none; z-index: 2; outline: 2px solid var(--text); outline-offset: -2px; }
-.hm-t.strong { color: #fff; }
-.hm-t b { font-weight: 700; white-space: nowrap; max-width: 96%; overflow: hidden; text-overflow: ellipsis; }
-.hm-t span { font-size: .85em; opacity: .9; }
-.hm-leg { display: flex; flex-direction: column; width: 260px; margin: 10px 0 0; }
-.hm-scale { height: 8px; border-radius: 4px; }
-.hm-ticks { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--muted); margin-top: 2px; }
-.hm-ticks i { font-style: normal; }
+/* ---------------------------------------------------------------- Phase N7: heatmap (new look 12-Nov-2026)
+   Like the reference video: pill menus, sector names above the blocks, 1 px gaps between tiles, seven colour steps,
+   a card that follows the pointer, tiles that glide to their new place. Palette "gr" = green / red (the reference),
+   "bp" = our blue / pink theme colours. */
+main.card:has(> .hmx) { padding: 14px 18px 10px; }
+.hmx { --hm-n3: #8d1231; --hm-n2: #d01d46; --hm-n1: #e8728b; --hm-z: #c3c8d1; --hm-p1: #57c87d; --hm-p2: #2ca455; --hm-p3: #1d733f; --hm-na: #dde0e6; --hm-zt: #3a4353;
+  display: flex; flex-direction: column; height: calc(100vh - var(--top-h) - var(--status-h) - 14px - 24px); min-height: 480px; }
+.hmx[data-pal="bp"] { --hm-n3: var(--heat-n4); --hm-n2: var(--heat-n3); --hm-n1: var(--heat-n2); --hm-z: #dfe3ea; --hm-p1: var(--heat-p2); --hm-p2: var(--heat-p3); --hm-p3: var(--heat-p4); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hmx { --hm-n1: #b9506a; --hm-z: #4a5265; --hm-p1: #3f9f63; --hm-na: #273042; --hm-zt: #d4dbe7; }
+  :root:not([data-theme="light"]) .hmx[data-pal="bp"] { --hm-z: #3a4458; } }
+:root[data-theme="dark"] .hmx { --hm-n1: #b9506a; --hm-z: #4a5265; --hm-p1: #3f9f63; --hm-na: #273042; --hm-zt: #d4dbe7; }
+:root[data-theme="dark"] .hmx[data-pal="bp"] { --hm-z: #3a4458; }
+.hq-n3 { background-color: var(--hm-n3); } .hq-n2 { background-color: var(--hm-n2); } .hq-n1 { background-color: var(--hm-n1); }
+.hq-z { background-color: var(--hm-z); } .hq-na { background-color: var(--hm-na); }
+.hq-p1 { background-color: var(--hm-p1); } .hq-p2 { background-color: var(--hm-p2); } .hq-p3 { background-color: var(--hm-p3); }
+
+.hmx-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; }
+.hm-dd { position: relative; }
+.hm-dd.pal { margin-left: auto; }
+.hm-ddb { height: 30px; display: inline-flex; align-items: center; gap: 6px; padding: 0 10px 0 11px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);
+  font-size: 12.5px; color: var(--muted); cursor: pointer; transition: border-color .15s, box-shadow .15s, background .15s; }
+.hm-ddb b { color: var(--text); font-weight: 500; }
+.hm-ddb svg { color: var(--muted); transition: transform .2s ease; }
+.hm-ddb:hover, .hm-dd.open .hm-ddb { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+.hm-dd.open .hm-ddb { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent); }
+.hm-dd.open .hm-ddb svg { transform: rotate(180deg); }
+.hm-menu { position: absolute; z-index: 60; top: calc(100% + 6px); left: 0; min-width: 158px; padding: 5px; display: flex; flex-direction: column; background: var(--panel);
+  border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 14px 36px rgba(20, 35, 70, .16); animation: drop .14s ease-out; }
+.hm-dd.pal .hm-menu { left: auto; right: 0; }
+.hm-menu[hidden] { display: none; }
+.hm-menu button { border: 0; background: none; text-align: left; padding: 7px 10px; border-radius: 6px; font-size: 12.5px; color: var(--text); cursor: pointer; white-space: nowrap; }
+.hm-menu button:hover { background: var(--panel-2); }
+.hm-menu button.on { color: var(--accent); font-weight: 500; }
+
+.hm-crumb { display: flex; align-items: center; gap: 6px; height: 20px; margin: -2px 0 4px; font-size: 11.5px; animation: drop .18s ease-out; }
+.hm-crumb[hidden] { display: none; }
+.hm-crumb button { border: 0; background: none; padding: 0; font: inherit; color: var(--muted); cursor: pointer; }
+.hm-crumb button:hover { color: var(--accent); text-decoration: underline; }
+.hm-crumb i { font-style: normal; color: var(--muted); }
+.hm-crumb b { font-weight: 600; }
+
+.hm-box { position: relative; flex: 1; min-height: 340px; overflow: hidden; }
+.hm-gh { position: absolute; height: 17px; border: 0; background: none; padding: 0 1px; text-align: left; font: 500 10.5px/17px var(--font); color: color-mix(in srgb, var(--text) 85%, var(--muted));
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
+  transition: left .5s cubic-bezier(.2, .8, .2, 1), top .5s cubic-bezier(.2, .8, .2, 1), width .5s cubic-bezier(.2, .8, .2, 1), color .15s; }
+.hm-gh i { font-style: normal; color: var(--muted); transition: transform .15s; display: inline-block; }
+.hm-gh:hover, .hm-gh.hl { color: var(--accent); }
+.hm-gh:hover i, .hm-gh.hl i { color: var(--accent); transform: translateX(2px); }
+.hm-t { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; overflow: hidden; line-height: 1.2;
+  color: #fff; text-shadow: 0 1px 1px rgba(0, 0, 0, .12); text-decoration: none; cursor: pointer;
+  transition: left .5s cubic-bezier(.2, .8, .2, 1), top .5s cubic-bezier(.2, .8, .2, 1), width .5s cubic-bezier(.2, .8, .2, 1), height .5s cubic-bezier(.2, .8, .2, 1),
+    background-color .4s ease, filter .15s, box-shadow .15s; }
+.hm-t.hq-z, .hm-t.hq-na { color: var(--hm-zt); text-shadow: none; }
+.hmx[data-pal="bp"] .hm-t.hq-p1, .hmx[data-pal="bp"] .hm-t.hq-n1 { text-shadow: 0 1px 2px rgba(0, 0, 0, .18); }
+.hm-t:hover { text-decoration: none; }
+.hm-t b { font-weight: 600; letter-spacing: .01em; max-width: 94%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hm-t span { font-size: .78em; font-weight: 500; opacity: .92; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.hm-t.hov { z-index: 3; box-shadow: inset 0 0 0 2px rgba(12, 18, 30, .82); filter: brightness(1.07) saturate(1.05); }
+.hm-t.new, .hm-gh.new { animation: hmIn .45s cubic-bezier(.2, .8, .2, 1) both; animation-delay: var(--d, 0ms); }
+.hm-t.out, .hm-gh.out { animation: hmOut .32s ease-in forwards; pointer-events: none; }
+.hm-box.still .hm-t, .hm-box.still .hm-gh { transition: background-color .4s ease; }
+@keyframes hmIn { from { opacity: 0; transform: scale(.86); } to { opacity: 1; transform: none; } }
+@keyframes hmOut { to { opacity: 0; transform: scale(.9); } }
+.hm-empty { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; color: var(--muted); font-size: 13px; }
+
+.hm-foot { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-top: 7px; }
+.hm-foot > small { font-size: 10.5px; color: var(--muted); padding-top: 1px; }
+.hm-sw { display: flex; gap: 1px; width: 252px; height: 6px; border-radius: 2px; overflow: hidden; }
+.hm-sw i { flex: 1; transition: background-color .4s ease; }
+.hm-tk { position: relative; width: 252px; height: 14px; font-size: 9.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.hm-tk span { position: absolute; top: 3px; transform: translateX(-50%); white-space: nowrap; }
+
+.hm-tip { position: fixed; left: 0; top: 0; z-index: 90; width: 286px; padding: 10px 12px 9px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  box-shadow: 0 14px 38px rgba(15, 25, 50, .18), 0 2px 6px rgba(15, 25, 50, .06); pointer-events: none; font-size: 11.5px; line-height: 1.4; will-change: transform; }
+.hm-tip[hidden] { display: none; }
+.hm-tip:not([hidden]) { animation: hmTip .14s ease-out; }
+@keyframes hmTip { from { opacity: 0; } to { opacity: 1; } }
+.hm-tip-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.hm-tip-h b { font-size: 12.5px; font-weight: 600; }
+.hm-tip-h span { font-weight: 600; white-space: nowrap; }
+.hm-tip-n { margin-top: 2px; font-weight: 500; }
+.hm-tip-s { color: var(--muted); }
+.hm-tip-g { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); font-weight: 600; font-variant-numeric: tabular-nums; }
+.hm-tip-g small { display: block; font-size: 9px; font-weight: 600; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
+.hm-tip-g i { font-style: normal; }
+.hm-tip-m { margin-top: 6px; color: var(--muted); font-size: 11px; }
+@media (max-width: 720px) {
+  main.card:has(> .hmx) { padding: 12px 10px; }
+  .hmx { height: auto; min-height: 0; }
+  .hm-box { flex: none; }
+  .hm-dd.pal { margin-left: 0; }
+  .hm-foot { flex-direction: column; gap: 4px; }
+}
 
 /* ---------------------------------------------------------------- Phase N8: groups in columns */
 .gx-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; }

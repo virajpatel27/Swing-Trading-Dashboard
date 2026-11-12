@@ -1344,92 +1344,180 @@
     if ($("#rBench")) $("#rBench").onchange = (e) => { rs.bench = e.target.value; save(); renderRRG(); };
   }
 
-  /* ------------------------------------------------------------------ heatmap (Phase N7): treemap by sector */
+  /* ------------------------------------------------------------------ heatmap (Phase N7; new look 12-Nov-2026): treemap by sector
+     Like the reference video (Viraj 12-Nov): three pill menus (Index / Area / Colour) + our Palette, sector names above
+     each block (click = zoom in, "All" or Esc = back), seven colour steps with a legend, a card that follows the pointer,
+     and tiles that glide to their new place when the index, area, colour or zoom changes. */
   const HM_INDEX = [["NIFTY_50", "Nifty 50"], ["NIFTY_NEXT_50", "Nifty Next 50"], ["NIFTY_200", "Nifty 200"], ["NIFTY_500", "Nifty 500"],
     ["NIFTY_MIDCAP_150", "Midcap 150"], ["NIFTY_SMALLCAP_250", "Smallcap 250"], ["NIFTY_MICROCAP_250", "Microcap 250"],
-    ["NIFTY_MIDSMALLCAP_400", "MidSmallcap 400"], ["NIFTY_BANK", "Nifty Bank"], ["FNO", "F&O stocks"], ["LIQUID", "Liquid stocks"]];
+    ["NIFTY_MIDSMALLCAP_400", "MidSmall 400"], ["NIFTY_BANK", "Nifty Bank"], ["FNO", "F&O stocks"], ["LIQUID", "Liquid stocks"]];
   const HM_AREA = [["turnover_cr", "Turnover"], ["mcap_cr", "Market cap"], ["equal", "Equal"]];
-  const HM_COLOR = [["chg_1d", "1D %", 3], ["ret_1w", "1W %", 6], ["ret_1m", "1M %", 12], ["ret_3m", "3M %", 25], ["from_hi52", "From 52W high", 40], ["rs_rating", "RS rating", 50]];
-  let hmResize = null;
-  const hexRGB = (c) => { c = c.trim(); if (c.startsWith("#")) { const n = parseInt(c.slice(1).length === 3 ? c.slice(1).replace(/./g, "$&$&") : c.slice(1, 7), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; } const m = c.match(/\d+/g); return m ? m.slice(0, 3).map(Number) : [128, 128, 128]; };
-  const mix = (a, b, t) => a.map((x, i) => Math.round(x + (b[i] - x) * t));
+  // colour steps: the six cut points between the seven colours (the reference's 1D scale is -2 / -1 / -0.2 / 0.2 / 1 / 3 %)
+  const HM_COLOR = [["chg_1d", "Perf 1D %", [-2, -1, -0.2, 0.2, 1, 3]], ["ret_1w", "Perf 1W %", [-5, -2.5, -0.5, 0.5, 2.5, 5]],
+    ["ret_1m", "Perf 1M %", [-10, -5, -1, 1, 5, 10]], ["ret_3m", "Perf 3M %", [-20, -10, -2, 2, 10, 20]],
+    ["from_hi52", "From 52W high", [-40, -25, -15, -8, -4, -1]], ["rs_rating", "RS rating", [20, 38, 48, 52, 62, 80]]];
+  const HM_PAL = [["gr", "Green / Red"], ["bp", "Blue / Pink"]];
+  const HM_BINS = ["n3", "n2", "n1", "z", "p1", "p2", "p3"];
+  const hmBin = (v, cuts) => { if (v == null || !isFinite(v)) return "na"; let i = 0; while (i < cuts.length && v >= cuts[i]) i++; return HM_BINS[i]; };
+  let hmResize = null, hmKey = null;
 
   async function renderHeatmap() {
     if (!state.screen) view.innerHTML = SKEL("Loading the heatmap");
     try { await loadScreen(); if (!state.members) state.members = await getJSON("data/index_members.json").catch(() => ({})); }
     catch (e) { view.innerHTML = `<p class="empty">Could not load the stock table (${esc(e.message)}).</p>`; return; }
     if (routeName() !== "heatmap") return;
-    const hm = Object.assign({ index: "NIFTY_500", area: "turnover_cr", color: "chg_1d", sector: "" }, store.get("sd-hm", {}));
+    const hm = Object.assign({ index: "NIFTY_500", area: "turnover_cr", color: "chg_1d", pal: "gr" }, store.get("sd-hm", {}));
+    hm.sector = "";
     if (!state.members[hm.index] && !["FNO", "LIQUID"].includes(hm.index)) hm.index = state.members.NIFTY_500 ? "NIFTY_500" : "LIQUID";
-    const save = () => store.set("sd-hm", { index: hm.index, area: hm.area, color: hm.color });
-    const sel = (id, opts, val) => `<select id="${id}">${opts.map(([v, l]) => `<option value="${v}" ${v === val ? "selected" : ""}>${l}</option>`).join("")}</select>`;
+    if (!HM_COLOR.some((c) => c[0] === hm.color)) hm.color = "chg_1d";
+    if (!HM_PAL.some((c) => c[0] === hm.pal)) hm.pal = "gr";
+    const save = () => store.set("sd-hm", { index: hm.index, area: hm.area, color: hm.color, pal: hm.pal });
     const idxOpts = HM_INDEX.filter(([k]) => state.members[k] || k === "FNO" || k === "LIQUID");
-    view.innerHTML = `<div class="hmx"><div class="hmx-bar"><label>Index ${sel("hmIdx", idxOpts, hm.index)}</label><label>Area ${sel("hmArea", HM_AREA, hm.area)}</label>
-        <label>Colour ${sel("hmCol", HM_COLOR.map(([k, l]) => [k, l]), hm.color)}</label><span class="hm-crumb" id="hmCrumb"></span><span class="hm-n muted small" id="hmN"></span></div>
-      <div class="hm-box" id="hmBox"></div><div class="hm-leg" id="hmLeg"></div><div class="ehov" id="hmHov" hidden></div></div>`;
-    const draw = () => {
-      const box = $("#hmBox");
-      if (!box) { window.removeEventListener("resize", hmResize); return; }
+    const OPTS = { index: idxOpts, area: HM_AREA, color: HM_COLOR, pal: HM_PAL };
+    const CHEV = '<svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const nameOf = (k) => ((OPTS[k].find((o) => o[0] === hm[k]) || OPTS[k][0])[1]);
+    const dd = (k, label) => `<div class="hm-dd${k === "pal" ? " pal" : ""}" data-dd="${k}"><button type="button" class="hm-ddb" aria-haspopup="listbox" aria-expanded="false"><span>${label}</span><b>${esc(nameOf(k))}</b>${CHEV}</button>
+      <div class="hm-menu" role="listbox" hidden>${OPTS[k].map(([v, l]) => `<button type="button" role="option" data-v="${esc(v)}" class="${v === hm[k] ? "on" : ""}">${esc(l)}</button>`).join("")}</div></div>`;
+    view.innerHTML = `<div class="hmx" data-pal="${hm.pal}"><div class="hmx-bar">${dd("index", "Index")}${dd("area", "Area")}${dd("color", "Colour")}${dd("pal", "Palette")}</div>
+      <div class="hm-crumb" id="hmCrumb" hidden></div>
+      <div class="hm-box" id="hmBox"></div>
+      <div class="hm-foot"><div class="hm-leg" id="hmLeg"></div><small id="hmN"></small></div>
+      <div class="hm-tip" id="hmTip" hidden></div></div>`;
+    const box = $("#hmBox"), tip = $("#hmTip");
+    const tiles = new Map(), heads = new Map();
+    const fmtV = (v) => (v == null || !isFinite(v) ? "–" : hm.color === "rs_rating" ? String(Math.round(v)) : `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).toFixed(1)}%`);
+    const drop = (map, k, el) => { map.delete(k); el.classList.remove("new", "hov"); el.classList.add("out"); setTimeout(() => el.remove(), 340); };
+
+    const draw = (still) => {
+      if (!document.body.contains(box)) { window.removeEventListener("resize", hmResize); return; }
+      box.classList.toggle("still", !!still);
       const mem = state.members[hm.index] ? new Set(state.members[hm.index].symbols) : null;
       let rows = state.screen.filter((r) => !r.stale && (mem ? mem.has(r.symbol) : hm.index === "FNO" ? r.fno : (r.liquid_day ?? r.liquid)));
       const total = rows.length;
       if (hm.sector) rows = rows.filter((r) => (r.sector || "Other") === hm.sector);
       const val = (r) => (hm.area === "equal" ? 1 : Math.max(r[hm.area] || 0, 0));
       const groups = new Map();
-      for (const r of rows) { if (!(val(r) > 0)) continue; const g = hm.sector ? (r.basic_industry || r.industry || "Other") : (r.sector || "Other"); if (!groups.has(g)) groups.set(g, []); groups.get(g).push(r); }
-      const W = box.clientWidth, H = Math.max(420, Math.min(innerHeight - 250, W * 0.62));
-      box.style.height = H + "px";
+      for (const r of rows) { if (!(val(r) > 0)) continue; const g = r.sector || "Other"; if (!groups.has(g)) groups.set(g, []); groups.get(g).push(r); }
+      const shown = [...groups.values()].reduce((a, l) => a + l.length, 0);
+      // breadcrumb first: it changes the height left for the map
+      const crumb = $("#hmCrumb");
+      crumb.hidden = !hm.sector;
+      crumb.innerHTML = hm.sector ? `<button type="button" id="hmAll">All</button><i>›</i><b>${esc(hm.sector)}</b>` : "";
+      const narrow = innerWidth <= 720;
+      box.style.height = narrow ? `${Math.max(560, Math.round(box.clientWidth * 1.9))}px` : "";
+      const W = box.clientWidth, H = box.clientHeight || 480;
       const gl = [...groups].map(([g, list]) => ({ v: list.reduce((a, r) => a + val(r), 0), g, list: list.sort((a, b) => val(b) - val(a)) })).sort((a, b) => b.v - a.v);
-      const cs = getComputedStyle(document.documentElement), neg = hexRGB(cs.getPropertyValue("--heat-n4")), mid = hexRGB(cs.getPropertyValue("--heat-0")), pos = hexRGB(cs.getPropertyValue("--heat-p4"));
-      const cdef = HM_COLOR.find((x) => x[0] === hm.color), span = cdef[2];
-      const colorOf = (v) => {
-        if (v == null || !isFinite(v)) return [`rgb(${mid.join(",")})`, false];
-        let t = hm.color === "rs_rating" ? (v - 50) / span : hm.color === "from_hi52" ? (v + span / 2) / (span / 2) : v / span;
-        t = Math.max(-1, Math.min(1, t));
-        const c = t < 0 ? mix(mid, neg, -t) : mix(mid, pos, t);
-        return [`rgb(${c.join(",")})`, Math.abs(t) > 0.55];
-      };
-      const fmtV = (v) => (v == null ? "–" : hm.color === "rs_rating" ? String(v) : (v > 0 ? "+" : "") + Number(v).toFixed(1) + "%");
-      let html = "";
+      const cuts = HM_COLOR.find((x) => x[0] === hm.color)[2];
+      const seenT = new Set(), seenH = new Set();
+      let gi = 0;
       for (const gr of SD.squarify(gl, { x: 0, y: 0, w: W, h: H })) {
-        const g = gr.it, head = gr.h > 34 && gr.w > 50 ? 16 : 0;
-        html += `<div class="hm-g" style="left:${gr.x}px;top:${gr.y}px;width:${gr.w}px;height:${gr.h}px">${head ? `<button type="button" class="hm-gh" data-g="${esc(g.g)}" title="${hm.sector ? "" : "Open " + esc(g.g)}">${esc(g.g)}${hm.sector ? "" : " ›"}</button>` : ""}</div>`;
-        for (const t of SD.squarify(g.list.map((r) => ({ v: val(r), r })), { x: gr.x + 1, y: gr.y + head + 1, w: Math.max(gr.w - 2, 0), h: Math.max(gr.h - head - 2, 0) })) {
-          const r = t.it.r, v = r[hm.color], [bg, strong] = colorOf(v);
-          const big = t.w > 46 && t.h > 28, fs = Math.max(10, Math.min(18, Math.sqrt(t.w * t.h) / 6));
-          html += `<a class="hm-t ${strong ? "strong" : ""}" href="#/i/s/${encodeURIComponent(r.id)}" data-k="${esc(r.key)}" style="left:${t.x}px;top:${t.y}px;width:${t.w}px;height:${t.h}px;background:${bg};font-size:${fs}px">`
-            + (big ? `<b>${esc(r.symbol)}</b><span>${fmtV(v)}</span>` : "") + "</a>";
+        const g = gr.it, head = !hm.sector && gr.h > 44 && gr.w > 40 ? 17 : 0;
+        const gx = gr.x + 2, gy = gr.y + 2, gw = Math.max(gr.w - 4, 0), gh = Math.max(gr.h - 4, 0);
+        if (head) {
+          let h = heads.get(g.g);
+          if (!h) { h = document.createElement("button"); h.type = "button"; h.className = "hm-gh new"; h.dataset.g = g.g; h.innerHTML = `${esc(g.g)} <i>›</i>`; h.title = `Open ${g.g}`;
+            h.style.setProperty("--d", `${Math.min(gi * 35, 420)}ms`); h.addEventListener("animationend", () => h.classList.remove("new"), { once: true }); box.appendChild(h); heads.set(g.g, h); }
+          h.style.left = `${gx}px`; h.style.top = `${gy}px`; h.style.width = `${gw}px`;
+          seenH.add(g.g);
         }
+        for (const t of SD.squarify(g.list.map((r) => ({ v: val(r), r })), { x: gx, y: gy + head, w: gw, h: Math.max(gh - head, 0) })) {
+          const r = t.it.r, v = r[hm.color], k = r.key;
+          let el = tiles.get(k);
+          if (!el) {
+            el = document.createElement("a"); el.className = "hm-t new"; el.dataset.k = k; el.href = `#/i/s/${encodeURIComponent(r.id)}`;
+            el.style.setProperty("--d", `${Math.min(gi * 35, 420)}ms`); el.addEventListener("animationend", () => el.classList.remove("new"), { once: true });
+            box.appendChild(el); tiles.set(k, el);
+          }
+          const w = Math.max(t.w - 1, 0), h = Math.max(t.h - 1, 0), c = `hq-${hmBin(v, cuts)}`;
+          el.style.left = `${t.x}px`; el.style.top = `${t.y}px`; el.style.width = `${w}px`; el.style.height = `${h}px`;
+          if (el._c !== c) { if (el._c) el.classList.remove(el._c); el.classList.add(c); el._c = c; }
+          el.dataset.g = g.g;
+          el.style.fontSize = `${Math.max(7.5, Math.min(14, Math.min(Math.sqrt(w * h) / 7.5, w / 6.2))).toFixed(1)}px`;
+          const txt = w >= 34 && h >= 22 ? `<b>${esc(r.symbol)}</b>${h >= 34 && w >= 40 ? `<span>${fmtV(v)}</span>` : ""}` : "";
+          if (el._t !== txt) { el.innerHTML = txt; el._t = txt; }
+          seenT.add(k);
+        }
+        gi++;
       }
-      box.innerHTML = html || '<p class="empty">No stock.</p>';
-      $("#hmCrumb").innerHTML = hm.sector ? `<button type="button" class="btn sm" id="hmBack">‹ All sectors</button> <b>${esc(hm.sector)}</b>` : "";
-      if ($("#hmBack")) $("#hmBack").onclick = () => { hm.sector = ""; draw(); };
-      const lbl = (idxOpts.find((x) => x[0] === hm.index) || ["", hm.index])[1];
-      $("#hmN").textContent = `${rows.length}${hm.sector ? ` of ${total}` : ""} stocks · ${lbl} · area ${HM_AREA.find((x) => x[0] === hm.area)[1].toLowerCase()} · colour ${cdef[1]}`;
-      const ticks = hm.color === "rs_rating" ? [1, 25, 50, 75, 99] : hm.color === "from_hi52" ? [-span, -span * 0.75, -span / 2, -span / 4, 0] : [-span, -span / 2, 0, span / 2, span];
-      $("#hmLeg").innerHTML = `<span class="hm-scale" style="background:linear-gradient(90deg, rgb(${neg.join(",")}), rgb(${mid.join(",")}), rgb(${pos.join(",")}))"></span>`
-        + `<span class="hm-ticks">${ticks.map((x) => `<i>${hm.color === "rs_rating" ? x : (x > 0 ? "+" : "") + x + "%"}</i>`).join("")}</span>`;
-      $("#stPage").innerHTML = `<span>${rows.length} stocks</span><span class="st-n">${esc(lbl)} · data ${SD.fmtDate(state.screenDate)}</span>`;
+      for (const [k, el] of [...tiles]) if (!seenT.has(k)) drop(tiles, k, el);
+      for (const [k, el] of [...heads]) if (!seenH.has(k)) drop(heads, k, el);
+      let empty = box.querySelector(".hm-empty");
+      if (!shown && !empty) box.insertAdjacentHTML("beforeend", '<p class="hm-empty">No stock with this setting.</p>'); else if (shown && empty) empty.remove();
+      // legend + counts
+      $("#hmLeg").innerHTML = `<div class="hm-sw">${HM_BINS.map((b) => `<i class="hq-${b}"></i>`).join("")}</div>`
+        + `<div class="hm-tk">${cuts.map((x, i) => `<span style="left:${((i + 1) * 100) / 7}%">${hm.color === "rs_rating" ? x : String(x).replace("-", "−") + "%"}</span>`).join("")}</div>`;
+      const idxName = nameOf("index"), areaName = nameOf("area"), colName = nameOf("color");
+      $("#hmN").textContent = `${shown}${hm.sector ? ` of ${total}` : ""} symbols · Area = ${areaName}`;
+      $("#stPage").innerHTML = `<span>${shown} stocks</span><span class="st-n">${esc(idxName)} · area ${esc(areaName.toLowerCase())} · colour ${esc(colName)}</span><span class="st-n">data ${SD.fmtDate(state.screenDate)}</span>`;
+      if ($("#hmAll")) $("#hmAll").onclick = () => zoom("");
     };
-    draw();
-    $("#hmIdx").onchange = (e) => { hm.index = e.target.value; hm.sector = ""; save(); draw(); };
-    $("#hmArea").onchange = (e) => { hm.area = e.target.value; save(); draw(); };
-    $("#hmCol").onchange = (e) => { hm.color = e.target.value; save(); draw(); };
-    $("#hmBox").onclick = (e) => { const g = e.target.closest(".hm-gh"); if (g && !hm.sector) { hm.sector = g.dataset.g; draw(); } };
-    const hov = $("#hmHov");
-    $("#hmBox").addEventListener("mousemove", (e) => {
-      const a = e.target.closest(".hm-t"); if (!a) { hov.hidden = true; return; }
-      const r = state.screenByKey.get(a.dataset.k); if (!r) return;
-      hov.innerHTML = `<b>${esc(r.symbol)}</b> <small class="muted">${esc(r.name || "")}</small><div class="eh-k"><span>Price ₹${SD.fmtPrice(r.close)}</span><span>1D ${pct(r.chg_1d)}</span>
-        <span>1W ${pct(r.ret_1w)}</span><span>1M ${pct(r.ret_1m)}</span><span>RS ${r.rs_rating ?? "–"}</span><span>MCap ₹${finNum(r.mcap_cr)} Cr</span><span>Turnover ₹${finNum(r.turnover_cr, 1)} Cr</span></div>
-        <small class="muted">${esc(r.sector || "")} › ${esc(r.basic_industry || r.industry || "")}</small>`;
-      hov.hidden = false;
-      hov.style.left = `${Math.min(e.clientX + 14, innerWidth - 300)}px`; hov.style.top = `${Math.min(e.clientY + 14, innerHeight - 140)}px`;
+    const zoom = (sector) => { hm.sector = sector; hideTip(); draw(); };
+
+    // pill menus
+    const closeMenus = (except) => view.querySelectorAll(".hm-dd.open").forEach((d) => { if (d !== except) { d.classList.remove("open"); d.querySelector(".hm-menu").hidden = true; d.querySelector(".hm-ddb").setAttribute("aria-expanded", "false"); } });
+    view.querySelector(".hmx-bar").onclick = (e) => {
+      e.stopPropagation();
+      const d = e.target.closest(".hm-dd"); if (!d) return;
+      const opt = e.target.closest(".hm-menu button");
+      if (!opt) { const open = !d.classList.contains("open"); closeMenus(d); d.classList.toggle("open", open); d.querySelector(".hm-menu").hidden = !open; d.querySelector(".hm-ddb").setAttribute("aria-expanded", String(open)); return; }
+      const k = d.dataset.dd, v = opt.dataset.v;
+      closeMenus();
+      if (hm[k] === v) return;
+      hm[k] = v; if (k === "index") hm.sector = "";
+      d.querySelector(".hm-ddb b").textContent = nameOf(k);
+      d.querySelectorAll(".hm-menu button").forEach((b) => b.classList.toggle("on", b.dataset.v === v));
+      if (k === "pal") view.querySelector(".hmx").dataset.pal = v;
+      save(); draw();
+    };
+    view.onclick = () => closeMenus();
+    if (hmKey) document.removeEventListener("keydown", hmKey);
+    hmKey = (e) => {
+      if (routeName() !== "heatmap") { document.removeEventListener("keydown", hmKey); return; }
+      if (e.key !== "Escape") return;
+      if (view.querySelector(".hm-dd.open")) closeMenus(); else if (hm.sector) zoom("");
+    };
+    document.addEventListener("keydown", hmKey);
+    box.addEventListener("click", (e) => { const g = e.target.closest(".hm-gh"); if (g && !hm.sector) zoom(g.dataset.g); });
+
+    // the card that follows the pointer
+    let hovEl = null;
+    const hideTip = () => { if (hovEl) { hovEl.classList.remove("hov"); heads.get(hovEl.dataset.g)?.classList.remove("hl"); } hovEl = null; tip.hidden = true; };
+    const tipHTML = (r) => {
+      const v = r[hm.color], b = hmBin(v, HM_COLOR.find((x) => x[0] === hm.color)[2]);
+      const tone = b[0] === "p" ? "up" : b[0] === "n" ? "down" : "muted";
+      const main = hm.color === "rs_rating" ? `RS ${v ?? "–"}` : hm.color === "from_hi52" ? `${fmtV(v)} from high` : fmtV(v);
+      const k = (l, x) => `<span><small>${l}</small>${x}</span>`;
+      const p = (x) => (x == null || !isFinite(x) ? '<i class="muted">–</i>' : `<i class="${x >= 0 ? "up" : "down"}">${x > 0 ? "+" : x < 0 ? "−" : ""}${Math.abs(x).toFixed(1)}%</i>`);
+      return `<div class="hm-tip-h"><b>${esc(r.symbol)}</b><span class="${tone}">${main}</span></div>
+        <div class="hm-tip-n">${esc(r.name || "")}</div>
+        <div class="hm-tip-s">${esc(r.sector || "")}${r.basic_industry || r.industry ? " · " + esc(r.basic_industry || r.industry) : ""}</div>
+        <div class="hm-tip-g">${k("Price", `₹${SD.fmtPrice(r.close)}`)}${k("1D", p(r.chg_1d))}${k("1M", p(r.ret_1m))}${k("RS", r.rs_rating ?? "–")}</div>
+        <div class="hm-tip-m">Market cap ₹${finNum(r.mcap_cr)} Cr${r.turnover_cr != null ? ` · Turnover ₹${finNum(r.turnover_cr, 1)} Cr` : ""}</div>`;
+    };
+    box.addEventListener("pointermove", (e) => {
+      if (e.pointerType === "touch") return;
+      const a = e.target.closest(".hm-t:not(.out)");
+      if (a !== hovEl) {
+        if (hovEl) { hovEl.classList.remove("hov"); heads.get(hovEl.dataset.g)?.classList.remove("hl"); }
+        hovEl = a;
+        if (!a) { tip.hidden = true; return; }
+        const r = state.screenByKey.get(a.dataset.k); if (!r) { tip.hidden = true; return; }
+        a.classList.add("hov"); heads.get(a.dataset.g)?.classList.add("hl");
+        tip.innerHTML = tipHTML(r); tip.hidden = false;
+      }
+      if (!a) return;
+      const tw = tip.offsetWidth, th = tip.offsetHeight;
+      let x = e.clientX + 16, y = e.clientY + 16;
+      if (x + tw > innerWidth - 8) x = e.clientX - tw - 12;
+      if (y + th > innerHeight - 8) y = e.clientY - th - 12;
+      tip.style.transform = `translate(${Math.max(8, x)}px, ${Math.max(8, y)}px)`;
     });
-    $("#hmBox").addEventListener("mouseleave", () => { hov.hidden = true; });
+    box.addEventListener("pointerleave", hideTip);
+
+    draw();
     if (hmResize) window.removeEventListener("resize", hmResize);
     let tmr = null;
-    hmResize = () => { clearTimeout(tmr); tmr = setTimeout(() => { if (routeName() === "heatmap") draw(); else window.removeEventListener("resize", hmResize); }, 150); };
+    hmResize = () => { clearTimeout(tmr); tmr = setTimeout(() => { if (routeName() === "heatmap") draw(true); else window.removeEventListener("resize", hmResize); }, 120); };
     window.addEventListener("resize", hmResize);
   }
 

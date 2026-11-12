@@ -999,3 +999,19 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   data/f copy). JS tests 32 / 32, Python tests 216 passed.
 - Follow-up (same day): on laptop widths up to 1399 px the letter badges are hidden and the right panel is 280 px,
   so symbols fit (1093 px: 15 of 465 symbols still cut, 1440 px: 1); below 136 px a column, the columns scroll sideways.
+
+### 2026-11-12: Heatmap page in the reference's look
+- Viraj (video 09-Nov "Heatmap 09-11-2026.mp4"): hover information on every stock, and the look, layout and animation
+  of the reference's heatmap.
+- site/app.js renderHeatmap() rewritten, site/styles.css "Phase N7" block replaced:
+  - pill menus Index / Area / Colour (+ our Palette: Green / Red like the reference, or Blue / Pink of our theme,
+    saved in localStorage sd-hm);
+  - sector names above each block ("Financial Services ›"), click = zoom into the sector ("All › Healthcare", Esc or
+    "All" = back); 1 px gaps between tiles, 4 px between sectors; the map fills the card's height;
+  - seven colour steps with the reference's 1D cut points (-2 / -1 / -0.2 / 0.2 / 1 / 3 %; RS 20 / 38 / 48 / 52 /
+    62 / 80; own steps for 1W / 1M / 3M / 52W high) and a matching legend;
+  - hover: dark outline on the tile, its sector name turns blue, a card follows the pointer (symbol + value, company
+    name, sector · industry, price / 1D / 1M / RS, market cap + turnover);
+  - animation: tiles are kept per stock, so on an index / area / colour / zoom change they glide to their new place
+    and change colour; new tiles pop in sector by sector, removed ones fade out; resize redraws without the glide.
+- Checked in the preview: light, dark, both palettes, zoom + Esc, phone; no console errors. JS tests 32 / 32.

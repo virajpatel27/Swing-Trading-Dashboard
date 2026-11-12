@@ -133,7 +133,7 @@ industry,petrochemicals,Petrochemicals,Chemicals,9,False,2014-05-23,2026-11-12
 industry,pharmaceuticals,Pharmaceuticals,Healthcare,129,False,2007-01-16,2026-11-12
 industry,pharmacy-retail,Pharmacy Retail,Consumer Services,2,True,,
 industry,pig-iron,Pig Iron,Metals & Mining,1,True,,
-industry,plastic-products-consumer,Plastic Products - Consumer,Consumer Durables,8,False,2021-03-24,2026-11-12
+industry,plastic-products-consumer,Plastic Products - Consumer,Consumer Durables,9,False,2021-03-24,2026-11-12
 industry,plastic-products-industrial,Plastic Products - Industrial,Capital Goods,26,False,2007-06-27,2026-11-12
 industry,plywood-boards-laminates,Plywood Boards/ Laminates,Consumer Durables,11,False,2015-08-24,2026-11-12
 industry,port-and-port-services,Port & Port services,Services,4,True,2023-08-25,2026-11-12
@@ -197,7 +197,7 @@ sector,capital-goods,Capital Goods,,404,False,2007-01-16,2026-11-12
 sector,chemicals,Chemicals,,184,False,2007-01-16,2026-11-12
 sector,construction,Construction,,94,False,2007-01-16,2026-11-12
 sector,construction-materials,Construction Materials,,37,False,2007-01-16,2026-11-12
-sector,consumer-durables,Consumer Durables,,153,False,2007-01-16,2026-11-12
+sector,consumer-durables,Consumer Durables,,154,False,2007-01-16,2026-11-12
 sector,consumer-services,Consumer Services,,128,False,2007-01-16,2026-11-12
 sector,diversified,Diversified,,9,False,2007-11-20,2026-11-12
 sector,fast-moving-consumer-goods,Fast Moving Consumer Goods,,177,False,2007-01-16,2026-11-12

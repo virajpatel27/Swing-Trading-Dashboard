@@ -1100,3 +1100,20 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   NEXT (Viraj's choice later): the other ~2,100 stocks, e.g. from each company's own website text.
 - index.html loads every file with ?v=<build>, so a deploy never mixes old and new files (the local preview needs a
   manual bump of the version to see edits).
+
+### 2026-11-12 (late): Breadth page in the reference's look
+- Viraj (video 09-Nov "Breadth 09-11-2026.mp4"): pointing at any of Participation, Advance / Decline, Large vs Mid vs
+  Small, Net 20D highs - lows, 4% movers, Breakouts - breakdowns must show every chart's date and change, with
+  smooth animation, fonts, colours, sizes like the reference.
+- site/app.js renderBreadth() rewritten (same data and rules), site/styles.css "Phase N10" breadth part replaced:
+  - two-half tab bar on top of the card (Market Breadth | Major Indices), an unboxed reading column ("Market Breadth"
+    with a pink underline, coloured words: Strong / Up blue, Down pink, Mixed amber), stage bar + 1D changes;
+  - "Market internals" with a "Liquid stocks N" menu and 1M / 3M / 1Y; six charts in two columns, no boxes;
+  - charts are drawn at the box's real pixel width (no stretched text), y labels, 3 date labels, bands and dashed
+    reference lines, a soft area under participation, the grey Nifty 500 line;
+  - one shared crosshair: a dashed line + ring markers glide to the same day in all six charts, the hovered bar
+    stays bright (others fade), every header shows that day (value, word, better / worse, date, highs / lows,
+    up / down); the two lower charts show a card (index day changes; held / failed / net / new breakouts /
+    5-session held %); title and reading rows explain themselves on hover;
+  - animation on every range / toggle change: lines draw in, areas fade, bars grow from the zero line.
+- Checked: light, dark, 1Y, phone (no sideways scroll), Major Indices still fine. JS 32 / 32, Python 219.

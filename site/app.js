@@ -343,9 +343,28 @@
   function clearBreadthCharts() { while (breadthCharts.length) { try { breadthCharts.pop().remove(); } catch (e) { /* gone */ } } }
   const WORD_CLS = { Building: "t-info", Strong: "t-up", Fading: "t-warn", Weak: "t-down", Flat: "", Up: "t-up", Down: "t-down", Mixed: "t-warn",
     Working: "t-up", Failing: "t-down", Stretched: "t-warn", "Washed out": "t-info", Normal: "" };
+  /* new look 12-Nov-2026 (Viraj, reference video "Breadth 09-11-2026"): one shared crosshair - pointing at any chart
+     moves a dashed line + ring markers to the same day in all six charts and every header shows that day's numbers;
+     the two lower charts also show a small card; charts are drawn at their real pixel size and animate in (lines
+     draw, bars grow) when the range or a toggle changes. */
+  const BX_TIP = {
+    part: "Share of stocks above their 20 / 50 / 200-day average. Above 80 % = crowded, below 20 % = washed out.",
+    hl: "Stocks at a 20-day (or 52-week) high minus stocks at a 20-day (52-week) low, one bar a day.",
+    ad: "Stocks that rose divided by stocks that fell over the last 20 or 40 sessions (above 1 = more rose), or the running advance - decline line.",
+    mv: "Stocks up 4 % or more in a day minus those down 4 % or more, or the 5 / 10-day ratio of the two.",
+    lms: "Nifty 50, Midcap 150 and Smallcap 250, each from the first day of the range.",
+    bo: "Closes above the 50-session high (breakouts) judged 5 sessions later: held = still above, failed = back below.",
+  };
+  const BX_TONE = { Strong: "up", Up: "up", Working: "up", Building: "up", Positive: "up", Weak: "down", Down: "down", Failing: "down",
+    Fading: "warn", Mixed: "warn", Stretched: "warn", Caution: "warn", "Washed out": "info" };
+  const bxDM = (iso, yr) => { const t = new Date(iso + "T00:00:00"); return `${t.getDate()} ${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][t.getMonth()]}${yr ? " " + t.getFullYear() : ""}`; };
+  let bxResize = null;
+
   async function renderBreadth(tab) {
     clearBreadthCharts();
-    const tabs = `<div class="bx-tabs"><a class="${tab !== "indices" ? "on" : ""}" href="#/breadth">Market Breadth</a><a class="${tab === "indices" ? "on" : ""}" href="#/breadth/indices">Major Indices</a></div>`;
+    const IC_B = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 18a8 8 0 1 1 16 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 18l4-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+    const IC_I = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 19h16M5 15l4-5 4 3 6-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const tabs = `<div class="bx-tabs"><a class="${tab !== "indices" ? "on" : ""}" href="#/breadth">${IC_B}Market Breadth</a><a class="${tab === "indices" ? "on" : ""}" href="#/breadth/indices">${IC_I}Major Indices</a></div>`;
     if (tab === "indices") return renderMajorIndices(tabs);
     if (!state.breadth) view.innerHTML = SKEL("Loading breadth");
     try { if (!state.breadth) state.breadth = await getJSON("data/breadth.json"); }
@@ -355,122 +374,186 @@
     const bs = state.bstate || (state.bstate = Object.assign({ uni: "liquid", range: "3m", hl: "20", part: "50", ad: "20", mv: "d" }, store.get("sd-breadth", {})));
     const saveB = () => store.set("sd-breadth", { uni: bs.uni, range: bs.range, hl: bs.hl, part: bs.part, ad: bs.ad, mv: bs.mv });
     const U = B.universes[bs.uni] || B.universes.liquid, S = U.series;
-    const n = Math.min({ "1m": 21, "3m": 63, "1y": 252 }[bs.range], B.days.length);
+    const n = Math.min({ "1m": 21, "3m": 63, "1y": 252 }[bs.range], B.days.length), off = B.days.length - n;
     const days = B.days.slice(-n), cut = (k) => (S[k] || []).slice(-n), full = (k) => S[k] || [];
     const f0 = (v) => (v == null || !isFinite(v) ? "–" : Math.round(v).toLocaleString("en-IN"));
+    const sg = (v, f = f0) => (v == null || !isFinite(v) ? "–" : (v > 0 ? "+" : v < 0 ? "−" : "") + f(Math.abs(v)));
     const read = U.read || {};
     const READ = [["momentum", "Momentum"], ["short_term", "Short-term"], ["big_trend", "Big trend"], ["breakouts", "Breakouts"], ["overdone", "Overdone?"], ["leadership", "Leadership"]];
-    const STG = [["stage1", "Base", "#9e9e9e"], ["stage2", "Uptrend", "#2962ff"], ["stage3", "Top", "#f59e0b"], ["stage4", "Downtrend", "#db2777"]];
+    const STG = [["stage1", "Base", "#9aa3b2"], ["stage2", "Uptrend", "#3b7dd8"], ["stage3", "Top", "#e0a23e"], ["stage4", "Downtrend", "#d8457c"]];
     const lastOf = (a) => { for (let i = a.length - 1; i >= 0; i--) if (a[i] != null) return a[i]; return null; };
-    // rolling sums over the full series, then cut to the range
     const roll = (a, w) => a.map((_, i) => { if (i < w - 1) return null; let s = 0; for (let k = i - w + 1; k <= i; k++) { if (a[k] == null) return null; s += a[k]; } return s; });
     const ratio = (u, d) => u.map((x, i) => (x == null || d[i] == null || !d[i] ? null : x / d[i]));
     const tail = (a) => a.slice(-n);
     const n500 = (B.indices.NIFTY_500 || []).slice(-n);
     const lab = (v, labels) => { for (const [lim, t] of labels || []) if (v < lim) return t; return ""; };
-    const trend = (a, i, higherBetter = true) => { const j = i - 5; if (j < 0 || a[i] == null || a[j] == null || a[i] === a[j]) return ""; const better = (a[i] > a[j]) === higherBetter; return `<span class="${better ? "up" : "down"}">· ${better ? "better ↑" : "worse ↓"}</span>`; };
-    // series per chart (all already cut to the range)
+    const trend = (a, i, higherBetter = true) => { const j = i - 5; if (j < 0 || a[i] == null || a[j] == null || a[i] === a[j]) return ""; const better = (a[i] > a[j]) === higherBetter; return `<span class="bx-tr ${better ? "up" : "down"}">· ${better ? "better ↑" : "worse ↓"}</span>`; };
     const partK = `pct_above${bs.part}`, part = cut(partK);
     const hlH = cut("nh" + bs.hl), hlL = cut("nl" + bs.hl), hl = hlH.map((v, i) => (v == null || hlL[i] == null ? null : v - hlL[i]));
     const adv = full("adv"), dec = full("dec");
     const adR = bs.ad === "line" ? cut("ad_line") : tail(ratio(roll(adv, Number(bs.ad)), roll(dec, Number(bs.ad))));
+    const advW = bs.ad === "line" ? null : tail(roll(adv, Number(bs.ad))), decW = bs.ad === "line" ? null : tail(roll(dec, Number(bs.ad)));
     const up4 = full("up4"), dn4 = full("dn4");
     const mv = bs.mv === "d" ? tail(up4.map((v, i) => (v == null || dn4[i] == null ? null : v - dn4[i]))) : tail(ratio(roll(up4, Number(bs.mv)), roll(dn4, Number(bs.mv))));
-    const held = cut("held"), failed = cut("failed");
-    const LMS = [["NIFTY_50", "N50", "#2962ff"], ["NIFTY_MIDCAP_150", "MID150", "#f59e0b"], ["NIFTY_SMALLCAP_250", "SML250", "#db2777"]];
-    const lms = LMS.map(([k, l, c]) => { const x = (B.indices[k] || []).slice(-n), b0 = x.find((v) => v != null); return { l, c, vals: x.map((v) => (v == null || !b0 ? null : (v / b0 - 1) * 100)) }; });
+    const held = cut("held"), failed = cut("failed"), bouts = cut("breakouts");
+    const LMS = [["NIFTY_50", "N50", "Nifty 50", "#3b7dd8"], ["NIFTY_MIDCAP_150", "MID150", "Nifty Midcap 150", "#c98a1e"], ["NIFTY_SMALLCAP_250", "SML250", "Nifty Smallcap 250", "#6b7280"]];
+    const lms = LMS.map(([k, l, nm, c]) => { const all = B.indices[k] || [], x = all.slice(-n), b0 = x.find((v) => v != null);
+      return { l, nm, c, vals: x.map((v) => (v == null || !b0 ? null : (v / b0 - 1) * 100)), day: x.map((v, j) => { const p = all[off + j - 1]; return v == null || p == null ? null : (v / p - 1) * 100; }) }; });
     const judged = (a) => a.filter((x) => x != null).slice(-5).reduce((s, b) => s + b, 0);
     const h5 = judged(full("held")), f5 = judged(full("failed"));
-    // one chart = header + SVG; hover anywhere moves the crosshair in every chart
-    const CH = [];
-    const chartBox = (id, title, toggle, info) => `<div class="bx-c" data-c="${id}"><div class="bx-ch"><small>${title}</small>${toggle || ""}</div><div class="bx-v" id="bv-${id}"></div>
-      <div class="bx-svg" id="bs-${id}"></div>${info ? `<small class="muted bx-note">${info}</small>` : ""}</div>`;
     const N = days.length;
+    const segB = (name, opts, val) => `<div class="rr-seg bx-seg" data-seg="${name}">${opts.map(([v, l]) => `<button type="button" data-v="${v}" class="${String(v) === String(val) ? "on" : ""}">${l}</button>`).join("")}</div>`;
+    const chartBox = (id, title, toggle) => `<div class="bx-c" data-c="${id}" style="--k:${["part", "hl", "ad", "mv", "lms", "bo"].indexOf(id)}"><div class="bx-ch"><small class="bx-t" data-tip="${esc(BX_TIP[id])}">${title}</small>${toggle || ""}</div>
+      <div class="bx-v" id="bv-${id}"></div><div class="bx-svg" id="bs-${id}"></div></div>`;
+    const CHEV = '<svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const uniN = (k) => f0(lastOf(B.universes[k].series.n));
     view.innerHTML = `<div class="bx">${tabs}
-      <div class="bx-g"><aside class="bx-l"><div class="bx-lh"><b>Market breadth</b><small class="muted">read as of ${shortDay(B.data_date)}</small></div>
-        ${READ.filter(([k]) => read[k]).map(([k, l]) => `<div class="hr-row" title="${esc(read[k].rule || "")}"><div><i class="hr-dot ${WORD_CLS[read[k].word] || "t-info"}"></i><b>${l}</b><span class="tag ${WORD_CLS[read[k].word] || "t-info"}">${esc(read[k].word)}</span></div><p>${esc(read[k].text)}</p></div>`).join("")}
-        <div class="bx-stage"><div class="bx-lh"><small class="muted">STAGE ANALYSIS</small><small class="muted">of ${f0(lastOf(full("stage_n")))} stocks (64+ days)</small></div>
-          <div class="bar">${STG.map(([k, l, c]) => `<span style="flex:${lastOf(full(k)) || 0.0001};background:${c}" title="${l}"></span>`).join("")}</div>
+      <div class="bx-g"><aside class="bx-l"><div class="bx-lh"><h3>Market Breadth</h3><small>Read as of ${esc(shortDay(B.data_date))}</small></div>
+        ${READ.filter(([k]) => read[k]).map(([k, l], i) => { const t = BX_TONE[read[k].word] || "neu"; return `<div class="bx-rd" style="--i:${i}" data-tip="${esc(read[k].rule || "")}"><div class="bx-rt"><i class="bx-dt ${t}"></i><b>${l}</b><span class="bx-wd ${t}">${esc(read[k].word)}</span></div><p>${esc(read[k].text)}</p></div>`; }).join("")}
+        <div class="bx-stage"><div class="bx-sh"><small class="bx-t" data-tip="Stage of each stock with 64+ sessions: base, uptrend (stage 2), top, downtrend (stage 4); change vs the day before.">STAGE ANALYSIS</small><small>of ${f0(lastOf(full("stage_n")))} stocks (64+ days)</small></div>
+          <div class="bar">${STG.map(([k, l, c]) => `<span style="flex:${lastOf(full(k)) || 0.0001};background:${c}" title="${l} ${(lastOf(full(k)) ?? 0).toFixed(1)}%"></span>`).join("")}</div>
           <div class="bx-sg">${STG.map(([k, l, c]) => { const ch = (U.stage_change || {})[k]; return `<div><small><i style="background:${c}"></i>${l}</small><b>${(lastOf(full(k)) ?? 0).toFixed(1)}%</b><small class="${ch > 0 ? "up" : ch < 0 ? "down" : "muted"}">${ch ? (ch > 0 ? "+" : "") + ch + " 1D" : "–"}</small></div>`; }).join("")}</div></div>
-        <p class="muted small">Our own simple rules (hover a line to see it). Not investment advice.</p></aside>
-      <section class="bx-r"><div class="bx-rh"><b>Market internals</b><span class="pk-i" title="Participation: share of stocks above their 20 / 50 / 200-day average. Net highs - lows: stocks at a 20-day (or 52-week) high minus those at a low. Advance / decline: stocks that rose / fell over the last 20 or 40 sessions (above 1 = more rose) or the cumulative advance - decline line. 4% movers: stocks up 4 % or more in a day minus those down 4 %, or the 5 / 10-day ratio. Breakouts: closes above the 50-session high; held = still above 5 sessions later. The grey line in each chart is the Nifty 500.">i</span>
-          <small class="muted"><i class="bx-grey"></i> Nifty 500 (grey line)</small>
-          <span class="bx-tools">${seg("buni", [["liquid", `Liquid ${f0(lastOf(B.universes.liquid.series.n))}`], ["all", `All ${f0(lastOf(B.universes.all.series.n))}`]], bs.uni)}${seg("brange", [["1m", "1M"], ["3m", "3M"], ["1y", "1Y"]], bs.range)}</span></div>
+        <p class="bx-foot">Our own simple rules - point at a line to see it. Not investment advice.</p></aside>
+      <section class="bx-r"><div class="bx-rh"><h3>Market internals</h3><span class="pk-i bx-t" data-tip="Point at any chart: every chart moves to the same day and shows that day's numbers. The grey line in each chart is the Nifty 500.">i</span>
+          <small class="bx-gl"><i></i>Nifty 500 (grey line)</small>
+          <div class="bx-tools"><div class="hm-dd bx-dd" data-dd="uni"><button type="button" class="hm-ddb"><b>${bs.uni === "all" ? "All stocks" : "Liquid stocks"} <span class="bx-n">${uniN(bs.uni === "all" ? "all" : "liquid")}</span></b>${CHEV}</button>
+            <div class="hm-menu" hidden><button type="button" data-v="liquid" class="${bs.uni !== "all" ? "on" : ""}">Liquid stocks · ${uniN("liquid")}</button><button type="button" data-v="all" class="${bs.uni === "all" ? "on" : ""}">All stocks · ${uniN("all")}</button></div></div>
+            ${segB("brange", [["1m", "1M"], ["3m", "3M"], ["1y", "1Y"]], bs.range)}</div></div>
         <div class="bx-grid">
-          ${chartBox("part", "PARTICIPATION", seg("bpart", [["20", "20D"], ["50", "50D"], ["200", "200D"]], bs.part))}
-          ${chartBox("hl", "NET HIGHS − LOWS", seg("bhl", [["20", "20D"], ["52", "52W"]], bs.hl))}
-          ${chartBox("ad", "ADVANCE / DECLINE", seg("bad", [["20", "20D"], ["40", "40D"], ["line", "A-D line"]], bs.ad))}
-          ${chartBox("mv", "4% MOVERS", seg("bmv", [["d", "Daily"], ["5", "5D ratio"], ["10", "10D ratio"]], bs.mv))}
+          ${chartBox("part", "PARTICIPATION", segB("bpart", [["20", "20D"], ["50", "50D"], ["200", "200D"]], bs.part))}
+          ${chartBox("hl", `NET ${bs.hl === "52" ? "52W" : "20D"} HIGHS − LOWS`, segB("bhl", [["20", "20D"], ["52", "52W"]], bs.hl))}
+          ${chartBox("ad", "ADVANCE / DECLINE", segB("bad", [["20", "20D"], ["40", "40D"], ["line", "A-D line"]], bs.ad))}
+          ${chartBox("mv", "4% MOVERS", segB("bmv", [["d", "Daily"], ["5", "5D ratio"], ["10", "10D ratio"]], bs.mv))}
           ${chartBox("lms", "LARGE VS MID VS SMALL", "")}
-          ${chartBox("bo", "BREAKOUTS · BREAKDOWNS", `<span class="bx-chip">${f0(lastOf(full("held")))} held, ${f0(lastOf(full("failed")))} failed · ${h5 + f5 ? Math.round((100 * h5) / (h5 + f5)) : "–"}% held over 5 days</span>`)}
-        </div></section></div></div>`;
-    $("#stPage").innerHTML = `<span>${f0(lastOf(S.n))} ${bs.uni === "liquid" ? "liquid " : ""}stocks</span><span class="st-n">data ${SD.fmtDate(B.data_date)}</span>`;
-    const W = 520, H = 150, PL = 40, PR = 6, PT = 6, PB = 18;
-    const make = (id, o) => {
+          ${chartBox("bo", "BREAKOUTS − BREAKDOWNS", "")}
+        </div></section></div></div>
+      <div class="bx-tipbox" id="bxTip" hidden></div>`;
+    $("#stPage").innerHTML = `<span>${f0(lastOf(S.n))} ${bs.uni === "liquid" ? "liquid " : ""}stocks</span><span class="st-n">data through ${esc(shortDay(B.data_date))}</span>`;
+
+    // ---- the six charts (drawn at the box's real pixel width)
+    const H = 156, PL = 42, PR = 8, PT = 8, PB = 22;
+    const CH = [];
+    const day = (j, extra) => `<small class="bx-d">${esc(bxDM(days[j]))}${extra ? ` · ${extra}` : ""}</small>`;
+    const word = (t, tone) => `<span class="bx-w ${tone || ""}">${t}</span>`;
+    const draw = (c, anim) => {
+      const el = c.el, o = c.o, W = Math.max(260, el.clientWidth);
       const vals = o.series.flatMap((s) => s.vals).filter((v) => v != null && isFinite(v));
       let lo = o.lo ?? Math.min(...vals), hi = o.hi ?? Math.max(...vals);
-      if (o.zero) { lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
-      if (!(hi > lo)) { hi = lo + 1; }
-      const padY = (hi - lo) * 0.06; if (o.lo == null) lo -= padY; if (o.hi == null) hi += padY;
+      if (o.zero) { const m = o.sym ? Math.max(Math.abs(lo), Math.abs(hi)) : 0; if (o.sym) { lo = -m; hi = m; } else { lo = Math.min(lo, 0); hi = Math.max(hi, 0); } }
+      if (!(hi > lo)) hi = lo + 1;
+      const pad = (hi - lo) * 0.06; if (o.lo == null && !o.sym) lo -= pad; if (o.hi == null && !o.sym) hi += pad;
       const X = (i) => PL + (i / Math.max(N - 1, 1)) * (W - PL - PR), Y = (v) => PT + (1 - (v - lo) / (hi - lo)) * (H - PT - PB), bw = (W - PL - PR) / Math.max(N, 1);
-      const fmtT = (v) => (Math.abs(hi - lo) < 5 ? v.toFixed(2) : Math.round(v).toLocaleString("en-IN"));
-      const ticks = o.ticks || [lo + padY, (lo + hi) / 2, hi - padY];
-      let s = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="bx-s">`;
-      for (const [a, b, c] of o.bands || []) s += `<rect x="${PL}" y="${Y(Math.min(b, hi))}" width="${W - PL - PR}" height="${Math.max(0, Y(Math.max(a, lo)) - Y(Math.min(b, hi)))}" fill="${c}"/>`;
-      for (const t of ticks) s += `<line x1="${PL}" x2="${W - PR}" y1="${Y(t)}" y2="${Y(t)}" class="hl-grid"/><text x="${PL - 4}" y="${Y(t) + 3}" text-anchor="end" class="hl-ax">${fmtT(t)}${o.unit || ""}</text>`;
+      const fmtT = o.fmtT || ((v) => (Math.abs(hi - lo) < 5 ? v.toFixed(2) : (v > 0 && o.zero ? "+" : "") + Math.round(v).toLocaleString("en-IN")));
+      const ticks = o.ticks || (o.zero ? [hi, 0, lo].map((v) => Math.round(v)) : [hi - pad, lo + pad]);
+      let s = `<svg class="bx-s${anim ? " bx-in" : ""}" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs><linearGradient id="bxg-${c.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b7dd8" stop-opacity=".22"/><stop offset="1" stop-color="#3b7dd8" stop-opacity=".02"/></linearGradient></defs>`;
+      for (const [a, b, cls] of o.bands || []) s += `<rect class="bx-band ${cls}" x="${PL}" y="${Y(Math.min(b, hi)).toFixed(1)}" width="${W - PL - PR}" height="${Math.max(0, Y(Math.max(a, lo)) - Y(Math.min(b, hi))).toFixed(1)}"/>`;
+      for (const r of o.refs || []) s += `<line class="bx-ref" x1="${PL}" x2="${W - PR}" y1="${Y(r).toFixed(1)}" y2="${Y(r).toFixed(1)}"/>`;
+      for (const t of ticks) s += `<text x="${PL - 6}" y="${(Y(t) + 3).toFixed(1)}" text-anchor="end" class="bx-ax">${fmtT(t)}${o.unit || ""}</text>`;
       if (o.grey) {
-        const g = o.grey.filter((v) => v != null), glo = Math.min(...g), ghi = Math.max(...g), GY = (v) => PT + (1 - (v - glo) / (ghi - glo || 1)) * (H - PT - PB);
-        s += `<polyline points="${o.grey.map((v, i) => (v == null ? "" : `${X(i).toFixed(1)},${GY(v).toFixed(1)}`)).filter(Boolean).join(" ")}" fill="none" stroke="var(--muted)" stroke-opacity=".55" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+        const g = o.grey.filter((v) => v != null), glo = Math.min(...g), ghi = Math.max(...g), GY = (v) => PT + 4 + (1 - (v - glo) / (ghi - glo || 1)) * (H - PT - PB - 8);
+        s += `<polyline class="bx-grey" points="${o.grey.map((v, i) => (v == null ? "" : `${X(i).toFixed(1)},${GY(v).toFixed(1)}`)).filter(Boolean).join(" ")}"/>`;
       }
-      for (const se of o.series) {
-        if (se.bars) s += se.vals.map((v, i) => (v == null ? "" : `<rect x="${(X(i) - bw * 0.38).toFixed(1)}" y="${Math.min(Y(v), Y(0)).toFixed(1)}" width="${(bw * 0.76).toFixed(1)}" height="${Math.max(1, Math.abs(Y(v) - Y(0))).toFixed(1)}" fill="${v >= 0 ? se.up : se.down}"/>`)).join("");
-        else {
-          const pts = se.vals.map((v, i) => (v == null ? null : `${X(i).toFixed(1)},${Y(v).toFixed(1)}`)).filter(Boolean);
-          if (se.fill && pts.length) s += `<path d="M${pts[0].split(",")[0]},${Y(lo)} L${pts.join(" L")} L${pts[pts.length - 1].split(",")[0]},${Y(lo)} Z" fill="${se.fill}"/>`;
-          s += `<polyline points="${pts.join(" ")}" fill="none" stroke="${se.color}" stroke-width="${se.width || 1.8}" vector-effect="non-scaling-stroke"/>`;
+      if (o.zero) s += `<line class="bx-zero" x1="${PL}" x2="${W - PR}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}"/>`;
+      o.series.forEach((se, k) => {
+        if (se.bars) {
+          const w = Math.max(1, Math.min(bw * 0.62, 10));
+          s += `<g class="bx-bars">${se.vals.map((v, i) => (v == null || v === 0 ? "" : `<rect class="bx-b ${(se.tone ? se.tone(v) : v >= 0) ? "pos" : "neg"}" data-i="${i}" style="--d:${Math.min(i * 6, 500)}ms" x="${(X(i) - w / 2).toFixed(1)}" y="${Math.min(Y(v), Y(0)).toFixed(1)}" width="${w.toFixed(1)}" height="${Math.max(1, Math.abs(Y(v) - Y(0))).toFixed(1)}"/>`)).join("")}</g>`;
+        } else {
+          const pts = se.vals.map((v, i) => (v == null ? null : [X(i), Y(v)])).filter(Boolean);
+          if (!pts.length) return;
+          const d = "M" + pts.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" L");
+          if (se.fill) s += `<path class="bx-area" d="${d} L${pts[pts.length - 1][0].toFixed(1)},${Y(lo).toFixed(1)} L${pts[0][0].toFixed(1)},${Y(lo).toFixed(1)} Z" fill="url(#bxg-${c.id})"/>`;
+          s += `<path class="bx-ln" d="${d}" pathLength="1" style="stroke:${se.color};--d:${k * 120}ms"/>`;
         }
-      }
-      s += `<text x="${PL}" y="${H - 4}" class="hl-ax">${esc(shortDay(days[0]))}</text><text x="${W - PR}" y="${H - 4}" text-anchor="end" class="hl-ax">${esc(shortDay(days[N - 1]))}</text>`;
-      s += `<line class="bx-x" x1="0" x2="0" y1="${PT}" y2="${H - PB}" style="display:none"/>${o.series.filter((se) => !se.bars).map((se, k) => `<circle class="bx-dot" data-k="${k}" r="3.5" fill="${se.color}" style="display:none"/>`).join("")}</svg>`;
-      const el = $("#bs-" + id);
+      });
+      const xl = [0, Math.floor((N - 1) / 2), N - 1];
+      s += xl.map((i, k) => `<text x="${X(i).toFixed(1)}" y="${H - 5}" text-anchor="${k === 0 ? "start" : k === 2 ? "end" : "middle"}" class="bx-ax">${esc(bxDM(days[i], k === 0 && bs.range === "1y"))}</text>`).join("");
+      s += `<g class="bx-hv" style="opacity:0"><line class="bx-x" x1="0" x2="0" y1="${PT}" y2="${H - PB}"/>${o.series.filter((se) => !se.bars).map((se, k) => `<circle class="bx-dot" data-k="${k}" r="4" cx="0" cy="0" style="stroke:${se.color}"/>`).join("")}</g>`;
+      s += `<rect class="bx-hit" x="${PL}" y="0" width="${W - PL - PR}" height="${H}"/></svg>`;
       el.innerHTML = s;
-      CH.push({ id, el, o, X, Y, head: o.head });
+      Object.assign(c, { X, Y, W });
     };
+    const make = (id, o) => { const c = { id, el: $("#bs-" + id), o }; CH.push(c); draw(c, true); };
+    make("part", { series: [{ vals: part, color: "#3b7dd8", fill: true }], lo: 0, hi: 100, ticks: [100, 50, 0], unit: "%", grey: n500, refs: [80, 50, 20],
+      bands: [[80, 100, "pk"], [0, 20, "bl"]],
+      head: (j) => `<b>${part[j] == null ? "–" : Math.round(part[j]) + "%"}</b>${word(esc(lab(part[j], B.config.participation_labels)), part[j] >= 60 ? "up" : part[j] < 30 ? "down" : "")}${trend(part, j)}${day(j)}` });
+    make("hl", { series: [{ vals: hl, bars: true }], zero: true, sym: true, grey: n500,
+      head: (j) => { const v = hl[j], far = v > 0 ? hlH[j] > 3 * (hlL[j] || 0.5) : hlL[j] > 3 * (hlH[j] || 0.5);
+        return `<b>${sg(v)}</b>${word(v == null ? "" : v > 0 ? (far ? "Far more highs than lows" : "More highs than lows") : v < 0 ? (far ? "Far more lows than highs" : "More lows than highs") : "Even", v > 0 ? "up" : v < 0 ? "down" : "")}${trend(hl, j)}${day(j, `${f0(hlH[j])} highs / ${f0(hlL[j])} lows`)}`; } });
+    make("ad", { series: [{ vals: adR, color: "#3b7dd8" }], grey: n500, refs: bs.ad === "line" ? [] : [1], ...(bs.ad === "line" ? {} : { lo: 0.5, hi: 1.5, ticks: [1.5, 1, 0.5], fmtT: (v) => v.toFixed(2) }),
+      bands: bs.ad === "line" ? [] : [[1.25, 1.5, "bl"], [0.5, 0.75, "pk"]],
+      head: (j) => `<b>${adR[j] == null ? "–" : bs.ad === "line" ? f0(adR[j]) : adR[j].toFixed(2)}</b>${word(bs.ad === "line" ? "advances − declines, running" : adR[j] == null ? "" : esc(lab(adR[j], B.config.ad_labels) || (adR[j] >= 1 ? "More risers" : "More fallers")), adR[j] >= 1.05 ? "up" : adR[j] <= 0.95 ? "down" : "")}${trend(adR, j)}`
+        + day(j, bs.ad === "line" ? `${f0(tail(adv)[j])} up / ${f0(tail(dec)[j])} down` : `avg ${f0(advW[j] / Number(bs.ad))} up / ${f0(decW[j] / Number(bs.ad))} down`) });
+    make("mv", bs.mv === "d" ? { series: [{ vals: mv, bars: true }], zero: true, sym: true, grey: n500,
+        head: (j) => { const u = tail(up4)[j], d = tail(dn4)[j], r = d ? u / d : u ? 9 : 1; return `<b>${sg(mv[j])}</b>${word(r >= 2 ? "Heavy buying" : r >= 1.2 ? "More up 4%+" : r > 0.83 ? "Balanced" : r > 0.5 ? "More down 4%+" : "Heavy selling", r >= 1.2 ? "up" : r <= 0.83 ? "down" : "")}${trend(mv, j)}${day(j, `${f0(u)} up / ${f0(d)} down`)}`; } }
+      : { series: [{ vals: mv, color: "#3b7dd8" }], grey: n500, refs: [1], bands: [[0, 1, "pk"]],
+        head: (j) => `<b>${mv[j] == null ? "–" : mv[j].toFixed(2)}</b>${word(mv[j] == null ? "" : mv[j] >= 1 ? "More 4% gainers" : "More 4% losers", mv[j] >= 1 ? "up" : "down")}${trend(mv, j)}${day(j, `${bs.mv}-day ratio`)}` });
+    make("lms", { series: lms.map((x) => ({ vals: x.vals, color: x.c })), zero: true, unit: "%", fmtT: (v) => (v > 0 ? "+" : "") + Math.round(v),
+      head: (j) => { const lead = lms.slice().sort((a, b) => (b.vals[j] ?? -1e9) - (a.vals[j] ?? -1e9))[0];
+        return `${word({ N50: "Large caps lead", MID150: "Mid caps lead", SML250: "Small caps lead" }[lead.l], "")}${lms.map((x) => `<span class="bx-lg"><i style="background:${x.c}"></i>${x.l} <b class="${x.vals[j] >= 0 ? "up" : "down"}">${x.vals[j] == null ? "–" : sg(x.vals[j], (v) => v.toFixed(1)) + "%"}</b></span>`).join("")}${day(j)}`; },
+      tip: (j) => `<b>${esc(shortDay(days[j]))}</b>${lms.map((x) => `<div><span><i style="background:${x.c}"></i>${x.nm}</span><em class="${x.day[j] >= 0 ? "up" : "down"}">${x.day[j] == null ? "–" : sg(x.day[j], (v) => v.toFixed(1)) + "%"}</em></div>`).join("")}` });
+    const heldPct = (j) => { let h = 0, f = 0; for (let k = Math.max(0, j - 4); k <= j; k++) { h += held[k] || 0; f += failed[k] || 0; } return h + f ? (100 * h) / (h + f) : null; };
+    make("bo", { series: [{ vals: held.map((h, i) => (h == null || failed[i] == null ? null : h - failed[i])), bars: true }], zero: true, sym: true,
+      head: (j) => `<span class="bx-chip">${f0(lastOf(full("held")))} held, ${f0(lastOf(full("failed")))} failed today · ${h5 + f5 ? Math.round((100 * h5) / (h5 + f5)) : "–"}% held this week</span>${day(j)}`,
+      tip: (j) => `<b>${esc(shortDay(days[j]))}</b><div><span>Breakouts (held)</span><em class="up">${f0(held[j])}</em></div><div><span>Breakdowns (failed)</span><em class="down">${f0(failed[j])}</em></div>`
+        + `<div><span>Net</span><em class="${(held[j] || 0) - (failed[j] || 0) >= 0 ? "up" : "down"}">${held[j] == null ? "–" : sg(held[j] - failed[j])}</em></div><div><span>New breakouts that day</span><em>${f0(bouts[j])}</em></div>`
+        + `<div><span>Held, 5-session avg</span><em>${heldPct(j) == null ? "–" : heldPct(j).toFixed(1) + "%"}</em></div>` });
+
+    // ---- one shared crosshair
+    const tip = $("#bxTip");
+    const tips = CH.filter((c) => c.o.tip).map((c) => { const t = document.createElement("div"); t.className = "bx-ct"; t.hidden = true; c.el.parentElement.appendChild(t); return { c, t }; });
+    let cur = null;
     const sync = (i) => {
+      const atEnd = i == null, j = atEnd ? N - 1 : i;
+      if (i === cur && !atEnd) return; cur = i;
       for (const c of CH) {
-        const line = c.el.querySelector(".bx-x"), atEnd = i == null;
-        const j = atEnd ? N - 1 : i;
-        line.style.display = atEnd ? "none" : ""; line.setAttribute("x1", c.X(j)); line.setAttribute("x2", c.X(j));
-        c.el.querySelectorAll(".bx-dot").forEach((d) => { const se = c.o.series.filter((x) => !x.bars)[Number(d.dataset.k)], v = se.vals[j]; d.style.display = atEnd || v == null ? "none" : ""; if (v != null) { d.setAttribute("cx", c.X(j)); d.setAttribute("cy", c.Y(v)); } });
-        $("#bv-" + c.id).innerHTML = c.head(j);
+        const g = c.el.querySelector(".bx-hv");
+        if (g) {
+          g.style.opacity = atEnd ? 0 : 1; g.style.transform = `translateX(${c.X(j).toFixed(1)}px)`;
+          g.querySelectorAll(".bx-dot").forEach((d) => { const se = c.o.series.filter((x) => !x.bars)[Number(d.dataset.k)], v = se.vals[j]; d.style.display = v == null ? "none" : ""; if (v != null) d.style.cy = `${c.Y(v).toFixed(1)}px`; });
+        }
+        const sv = c.el.querySelector("svg"); if (sv) sv.classList.toggle("hov", !atEnd);
+        c.el.querySelectorAll(".bx-b.on").forEach((b) => b.classList.remove("on"));
+        if (!atEnd) c.el.querySelectorAll(`.bx-b[data-i="${j}"]`).forEach((b) => b.classList.add("on"));
+        $("#bv-" + c.id).innerHTML = c.o.head(j);
+      }
+      for (const { c, t } of tips) {
+        if (atEnd) { t.hidden = true; continue; }
+        t.innerHTML = c.o.tip(j); t.hidden = false;
+        const x = c.X(j), w = t.offsetWidth, box = c.el.clientWidth;
+        t.style.transform = `translate(${(x + 14 + w > box ? x - w - 14 : x + 14).toFixed(0)}px, 0)`;
       }
     };
-    const day = (j) => `<small class="muted bx-d">${esc(shortDay(days[j]))}</small>`;
-    make("part", { series: [{ vals: part, color: "#2962ff", fill: "rgba(41,98,255,.12)" }], lo: 0, hi: 100, ticks: [0, 20, 50, 80, 100], unit: "%", grey: n500,
-      bands: [[80, 100, "rgba(219,39,119,.09)"], [0, 20, "rgba(219,39,119,.05)"]],
-      head: (j) => `<b>${part[j] == null ? "–" : part[j].toFixed(1) + "%"}</b><span class="bx-w">${esc(lab(part[j], B.config.participation_labels))}</span>${trend(part, j)}${day(j)}` });
-    make("hl", { series: [{ vals: hl, bars: true, up: "rgba(41,98,255,.75)", down: "rgba(219,39,119,.75)" }], zero: true, grey: n500,
-      head: (j) => `<b>${hl[j] == null ? "–" : (hl[j] > 0 ? "+" : "") + f0(hl[j])}</b><span class="bx-w">${hl[j] == null ? "" : hl[j] > 0 ? (hlL[j] && hlH[j] > 3 * hlL[j] ? "Far more highs than lows" : "More highs than lows") : hl[j] < 0 ? (hlH[j] && hlL[j] > 3 * hlH[j] ? "Far more lows than highs" : "More lows than highs") : "Even"}</span>${trend(hl, j)}${day(j)}<small class="muted bx-r2">${f0(hlH[j])} highs / ${f0(hlL[j])} lows</small>` });
-    make("ad", { series: [{ vals: adR, color: "#2962ff" }], grey: n500, bands: bs.ad === "line" ? [] : [[0, 1, "rgba(219,39,119,.06)"], [1, 99, "rgba(41,98,255,.05)"]],
-      ticks: bs.ad === "line" ? undefined : undefined,
-      head: (j) => `<b>${adR[j] == null ? "–" : bs.ad === "line" ? f0(adR[j]) : adR[j].toFixed(2)}</b><span class="bx-w">${bs.ad === "line" ? "cumulative advances − declines" : adR[j] == null ? "" : esc(lab(adR[j], B.config.ad_labels) || (adR[j] >= 1 ? "More risers" : "More fallers"))}</span>${trend(adR, j)}${day(j)}<small class="muted bx-r2">${f0(tail(adv)[j])} up / ${f0(tail(dec)[j])} down that day</small>` });
-    make("mv", bs.mv === "d" ? { series: [{ vals: mv, bars: true, up: "rgba(41,98,255,.75)", down: "rgba(219,39,119,.75)" }], zero: true, grey: n500,
-        head: (j) => { const u = tail(up4)[j], d = tail(dn4)[j], r = d ? u / d : u ? 9 : 1; return `<b>${mv[j] == null ? "–" : (mv[j] > 0 ? "+" : "") + f0(mv[j])}</b><span class="bx-w">${r >= 2 ? "Heavy buying" : r >= 1.2 ? "More buying" : r > 0.83 ? "Balanced" : r > 0.5 ? "More selling" : "Heavy selling"}</span>${trend(mv, j)}${day(j)}<small class="muted bx-r2">${f0(u)} up / ${f0(d)} down</small>`; } }
-      : { series: [{ vals: mv, color: "#2962ff" }], grey: n500, bands: [[0, 1, "rgba(219,39,119,.06)"]],
-        head: (j) => `<b>${mv[j] == null ? "–" : mv[j].toFixed(2)}</b><span class="bx-w">${mv[j] == null ? "" : mv[j] >= 1 ? "more 4 % gainers" : "more 4 % losers"} (${bs.mv} days)</span>${trend(mv, j)}${day(j)}` });
-    make("lms", { series: lms.map((x) => ({ vals: x.vals, color: x.c })), zero: true, unit: "%",
-      head: (j) => `${lms.map((x) => `<span class="bx-lg"><i style="background:${x.c}"></i>${x.l} <b class="${x.vals[j] >= 0 ? "up" : "down"}">${x.vals[j] == null ? "–" : (x.vals[j] > 0 ? "+" : "") + x.vals[j].toFixed(1) + "%"}</b></span>`).join("")}${day(j)}` });
-    make("bo", { series: [{ vals: held, bars: true, up: "rgba(41,98,255,.75)", down: "rgba(41,98,255,.75)" }, { vals: failed.map((v) => (v == null ? null : -v)), bars: true, up: "rgba(219,39,119,.75)", down: "rgba(219,39,119,.75)" }], zero: true, grey: n500,
-      head: (j) => { let k = j; while (k > 0 && held[k] == null) k--;
-        return `<b>${held[k] == null ? "–" : f0(held[k])}</b><span class="bx-w">held</span> <b>${failed[k] == null ? "–" : f0(failed[k])}</b><span class="bx-w">failed</span>${day(k)}<small class="muted bx-r2">${k < j ? "latest judged day · " : ""}breakouts of ${esc(shortDay(days[Math.max(0, k - 5)]))}, judged 5 sessions later</small>`; } });
     sync(null);
     view.querySelectorAll(".bx-svg").forEach((el) => {
-      el.addEventListener("mousemove", (e) => { const r = el.getBoundingClientRect(), x = ((e.clientX - r.left) / r.width) * W; const i = Math.round(((x - PL) / (W - PL - PR)) * (N - 1)); sync(Math.max(0, Math.min(N - 1, i))); });
-      el.addEventListener("mouseleave", () => sync(null));
+      const c = CH.find((x) => x.el === el);
+      el.addEventListener("pointermove", (e) => { const r = el.getBoundingClientRect(), x = e.clientX - r.left; sync(Math.max(0, Math.min(N - 1, Math.round(((x - PL) / (c.W - PL - PR)) * (N - 1))))); });
+      el.addEventListener("pointerleave", () => sync(null));
     });
-    const on = (name, fn) => { const g = $(`[data-seg=${name}]`); if (g) g.onclick = (e) => { const b = e.target.closest("button"); if (b) { fn(b.dataset.v); saveB(); renderBreadth(); } }; };
-    on("buni", (v) => { bs.uni = v; }); on("brange", (v) => { bs.range = v; }); on("bhl", (v) => { bs.hl = v; });
+    // little explanation cards on titles and the reading rows
+    view.addEventListener("pointerover", (e) => {
+      const t = e.target.closest("[data-tip]"); if (!t || !t.dataset.tip) { tip.hidden = true; return; }
+      tip.textContent = t.dataset.tip; tip.hidden = false;
+      const b = t.getBoundingClientRect(), w = tip.offsetWidth;
+      tip.style.transform = `translate(${Math.max(8, Math.min(innerWidth - w - 8, b.left)).toFixed(0)}px, ${(b.bottom + 8).toFixed(0)}px)`;
+    });
+    view.addEventListener("pointerleave", () => { tip.hidden = true; });
+    // options
+    const on = (name, fn) => { const g = $(`[data-seg=${name}]`); if (g) g.onclick = (e) => { const b = e.target.closest("button"); if (b && !b.classList.contains("on")) { fn(b.dataset.v); saveB(); renderBreadth(); } }; };
+    on("brange", (v) => { bs.range = v; }); on("bhl", (v) => { bs.hl = v; });
     on("bpart", (v) => { bs.part = v; }); on("bad", (v) => { bs.ad = v; }); on("bmv", (v) => { bs.mv = v; });
+    const dd = view.querySelector(".bx-dd");
+    dd.onclick = (e) => {
+      e.stopPropagation();
+      const o = e.target.closest(".hm-menu button");
+      if (!o) { const open = !dd.classList.contains("open"); dd.classList.toggle("open", open); dd.querySelector(".hm-menu").hidden = !open; return; }
+      if (o.dataset.v !== bs.uni) { bs.uni = o.dataset.v; saveB(); renderBreadth(); }
+    };
+    view.onclick = () => { dd.classList.remove("open"); dd.querySelector(".hm-menu").hidden = true; };
+    if (bxResize) window.removeEventListener("resize", bxResize);
+    let tmr = null;
+    bxResize = () => { clearTimeout(tmr); tmr = setTimeout(() => { if (routeName() !== "breadth" || !document.body.contains(CH[0].el)) { window.removeEventListener("resize", bxResize); return; } CH.forEach((c) => draw(c, false)); cur = undefined; sync(null); }, 120); };
+    window.addEventListener("resize", bxResize);
   }
 
   /* Major indices: a grid of index charts (Phase N10) */

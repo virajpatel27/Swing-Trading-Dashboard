@@ -1234,16 +1234,38 @@
     $("#ldCopy").onclick = async () => { const t = top.map(({ r }) => "NSE:" + r.symbol).join(","); try { await navigator.clipboard.writeText(t); $("#ldCopy").textContent = `Copied ${top.length}`; } catch (e) { prompt("Copy these symbols:", t); } };
   }
 
-  /* ------------------------------------------------------------------ RRG (Phase N9): strength x momentum with tails */
-  const RRG_Q = { Leading: "#16a34a", Improving: "#2962ff", Weakening: "#f59e0b", Lagging: "#db2777" };
+  /* ------------------------------------------------------------------ RRG (Phase N9; new look 12-Nov-2026): strength x momentum with tails
+     Like the reference video (Viraj 12-Nov): four soft quadrants, curved tails that fade into the past, quadrant chips
+     that hide / show, Tail 5 | 10, Sectors | Industries | Themes, Daily | Weekly, a benchmark menu, a list grouped by
+     quadrant with heading arrows. Hover = trace the path (others fade, dated start), click = pin. Changing any option
+     moves every dot along to its new place; the first view draws the tails in. */
+  const RR_Q = ["Leading", "Improving", "Weakening", "Lagging"], RR_K = { Leading: "lead", Improving: "imp", Weakening: "weak", Lagging: "lag" };
   const quadOf = (s, m) => (s >= 100 ? (m >= 100 ? "Leading" : "Weakening") : (m >= 100 ? "Improving" : "Lagging"));
   const ARROWS = ["→", "↗", "↑", "↖", "←", "↙", "↓", "↘"];
+  /** direction of the last step: arrow + a short word (right-up = gaining, left-down = losing) */
   const headingOf = (pts) => {
-    if (pts.length < 2) return { arrow: "·", text: "–" };
+    if (pts.length < 2) return { arrow: "·", text: "–", cls: "" };
     const [a, b] = pts.slice(-2), dx = b[0] - a[0], dy = b[1] - a[1];
     const k = ((Math.round(Math.atan2(dy, dx) / (Math.PI / 4)) % 8) + 8) % 8;
-    const text = ["Moving right (gaining strength)", "Up and right (best direction)", "Turning up", "Up but weaker", "Moving left (losing strength)", "Down and left (worst direction)", "Turning down", "Down but stronger"][k];
-    return { arrow: ARROWS[k], text };
+    const [text, cls] = dx >= 0 && dy >= 0 ? ["Gaining", "hd-up"] : dx < 0 && dy < 0 ? ["Losing", "hd-dn"] : dx >= 0 ? ["Momentum fading", "hd-mix"] : ["Momentum building", "hd-mix2"];
+    return { arrow: ARROWS[k], text, cls };
+  };
+  const RR_SHORT = { "Automobile and Auto Components": "Auto", "Financial Services": "Fin Services", "Consumer Durables": "Cons Durables",
+    "Fast Moving Consumer Goods": "FMCG", "Media, Entertainment & Publication": "Media", "Media Entertainment & Publication": "Media",
+    "Information Technology": "IT", "Oil, Gas & Consumable Fuels": "Oil & Gas", "Consumer Services": "Cons Services", "Capital Goods": "Cap Goods",
+    "Metals & Mining": "Metals", "Construction Materials": "Constr Matl", "Forest Materials": "Forest Matl", "Telecommunication": "Telecom" };
+  const RR_BENCH = [["mkt", "Equal-weight market"], ["NIFTY_50", "Nifty 50"], ["NIFTY_500", "Nifty 500"], ["NIFTY_SMALLCAP_250", "Nifty Smallcap 250"], ["NIFTY_MIDSMALLCAP_400", "Nifty MidSmallcap 400"]];
+  let rrFrom = null, rrResize = null, rrAnim = 0;
+  /** a smooth curve through the points (Catmull-Rom as cubic Bezier) */
+  const rrPath = (P) => {
+    if (!P.length) return "";
+    const f = (v) => v.toFixed(1);
+    let d = `M${f(P[0][0])},${f(P[0][1])}`;
+    for (let i = 0; i < P.length - 1; i++) {
+      const p0 = P[i - 1] || P[i], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2] || p2;
+      d += ` C${f(p1[0] + (p2[0] - p0[0]) / 6)},${f(p1[1] + (p2[1] - p0[1]) / 6)} ${f(p2[0] - (p3[0] - p1[0]) / 6)},${f(p2[1] - (p3[1] - p1[1]) / 6)} ${f(p2[0])},${f(p2[1])}`;
+    }
+    return d;
   };
 
   async function renderRRG() {
@@ -1251,97 +1273,187 @@
     try { if (!state.groups) state.groups = await getJSON("data/group_ranks.json"); }
     catch (e) { view.innerHTML = `<p class="empty">Groups are not built yet (${esc(e.message)}).</p>`; return; }
     if (routeName() !== "rrg") return;
-    const rs = Object.assign({ level: "sector", tf: "d", tail: 10, bench: "mkt", top: true, pins: {} }, store.get("sd-rrg", {}));
+    const rs = Object.assign({ level: "sector", tf: "d", tail: 10, bench: "mkt", top: true, pins: {}, hide: [] }, store.get("sd-rrg", {}));
     const save = () => store.set("sd-rrg", rs);
     const G = state.groups, days = (G.tail_days || {})[rs.tf] || [];
     const hasTails = (G.levels.sector || []).some((g) => g.tails);
     if (!hasTails) { rs.tf = "d"; rs.bench = "mkt"; }
-    const maxTail = rs.tf === "w" ? 10 : 20;
-    const tailN = Math.min(rs.tail, maxTail);
-    let groups = (G.levels[rs.level] || []).filter((g) => !g.small && g.strength != null);
+    const benches = RR_BENCH.filter(([k]) => k === "mkt" || (G.levels.sector || []).some((g) => g.tails && g.tails[k]));
+    if (!benches.some(([k]) => k === rs.bench)) rs.bench = "mkt";
+    if (![5, 10].includes(rs.tail)) rs.tail = 10;
+    const tailN = rs.tail, hide = new Set(rs.hide || []);
+    let groups = (G.levels[rs.level] || []).filter((g) => !g.small && g.strength != null && !(rs.level === "sector" && g.name === "Unclassified"));
+    const allN = groups.length;
     if (rs.level !== "sector" && rs.top) groups = groups.slice().sort((a, b) => (a.rank ?? 1e9) - (b.rank ?? 1e9)).slice(0, 20);
     const ptsOf = (g) => {
       const t = g.tails && (g.tails[rs.bench] || g.tails.mkt);
       if (t) { const s = t.s[rs.tf], m = t.m[rs.tf]; return s.map((x, i) => [x, m[i]]).filter(([a, b]) => a != null && b != null).slice(-tailN); }
       return (g.tail || []).filter(([a, b]) => a != null && b != null).slice(-tailN);
     };
-    const items = groups.map((g) => { const p = ptsOf(g); const last = p[p.length - 1]; return last ? { g, p, q: quadOf(last[0], last[1]), h: headingOf(p) } : null; }).filter(Boolean);
+    const all = groups.map((g) => { const p = ptsOf(g); const last = p[p.length - 1]; return last ? { g, name: g.name, p, q: quadOf(last[0], last[1]), h: headingOf(p) } : null; }).filter(Boolean);
+    const byQ = (q) => all.filter((it) => it.q === q);
+    const items = all.filter((it) => !hide.has(it.q));
     const pins = new Set(rs.pins[rs.level] || []);
-    const W = 1000, H = 620, pad = 34;
-    let dS = 2, dM = 2;
-    for (const it of items) for (const [s, m] of it.p) { dS = Math.max(dS, Math.abs(s - 100)); dM = Math.max(dM, Math.abs(m - 100)); }
-    dS *= 1.1; dM *= 1.12;
-    const X = (s) => pad + ((s - (100 - dS)) / (2 * dS)) * (W - 2 * pad), Y = (m) => H - pad - ((m - (100 - dM)) / (2 * dM)) * (H - 2 * pad);
-    const cx = X(100), cy = Y(100);
-    const short = (n) => (n.length > 18 ? n.slice(0, 17) + "…" : n);
-    const svg = `<svg class="rrg-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Relative rotation graph">
-      <rect x="${pad}" y="${pad}" width="${cx - pad}" height="${cy - pad}" class="q-imp"/><rect x="${cx}" y="${pad}" width="${W - pad - cx}" height="${cy - pad}" class="q-lead"/>
-      <rect x="${pad}" y="${cy}" width="${cx - pad}" height="${H - pad - cy}" class="q-lag"/><rect x="${cx}" y="${cy}" width="${W - pad - cx}" height="${H - pad - cy}" class="q-weak"/>
-      <text x="${pad + 10}" y="${pad + 20}" class="q-t" fill="${RRG_Q.Improving}">Improving</text><text x="${W - pad - 10}" y="${pad + 20}" class="q-t" text-anchor="end" fill="${RRG_Q.Leading}">Leading</text>
-      <text x="${pad + 10}" y="${H - pad - 10}" class="q-t" fill="${RRG_Q.Lagging}">Lagging</text><text x="${W - pad - 10}" y="${H - pad - 10}" class="q-t" text-anchor="end" fill="${RRG_Q.Weakening}">Weakening</text>
-      <text x="${W / 2}" y="${H - 8}" class="q-ax" text-anchor="middle">Strength (RS-Ratio) →</text><text x="12" y="${H / 2}" class="q-ax" text-anchor="middle" transform="rotate(-90 12 ${H / 2})">Momentum →</text>
-      <text x="${cx}" y="${H - pad + 14}" class="q-ax" text-anchor="middle">100</text><text x="${pad - 4}" y="${cy + 4}" class="q-ax" text-anchor="end">100</text>
-      ${items.map((it, i) => {
-        const col = RRG_Q[it.q], n = it.p.length;
-        // drawn path: inner points lightly smoothed (1-2-1), the head exact; curves through the midpoints
-        const sp = it.p.map((pt, k) => (k === 0 || k === n - 1 ? pt : [(it.p[k - 1][0] + 2 * pt[0] + it.p[k + 1][0]) / 4, (it.p[k - 1][1] + 2 * pt[1] + it.p[k + 1][1]) / 4]));
-        const P = sp.map(([a, b]) => [X(a), Y(b)]), mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-        const segs = P.slice(1).map((pt, k) => {
-          const a = k === 0 ? P[0] : mid(P[k - 1], P[k]), c = k === n - 2 ? pt : mid(P[k], pt);
-          return `<path d="M${a[0].toFixed(1)},${a[1].toFixed(1)} Q${P[k][0].toFixed(1)},${P[k][1].toFixed(1)} ${c[0].toFixed(1)},${c[1].toFixed(1)}" fill="none" stroke="${col}" stroke-opacity="${(0.12 + 0.78 * ((k + 1) / n)).toFixed(2)}" stroke-width="${(1 + 1.8 * ((k + 1) / n)).toFixed(1)}" stroke-linecap="round"/>`;
-        }).join("");
-        const dots = "";
-        const [hx, hy] = [X(it.p[n - 1][0]), Y(it.p[n - 1][1])];
-        const start = days.length ? days[days.length - n] : "";
-        return `<g class="r-g ${pins.has(it.g.name) ? "pin" : ""}" data-i="${i}">${segs}${dots}<circle cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="6" fill="${col}" stroke="var(--panel)" stroke-width="2"/>
-          <text x="${(hx + 9).toFixed(1)}" y="${(hy + 4).toFixed(1)}" class="r-lbl">${esc(short(it.g.name))}</text>
-          ${start ? `<text x="${X(it.p[0][0]).toFixed(1)}" y="${(Y(it.p[0][1]) + 16).toFixed(1)}" class="r-date" text-anchor="middle">${esc(shortDay(start))}</text>` : ""}</g>`;
-      }).join("")}</svg>`;
-    const byQ = (q) => items.map((it, i) => [it, i]).filter(([it]) => it.q === q);
-    const side = ["Leading", "Improving", "Weakening", "Lagging"].map((q) => `<div class="rr-q"><small><i style="background:${RRG_Q[q]}"></i>${q} <b>${byQ(q).length}</b></small>
-      <div class="rr-l">${byQ(q).map(([it, i]) => `<button type="button" data-i="${i}" class="${pins.has(it.g.name) ? "pin" : ""}" title="${esc(it.h.text)}"><span>${esc(it.g.name)}</span><b style="color:${RRG_Q[it.q]}">${it.h.arrow}</b></button>`).join("") || '<small class="muted">None</small>'}</div></div>`).join("");
-    const lvlName = { sector: "sectors", industry: "industries", theme: "themes" }[rs.level];
-    const benchName = { mkt: "the equal-weight market", NIFTY_50: "Nifty 50", NIFTY_500: "Nifty 500" }[rs.bench] || rs.bench;
+    const unit = rs.tf === "w" ? "week" : "day";
+    const lvlName = { sector: "sectors", industry: "industries", theme: "themes" }[rs.level], lvl1 = lvlName === "industries" ? "industry" : lvlName.slice(0, -1);
+    const benchName = rs.bench === "mkt" ? "the equal-weight market" : (benches.find((b) => b[0] === rs.bench) || ["", rs.bench])[1];
+    const label = (n) => (rs.level === "sector" && RR_SHORT[n]) || (n.length > 20 ? n.slice(0, 19) + "…" : n);
+    const seg2 = (name, opts, val) => `<div class="rr-seg" data-seg="${name}">${opts.map(([v, l]) => `<button type="button" data-v="${v}" class="${String(v) === String(val) ? "on" : ""}">${l}</button>`).join("")}</div>`;
+    const CHEV = '<svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const side = RR_Q.map((q) => {
+      const list = byQ(q), hid = hide.has(q);
+      return `<div class="rr-q ${RR_K[q]}${hid ? " off" : ""}"><div class="rr-qh"><i></i><b>${q}</b><span>${list.length}</span>${hid ? `<em>Hidden · <button type="button" data-show="${q}">Show</button></em>` : ""}</div>
+        <div class="rr-l">${list.map((it) => `<button type="button" data-n="${esc(it.name)}" class="${pins.has(it.name) ? "pin" : ""}"><span>${esc(label(it.name))}</span><b class="${it.h.cls}">${it.h.arrow}</b></button>`).join("") || '<small>None</small>'}</div></div>`;
+    }).join("");
     view.innerHTML = `<div class="rr">
-      <div class="rr-bar"><span class="rr-chips">${["Leading", "Improving", "Weakening", "Lagging"].map((q) => `<span class="rr-chip"><i style="background:${RRG_Q[q]}"></i>${q} ${byQ(q).length}</span>`).join("")}</span>
-        <span class="rr-tools"><small class="muted">Tail</small>${seg("rtail", [["5", "5"], ["10", "10"], ...(rs.tf === "d" ? [["20", "20"]] : [])], String(tailN))}
-        ${seg("rlvl", [["sector", "Sectors"], ["industry", "Industries"], ["theme", "Themes"]], rs.level)}
-        ${rs.level !== "sector" ? seg("rtop", [["1", "Top 20"], ["0", "All"]], rs.top ? "1" : "0") : ""}
-        ${hasTails ? seg("rtf", [["d", "Daily"], ["w", "Weekly"]], rs.tf) : ""}
-        ${hasTails ? `<select id="rBench" aria-label="Benchmark"><option value="mkt" ${rs.bench === "mkt" ? "selected" : ""}>vs equal-weight market</option><option value="NIFTY_50" ${rs.bench === "NIFTY_50" ? "selected" : ""}>vs Nifty 50</option><option value="NIFTY_500" ${rs.bench === "NIFTY_500" ? "selected" : ""}>vs Nifty 500</option></select>` : ""}</span></div>
-      <div class="rr-main"><div class="rr-chart ${pins.size ? "has-pin" : ""}" id="rChart">${svg}<p class="muted small rr-hint">Hover a ${rs.level} to trace its path. Click to pin it (click again to unpin).</p></div>
-        <aside class="rr-side"><small class="muted rr-h">${lvlName.toUpperCase()}</small>${side}</aside></div>
-      <div class="ehov" id="rHov" hidden></div>
-      <p class="muted small">Strength = the group's average stock vs ${esc(benchName)} against its own ${G.config.ratio_window || 63}-session average (100 = usual);
-        momentum = change of strength over ${G.config.momentum_lag || 10} sessions + 100. An open approximation of a Relative Rotation Graph (config/group_rank.yaml), not the original formula. Not investment advice.</p></div>`;
-    $("#stPage").innerHTML = `<span>${items.length} ${lvlName}</span><span class="st-n">${tailN} ${rs.tf === "w" ? "weekly points" : "sessions"} against ${esc(benchName)} · data ${SD.fmtDate(G.data_date)}</span>`;
+      <div class="rr-bar"><div class="rr-chips">${RR_Q.map((q) => `<button type="button" class="rr-chip ${RR_K[q]}${hide.has(q) ? " off" : ""}" data-q="${q}" title="${hide.has(q) ? "Show" : "Hide"} ${q.toLowerCase()}"><i></i>${q} <b>${byQ(q).length}</b></button>`).join("")}</div>
+        <div class="rr-tools"><span class="rr-tl">Tail</span>${seg2("rtail", [[5, "5"], [10, "10"]], tailN)}
+          ${seg2("rlvl", [["sector", "Sectors"], ["industry", "Industries"], ["theme", "Themes"]], rs.level)}
+          ${hasTails ? seg2("rtf", [["d", "Daily"], ["w", "Weekly"]], rs.tf) : ""}
+          ${hasTails ? `<div class="hm-dd rr-dd" data-dd="bench"><button type="button" class="hm-ddb"><b>vs ${esc((benches.find((b) => b[0] === rs.bench) || benches[0])[1])}</b>${CHEV}</button>
+            <div class="hm-menu" hidden>${benches.map(([k, l]) => `<button type="button" data-v="${k}" class="${k === rs.bench ? "on" : ""}">vs ${esc(l)}</button>`).join("")}</div></div>` : ""}</div></div>
+      <div class="rr-main"><div class="rr-plot"><span class="rr-ym">Momentum →</span><div class="rr-chart" id="rChart"></div>
+          <div class="rr-foot"><small>Hover a ${lvl1} to trace its path. Click to pin it.</small><span>Strength →</span></div></div>
+        <aside class="rr-side"><div class="rr-sh"><small>${lvlName.toUpperCase()}</small>${rs.level !== "sector" ? seg2("rtop", [["1", "Top 20"], ["0", "All"]], rs.top ? "1" : "0") : ""}</div>${side}</aside></div>
+      <div class="rr-card" id="rHov" hidden></div></div>`;
+    $("#stPage").innerHTML = `<span>${rs.level !== "sector" && rs.top ? `${all.length} of ${allN}` : all.length} ${lvlName}</span><span class="st-n">${tailN} ${unit === "week" ? "weeks" : "sessions"} against ${esc(benchName)}</span><span class="st-n">data through ${esc(shortDay(G.data_date))}</span>`;
+
+    // --- the chart: a model in data units, painted to the chart's pixel size (t = 0..1 for the move from the old model)
     const chart = $("#rChart"), hov = $("#rHov");
-    const focus = (i) => { chart.classList.toggle("focus", i != null); chart.querySelectorAll(".r-g").forEach((g) => g.classList.toggle("hot", g.dataset.i === String(i))); };
-    const card = (i, x, y) => {
-      const it = items[i], g = it.g, last = it.p[it.p.length - 1];
+    const dom = (() => {
+      let s0 = 100, s1 = 100, m0 = 100, m1 = 100;
+      for (const it of items) for (const [s, m] of it.p) { s0 = Math.min(s0, s); s1 = Math.max(s1, s); m0 = Math.min(m0, m); m1 = Math.max(m1, m); }
+      const ps = Math.max((s1 - s0) * 0.08, 0.6), pm = Math.max((m1 - m0) * 0.1, 0.6);
+      return [s0 - ps, s1 + ps, m0 - pm, m1 + pm];
+    })();
+    // drawn tails: inner points smoothed twice (1-2-1), the head stays exact (the card shows the real numbers)
+    const soft = (p) => { let q = p; for (let r = 0; r < 2; r++) q = q.map((pt, k) => (k === 0 || k === q.length - 1 ? pt : [(q[k - 1][0] + 2 * pt[0] + q[k + 1][0]) / 4, (q[k - 1][1] + 2 * pt[1] + q[k + 1][1]) / 4])); return q; };
+    const model = { dom, items: items.map((it) => ({ name: it.name, q: it.q, p: soft(it.p) })) };
+    const from = rrFrom; rrFrom = null;
+    const fromBy = new Map((from ? from.items : []).map((x) => [x.name, x]));
+    let geo = [];   // pixel positions of the final paint, for hover
+    const paint = (t) => {
+      const W = chart.clientWidth, H = chart.clientHeight;
+      if (!W || !H) return;
+      const e = t >= 1 ? 1 : t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      const L = (a, b) => a + (b - a) * e;
+      const d = from ? model.dom.map((v, i) => L(from.dom[i], v)) : model.dom;
+      const X = (s) => ((s - d[0]) / (d[1] - d[0])) * W, Y = (m) => H - ((m - d[2]) / (d[3] - d[2])) * H;
+      const cx = Math.max(0, Math.min(W, X(100))), cy = Math.max(0, Math.min(H, Y(100)));
+      let s = `<svg class="rr-svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Relative rotation graph"><defs>`;
+      const body = [];
+      geo = [];
+      model.items.forEach((it, k) => {
+        const o = fromBy.get(it.name), n = it.p.length;
+        const pts = it.p.map((pt, j) => {
+          if (!o || e >= 1) return pt;
+          const op = o.p[Math.round((j / Math.max(n - 1, 1)) * (o.p.length - 1))] || pt;
+          return [L(op[0], pt[0]), L(op[1], pt[1])];
+        });
+        const P = pts.map(([a, b]) => [X(a), Y(b)]), head = P[n - 1], c = RR_K[it.q];
+        s += `<linearGradient id="rrG${k}" gradientUnits="userSpaceOnUse" x1="${P[0][0].toFixed(1)}" y1="${P[0][1].toFixed(1)}" x2="${head[0].toFixed(1)}" y2="${head[1].toFixed(1)}"><stop offset="0" style="stop-color:var(--q-${c});stop-opacity:.05"/><stop offset="1" style="stop-color:var(--q-${c});stop-opacity:.95"/></linearGradient>`;
+        const start = days.length >= n ? days[days.length - n] : "";
+        const fade = o || !from ? "" : ` style="opacity:${e.toFixed(2)}"`;
+        body.push(`<g class="r-g ${c}${pins.has(it.name) ? " pin" : ""}" data-n="${esc(it.name)}" style="--k:${k}"${fade}><path class="r-tail" d="${rrPath(P)}" stroke="url(#rrG${k})" pathLength="1"/>
+          <g class="r-pts">${P.slice(0, -1).map(([x, y]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.4"/>`).join("")}${start ? `<text x="${P[0][0].toFixed(1)}" y="${(P[0][1] - 9).toFixed(1)}" class="r-date" text-anchor="middle">${esc(shortDay(start))}</text>` : ""}</g>
+          <circle class="r-head" cx="${head[0].toFixed(1)}" cy="${head[1].toFixed(1)}" r="5"/><text class="r-lbl" x="${(head[0] + (head[0] > W - 90 ? -9 : 9)).toFixed(1)}" y="${(head[1] + 4).toFixed(1)}"${head[0] > W - 90 ? ' text-anchor="end"' : ""}>${esc(label(it.name))}</text></g>`);
+        geo.push({ name: it.name, P });
+      });
+      s += `</defs><rect class="qf imp" x="0" y="0" width="${cx}" height="${cy}"/><rect class="qf lead" x="${cx}" y="0" width="${W - cx}" height="${cy}"/>
+        <rect class="qf lag" x="0" y="${cy}" width="${cx}" height="${H - cy}"/><rect class="qf weak" x="${cx}" y="${cy}" width="${W - cx}" height="${H - cy}"/>
+        <line class="qx" x1="${cx}" y1="0" x2="${cx}" y2="${H}"/><line class="qx" x1="0" y1="${cy}" x2="${W}" y2="${cy}"/>
+        <text class="qt imp" x="12" y="22">Improving</text><text class="qt lead" x="${Math.min(cx + 12, W - 70)}" y="22">Leading</text>
+        <text class="qt lag" x="12" y="${H - 12}">Lagging</text><text class="qt weak" x="${Math.min(cx + 12, W - 80)}" y="${H - 12}">Weakening</text>${body.join("")}</svg>`;
+      chart.innerHTML = s;
+    };
+    const svgCls = (fn) => { const sv = chart.querySelector("svg"); if (sv) fn(sv); };
+    cancelAnimationFrame(rrAnim);
+    if (from) {
+      const t0 = performance.now(), dur = 650;
+      const step = (now) => { const t = Math.min(1, (now - t0) / dur); paint(t); if (t < 1) rrAnim = requestAnimationFrame(step); else applyMarks(); };
+      paint(0); rrAnim = requestAnimationFrame(step);
+    } else { paint(1); svgCls((sv) => sv.classList.add("intro")); }
+
+    // --- hover / pin
+    let hot = null;
+    const applyMarks = () => svgCls((sv) => {
+      sv.classList.toggle("focus", hot != null); sv.classList.toggle("pinned", pins.size > 0);
+      sv.querySelectorAll(".r-g").forEach((g) => { g.classList.toggle("hot", g.dataset.n === hot); g.classList.toggle("pin", pins.has(g.dataset.n)); });
+      view.querySelectorAll(".rr-l button").forEach((b) => b.classList.toggle("hot", b.dataset.n === hot));
+    });
+    const cardHTML = (name) => {
+      const it = all.find((x) => x.name === name); if (!it) return "";
+      const last = it.p[it.p.length - 1];
       let inQ = 0; for (let k = it.p.length - 1; k >= 0 && quadOf(it.p[k][0], it.p[k][1]) === it.q; k--) inQ++;
       const m5 = it.p.length > 5 ? last[1] - it.p[it.p.length - 6][1] : null;
-      hov.innerHTML = `<div class="rr-ct"><b>${esc(g.name)}</b><span class="tag" style="color:${RRG_Q[it.q]};background:${RRG_Q[it.q]}1f">${it.q}</span></div>
-        <div class="rr-kv"><span>Strength (RS-Ratio)</span><b>${finNum(last[0], 2)}</b><span>Momentum</span><b>${finNum(last[1], 2)}</b>
-        <span>Heading</span><b style="color:${RRG_Q[it.q]}">${it.h.arrow} ${esc(it.h.text)}</b><span>Points in this quadrant</span><b>${inQ}${inQ === it.p.length ? "+" : ""}</b>
-        ${m5 != null ? `<span>Momentum, 5 points</span><b class="${m5 >= 0 ? "up" : "down"}">${m5 > 0 ? "+" : ""}${finNum(m5, 2)}</b>` : ""}<span>Rank / stocks</span><b>${g.rank ?? "–"} / ${g.n}</b></div>`;
-      hov.hidden = false;
-      hov.style.left = `${Math.min(x + 14, innerWidth - 300)}px`; hov.style.top = `${Math.min(y + 14, innerHeight - 190)}px`;
+      const row = (l, v, c = "") => `<span>${l}</span><b class="${c}">${v}</b>`;
+      return `<div class="rr-ct"><b>${esc(it.name)}</b><span class="${RR_K[it.q]}">${it.q}</span></div><div class="rr-kv">
+        ${row("RS-Ratio", finNum(last[0], 2))}${row("RS-Momentum", finNum(last[1], 2))}${row("Heading", `${it.h.arrow} ${esc(it.h.text)}`, it.h.cls)}
+        ${row(`${unit === "week" ? "Weeks" : "Days"} in quadrant`, `${inQ}${inQ === it.p.length ? "+" : ""}`)}
+        ${m5 != null ? row(`Momentum, 5 ${unit}s`, `${m5 > 0 ? "+" : m5 < 0 ? "−" : ""}${finNum(Math.abs(m5), 2)}`, m5 >= 0 ? "up" : "down") : ""}
+        ${row("Stocks", it.g.n ?? "–")}</div>`;
     };
-    chart.addEventListener("mousemove", (e) => { const g = e.target.closest(".r-g"); if (!g) { focus(null); hov.hidden = true; return; } focus(g.dataset.i); card(Number(g.dataset.i), e.clientX, e.clientY); });
-    chart.addEventListener("mouseleave", () => { focus(null); hov.hidden = true; });
-    const togglePin = (i) => { const n = items[i].g.name; if (pins.has(n)) pins.delete(n); else pins.add(n); rs.pins[rs.level] = [...pins]; save(); renderRRG(); };
-    chart.addEventListener("click", (e) => { const g = e.target.closest(".r-g"); if (g) togglePin(Number(g.dataset.i)); });
+    const showCard = (name, x, y, left) => {
+      const h = cardHTML(name); if (!h) return;
+      if (hov.hidden || hov.dataset.n !== name) { hov.innerHTML = h; hov.dataset.n = name; }
+      hov.hidden = false;
+      const w = hov.offsetWidth, ht = hov.offsetHeight;
+      let px = left ? x - w - 14 : x + 16, py = y + 16;
+      if (px + w > innerWidth - 8) px = x - w - 14;
+      if (py + ht > innerHeight - 8) py = y - ht - 12;
+      hov.style.transform = `translate(${Math.max(8, px)}px, ${Math.max(8, py)}px)`;
+    };
+    const hideCard = () => { hov.hidden = true; hov.dataset.n = ""; };
+    const nearest = (x, y) => {
+      let best = null, bd = 24 * 24;
+      for (const g of geo) for (let j = g.P.length - 1; j >= 0; j--) {
+        const dx = g.P[j][0] - x, dy = g.P[j][1] - y, dd = dx * dx + dy * dy - (j === g.P.length - 1 ? 60 : 0);
+        if (dd < bd) { bd = dd; best = g.name; }
+      }
+      return best;
+    };
+    chart.addEventListener("pointermove", (e) => {
+      if (e.pointerType === "touch") return;
+      const b = chart.getBoundingClientRect(), n = nearest(e.clientX - b.left, e.clientY - b.top);
+      if (n !== hot) { hot = n; applyMarks(); }
+      if (n) showCard(n, e.clientX, e.clientY); else hideCard();
+      chart.style.cursor = n ? "pointer" : "";
+    });
+    chart.addEventListener("pointerleave", () => { hot = null; applyMarks(); hideCard(); });
+    const togglePin = (n) => { if (pins.has(n)) pins.delete(n); else pins.add(n); rs.pins[rs.level] = [...pins]; save(); applyMarks(); view.querySelectorAll(".rr-l button").forEach((b) => b.classList.toggle("pin", pins.has(b.dataset.n))); };
+    chart.addEventListener("click", () => { if (hot) togglePin(hot); });
     const sideEl = view.querySelector(".rr-side");
-    sideEl.addEventListener("mouseover", (e) => { const b = e.target.closest("button[data-i]"); if (b) { focus(b.dataset.i); const r = b.getBoundingClientRect(); card(Number(b.dataset.i), r.left - 310, r.top); } });
-    sideEl.addEventListener("mouseleave", () => { focus(null); hov.hidden = true; });
-    sideEl.addEventListener("click", (e) => { const b = e.target.closest("button[data-i]"); if (b) togglePin(Number(b.dataset.i)); });
-    const segOn = (name, fn) => { const s = view.querySelector(`[data-seg=${name}]`); if (s) s.onclick = (e) => { const b = e.target.closest("button"); if (b) { fn(b.dataset.v); save(); renderRRG(); } }; };
-    segOn("rtail", (v) => { rs.tail = Number(v); });
-    segOn("rlvl", (v) => { rs.level = v; });
-    segOn("rtop", (v) => { rs.top = v === "1"; });
-    segOn("rtf", (v) => { rs.tf = v; });
-    if ($("#rBench")) $("#rBench").onchange = (e) => { rs.bench = e.target.value; save(); renderRRG(); };
+    sideEl.addEventListener("mouseover", (e) => { const b = e.target.closest(".rr-l button"); if (!b) return; if (hot !== b.dataset.n) { hot = b.dataset.n; applyMarks(); } const r = b.getBoundingClientRect(); showCard(hot, r.left, r.top - 10, true); });
+    sideEl.addEventListener("mouseleave", () => { hot = null; applyMarks(); hideCard(); });
+
+    // --- options: every change moves the dots from where they are now
+    const again = () => { rrFrom = model; save(); renderRRG(); };
+    sideEl.addEventListener("click", (e) => {
+      const b = e.target.closest(".rr-l button"); if (b) { togglePin(b.dataset.n); return; }
+      const sh = e.target.closest("[data-show]"); if (sh) { rs.hide = (rs.hide || []).filter((q) => q !== sh.dataset.show); again(); return; }
+      const t = e.target.closest('[data-seg="rtop"] button'); if (t) { rs.top = t.dataset.v === "1"; again(); }
+    });
+    view.querySelector(".rr-chips").onclick = (e) => { const c = e.target.closest(".rr-chip"); if (!c) return; const q = c.dataset.q; rs.hide = hide.has(q) ? [...hide].filter((x) => x !== q) : [...hide, q]; again(); };
+    view.querySelectorAll(".rr-tools [data-seg]").forEach((sg) => { sg.onclick = (e) => {
+      const b = e.target.closest("button"); if (!b || b.classList.contains("on")) return;
+      const v = b.dataset.v, k = sg.dataset.seg;
+      if (k === "rtail") rs.tail = Number(v); else if (k === "rlvl") { rs.level = v; rrFrom = null; save(); renderRRG(); return; } else if (k === "rtf") rs.tf = v;
+      again();
+    }; });
+    const dd = view.querySelector(".rr-dd");
+    if (dd) dd.onclick = (e) => {
+      e.stopPropagation();
+      const o = e.target.closest(".hm-menu button");
+      if (!o) { const open = !dd.classList.contains("open"); dd.classList.toggle("open", open); dd.querySelector(".hm-menu").hidden = !open; return; }
+      dd.classList.remove("open"); dd.querySelector(".hm-menu").hidden = true;
+      if (o.dataset.v !== rs.bench) { rs.bench = o.dataset.v; again(); }
+    };
+    view.onclick = () => { if (dd) { dd.classList.remove("open"); dd.querySelector(".hm-menu").hidden = true; } };
+    if (rrResize) window.removeEventListener("resize", rrResize);
+    let tmr = null;
+    rrResize = () => { clearTimeout(tmr); tmr = setTimeout(() => { if (routeName() !== "rrg" || !document.body.contains(chart)) { window.removeEventListener("resize", rrResize); return; } paint(1); applyMarks(); }, 120); };
+    window.addEventListener("resize", rrResize);
+    if (pins.size) applyMarks();
   }
 
   /* ------------------------------------------------------------------ heatmap (Phase N7; new look 12-Nov-2026): treemap by sector

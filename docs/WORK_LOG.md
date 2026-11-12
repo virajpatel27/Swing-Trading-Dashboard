@@ -1015,3 +1015,24 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   - animation: tiles are kept per stock, so on an index / area / colour / zoom change they glide to their new place
     and change colour; new tiles pop in sector by sector, removed ones fade out; resize redraws without the glide.
 - Checked in the preview: light, dark, both palettes, zoom + Esc, phone; no console errors. JS tests 32 / 32.
+
+### 2026-11-12: RRG page in the reference's look
+- Viraj (video 09-Nov "RRG 09-11-2026.mp4"): the four boxes, the hover information, layout, fonts, colours,
+  animation and the Daily / Weekly / other options like the reference.
+- site/app.js renderRRG() rewritten, site/styles.css "Phase N9" block replaced:
+  - four soft quadrants (Improving pale blue, Leading blue, Weakening cream, Lagging pink) with coloured names; the
+    chart fills the card, "Momentum →" on the left and "Strength →" below; the range follows the data (100 / 100 is
+    not forced to the middle, like the reference);
+  - tails: smooth curves (inner points smoothed twice for drawing, the head exact) fading into the past; dot colour =
+    quadrant; short sector names (Fin Services, Cons Durables, Constr Matl ...); "Unclassified" left out;
+  - top bar: quadrant chips with counts (click = hide / show; hidden groups say "Hidden · Show" in the list),
+    Tail 5 | 10, Sectors | Industries | Themes, Daily | Weekly, a "vs ..." benchmark menu; Top 20 | All for
+    industries and themes;
+  - hover (or a name in the list): the others fade, the path shows its points and its start date, and a card shows
+    RS-Ratio, RS-Momentum, heading (Gaining / Losing / Momentum fading / building), days or weeks in the quadrant,
+    momentum change over 5 points and the number of stocks; click = pin;
+  - animation: the first view draws the tails in and pops the dots; any option change moves every dot and tail to
+    its new place (650 ms), new groups fade in.
+- config/group_rank.yaml rrg_benchmarks + NIFTY_SMALLCAP_250, NIFTY_MIDSMALLCAP_400 (the reference offers Smallcap 250):
+  the menu shows them once the next site build writes their tails.
+- Checked in the preview (hover card, weekly, chips, themes, no console errors); JS 32 / 32, Python 216 passed.

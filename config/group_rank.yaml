@@ -20,4 +20,4 @@ min_members: 5                 # smaller industries / themes get no rank (greyed
 tail_points: 10                # strength / momentum points kept per group for a later RRG chart
 tail_daily: 20                 # RRG page (Phase N9): daily points per tail
 tail_weekly: 10                # RRG page: points 5 sessions apart ("weekly")
-rrg_benchmarks: [NIFTY_50, NIFTY_500]   # RRG page: also against these indices (default = equal-weight market)
+rrg_benchmarks: [NIFTY_50, NIFTY_500, NIFTY_SMALLCAP_250, NIFTY_MIDSMALLCAP_400]   # RRG page: also against these indices (default = equal-weight market)

@@ -1,7 +1,7 @@
 {
- "date": "2026-11-11",
- "compared": 1468,
- "mismatched": 0,
- "share_pct": 0.0,
+ "date": "2026-11-12",
+ "compared": 1441,
+ "mismatched": 1,
+ "share_pct": 0.07,
  "max_diff_pct": 3.0
 }

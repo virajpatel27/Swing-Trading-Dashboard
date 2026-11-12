@@ -727,6 +727,7 @@ stock,NSE,ESABINDIA,ESABINDIA,,stocks/raw/ESABINDIA,2007-01-02,2026-11-11,4919,N
 stock,NSE,ESAFSFB,ESAFSFB,,stocks/raw/ESAFSFB,2023-11-10,2026-11-11,745,NSE bhavcopy
 stock,NSE,ESCORTS,ESCORTS,Capital Goods,stocks/raw/ESCORTS,2007-01-02,2026-11-11,4921,NSE bhavcopy
 stock,NSE,ESDS,ESDS,,stocks/raw/ESDS,2026-09-04,2026-11-11,46,NSE bhavcopy
+stock,NSE,ESFL,ESFL,,stocks/raw/ESFL,2026-11-05,2026-11-11,5,NSE bhavcopy
 stock,NSE,ESSARSHPNG,ESSARSHPNG,,stocks/raw/ESSARSHPNG,2011-11-15,2026-11-11,3717,NSE bhavcopy
 stock,NSE,ESSENTIA,ESSENTIA,,stocks/raw/ESSENTIA,2022-03-07,2026-11-11,1099,NSE bhavcopy
 stock,NSE,ESTER,ESTER,,stocks/raw/ESTER,2011-06-20,2026-11-11,3815,NSE bhavcopy
@@ -3376,6 +3377,7 @@ stock-adjusted,NSE,ESABINDIA,ESABINDIA,,stocks/adjusted/ESABINDIA,2007-01-02,202
 stock-adjusted,NSE,ESAFSFB,ESAFSFB,,stocks/adjusted/ESAFSFB,2023-11-10,2026-11-11,745,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,ESCORTS,ESCORTS,Capital Goods,stocks/adjusted/ESCORTS,2007-01-02,2026-11-11,4921,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,ESDS,ESDS,,stocks/adjusted/ESDS,2026-09-04,2026-11-11,46,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,ESFL,ESFL,,stocks/adjusted/ESFL,2026-11-05,2026-11-11,5,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,ESSARSHPNG,ESSARSHPNG,,stocks/adjusted/ESSARSHPNG,2011-11-15,2026-11-11,3717,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,ESSENTIA,ESSENTIA,,stocks/adjusted/ESSENTIA,2022-03-07,2026-11-11,1099,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,ESTER,ESTER,,stocks/adjusted/ESTER,2011-06-20,2026-11-11,3815,NSE bhavcopy + NSE corporate actions
@@ -6022,6 +6024,7 @@ delivery,NSE,ESABINDIA,ESABINDIA,,stocks/delivery/ESABINDIA,2007-01-02,2026-11-1
 delivery,NSE,ESAFSFB,ESAFSFB,,stocks/delivery/ESAFSFB,2023-11-10,2026-11-11,688,NSE MTO delivery file
 delivery,NSE,ESCORTS,ESCORTS,Capital Goods,stocks/delivery/ESCORTS,2007-01-02,2026-11-11,4921,NSE MTO delivery file
 delivery,NSE,ESDS,ESDS,,stocks/delivery/ESDS,2026-09-04,2026-11-11,46,NSE MTO delivery file
+delivery,NSE,ESFL,ESFL,,stocks/delivery/ESFL,2026-11-05,2026-11-11,5,NSE MTO delivery file
 delivery,NSE,ESSARSHPNG,ESSARSHPNG,,stocks/delivery/ESSARSHPNG,2011-11-29,2026-11-11,2997,NSE MTO delivery file
 delivery,NSE,ESSENTIA,ESSENTIA,,stocks/delivery/ESSENTIA,2022-06-21,2026-11-11,603,NSE MTO delivery file
 delivery,NSE,ESTER,ESTER,,stocks/delivery/ESTER,2011-06-20,2026-11-11,3649,NSE MTO delivery file

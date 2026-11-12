@@ -1,14 +1,14 @@
 {
- "checked_at": "2026-11-11 11:52",
- "instruments": 8216,
+ "checked_at": "2026-11-12 00:59",
+ "instruments": 8219,
  "by_group": {
-  "delivery NSE": 2640,
+  "delivery NSE": 2641,
   "index BSE": 139,
   "index NSE": 139,
-  "stock NSE": 2649,
-  "stock-adjusted NSE": 2649
+  "stock NSE": 2650,
+  "stock-adjusted NSE": 2650
  },
- "rows": 19861344,
+ "rows": 19861359,
  "newest_date": "2026-11-11",
  "errors": 0,
  "warnings": 3431

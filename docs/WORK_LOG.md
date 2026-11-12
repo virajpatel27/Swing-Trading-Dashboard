@@ -1123,3 +1123,10 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   like the reference. route() sets body[data-sec] = "tool" for the rail's Scanners, Groups and Breadth (and their
   sub-pages), "home" for everything else; styles.css hides .top there and lets the card start at the top
   (--top-h 14px). Checked Breadth, Scanners, Groups (no bar) and Home / Earnings (bar). JS tests 32 / 32.
+
+### 2026-11-12: Breakouts - breakdowns chart shows the latest days
+- Viraj: the last days of the Breakouts - Breakdowns chart were empty. breadth.json keeps held / failed on the
+  breakout day (they are known 5 sessions later), so the newest 5 days had no bar. Like the reference, the page now
+  shows each verdict on the day it is judged (breakout day + hold_sessions, from breadth config): the last bar is
+  today's verdict, the chip "N held, M failed today" uses it, and the card says "breakouts of <date>, judged today".
+- The explanation card of a title now opens above the title, so it never covers the chip / numbers below.

@@ -395,7 +395,12 @@
     const advW = bs.ad === "line" ? null : tail(roll(adv, Number(bs.ad))), decW = bs.ad === "line" ? null : tail(roll(dec, Number(bs.ad)));
     const up4 = full("up4"), dn4 = full("dn4");
     const mv = bs.mv === "d" ? tail(up4.map((v, i) => (v == null || dn4[i] == null ? null : v - dn4[i]))) : tail(ratio(roll(up4, Number(bs.mv)), roll(dn4, Number(bs.mv))));
-    const held = cut("held"), failed = cut("failed"), bouts = cut("breakouts");
+    // held / failed belong to the day they are JUDGED (breakout day + hold sessions), like the reference: the last bar
+    // is today's verdict on the breakouts of 5 sessions ago (B.days are trading days)
+    const HOLD = Number(((B.config || {}).breakout || {}).hold_sessions) || 5;
+    const shiftJ = (a) => a.map((_, i) => (i >= HOLD ? a[i - HOLD] : null));
+    const held = tail(shiftJ(full("held"))), failed = tail(shiftJ(full("failed"))), bouts = cut("breakouts");
+    const boDay = (j) => B.days[off + j - HOLD] || null;
     const LMS = [["NIFTY_50", "N50", "Nifty 50", "#3b7dd8"], ["NIFTY_MIDCAP_150", "MID150", "Nifty Midcap 150", "#c98a1e"], ["NIFTY_SMALLCAP_250", "SML250", "Nifty Smallcap 250", "#6b7280"]];
     const lms = LMS.map(([k, l, nm, c]) => { const all = B.indices[k] || [], x = all.slice(-n), b0 = x.find((v) => v != null);
       return { l, nm, c, vals: x.map((v) => (v == null || !b0 ? null : (v / b0 - 1) * 100)), day: x.map((v, j) => { const p = all[off + j - 1]; return v == null || p == null ? null : (v / p - 1) * 100; }) }; });
@@ -494,8 +499,8 @@
       tip: (j) => `<b>${esc(shortDay(days[j]))}</b>${lms.map((x) => `<div><span><i style="background:${x.c}"></i>${x.nm}</span><em class="${x.day[j] >= 0 ? "up" : "down"}">${x.day[j] == null ? "–" : sg(x.day[j], (v) => v.toFixed(1)) + "%"}</em></div>`).join("")}` });
     const heldPct = (j) => { let h = 0, f = 0; for (let k = Math.max(0, j - 4); k <= j; k++) { h += held[k] || 0; f += failed[k] || 0; } return h + f ? (100 * h) / (h + f) : null; };
     make("bo", { series: [{ vals: held.map((h, i) => (h == null || failed[i] == null ? null : h - failed[i])), bars: true }], zero: true, sym: true,
-      head: (j) => `<span class="bx-chip">${f0(lastOf(full("held")))} held, ${f0(lastOf(full("failed")))} failed today · ${h5 + f5 ? Math.round((100 * h5) / (h5 + f5)) : "–"}% held this week</span>${day(j)}`,
-      tip: (j) => `<b>${esc(shortDay(days[j]))}</b><div><span>Breakouts (held)</span><em class="up">${f0(held[j])}</em></div><div><span>Breakdowns (failed)</span><em class="down">${f0(failed[j])}</em></div>`
+      head: (j) => `<span class="bx-chip">${f0(held[N - 1])} held, ${f0(failed[N - 1])} failed today · ${h5 + f5 ? Math.round((100 * h5) / (h5 + f5)) : "–"}% held this week</span>${day(j)}`,
+      tip: (j) => `<b>${esc(shortDay(days[j]))}</b>${boDay(j) ? `<small class="bx-ts">breakouts of ${esc(bxDM(boDay(j)))}, judged today</small>` : ""}<div><span>Breakouts (held)</span><em class="up">${f0(held[j])}</em></div><div><span>Breakdowns (failed)</span><em class="down">${f0(failed[j])}</em></div>`
         + `<div><span>Net</span><em class="${(held[j] || 0) - (failed[j] || 0) >= 0 ? "up" : "down"}">${held[j] == null ? "–" : sg(held[j] - failed[j])}</em></div><div><span>New breakouts that day</span><em>${f0(bouts[j])}</em></div>`
         + `<div><span>Held, 5-session avg</span><em>${heldPct(j) == null ? "–" : heldPct(j).toFixed(1) + "%"}</em></div>` });
 
@@ -534,8 +539,9 @@
     view.addEventListener("pointerover", (e) => {
       const t = e.target.closest("[data-tip]"); if (!t || !t.dataset.tip) { tip.hidden = true; return; }
       tip.textContent = t.dataset.tip; tip.hidden = false;
-      const b = t.getBoundingClientRect(), w = tip.offsetWidth;
-      tip.style.transform = `translate(${Math.max(8, Math.min(innerWidth - w - 8, b.left)).toFixed(0)}px, ${(b.bottom + 8).toFixed(0)}px)`;
+      const b = t.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+      const y = b.top - h - 8 > 8 ? b.top - h - 8 : b.bottom + 8;          // above the title: never over the numbers below it
+      tip.style.transform = `translate(${Math.max(8, Math.min(innerWidth - w - 8, b.left)).toFixed(0)}px, ${y.toFixed(0)}px)`;
     });
     view.addEventListener("pointerleave", () => { tip.hidden = true; });
     // options

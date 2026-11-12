@@ -2833,6 +2833,9 @@
     const parts = location.hash.replace(/^#\/?/, "").split("/").map(decodeURIComponent);
     const tab = { "": "home", market: "market", earnings: "earnings", heatmap: "heatmap", rrg: "rrg", leaders: "leaders", news: "news", stocks: "stocks", scanners: "scanners", screener: "scanners", sectors: "groups", groups: "groups", breadth: "breadth", watchlist: "watchlist", fields: "fields", i: "" }[parts[0]] ?? "market";
     document.querySelectorAll(".rail [data-tab]").forEach((a) => a.classList.toggle("active", a.dataset.tab === tab));
+    // the Pages bar belongs to the Home section only (Viraj 12-Nov, like the reference): Scanners, Groups and Breadth
+    // (their own rail buttons) start straight with their card
+    document.body.dataset.sec = ["scanners", "groups", "breadth"].includes(tab) ? "tool" : "home";
     const act = document.querySelector(".rail-main .active");
     if (act && matchMedia("(max-width: 720px)").matches) act.scrollIntoView({ inline: "center", block: "nearest" });
     view.classList.remove("enter"); void view.offsetWidth; view.classList.add("enter");

@@ -1117,3 +1117,9 @@ Newest at the bottom. Each entry: what was done, why, what is next.
     5-session held %); title and reading rows explain themselves on hover;
   - animation on every range / toggle change: lines draw in, areas fade, bars grow from the zero line.
 - Checked: light, dark, 1Y, phone (no sideways scroll), Major Indices still fine. JS 32 / 32, Python 219.
+
+### 2026-11-12: Pages bar only in the Home section
+- Viraj: the top "Pages" bar (Market, Stocks, Earnings ... Add page, Data date) must show only in the Home section,
+  like the reference. route() sets body[data-sec] = "tool" for the rail's Scanners, Groups and Breadth (and their
+  sub-pages), "home" for everything else; styles.css hides .top there and lets the card start at the top
+  (--top-h 14px). Checked Breadth, Scanners, Groups (no bar) and Home / Earnings (bar). JS tests 32 / 32.

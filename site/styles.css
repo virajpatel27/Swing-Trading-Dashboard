@@ -1572,3 +1572,10 @@ b.wl > .slogo, b.wl > .mono { width: 18px; height: 18px; font-size: 9px; }
 /* company description under the chart header (like the reference): two lines at most, our own words */
 .ch-about { margin: 6px 0 2px; max-width: 760px; font-size: 12.5px; line-height: 1.5; color: color-mix(in srgb, var(--text) 80%, var(--muted));
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; animation: hmTip .25s ease-out; }
+
+/* Pages bar only in the Home section (Viraj 12-Nov-2026, like the reference): Scanners / Groups / Breadth start with the card */
+body[data-sec="tool"] { --top-h: 14px; }
+body[data-sec="tool"] .top { display: none; }
+body[data-sec="tool"] .frame { padding-top: 14px; }
+body[data-sec="tool"] main.card { animation: rise .22s ease-out; }
+@media (max-width: 720px) { body[data-sec="tool"] .frame { padding-top: max(10px, env(safe-area-inset-top)); } }

@@ -1152,3 +1152,22 @@ Newest at the bottom. Each entry: what was done, why, what is next.
     period changes pulse the numbers, columns keep their scroll position across clicks.
 - Breadth + Groups explanation cards now use one listener (view.onpointerover, reset by the router) instead of adding
   one per redraw. JS 32 / 32, Python all green.
+
+### 2026-11-13: Watchlist page in the reference's look (several lists, signals, Focus / Signals / Fundamentals)
+- Viraj (video 12-Nov "Watchlist 12-11-2026.mp4"): smooth animation, the watch information shown properly, colours,
+  fonts and sizes like the reference.
+- Watchlist is now a rail button (star, like the reference) and part of the "tool" section (no Pages bar).
+- Several named lists as tabs (rename / delete with ⋮, + for a new list); saved in this browser as sd-watchlists
+  (old sd-watch becomes the first list; state.watch / sd-watch = the open list, so ★ / + elsewhere add to it).
+- site/app.js renderWatchlist() rewritten (+ wlSignals, wlEvents, wlStore); styles.css "watchlist" block:
+  - list card: filter chips All / Needs attention / Earnings this week / Good day / New news (with counts),
+    search, sort (date added, A-Z, 1D %, RS, most signals), rows with logo, price, 1D % and coloured signal chips
+    (week N in base, earnings day, breakout above ₹x, pocket pivot, up / down on RVol, RS new high before price,
+    RS line high, results move, near pivot, new 20-day low, inside day, volume dry-up), hover ✕ to remove;
+  - "Add a stock…" with suggestions (arrow keys + Enter), the new row flashes;
+  - chart in the middle; right card with a sliding tab underline: Focus (status, previous session's signals,
+    upcoming results, the stock's NSE filings), Signals (events of the last 60 sessions by date from the screen's
+    *_age fields), Fundamentals (the stock panel);
+  - status bar: Copy / CSV, "x of N selected", Remove selected, "N stocks · sorted by … · M lists".
+- Signal tone classes are prefixed wt-* (plain "earn" / "base" clashed with other pages' styles).
+- Checked: light, dark, phone, tabs, filters, add / remove. JS 32 / 32, Python all green.

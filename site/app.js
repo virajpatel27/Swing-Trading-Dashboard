@@ -118,9 +118,11 @@
     };
   }
 
+  /** add / remove a stock in the open watchlist (several lists since 13-Nov-2026; state.watch = the open list) */
   function toggleWatch(key) {
-    state.watch.has(key) ? state.watch.delete(key) : state.watch.add(key);
-    store.set("sd-watch", [...state.watch]);
+    const L = wlCur();
+    if (L.items.some((i) => i.k === key)) L.items = L.items.filter((i) => i.k !== key); else L.items.push({ k: key, t: Date.now() });
+    wlSave();
   }
 
   function downloadCSV(rows, name) {
@@ -742,17 +744,221 @@
     $("#miSort").onchange = (e) => { mi.sort = e.target.value; save(); renderBreadth("indices"); };
   }
 
-  /* ------------------------------------------------------------------ watchlist */
-  function renderWatchlist() {
-    const st = state.watchSort || (state.watchSort = { sort: "chg_1d", dir: "desc", limit: 1000 });
-    view.innerHTML = `<h1>Watchlist</h1><p class="sub">Tap ★ in any table to add or remove. Saved only in this browser.</p><div id="tbl"></div>`;
-    const draw = () => {
-      const rows = state.rows.filter((r) => state.watch.has(r.key));
-      $("#tbl").innerHTML = rows.length ? tableHTML(SD.sortRows(rows, st.sort, st.dir), st)
-        : `<div class="table-wrap"><div class="empty">Your watchlist is empty. Tap ★ next to a stock or index.</div></div>`;
+  /* ------------------------------------------------------------------ watchlist (new look 13-Nov-2026)
+     Like the reference video (Viraj 12-Nov): several named lists as tabs, a list card with filter chips (All, Needs
+     attention, Earnings this week, Good day, New news) and each stock's signals as small coloured chips, the chart in
+     the middle, and a panel with Focus (today's signals, upcoming results, news), Signals (recent events by date) and
+     Fundamentals (the stock panel). Lists live in this browser (sd-watchlists; sd-watch = the open list, as before). */
+  const WL_NEWS = { E: "Results", K: "Con-call", O: "Orders", D: "Deals", C: "Corp action", F: "Fund raising", M: "Management", R: "Regulatory", A: "Rating", P: "Update" };
+  const wlDay = (iso) => { const t = new Date(iso.slice(0, 10) + "T00:00:00"); return `${["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][t.getDay()]} ${t.getDate()} ${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][t.getMonth()]}`; };
+  const wlDays = (a, b) => Math.round((new Date(b + "T00:00:00") - new Date(a + "T00:00:00")) / 864e5);
+  /** today's signals of one stock: [{t, tone}] - tone up (bullish), down (warning), info, earn, base */
+  function wlSignals(r) {
+    const out = [], f1 = (v) => finNum(v, Math.abs(v) < 10 ? 1 : 0), today = state.screenDate;
+    if (r.next_result && r.next_result >= today && wlDays(today, r.next_result) <= 7) out.push({ t: `Earnings ${wlDay(r.next_result).split(" ")[0]}`, tone: "earn", ic: true });
+    if (r.breakout_days === 0 && r.breakout_level) out.push({ t: `Breakout above ₹${SD.fmtPrice(r.breakout_level)} (${r.close >= r.breakout_level ? "+" : ""}${f1(((r.close / r.breakout_level) - 1) * 100)}%)`, tone: "up" });
+    if (r.pocket_pivot) out.push({ t: "Pocket pivot", tone: "up" });
+    if (r.hve) out.push({ t: "Highest volume ever", tone: r.chg_1d >= 0 ? "up" : "down" });
+    else if (r.high_volume && r.rvol) out.push({ t: `${r.chg_1d >= 0 ? "Up" : "Down"} on RVol ${finNum(r.rvol, 1)}x`, tone: r.chg_1d >= 0 ? "up" : "down" });
+    if (r.rs_new_high_before_price || r.rsb_today) out.push({ t: "RS new high, price not yet", tone: "up" });
+    else if (r.rs_line_52w_high) out.push({ t: "RS line at a 52-week high", tone: "up" });
+    if (r.earn_sessions != null && r.earn_sessions <= 2 && r.earn_chg_pct != null) out.push({ t: `Results move ${r.earn_chg_pct > 0 ? "+" : ""}${finNum(r.earn_chg_pct, 1)}%`, tone: r.earn_chg_pct >= 0 ? "up" : "down" });
+    if (r.dist_pivot != null && r.dist_pivot > -3 && r.dist_pivot <= 0 && r.pivot) out.push({ t: `Near pivot ₹${SD.fmtPrice(r.pivot)} (${finNum(r.dist_pivot, 1)}%)`, tone: "info" });
+    if (r.new_low_20d) out.push({ t: "New 20-day low", tone: "down" });
+    if (r.chg_1d != null && r.chg_1d <= -4) out.push({ t: `Down ${finNum(Math.abs(r.chg_1d), 1)}% today`, tone: "down" });
+    if (r.inside_day) out.push({ t: "Inside day", tone: "info" });
+    if (r.dry_up) out.push({ t: "Volume dry-up", tone: "info" });
+    if (r.lvl_age != null && r.dist_pivot != null && r.dist_pivot <= 0 && r.dist_pivot > -25) out.unshift({ t: `Week ${Math.max(1, Math.ceil(r.lvl_age / 5))} in base`, tone: "base" });
+    return out;
+  }
+  /** recent events of one stock from the screen's "age" fields: [{ago (sessions), t, tone}] */
+  function wlEvents(r) {
+    const ev = [], add = (ago, t, tone) => { if (ago != null && ago >= 0 && ago <= 60) ev.push({ ago, t, tone }); };
+    add(r.br_age, "Breakout", "up"); add(r.rb_age, `Breakout above ₹${r.rb_level ? SD.fmtPrice(r.rb_level) : "–"}`, "up"); add(r.s2b_age, "Stage 2 breakout", "up");
+    add(r.hv_age, `High volume day${r.hv_rvol ? ` (${finNum(r.hv_rvol, 1)}x)` : ""}`, "up"); add(r.so_age, "Shakeout and recovery", "info"); add(r.vcp_age, "VCP setup", "info");
+    add(r.pivot_age, `Pivot ₹${r.pivot ? SD.fmtPrice(r.pivot) : "–"} set`, "base"); add(r.lvl_age, "Base level set", "base");
+    if (r.earn_sessions != null) add(r.earn_sessions, `Results day ${r.earn_chg_pct > 0 ? "+" : ""}${r.earn_chg_pct != null ? finNum(r.earn_chg_pct, 1) + "%" : ""}`, r.earn_chg_pct >= 0 ? "up" : "down");
+    if (r.breakout_days != null) add(r.breakout_days, `Breakout above ₹${r.breakout_level ? SD.fmtPrice(r.breakout_level) : "–"}${r.breakout_rvol ? ` on ${finNum(r.breakout_rvol, 1)}x volume` : ""}`, "up");
+    const seen = new Set();
+    return ev.filter((e) => { const k = e.ago + e.t; if (seen.has(k)) return false; seen.add(k); return true; }).sort((a, b) => a.ago - b.ago);
+  }
+  function wlStore() {
+    if (!state.wls) {
+      let w = store.get("sd-watchlists", null);
+      if (!w || !Array.isArray(w.lists) || !w.lists.length) w = { cur: "w1", lists: [{ id: "w1", name: "My list", items: [...state.watch].map((k) => ({ k, t: Date.now() })) }] };
+      state.wls = w;
+    }
+    return state.wls;
+  }
+  const wlCur = () => { const w = wlStore(); return w.lists.find((l) => l.id === w.cur) || w.lists[0]; };
+  const wlSave = () => { const w = wlStore(); state.watch = new Set(wlCur().items.map((i) => i.k)); store.set("sd-watchlists", w); store.set("sd-watch", [...state.watch]); };
+
+  async function renderWatchlist() {
+    if (!state.screen) view.innerHTML = SKEL("Loading your watchlist");
+    try { await loadScreen(); } catch (e) { view.innerHTML = `<p class="empty">Could not load the stock table (${esc(e.message)}).</p>`; return; }
+    if (routeName() !== "watchlist") return;
+    wlStore(); state.watch = new Set(wlCur().items.map((i) => i.k));
+    const ws = state.wlUi || (state.wlUi = Object.assign({ filter: "all", sort: "added", tab: "focus", q: "" }, store.get("sd-wl-ui", {})));
+    const saveUi = () => store.set("sd-wl-ui", { sort: ws.sort, tab: ws.tab });
+    const isWide = wide(), W = wlStore(), L = wlCur();
+    const items = L.items.map((it) => ({ it, r: state.screenByKey.get(it.k) })).filter((x) => x.r);
+    // news of the listed stocks (their own files, cached)
+    state.wlNews = state.wlNews || new Map();
+    await Promise.all(items.filter(({ r }) => !state.wlNews.has(r.symbol)).map(({ r }) => getJSON(`data/a/${encodeURIComponent(r.symbol)}.json`).then((a) => state.wlNews.set(r.symbol, a || [])).catch(() => state.wlNews.set(r.symbol, []))));
+    if (routeName() !== "watchlist") return;
+    const newsOf = (r) => (state.wlNews.get(r.symbol) || []).slice().sort((a, b) => (a[0] < b[0] ? 1 : -1));
+    const recentNews = (r) => newsOf(r).filter((n) => wlDays(n[0].slice(0, 10), state.screenDate) <= 2);
+    const sigs = new Map(items.map(({ r }) => [r.key, wlSignals(r)]));
+    const FILTERS = [["all", "All", () => true, ""], ["attn", "Needs attention", (r) => sigs.get(r.key).some((s) => s.tone === "down"), "down"],
+      ["earn", "Earnings this week", (r) => sigs.get(r.key).some((s) => s.tone === "earn"), "earn"], ["good", "Good day", (r) => r.chg_1d >= 2.5 || sigs.get(r.key).some((s) => s.tone === "up" && /Breakout|Pocket/.test(s.t)), "up"],
+      ["news", "New news", (r) => recentNews(r).length > 0, "news"]];
+    const fdef = FILTERS.find((f) => f[0] === ws.filter) || FILTERS[0];
+    const SORTS = [["added", "Date added"], ["az", "A - Z"], ["chg", "1D %"], ["rs", "RS rating"], ["sig", "Most signals"]];
+    const by = { added: (a, b) => b.it.t - a.it.t, az: (a, b) => a.r.symbol.localeCompare(b.r.symbol), chg: (a, b) => (b.r.chg_1d ?? -1e9) - (a.r.chg_1d ?? -1e9),
+      rs: (a, b) => (b.r.rs_rating ?? -1) - (a.r.rs_rating ?? -1), sig: (a, b) => sigs.get(b.r.key).length - sigs.get(a.r.key).length }[ws.sort] || ((a, b) => b.it.t - a.it.t);
+    const shown = items.filter(({ r }) => fdef[2](r)).sort(by);
+    if (!state.wlStock || !items.some((x) => x.r.key === state.wlStock)) state.wlStock = shown[0] ? shown[0].r.key : items[0] ? items[0].r.key : null;
+    const chip = (s) => `<i class="wl-c wt-${s.tone}">${s.ic ? '<svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><rect x="2.5" y="3.5" width="11" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M2.5 6.5h11M5.5 2v3M10.5 2v3" stroke="currentColor" stroke-width="1.3"/></svg>' : ""}${esc(s.t)}</i>`;
+    const rowHTML = ({ r }, i) => { const s = sigs.get(r.key);
+      return `<div class="wl-r${state.wlStock === r.key ? " on" : ""}" data-k="${esc(r.key)}" data-f="${esc(r.key)}" style="--i:${i}"><label class="wl-ck"><input type="checkbox" data-sel="${esc(r.key)}" ${state.selected.has(r.key) ? "checked" : ""}></label>
+        <div class="wl-m"><div class="wl-t">${logo(r)}<b>${esc(r.symbol)}</b><span class="wl-p">${SD.fmtPrice(r.close)}</span><span class="wl-x ${r.chg_1d >= 0 ? "up" : "down"}">${r.chg_1d == null ? "–" : (r.chg_1d > 0 ? "+" : "") + finNum(r.chg_1d, 2) + "%"}</span></div>
+        <div class="wl-s">${s.length ? s.slice(0, 4).map(chip).join("") : `<small>${r.chg_1d != null && Math.abs(r.chg_1d) < 0.5 ? "No major signals" : "No new signals"}</small>`}</div></div>
+        <button type="button" class="wl-rm" data-rm="${esc(r.key)}" title="Remove from ${esc(L.name)}">✕</button></div>`; };
+    const PLUS = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+    view.innerHTML = `<div class="wlx">
+      <div class="wl-bar"><div class="wl-tabs">${W.lists.map((l) => `<button type="button" class="wl-tab${l.id === L.id ? " on" : ""}" data-l="${l.id}"><i class="wl-ti">${esc(l.name.slice(0, 1).toUpperCase())}</i>${esc(l.name)}<small>${l.items.length}</small>${l.id === L.id ? '<span class="wl-dots" data-menu title="Rename / delete">⋮</span>' : ""}</button>`).join("")}
+          <button type="button" class="wl-tab add" id="wlNew" title="New list">${PLUS}</button></div>
+        <div class="wl-add"><label class="gx-q wl-aq">${ICON.filter}<input id="wlAdd" type="search" placeholder="Add a stock…" autocomplete="off"></label><div class="wl-sug" id="wlSug" hidden></div></div></div>
+      <div class="wl-main ${isWide ? "wide" : ""}">
+        <section class="wl-list"><div class="wl-lh"><b>${esc(L.name)}</b><span class="wl-li"><button class="icon-btn sm" id="wlFind" type="button" title="Search in this list">${ICON.filter}</button>
+            <div class="menu-wrap"><button class="icon-btn sm" id="wlSortB" type="button" title="Sort">${ICON.sort}</button><div class="menu right" id="wlSortM" hidden><small class="menu-h">Sort by</small>${SORTS.map(([k, l]) => `<button type="button" data-s="${k}" class="${ws.sort === k ? "on" : ""}">${l}</button>`).join("")}</div></div></span></div>
+          <div class="wl-q" ${ws.q ? "" : "hidden"}><input type="search" id="wlQ" placeholder="Search in ${esc(L.name)}" value="${esc(ws.q)}"></div>
+          <div class="wl-fs">${FILTERS.map(([k, l, fn, tone]) => `<button type="button" class="wl-f${ws.filter === k ? " on" : ""}" data-f="${k}">${tone ? `<i class="wl-fd wt-${tone}"></i>` : ""}${l}<b>${items.filter(({ r }) => fn(r)).length}</b></button>`).join("")}</div>
+          <div class="wl-rows" id="wlRows">${items.length ? (shown.length ? shown.map(rowHTML).join("") : '<p class="wl-empty">No stock in this filter.</p>') : `<p class="wl-empty">This watchlist is empty. Type a symbol in "Add a stock…" above, or press ★ / + on any stock.</p>`}</div></section>
+        ${isWide ? '<section class="wl-chart"><div class="chart-pane" id="wlPane"><p class="empty">Select a stock to chart it.</p></div></section><aside class="wl-side" id="wlSide"></aside>' : ""}</div></div>`;
+    const footer = () => {
+      const sel = items.filter(({ r }) => state.selected.has(r.key)).length;
+      $("#stPage").innerHTML = `<button class="st-btn" id="wlCopy" type="button">Copy</button><button class="st-btn" id="wlCsv" type="button">CSV</button><span>${esc(L.name)} · ${sel} of ${items.length} selected</span>`
+        + (sel ? '<button class="st-btn gx-wl" id="wlDel" type="button">Remove selected</button>' : "")
+        + `<span class="st-n">${items.length} stocks · sorted by ${SORTS.find((s) => s[0] === ws.sort)[1]} · ${W.lists.length} list${W.lists.length === 1 ? "" : "s"}</span>`;
+      const picked = () => { const s = items.filter(({ r }) => state.selected.has(r.key)).map((x) => x.r); return s.length ? s : shown.map((x) => x.r); };
+      $("#wlCopy").onclick = async () => { const t = picked().map((r) => "NSE:" + r.symbol).join(","); try { await navigator.clipboard.writeText(t); $("#wlCopy").textContent = "Copied"; } catch (e) { prompt("Copy these symbols:", t); } };
+      $("#wlCsv").onclick = () => { const blob = new Blob([SD.toCSV(picked(), ["symbol", "name", "close", "chg_1d", "rs_rating", "from_hi52"])], { type: "text/csv" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `watchlist-${L.name}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); };
+      if ($("#wlDel")) $("#wlDel").onclick = () => { const del = new Set(items.filter(({ r }) => state.selected.has(r.key)).map((x) => x.r.key)); L.items = L.items.filter((i) => !del.has(i.k)); del.forEach((k) => state.selected.delete(k)); wlSave(); renderWatchlist(); };
     };
-    draw();
-    wireTable($("#tbl"), st, draw);
+    footer();
+    const main = view.querySelector(".wl-main");
+    if (isWide) main.style.height = Math.max(480, innerHeight - main.getBoundingClientRect().top - 46) + "px";
+
+    // ---- the side panel: Focus / Signals / Fundamentals
+    const side = $("#wlSide");
+    const drawSide = (r) => {
+      if (!side) return;
+      if (!r) { side.innerHTML = ""; return; }
+      const s = sigs.get(r.key) || wlSignals(r), ev = wlEvents(r), news = newsOf(r).slice(0, 6);
+      const TD = state.breadth && state.breadth.days ? state.breadth.days : null;
+      const dayAgo = (ago) => (TD && TD.length > ago ? wlDay(TD[TD.length - 1 - ago]) : ago === 0 ? "Today" : `${ago} sessions ago`);
+      const head = `<div class="wl-sh">${logo(r, true)}<div><b>${esc(r.name || r.symbol)}</b><small>NSE:${esc(r.symbol)}</small></div></div>
+        <div class="wl-px"><b>₹${SD.fmtPrice(r.close)}</b><span class="${r.chg_1d >= 0 ? "up" : "down"}">${r.chg_1d == null ? "" : (r.chg_1d > 0 ? "+" : "") + finNum(r.chg_1d, 2) + "%"}</span></div>
+        <div class="wl-tb">${[["focus", "Focus", s.length], ["signals", "Signals", 0], ["fund", "Fundamentals", 0]].map(([k, l, n]) => `<button type="button" data-t="${k}" class="${ws.tab === k ? "on" : ""}">${l}${n ? `<i>${n}</i>` : ""}</button>`).join("")}<span class="wl-ul"></span></div>`;
+      let body = "";
+      if (ws.tab === "focus") {
+        const warn = s.filter((x) => x.tone === "down"), good = s.filter((x) => x.tone === "up");
+        const status = warn.length ? ["down", "Needs attention.", `${warn.map((x) => x.t).join(", ")}.`] : good.length ? ["up", "Bullish signal.", `${good.map((x) => x.t).join(", ")}.`]
+          : ["neu", "No change.", "No warning sign, results or bullish signal in the last session."];
+        body = `<div class="wl-st ${status[0]}"><i></i><p><b>${status[1]}</b> ${esc(status[2])}</p></div>
+          <h6>PREVIOUS SESSION · ${esc(wlDay(state.screenDate).toUpperCase())}</h6>
+          ${s.length ? `<ul class="wl-sl">${s.map((x) => `<li><i class="wt-${x.tone}"></i><span>${esc(x.t)}</span><small>${{ up: "Bullish", down: "Warning", earn: "Results", base: "Base", info: "Info" }[x.tone]}</small></li>`).join("")}</ul>` : '<p class="wl-mut">No signal in the last session.</p>'}
+          <p class="wl-mut">Today's signals arrive with the evening data update.</p>
+          <h6>UPCOMING</h6><div class="wl-kv"><span>Earnings</span><b>${r.next_result ? esc(wlDay(r.next_result)) : "Not announced yet"}</b><span>When</span><b>${r.next_result ? (() => { const d = wlDays(state.screenDate, r.next_result); return d === 0 ? "Today" : d > 0 ? `in ${d} day${d === 1 ? "" : "s"}` : `${-d} days ago`; })() : "—"}</b></div>
+          <h6>NEWS</h6>${news.length ? news.map((n) => `<a class="wl-n" ${n[5] ? `href="https://nsearchives.nseindia.com/corporate/${encodeURIComponent(n[5])}" target="_blank" rel="noopener"` : ""}><span><i>${esc(WL_NEWS[n[2]] || n[2])}</i><small>${esc(wlDay(n[0]))} ${esc(n[0].slice(11, 16))}</small></span><p>${esc(n[4] || n[3])}</p></a>`).join("") : '<p class="wl-mut">No filing in the last year.</p>'}`;
+      } else if (ws.tab === "signals") {
+        const by = new Map(); for (const e of ev) { if (!by.has(e.ago)) by.set(e.ago, []); by.get(e.ago).push(e); }
+        body = ev.length ? [...by].map(([ago, l]) => `<div class="wl-day"><h6><span class="wl-dd"></span>${esc(dayAgo(ago))}<small>${ago === 0 ? "last session" : ago + " session" + (ago === 1 ? "" : "s") + " ago"}</small></h6><div class="wl-s">${l.map((e) => chip(e)).join("")}</div></div>`).join("")
+          + `<p class="wl-mut wl-c2">Data through ${esc(wlDay(state.screenDate))}${r.adr_pct ? ` · ADR20 ${finNum(r.adr_pct, 1)}%` : ""}</p>` : `<p class="wl-mut">No breakout, high-volume day, shakeout or results move in the last 60 sessions.</p>`;
+      }
+      side.innerHTML = head + `<div class="wl-sb" id="wlSb">${ws.tab === "fund" ? '<div id="wlFund"></div>' : body}</div>`;
+      if (ws.tab === "fund") stockPanel($("#wlFund"), r, { onPeer: (pid) => { location.hash = "#/i/s/" + encodeURIComponent(pid); } });
+      const on = side.querySelector(".wl-tb button.on"), ul = side.querySelector(".wl-ul");
+      if (on && ul) { ul.style.width = on.offsetWidth + "px"; ul.style.transform = `translateX(${on.offsetLeft}px)`; }
+      side.querySelector(".wl-tb").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b || b.dataset.t === ws.tab) return; ws.tab = b.dataset.t; saveUi(); drawSide(r);
+        const sb = $("#wlSb"); if (sb) sb.animate([{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], { duration: 260, easing: "ease-out" }); };
+    };
+    const openRow = (key) => {
+      const r = state.screenByKey.get(key); if (!r) return;
+      if (!isWide) { location.hash = "#/i/s/" + encodeURIComponent(r.id); return; }
+      state.wlStock = key;
+      view.querySelectorAll(".wl-r.on").forEach((x) => x.classList.remove("on"));
+      const row = view.querySelector(`.wl-r[data-k="${CSS.escape(key)}"]`); if (row) { row.classList.add("on"); row.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
+      const pane = $("#wlPane"); pane.classList.remove("ld-swap"); void pane.offsetWidth; pane.classList.add("ld-swap");
+      SDChart.open(pane, r, { kind: "s" });
+      drawSide(r);
+      if (side) side.animate([{ opacity: .4 }, { opacity: 1 }], { duration: 300, easing: "ease-out" });
+    };
+    if (isWide && state.wlStock) openRow(state.wlStock);
+    if (isWide && !state.breadth) getJSON("data/breadth.json").then((b) => { state.breadth = b; if (routeName() === "watchlist" && ws.tab === "signals") drawSide(state.screenByKey.get(state.wlStock)); }).catch(() => {});
+
+    // ---- list events
+    const rowsEl = $("#wlRows");
+    rowsEl.onclick = (e) => {
+      const rm = e.target.closest("[data-rm]");
+      if (rm) { const k = rm.dataset.rm, row = rm.closest(".wl-r");
+        row.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateX(-14px)" }], { duration: 220, easing: "ease-in" }).onfinish = () => { L.items = L.items.filter((i) => i.k !== k); state.selected.delete(k); wlSave(); renderWatchlist(); };
+        return; }
+      const sel = e.target.closest("[data-sel]"); if (sel) { if (sel.checked) state.selected.add(sel.dataset.sel); else state.selected.delete(sel.dataset.sel); return footer(); }
+      if (e.target.closest(".wl-ck")) return;
+      const row = e.target.closest(".wl-r"); if (row) openRow(row.dataset.k);
+    };
+    view.onkeydown = (e) => {
+      if (!isWide || !["ArrowDown", "ArrowUp"].includes(e.key) || e.target.matches("input, select, textarea")) return;
+      const i = shown.findIndex((x) => x.r.key === state.wlStock), j = i + (e.key === "ArrowDown" ? 1 : -1);
+      if (shown[j]) { e.preventDefault(); openRow(shown[j].r.key); }
+    };
+    const flip = () => { const m = new Map(); rowsEl.querySelectorAll(".wl-r").forEach((el) => m.set(el.dataset.k, el.getBoundingClientRect().top)); return m; };
+    view.querySelector(".wl-fs").onclick = (e) => {
+      const b = e.target.closest("[data-f]"); if (!b || b.dataset.f === ws.filter) return;
+      ws.filter = b.dataset.f; renderWatchlist();
+    };
+    const sm = $("#wlSortM");
+    $("#wlSortB").onclick = (e) => { e.stopPropagation(); sm.hidden = !sm.hidden; };
+    sm.onclick = (e) => { e.stopPropagation(); const b = e.target.closest("[data-s]"); if (!b) return; const old = flip(); ws.sort = b.dataset.s; saveUi(); sm.hidden = true;
+      const o2 = old; renderWatchlist().then(() => { const r2 = $("#wlRows"); if (!r2) return; r2.querySelectorAll(".wl-r").forEach((el) => { const o = o2.get(el.dataset.k), n = el.getBoundingClientRect().top; if (o != null && Math.abs(o - n) > 1) el.animate([{ transform: `translateY(${o - n}px)` }, { transform: "none" }], { duration: 420, easing: "cubic-bezier(.2,.8,.2,1)" }); }); }); };
+    $("#wlFind").onclick = () => { const q = view.querySelector(".wl-q"); q.hidden = !q.hidden; if (!q.hidden) $("#wlQ").focus(); };
+    $("#wlQ").oninput = (e) => { ws.q = e.target.value; const t = ws.q.trim().toLowerCase(); rowsEl.querySelectorAll(".wl-r").forEach((el) => { const r = state.screenByKey.get(el.dataset.k); el.hidden = !!t && !(r.symbol.toLowerCase().includes(t) || String(r.name || "").toLowerCase().includes(t)); }); };
+    if (ws.q) $("#wlQ").dispatchEvent(new Event("input"));
+    // ---- lists: switch, new, rename / delete
+    view.querySelector(".wl-tabs").onclick = (e) => {
+      if (e.target.closest("[data-menu]")) {
+        e.stopPropagation();
+        const act = prompt(`List "${L.name}": type a new name to rename it, or type DELETE to remove the list.`, L.name);
+        if (act == null) return;
+        if (act.trim().toUpperCase() === "DELETE") { if (W.lists.length === 1) { alert("This is your only list."); return; } if (!confirm(`Delete the list "${L.name}" with ${L.items.length} stocks?`)) return; W.lists = W.lists.filter((l) => l.id !== L.id); W.cur = W.lists[0].id; }
+        else if (act.trim()) L.name = act.trim().slice(0, 24);
+        wlSave(); renderWatchlist(); return;
+      }
+      if (e.target.closest("#wlNew")) { const nm = prompt("Name of the new list:", `List ${W.lists.length + 1}`); if (!nm || !nm.trim()) return; const id = "w" + Date.now().toString(36); W.lists.push({ id, name: nm.trim().slice(0, 24), items: [] }); W.cur = id; ws.filter = "all"; state.wlStock = null; wlSave(); renderWatchlist(); return; }
+      const t = e.target.closest("[data-l]"); if (t && t.dataset.l !== W.cur) { W.cur = t.dataset.l; ws.filter = "all"; state.wlStock = null; wlSave(); renderWatchlist(); }
+    };
+    // ---- add a stock: suggestions from every stock
+    const inp = $("#wlAdd"), sug = $("#wlSug");
+    let pick = 0, cands = [];
+    const showSug = () => {
+      const t = inp.value.trim().toUpperCase();
+      if (!t) { sug.hidden = true; return; }
+      cands = state.screen.filter((r) => r.symbol.startsWith(t) || String(r.name || "").toUpperCase().includes(t)).sort((a, b) => (b.symbol.startsWith(t) - a.symbol.startsWith(t)) || (b.mcap_cr ?? 0) - (a.mcap_cr ?? 0)).slice(0, 8);
+      pick = Math.min(pick, Math.max(0, cands.length - 1));
+      sug.innerHTML = cands.length ? cands.map((r, i) => `<button type="button" class="${i === pick ? "on" : ""}" data-add="${esc(r.key)}">${logo(r)}<b>${esc(r.symbol)}</b><span>${esc(r.name || "")}</span>${state.watch.has(r.key) ? "<em>added</em>" : ""}</button>`).join("") : '<p class="wl-mut">No stock found.</p>';
+      sug.hidden = false;
+    };
+    const addKey = (k) => { if (!L.items.some((i) => i.k === k)) L.items.push({ k, t: Date.now() }); state.wlStock = k; ws.filter = "all"; wlSave(); renderWatchlist().then(() => { const row = view.querySelector(`.wl-r[data-k="${CSS.escape(k)}"]`); if (row) row.animate([{ background: "color-mix(in srgb, var(--accent) 22%, var(--panel))" }, { background: "transparent" }], { duration: 1200, easing: "ease-out" }); }); };
+    inp.oninput = () => { pick = 0; showSug(); };
+    inp.onkeydown = (e) => {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); pick = Math.max(0, Math.min(cands.length - 1, pick + (e.key === "ArrowDown" ? 1 : -1))); showSug(); }
+      else if (e.key === "Enter" && cands[pick]) { e.preventDefault(); addKey(cands[pick].key); }
+      else if (e.key === "Escape") { sug.hidden = true; inp.blur(); }
+    };
+    sug.onclick = (e) => { const b = e.target.closest("[data-add]"); if (b) addKey(b.dataset.add); };
+    view.onclick = (e) => { if (!e.target.closest(".wl-add")) sug.hidden = true; sm.hidden = true; };
   }
 
   /* ------------------------------------------------------------------ stocks: results table + chart (Phase S5) */
@@ -2961,7 +3167,7 @@
     document.querySelectorAll(".rail [data-tab]").forEach((a) => a.classList.toggle("active", a.dataset.tab === tab));
     // the Pages bar belongs to the Home section only (Viraj 12-Nov, like the reference): Scanners, Groups and Breadth
     // (their own rail buttons) start straight with their card
-    document.body.dataset.sec = ["scanners", "groups", "breadth"].includes(tab) ? "tool" : "home";
+    document.body.dataset.sec = ["scanners", "groups", "breadth", "watchlist"].includes(tab) ? "tool" : "home";
     const act = document.querySelector(".rail-main .active");
     if (act && matchMedia("(max-width: 720px)").matches) act.scrollIntoView({ inline: "center", block: "nearest" });
     view.classList.remove("enter"); void view.offsetWidth; view.classList.add("enter");

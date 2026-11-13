@@ -61,7 +61,7 @@ industry,fertilizers,Fertilizers,Chemicals,21,False,2007-02-20,2026-11-13
 industry,film-production-distribution-and-exhibition,"Film Production, Distribution & Exhibition","Media, Entertainment & Publication",9,False,2016-04-20,2026-11-13
 industry,financial-institution,Financial Institution,Financial Services,7,False,2007-03-09,2026-11-13
 industry,financial-products-distributor,Financial Products Distributor,Financial Services,2,True,,
-industry,financial-technology-fintech,Financial Technology (Fintech),Financial Services,8,False,2021-12-03,2026-11-13
+industry,financial-technology-fintech,Financial Technology (Fintech),Financial Services,9,False,2021-12-03,2026-11-13
 industry,footwear,Footwear,Consumer Durables,8,False,2015-06-11,2026-11-13
 industry,forest-products,Forest Products,Forest Materials,1,True,,
 industry,furniture-home-furnishing,"Furniture, Home Furnishing",Consumer Durables,10,False,2017-04-19,2026-11-13
@@ -201,7 +201,7 @@ sector,consumer-durables,Consumer Durables,,154,False,2007-01-16,2026-11-13
 sector,consumer-services,Consumer Services,,128,False,2007-01-16,2026-11-13
 sector,diversified,Diversified,,9,False,2007-11-20,2026-11-13
 sector,fast-moving-consumer-goods,Fast Moving Consumer Goods,,177,False,2007-01-16,2026-11-13
-sector,financial-services,Financial Services,,291,False,2007-01-16,2026-11-13
+sector,financial-services,Financial Services,,292,False,2007-01-16,2026-11-13
 sector,forest-materials,Forest Materials,,28,False,2007-12-18,2026-11-13
 sector,healthcare,Healthcare,,182,False,2007-01-16,2026-11-13
 sector,information-technology,Information Technology,,145,False,2007-01-16,2026-11-13

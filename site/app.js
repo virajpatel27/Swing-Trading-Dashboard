@@ -1157,6 +1157,7 @@
         <div class="chart-pane" id="pane"><p class="empty">Select a stock from the results to chart it.</p></div>
         <aside class="side-panel" id="side"></aside>
         <div class="grid" id="grid" style="--gcols:${ui.gridCols}"></div>
+        <button class="ws-strip" id="wsStrip" type="button" title="Back to the results list + chart"><i>›</i><span>RESULTS</span></button>
       </div>`;
     let rows = [];
     const stPage = $("#stPage");
@@ -1179,24 +1180,39 @@
       $("#csv").onclick = csvSel;
     };
     // how many extra columns fit in the list: wider list = more columns (phones: all, scroll sideways)
+    // a wider list shows the daily / weekly candle first (like the reference), then more of your columns
+    const candlesOn = () => !isWide || ui.view !== "list" || $("#wsMain .results").clientWidth >= 470;
     const fitCols = () => {
       if (!isWide || ui.view !== "list") return st.cols;
-      const w = $("#wsMain .results").clientWidth;
+      const w = $("#wsMain .results").clientWidth - (candlesOn() ? 200 : 0);
       return st.cols.slice(0, Math.max(0, Math.floor((w - 250) / 86)));
     };
+    /** a tiny candle: the day (open / high / low / close) or the week (direction and size of the 1W move) */
+    const glyph = (o, h, l, c) => {
+      if ([o, h, l, c].some((v) => v == null || !isFinite(v))) return "";
+      const rg = h - l || 1, Y = (v) => (1 + ((h - v) / rg) * 16).toFixed(1), top = Y(Math.max(o, c)), bot = Y(Math.min(o, c));
+      return `<svg class="cg ${c >= o ? "up" : "down"}" viewBox="0 0 8 18" width="8" height="18" aria-hidden="true"><line x1="4" x2="4" y1="${Y(h)}" y2="${Y(l)}"/><rect x="1.5" y="${top}" width="5" height="${Math.max(1.2, bot - top).toFixed(1)}" rx=".6"/></svg>`;
+    };
+    const pctC = (v) => (v == null || !isFinite(v) ? '<span class="muted">–</span>' : `<span class="${v >= 0 ? "up" : "down"}">${v > 0 ? "+" : ""}${v.toFixed(2)}%</span>`);
+    const dCandle = (r) => `<span class="cgc">${glyph(r.open, r.high, r.low, r.close)}${pctC(r.chg_1d)}</span>`;
+    const wCandle = (r) => { const w = r.ret_1w; if (w == null) return '<span class="muted">–</span>'; const o = r.close / (1 + w / 100);
+      return `<span class="cgc">${glyph(o, Math.max(o, r.close, r.high ?? r.close), Math.min(o, r.close, r.low ?? r.close), r.close)}${pctC(w)}</span>`; };
     let shownCols = -1;
     const draw = () => {
       rows = SD.sortRows(SD.filterStocks(base, st), st.sort, st.dir);
       if (ui.view === "grid") { drawGrid(); footer(); return; }
       const cols = fitCols();
-      shownCols = cols.length;
-      const mark = (c) => (st.sort === c ? (st.dir === "asc" ? " ▲" : " ▼") : "");
-      const head = `<th class="l ck"><input type="checkbox" id="selAll" aria-label="Select all shown"></th><th class="l sticky ${st.sort === "symbol" ? "sorted" : ""}" data-col="symbol">Symbol${mark("symbol")}</th>`
-        + `<th data-col="close" class="${st.sort === "close" ? "sorted" : ""}">LTP${mark("close")}</th>`
-        + cols.map((c) => `<th data-col="${c}" class="${SD.COLUMNS[c].fmt === "text" ? "l " : ""}${st.sort === c ? "sorted" : ""}">${esc(SD.COLUMNS[c].label)}${mark(c)}</th>`).join("");
+      shownCols = cols.length + (candlesOn() ? 100 : 0);
+      const ar = (c) => `<i class="gx-ar${st.sort === c ? "" : " off"}">${st.sort === c ? (st.dir === "asc" ? "↑" : "↓") : "↕"}</i>`;
+      const cdl = candlesOn();
+      const head = `<th class="l ck"><input type="checkbox" id="selAll" aria-label="Select all shown"></th><th class="l sticky ${st.sort === "symbol" ? "sorted" : ""}" data-col="symbol">${ar("symbol")}Symbol</th>`
+        + `<th data-col="close" class="${st.sort === "close" ? "sorted" : ""}">${ar("close")}Last Price</th>`
+        + (cdl ? `<th data-col="chg_1d" class="${st.sort === "chg_1d" ? "sorted" : ""}">${ar("chg_1d")}Daily Candle</th><th data-col="ret_1w" class="${st.sort === "ret_1w" ? "sorted" : ""}">${ar("ret_1w")}Weekly Candle</th>` : "")
+        + cols.map((c) => `<th data-col="${c}" class="${SD.COLUMNS[c].fmt === "text" ? "l " : ""}${st.sort === c ? "sorted" : ""}">${ar(c)}${esc(SD.COLUMNS[c].label)}</th>`).join("");
       const body = rows.slice(0, st.limit).map((r) => `<tr data-key="${esc(r.key)}" class="${state.current === r.key ? "cur" : ""}">`
         + `<td class="l ck"><input type="checkbox" data-sel="${esc(r.key)}" ${state.selected.has(r.key) ? "checked" : ""} aria-label="Select ${esc(r.symbol)}"></td>`
-        + `<td class="l sticky name"><div class="nm">${logo(r)}<div><b>${esc(r.symbol)}</b><span>${esc(r.name)}</span></div></div></td><td class="num">${SD.fmtPrice(r.close)}</td>`
+        + `<td class="l sticky name"><div class="nm" title="${esc(r.name)}">${logo(r)}<b>${esc(r.symbol)}</b></div></td><td class="num">${SD.fmtPrice(r.close)}</td>`
+        + (cdl ? `<td class="num">${dCandle(r)}</td><td class="num">${wCandle(r)}</td>` : "")
         + cols.map((c) => `<td class="${SD.COLUMNS[c].fmt === "text" ? "l" : "num"}">${cellHTML(r, c)}</td>`).join("") + "</tr>").join("");
       const more = rows.length > st.limit ? `<button class="btn more" data-more type="button">Show more (${rows.length - st.limit} left)</button>` : "";
       $("#tbl").innerHTML = rows.length ? `<div class="table-wrap"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>${more}</div>`
@@ -1210,11 +1226,12 @@
       clearGrid();
       const list = gridSorted(rows, ui.gridSort);
       const box = $("#grid");
-      box.innerHTML = list.length ? list.slice(0, gridLimit).map((r) => `<article class="gcard" data-key="${esc(r.key)}" tabindex="0">
-          <div class="g-h"><b class="wl">${logo(r)}${esc(r.symbol)}</b>${pct(r.chg_1d)}<span class="g-px num">${SD.fmtPrice(r.close)}</span></div>
-          <div class="g-s muted">M ${r.mcap_cr == null ? "–" : "₹" + SD.fmtInt(r.mcap_cr) + " Cr"} · F ${r.float_mcap_cr == null ? "–" : "₹" + SD.fmtInt(r.float_mcap_cr) + " Cr"}${r.rs_rating == null ? "" : " · RS " + r.rs_rating}</div>
-          <div class="g-ch" data-id="${esc(r.id)}"><i class="skel"></i></div>
-          <div class="g-f muted">Vol ${SD.fmtVol(r.volume)} · Avg 20D ${SD.fmtVol(r.avg_vol20)} · RVol ${r.rvol == null ? "–" : Number(r.rvol).toFixed(2) + "x"}</div></article>`).join("")
+      // card like the reference: check box, logo, symbol, the move, M / F market cap; a mono chart with both axes
+      const per = { "1d": "chg_1d", "1w": "ret_1w", "1m": "ret_1m", "3m": "ret_3m" }[ui.gridPerf || "3m"] || "ret_3m";
+      box.innerHTML = list.length ? list.slice(0, gridLimit).map((r, i) => `<article class="gcard" data-key="${esc(r.key)}" tabindex="0" style="--i:${Math.min(i, 12)}">
+          <div class="g-h"><input type="checkbox" class="g-ck" data-sel="${esc(r.key)}" ${state.selected.has(r.key) ? "checked" : ""} aria-label="Select ${esc(r.symbol)}"><span class="g-nm" title="${esc(r.name)}">${logo(r)}<b>${esc(r.symbol)}</b></span>${pct(r[per])}
+            <span class="g-mf"><small>M</small>${r.mcap_cr == null ? "–" : "₹" + SD.fmtInt(r.mcap_cr) + " Cr"}<small>F</small>${r.float_mcap_cr == null ? "–" : "₹" + SD.fmtInt(r.float_mcap_cr) + " Cr"}</span></div>
+          <div class="g-ch" data-id="${esc(r.id)}"><i class="skel"></i></div></article>`).join("")
         + (list.length > gridLimit ? `<button class="btn more g-more" data-gmore type="button">Show more (${list.length - gridLimit} left)</button>` : "")
         : `<div class="empty">Nothing matches.</div>`;
       gridObs = new IntersectionObserver((ents) => ents.forEach((en) => { if (en.isIntersecting) { gridObs.unobserve(en.target); miniChart(en.target); } }), { rootMargin: "200px" });
@@ -1225,17 +1242,20 @@
       try { [data] = await Promise.all([getJSON(`data/c/s/${encodeURIComponent(el.dataset.id)}.json`), SDChart.loadLib()]); }
       catch (e) { el.innerHTML = '<p class="empty small">No chart</p>'; return; }
       if (!el.isConnected) return;
-      const bars = SD.candlesFromChart(data, "adjusted").slice(-180);
+      const bars = SD.candlesFromChart(data, "adjusted").slice(-66);
       const L = window.LightweightCharts, cs = getComputedStyle(document.documentElement), col = (v) => cs.getPropertyValue(v).trim();
+      const dk = document.documentElement.dataset.theme === "dark" || (document.documentElement.dataset.theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+      const up = dk ? "#c9d0db" : "#a3a9b3", dn = dk ? "#5b6577" : "#1f2430";
       el.innerHTML = "";
-      const ch = L.createChart(el, { layout: { background: { color: "transparent" }, textColor: col("--muted"), fontSize: 10, attributionLogo: false },
-        grid: { vertLines: { visible: false }, horzLines: { visible: false } }, rightPriceScale: { borderVisible: false, scaleMargins: { top: 0.08, bottom: 0.04 } },
-        timeScale: { borderVisible: false, visible: false }, handleScroll: false, handleScale: false, crosshair: { mode: 2 } });
+      const ch = L.createChart(el, { autoSize: true, layout: { background: { color: "transparent" }, textColor: col("--muted"), fontSize: 10.5, attributionLogo: false },
+        grid: { vertLines: { visible: false }, horzLines: { visible: false } }, rightPriceScale: { borderVisible: false, scaleMargins: { top: 0.1, bottom: 0.06 } },
+        timeScale: { borderVisible: false, visible: true, rightOffset: 2 }, handleScroll: { mouseWheel: false, pressedMouseMove: true }, handleScale: { mouseWheel: true, pinch: true },
+        crosshair: { mode: 0, vertLine: { style: 2, color: col("--muted"), labelBackgroundColor: "#1f2430" }, horzLine: { style: 2, color: col("--muted"), labelBackgroundColor: "#1f2430" } } });
       gridCharts.push(ch);
-      const s = ch.addSeries(L.CandlestickSeries, { upColor: col("--up"), downColor: col("--down"), borderVisible: false, wickUpColor: col("--up"), wickDownColor: col("--down"), priceLineVisible: false });
+      const s = ch.addSeries(L.CandlestickSeries, { upColor: up, downColor: dn, borderVisible: false, wickUpColor: up, wickDownColor: dn, priceLineVisible: false });
       s.setData(bars.map((b) => ({ time: b.time, open: b.open, high: b.high, low: b.low, close: b.close })));
       const all = SD.candlesFromChart(data, "adjusted"), off = all.length - bars.length;
-      [[20, "#3b82f6"], [50, "#f59e0b"]].forEach(([n, c]) => {
+      [[21, "#5b9bd5"], [50, "#c8b48a"]].forEach(([n, c]) => {
         const pts = [];
         let sum = 0;
         for (let i = 0; i < all.length; i++) { sum += all[i].close; if (i >= n) sum -= all[i - n].close; if (i >= off && i >= n - 1) pts.push({ time: all[i].time, value: sum / n }); }
@@ -1267,11 +1287,14 @@
     };
     $("#grid").onclick = (e) => {
       if (e.target.closest("[data-gmore]")) { gridLimit += ui.gridCols * 4; return drawGrid(); }
+      const ck = e.target.closest(".g-ck"); if (ck) { if (ck.checked) state.selected.add(ck.dataset.sel); else state.selected.delete(ck.dataset.sel); e.stopPropagation(); return footer(); }
+      if (e.target.closest(".g-ch")) return;                      // inside the chart: zoom / move, no page change
       const c = e.target.closest(".gcard");
       if (!c) return;
       if (!isWide) { location.hash = "#/i/" + c.dataset.key.replace(":", "/"); return; }
       state.current = c.dataset.key; ui.view = "list"; saveUi(); renderStocks();
     };
+    $("#wsStrip").onclick = () => { ui.view = "list"; saveUi(); renderStocks(); };
     $("#grid").onkeydown = (e) => { if (e.key === "Enter" && e.target.matches(".gcard")) e.target.click(); };
     view.onkeydown = (e) => {
       if (!isWide || ui.view !== "list" || !state.current || !["ArrowDown", "ArrowUp"].includes(e.key) || e.target.matches("input, select, textarea")) return;
@@ -1307,7 +1330,7 @@
       drag.onpointermove = (ev) => {
         ui.listW = Math.round(Math.min(Math.max(ev.clientX - left, 240), max));
         wsMain.style.setProperty("--list-w", ui.listW + "px");
-        if (fitCols().length !== shownCols) draw();
+        if (fitCols().length + (candlesOn() ? 100 : 0) !== shownCols) draw();
       };
       drag.onpointerup = () => { drag.onpointermove = drag.onpointerup = null; wsMain.classList.remove("dragging"); saveUi(); window.dispatchEvent(new Event("resize")); };
     };
@@ -2841,7 +2864,16 @@
       sx.querySelector(".sp-sum").textContent = list.length ? `${list.filter((n) => n[0] >= d30).length} in 30 days` : "none";
       const calls = list.filter((n) => n[2] === "K" && n[5]).slice(0, 6);
       const item = (n) => `<div class="sp-nw">${newsBadge(n[2], N.cats)}<div><small class="muted">${esc(SD.fmtDate(n[0].slice(0, 10)))} ${esc(n[0].slice(11, 16))}</small><div>${newsText(n[3], n[4])}</div></div>${newsLink(n[5], pdf)}</div>`;
-      sx.querySelector(".sp-b").innerHTML = list.length ? `${calls.length ? `<h5>Con-calls & presentations</h5>${calls.map(item).join("")}` : ""}
+      // Concalls like the reference: one row per month with Transcript / PPT / Recording buttons (the company's own PDFs)
+      const months = new Map();
+      for (const n of list.filter((x) => x[2] === "K" && x[5])) {
+        const t = `${n[3]} ${n[4]}`.toLowerCase(), kind = /transcript/.test(t) ? "Transcript" : /presentation|ppt/.test(t) ? "PPT" : /recording|audio|video/.test(t) ? "Recording" : null;
+        if (!kind) continue;
+        const m = n[0].slice(0, 7); if (!months.has(m)) months.set(m, {}); if (!months.get(m)[kind]) months.get(m)[kind] = n[5];
+      }
+      const mLbl = (m) => `${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+m.slice(5, 7) - 1]} ${m.slice(0, 4)}`;
+      const ccHTML = months.size ? `<h5>Concalls</h5><div class="sp-cc">${[...months].slice(0, 6).map(([m, k]) => `<div><span>${mLbl(m)}</span>${["Transcript", "PPT", "Recording"].filter((x) => k[x]).map((x) => `<a href="${pdf}${encodeURIComponent(k[x])}" target="_blank" rel="noopener">${x}</a>`).join("")}</div>`).join("")}</div>` : "";
+      sx.querySelector(".sp-b").innerHTML = list.length ? `${ccHTML}${calls.length && !months.size ? `<h5>Con-calls & presentations</h5>${calls.map(item).join("")}` : ""}
         <h5>Latest filings</h5>${list.filter((n) => n[2] !== "K").slice(0, 12).map(item).join("") || '<p class="muted small">Only con-call notices.</p>'}
         <a class="sp-link" href="#/news" data-nwq="${esc(r.symbol)}">All recent filings →</a>` : '<p class="muted small">No filings with NSE in the last year.</p>';
       const a = sx.querySelector("[data-nwq]"); if (a) a.onclick = () => store.set("sd-news", { ...store.get("sd-news", {}), q: a.dataset.nwq, cats: [] });
@@ -3096,7 +3128,8 @@
       clearTimeout(timer);
       timer = setTimeout(() => {
         const sc = csScan(cs), n = SDS.run(state.screen, sc).length, active = Object.entries(cs.f).filter(([id, s]) => s.on && list.some((f) => f.id === id));
-        m.querySelector("#csCount").innerHTML = `<b>${n.toLocaleString("en-IN")}</b> stocks pass this scan · ${active.length} filter${active.length === 1 ? "" : "s"} active across all tabs`;
+        const was = (m.querySelector("#csCount b") || {}).textContent;
+        m.querySelector("#csCount").innerHTML = `<b class="${was && was !== n.toLocaleString("en-IN") ? "bump" : ""}">${n.toLocaleString("en-IN")}</b> stocks pass this scan · ${active.length} filter${active.length === 1 ? "" : "s"} active across all tabs`;
         for (const [k] of CS_TABS) { const c = active.filter(([id]) => (CS.find((f) => f.id === id) || {}).t === k).length; m.querySelector(`[data-tc="${k}"]`).textContent = c || ""; }
         cs.name = m.querySelector("#csName").value.trim();
         store.set("sd-cs-draft", { ...cs, loadedId });

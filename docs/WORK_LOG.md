@@ -1185,3 +1185,19 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   - animation: cards rise one after another, charts fade in, a new range glides (eased visible-range tween), a new
     layout moves and resizes the cards (FLIP), style / MA / theme changes recolour in place without a redraw.
 - Settings saved in sd-mi (old "ma: false" maps to no MA). JS 32 / 32.
+
+### 2026-11-13: Scanner page - reference look (video "overview chart 12-11-2026.mp4")
+- Viraj: the scanner workspace (list + chart + grid) must look like the reference: fonts, sizes, colours, animation.
+- site/chart.js: default chart style is now Mono (light grey up / dark down candles, lighter shades on a dark page),
+  no grid lines, MA preset "minervini" with the new MA colours; a one-time migration (cfg.look < 2) moves old
+  saved settings to this look once.
+- site/app.js renderStocks:
+  - list: one-line symbol with logo, "Last Price", Daily Candle and Weekly Candle columns (small candle glyph +
+    %, sortable on 1D / 1W change), sort arrows on every header; candle columns hide when the list is < 470 px;
+  - grid: cards with a select checkbox, logo + symbol, 3M % and M / F (market cap / free-float cap), mono mini
+    charts of the last 66 sessions with MA 21 / 50, wheel zoom and drag (a click on the chart no longer opens
+    the stock); a "RESULTS" strip on the left goes back to list + chart; cards rise one after another;
+  - stock panel: "Concalls" rows per month with Transcript / PPT / Recording buttons (the company's own NSE PDFs).
+- Custom scan window: plain header, underline tabs that slide in, the live "N stocks pass this scan" number bumps
+  when it changes.
+- Checked in the preview: list (wide / narrow), grid, dark, custom scan count. JS 32 / 32, Python 220 passed.

@@ -15,7 +15,7 @@
     "#ffeb3b", "#3f51b5", "#8bc34a", "#ff5722", "#673ab7", "#009688", "#cddc39", "#ffc107", "#03a9f4", "#9e9e9e", "#000000"];
   const STYLES = {
     default: { label: "Default", up: "#2962ff", down: "#e91e63" }, classic: { label: "Classic", up: "#089981", down: "#f23645" },
-    contrast: { label: "Contrast", up: "#2962ff", down: "#ff9800" }, mono: { label: "Mono", up: "#9e9e9e", down: "#000000" },
+    contrast: { label: "Contrast", up: "#2962ff", down: "#ff9800" }, mono: { label: "Mono", up: "#a3a9b3", down: "#1f2430", dup: "#c9d0db", ddn: "#5b6577" },
   };
   const MA_PRESETS = {
     minervini: { label: "Minervini", d: [["EMA", 10], ["EMA", 21], ["SMA", 50], ["SMA", 150], ["SMA", 200]], w: [["SMA", 10], ["SMA", 30]] },
@@ -24,19 +24,20 @@
     oneil: { label: "O'Neil", d: [["EMA", 21], ["SMA", 50], ["SMA", 200]], w: [["SMA", 10], ["SMA", 40]] },
     mine: { label: "My preset", d: [["SMA", 20], ["SMA", 200]], w: [["SMA", 10], ["SMA", 20]] },
   };
-  const MA_COLORS = ["#2962ff", "#ff9800", "#e91e63", "#089981", "#9c27b0", "#795548"];
+  // like the reference's legend: EMA 10 orange, EMA 21 light blue, SMA 50 navy, SMA 150 violet, SMA 200 dark (13-Nov-2026)
+  const MA_COLORS = ["#f0a35e", "#5b9bd5", "#2b3f6c", "#a06fd0", "#3a3f4b", "#795548"];
   const BENCH = { NIFTY_50: "Nifty 50", NIFTY_500: "Nifty 500", NIFTY_MIDCAP_150: "Nifty Midcap 150", NIFTY_SMALLCAP_250: "Nifty Smallcap 250" };
   const STAGE_TXT = { 1: "Basing", "2A": "Early uptrend", 2: "Uptrend", 3: "Topping", 4: "Downtrend", "4A": "Improving" };
   const STAGE_COL = { 1: "#9e9e9e", "2A": "#66bb6a", 2: "#089981", 3: "#ff9800", 4: "#f23645", "4A": "#ef9a9a" };
 
   /* ------------------------------------------------------------------ settings (with defaults) */
   const DEFAULTS = {
-    style: "classic", type: "candle", tf: "D",
+    style: "mono", type: "candle", tf: "D", look: 2,
     marks: { hilo52: false, swings: false, swingPct: 10, circuit: false, inside: false, actions: true, pivot: true, vcp: true, cup: true, tight: false, earnings: true, news: true },
-    show: { earn: true, earnOpen: true, desc: true, due: true }, grid: true,
+    show: { earn: true, earnOpen: true, desc: true, due: true }, grid: false,
     chips: { float: true, rs: true, stage: true, from: true, theme: true },
     ind: {
-      ma: { on: true, preset: "mine", d: null, w: null },
+      ma: { on: true, preset: "minervini", d: null, w: null },
       supertrend: { on: false, len: 10, mult: 3, up: "#089981", down: "#f23645" },
       bb: { on: false, len: 20, std: 2, color: "#2962ff", fill: true },
       swing: { on: false, fast: 8, slow: 14, vf: 0.65 },
@@ -56,6 +57,9 @@
   };
   const merge = (a, b) => { const o = Array.isArray(a) ? [...a] : { ...a }; for (const k in b || {}) o[k] = b[k] && typeof b[k] === "object" && !Array.isArray(b[k]) && a[k] ? merge(a[k], b[k]) : b[k]; return o; };
   let cfg = merge(DEFAULTS, store.get(KEY, {}));
+  // one-time switch to the reference look (13-Nov-2026, Viraj): mono candles, no grid, Minervini averages;
+  // anything can be changed back in Chart settings afterwards
+  if ((cfg.look || 0) < 2) { cfg.look = 2; cfg.style = "mono"; cfg.grid = false; if (cfg.ind && cfg.ind.ma && !cfg.ind.ma.d) cfg.ind.ma.preset = "minervini"; store.set(KEY, cfg); }
   const save = () => store.set(KEY, cfg);
 
   const IND_MENU = [
@@ -187,7 +191,8 @@
     if (!pv) cur.bars = bars;
     const times = bars.map((b) => b.time), o = bars.map((b) => b.open), h = bars.map((b) => b.high), l = bars.map((b) => b.low),
       c = bars.map((b) => b.close), v = bars.map((b) => b.volume || 0);
-    const st = STYLES[C.style] || STYLES.classic;
+    const st0 = STYLES[C.style] || STYLES.classic, darkUi = document.documentElement.dataset.theme === "dark" || (document.documentElement.dataset.theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+    const st = st0.dup && darkUi ? { ...st0, up: st0.dup, down: st0.ddn } : st0;      // mono: lighter shades on a dark page
     const ind = C.ind;
     const show = (k) => ind[k] && ind[k].on && !ind[k].hidden;
     const panes = [];       // names in order below the price
@@ -811,7 +816,7 @@
       const t = e.target.closest("[data-tab] button");
       if (t) { m.querySelectorAll("[data-tab] button").forEach((b) => b.classList.toggle("on", b === t)); m.querySelectorAll(".sd-pane").forEach((p) => { p.hidden = p.dataset.p !== t.dataset.v; }); }
       if (e.target.closest("[data-sd=reset]")) {
-        cfg.style = DEFAULTS.style; cfg.marks = { ...DEFAULTS.marks }; cfg.chips = { ...DEFAULTS.chips }; cfg.show = { ...DEFAULTS.show }; cfg.grid = true;
+        cfg.style = DEFAULTS.style; cfg.marks = { ...DEFAULTS.marks }; cfg.chips = { ...DEFAULTS.chips }; cfg.show = { ...DEFAULTS.show }; cfg.grid = DEFAULTS.grid;
         save(); m.shut(); draw(true); renderTools(); earningsTable(); settingsDrawer();
       }
     });

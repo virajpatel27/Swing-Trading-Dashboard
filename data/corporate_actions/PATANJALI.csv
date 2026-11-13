@@ -7,5 +7,5 @@ ex_date,type,ratio,factor,amount,method,status,subject,source
 2025-09-11,bonus,2:1,0.33333333,,ratio from NSE text,applied,Bonus 2:1,NSE
 2025-11-13,dividend,,1,1.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 1.75 Per Share,NSE
 2026-04-24,dividend,,1,1.75,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 1.75 Per Share,NSE
-2026-08-21,dividend,,1,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 1.50 Per Share,NSE
 2026-08-21,dividend,,1,0.8,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 0.80 Per Share,NSE
+2026-08-21,dividend,,1,1.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 1.50 Per Share,NSE

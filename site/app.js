@@ -244,9 +244,58 @@
     }
   }
 
-  /* ------------------------------------------------------------------ groups (Phase S9): data/group_ranks.json */
+  /* ------------------------------------------------------------------ groups (Phase S9 / N8; new look 13-Nov-2026): data/group_ranks.json
+     Like the reference video (Viraj 12-Nov): Sector | Industry | Theme with counts and 1D ... YTD on the frame, separate
+     soft cards per column (groups, the sector's industries, results, chart), multi-column sorting with priority
+     numbers (a third click takes a column off; Rank cycles best, worst, climbers, fallers), rank change only above 5,
+     results with logos, check boxes, "+ Watchlist", column drawer; rows glide on every re-order and columns keep
+     their scroll position. */
   const TAG_CLS = { Leading: "t-up", Improving: "t-info", Weakening: "t-warn", Lagging: "t-down" };
   const tagHTML = (t) => (t ? `<span class="tag ${TAG_CLS[t] || ""}">${esc(t)}</span>` : "");
+  // short sector names as in the reference's group list (the full name stays in the tooltip and the breadcrumb)
+  const GX_SEC_SHORT = { "Automobile and Auto Components": "Auto & Components", "Telecommunication": "Telecom", "Media, Entertainment & Publication": "Media & Entertainment",
+    "Oil, Gas & Consumable Fuels": "Oil & Gas", "Fast Moving Consumer Goods": "FMCG", "Information Technology": "IT" };
+  const GX_DEF_COLS = ["chg_1d", "from_hi52", "rs_rating", "themes", "from_ath"];
+  const GX_SHORT = { chg_1d: "1D %", ret_1w: "1W %", ret_1m: "1M %", ret_3m: "3M %", ret_1y: "1Y %", from_hi52: "52W HI", rs_rating: "RS", themes: "Themes", from_ath: "ATH",
+    mcap_cr: "Mcap", float_mcap_cr: "Float", turnover_cr: "Turnover", vs_sector_1m: "vs Sect" };
+  const GX_RANK_TIP = "Rank: strength of the group over the last months against the whole market, the same whichever period is picked above. "
+    + "The small number beside it is the places moved in a week: blue up, pink down, shown only for moves of more than 5. "
+    + "Clicks on Rank go through best first, worst first, biggest climbers, biggest fallers. Click a column to sort, click another to sort by it next; a third click on a column takes it off.";
+  let gxPrev = { keys: {}, rects: null, scroll: {} };
+
+  /** multi-column sort: spec = [{k, d, m}] (m = Rank mode 0-3); a click adds a column, flips it, then takes it off */
+  const gxClick = (spec, k, firstDir) => {
+    if (spec.length === 1 && spec[0].def && spec[0].k !== k) spec = [];            // the default order gives way to the first click
+    const i = spec.findIndex((x) => x.k === k);
+    if (k === "rank") {
+      if (i < 0) return [...spec, { k, m: 0 }];
+      const m = (spec[i].m ?? 0) + 1;
+      return m > 3 ? spec.filter((_, j) => j !== i) : spec.map((x, j) => (j === i ? { k, m } : x));
+    }
+    if (i < 0) return [...spec, { k, d: firstDir }];
+    if (spec[i].d === firstDir) return spec.map((x, j) => (j === i ? { k, d: firstDir === "asc" ? "desc" : "asc" } : x));
+    return spec.filter((_, j) => j !== i);
+  };
+  const gxSort = (rows, spec, val) => rows.slice().sort((a, b) => {
+    for (const s of spec) {
+      let x, y, d = s.d;
+      if (s.k === "rank") { const chg = s.m >= 2; x = val(a, chg ? "rank_chg" : "rank"); y = val(b, chg ? "rank_chg" : "rank"); d = [ "asc", "desc", "desc", "asc" ][s.m ?? 0]; }
+      else { x = val(a, s.k); y = val(b, s.k); }
+      if (x == null && y == null) continue;
+      if (x == null) return 1; if (y == null) return -1;
+      const c = typeof x === "string" || typeof y === "string" ? String(x).localeCompare(String(y)) : x - y;
+      if (c) return d === "asc" ? c : -c;
+    }
+    return 0;
+  });
+  const gxArrow = (spec, k) => {
+    const i = spec.findIndex((x) => x.k === k);
+    if (i < 0) return '<i class="gx-ar off">↕</i>';
+    const s = spec[i], up = s.k === "rank" ? [true, false, false, true][s.m ?? 0] : s.d === "asc";
+    const extra = s.k === "rank" && s.m >= 2 ? (s.m === 2 ? "+" : "−") : "";
+    return `<i class="gx-ar">${up ? "↑" : "↓"}${extra}${spec.length > 1 ? `<sub>${i + 1}</sub>` : ""}</i>`;
+  };
+
   async function renderGroups(level, name, sub) {
     level = ["sector", "industry", "theme"].includes(level) ? level : "sector";
     if (!state.groups) view.innerHTML = SKEL("Loading groups");
@@ -255,78 +304,131 @@
       await loadScreen();
     } catch (e) { view.innerHTML = `<p class="empty">Groups are not built yet (${esc(e.message)}).</p>`; return; }
     if (routeName() !== "groups") return;
-    const gs = state.gstate || (state.gstate = { period: store.get("sd-gperiod", "1d"), small: false, q: "", sort: "rs_rating", dir: "desc", shut: {} });
-    const p = gs.period, enc = encodeURIComponent, retKey = p === "1d" ? "chg_1d" : "ret_" + p;
-    const L = state.groups.levels, all = L[level] || [], cfgG = state.groups.config || {};
+    const gs = state.gstate || (state.gstate = Object.assign({ period: store.get("sd-gperiod", "1d"), small: false, q: "", gsort: [{ k: "rank", m: 0, def: true }], isort: [{ k: "rank", m: 0, def: true }],
+      rsort: [{ k: "rs_rating", d: "desc", def: true }], shut: {}, rq: "" }, store.get("sd-groups", {})));
+    if (!Array.isArray(gs.cols)) gs.cols = GX_DEF_COLS.slice();
+    gs.cols = gs.cols.filter((c) => SD.COLUMNS[c]);
+    const saveG = () => store.set("sd-groups", { small: gs.small, gsort: gs.gsort, isort: gs.isort, rsort: gs.rsort, cols: gs.cols });
+    const p = gs.period, enc = encodeURIComponent;
+    const L = state.groups.levels, all = (L[level] || []).filter((x) => !(level === "sector" && x.n === 0)), cfgG = state.groups.config || {};
     const isWide = wide();
-    // default selection: the top-ranked group
-    if (!name && isWide) { const top = all.filter((g) => !g.small).sort((a, b) => (a.rank ?? 1e9) - (b.rank ?? 1e9))[0]; if (top) name = top.name; }
+    const rankOf = (x) => (x.small ? null : x.rank);
+    const gval = (x, k) => (k === "name" ? x.name : k === "med" ? x["med_" + p] : k === "hl" ? (x.hi20 ?? 0) - (x.lo20 ?? 0) : k === "rank" ? rankOf(x) : x[k]);
+    if (!name && isWide) { const top = gxSort(all.filter((x) => !x.small), [{ k: "rank", m: 0 }], gval)[0]; if (top) name = top.name; }
     const g = all.find((x) => x.name === name) || null;
-    const inds = level === "sector" && g ? (L.industry || []).filter((x) => x.parent === g.name).sort((a, b) => (a.rank ?? 1e9) - (b.rank ?? 1e9) || b.n - a.n) : [];
+    const inds = level === "sector" && g ? (L.industry || []).filter((x) => x.parent === g.name) : [];
     const subG = sub ? (L.industry || []).find((x) => x.name === sub) : null;
     const stockGroup = level === "sector" ? (subG || g) : g;
     const ids = stockGroup ? new Set(stockGroup.ids) : new Set();
-    const sorters = { symbol: (r) => r.symbol, close: (r) => r.close, ret: (r) => r[retKey], from_hi52: (r) => r.from_hi52, rs_rating: (r) => r.rs_rating };
-    const sk = sorters[gs.sort] || sorters.rs_rating;
-    const stocks = state.screen.filter((r) => ids.has(r.id)).sort((a, b) => {
-      const x = sk(a), y = sk(b);
-      if (gs.sort === "symbol") return gs.dir === "asc" ? String(x).localeCompare(String(y)) : String(y).localeCompare(String(x));
-      return gs.dir === "asc" ? (x ?? 1e9) - (y ?? 1e9) : (y ?? -1e9) - (x ?? -1e9);
-    });
+    const rq = (gs.rq || "").trim().toLowerCase();
+    const stocks = gxSort(state.screen.filter((r) => ids.has(r.id) && (!rq || r.symbol.toLowerCase().includes(rq) || String(r.name || "").toLowerCase().includes(rq))),
+      gs.rsort, (r, k) => (k === "symbol" ? r.symbol : r[k]));
     if (state.gStock && !stocks.some((r) => r.key === state.gStock)) state.gStock = null;
     const chartOn = isWide && !!state.gStock;
-    const rankCell = (x) => (x.rank == null ? '<span class="muted">–</span>' : `${x.rank}${x.rank_chg ? `<sup class="${x.rank_chg > 0 ? "up" : "down"}">${x.rank_chg > 0 ? "+" : ""}${x.rank_chg}</sup>` : ""}`);
-    const tip = (x) => `${x.name}: strength ${x.strength ?? "–"} · momentum ${x.momentum ?? "–"} · ${x.above50 ?? "–"}% above 50 SMA · ${x.n} stocks${x.tag ? " · " + x.tag : ""}`;
     const q = gs.q.trim().toLowerCase();
-    const list = all.filter((x) => (gs.small || !x.small || level === "sector") && (!q || x.name.toLowerCase().includes(q)))
-      .sort((a, b) => (a.rank ?? 1e9) - (b.rank ?? 1e9) || b.n - a.n);
+    const list = gxSort(all.filter((x) => (gs.small || !x.small || level === "sector") && (!q || x.name.toLowerCase().includes(q))), gs.gsort, gval);
+    const indList = gxSort(inds, gs.isort, gval);
     const label = { sector: "Sector", industry: "Industry", theme: "Theme" }[level], plural = { sector: "Sectors", industry: "Industries", theme: "Themes" }[level];
-    const col = (key, title, count, body, extra = "") => {
-      const shut = gs.shut[key] || (chartOn && key !== "res" && key !== "chart" && gs.shut[key] !== false);
-      return `<section class="gcol ${shut ? "shut" : ""} ${extra}" data-col="${key}"><div class="gcol-h"><b>${title}</b>${count != null ? `<small class="muted">${count}</small>` : ""}
-        ${key !== "res" && key !== "chart" ? `<button type="button" class="gcol-x" data-shut="${key}" title="${shut ? "Open" : "Fold"} this column">${shut ? "›" : "‹"}</button>` : ""}</div>
-        <div class="gcol-v">${esc(title)}</div><div class="gcol-b">${body}</div></section>`;
+    const pct2 = (v) => (v == null || !isFinite(v) ? '<span class="muted">—</span>' : `<span class="${v > 0 ? "up" : v < 0 ? "down" : ""}">${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).toFixed(2)}%</span>`);
+    const rankCell = (x) => (rankOf(x) == null ? '<span class="muted">—</span>' : `${x.rank}${x.rank_chg && Math.abs(x.rank_chg) > 5 ? `<sup class="${x.rank_chg > 0 ? "up" : "down"}">${x.rank_chg > 0 ? "+" : ""}${x.rank_chg}</sup>` : ""}`);
+    const tipOf = (x) => `${x.name}: ${x.n} stocks · ${x.above50 ?? "–"}% above the 50-day average${x.tag ? " · " + x.tag : ""}${x.strength != null ? ` · strength ${x.strength}, momentum ${x.momentum}` : ""}`;
+    // ---- columns
+    const col = (key, head, body, extra = "") => {
+      const shut = gs.shut[key] || (chartOn && key === "a" && gs.shut[key] !== false);
+      return `<section class="gcol ${shut ? "shut" : ""} ${extra}" data-col="${key}"><div class="gcol-h">${head}</div>
+        <div class="gcol-v">${esc(key === "a" ? plural : key === "b" && g ? g.name : "")}</div><div class="gcol-b">${body}</div>
+        ${key === "a" || key === "b" ? `<button type="button" class="gcol-x" data-shut="${key}" title="${shut ? "Open" : "Fold"} this column">${shut ? "›" : "‹"}</button>` : ""}</section>`;
     };
-    const groupTable = (items, lvl, selName, hrefOf) => `<table class="gt"><thead><tr><th class="l">${lvl === "industry" && level === "sector" ? "Industry" : label}</th><th>Rank</th><th>Med ${p.toUpperCase()}</th>
-        ${lvl === "industry" && level === "sector" ? "<th>&gt; 50 SMA</th><th>Stocks</th>" : '<th title="Members at a 20-day high / low today">20D H/L</th>'}</tr></thead><tbody>`
-      + items.map((x) => `<tr class="${x.name === selName ? "on" : ""} ${x.small ? "muted" : ""}" data-href="${hrefOf(x)}" title="${esc(tip(x))}"><td class="l"><span class="gt-n">${esc(x.name)}</span>${x.tag && !x.small ? ` <i class="gt-tag ${({ Leading: "t-up", Improving: "t-info", Weakening: "t-warn", Lagging: "t-down" })[x.tag] || ""}" title="${esc(x.tag)}"></i>` : ""}</td>`
-        + `<td class="num">${rankCell(x)}</td><td class="num">${pct(x["med_" + p])}</td>`
-        + (lvl === "industry" && level === "sector" ? `<td class="num">${x.small ? "–" : (x.above50 ?? "–") + "%"}</td><td class="num">${x.n}</td>` : `<td class="num"><span class="up">${x.hi20}</span>/<span class="down">${x.lo20}</span></td>`) + "</tr>").join("")
+    const th = (spec, tbl, k, l, cls = "", tip = "") => `<th class="${cls}" data-sort="${tbl}:${k}"${tip ? ` data-tip="${esc(tip)}"` : ""}>${cls.includes("l") ? `${l}${gxArrow(spec, k)}` : `${gxArrow(spec, k)}${l}`}</th>`;
+    const groupTable = (items, tbl, spec, lvlName, selName, hrefOf, indCols) => `<table class="gxt"><thead><tr>${th(spec, tbl, "name", lvlName.toUpperCase(), "l")}${th(spec, tbl, "rank", "RANK", "", GX_RANK_TIP)}${th(spec, tbl, "med", `MED ${p.toUpperCase()}`, "", `Median ${p.toUpperCase()} return of the group's stocks`)}`
+      + (indCols ? `${th(spec, tbl, "above50", "&gt; 50 SMA", "", "Share of the group's stocks above their 50-day average")}${th(spec, tbl, "n", "STOCKS")}` : th(spec, tbl, "hl", "20D H/L", "", "Stocks at a 20-day high / at a 20-day low today")) + `</tr></thead><tbody>`
+      + items.map((x) => `<tr class="${x.name === selName ? "on" : ""}${x.small ? " small" : ""}" data-f="${tbl}:${esc(x.name)}" data-href="${hrefOf(x)}" title="${esc(tipOf(x))}"><td class="l">${indCols ? '<i class="gx-chev">›</i>' : ""}<span class="gx-n">${esc(GX_SEC_SHORT[x.name] || x.name)}</span>${x.tag && !x.small ? `<i class="gx-tag ${TAG_CLS[x.tag] || ""}"></i>` : ""}</td>`
+        + `<td class="num">${rankCell(x)}</td><td class="num pv">${pct2(x["med_" + p])}</td>`
+        + (indCols ? `<td class="num">${x.small || x.above50 == null ? '<span class="muted">—</span>' : Math.round(x.above50) + "%"}</td><td class="num">${x.n}</td>`
+          : `<td class="num"><span class="${x.hi20 ? "up" : "muted"}">${x.hi20 ?? 0}</span><span class="muted">/</span><span class="${x.lo20 ? "down" : "muted"}">${x.lo20 ?? 0}</span></td>`) + "</tr>").join("")
       + "</tbody></table>";
-    const colA = col("a", plural, list.length, groupTable(list, level, g && g.name, (x) => `#/groups/${level}/${enc(x.name)}`));
-    const colB = level === "sector" && g ? col("b", g.name, `${inds.length} industr${inds.length === 1 ? "y" : "ies"}`, groupTable(inds, "industry", sub, (x) => `#/groups/sector/${enc(g.name)}/${enc(x.name)}`)
-      + `<a class="gt-all ${!sub ? "on" : ""}" href="#/groups/sector/${enc(g.name)}">All ${esc(g.name)} stocks · ${g.n} →</a>`) : "";
-    const th = (k, l, cls = "") => `<th class="${cls} ${gs.sort === k ? "sorted" : ""}" data-gs="${k}">${l}${gs.sort === k ? (gs.dir === "asc" ? " ▲" : " ▼") : ""}</th>`;
-    const resTitle = stockGroup ? (level === "sector" ? `${esc(g.name)}${subG ? " › " + esc(subG.name) : " · All stocks"}` : esc(g.name)) : "Stocks";
-    const colR = col("res", resTitle, stockGroup ? `${stocks.length} stocks` : null, stockGroup ? `<table class="gt gs"><thead><tr>${th("symbol", "Symbol", "l")}${th("close", "LTP")}${th("ret", p.toUpperCase() + " %")}${th("from_hi52", "52W HI")}${th("rs_rating", "RS")}<th class="l">Themes</th></tr></thead><tbody>`
-      + stocks.map((r) => `<tr class="${state.gStock === r.key ? "on" : ""}" data-stock="${esc(r.key)}"><td class="l"><b class="wl">${logo(r)}${esc(r.symbol)}</b>${r.high >= r.high_20d ? ' <span class="tag t-up">20H</span>' : ""}${r.low <= r.low_20d ? ' <span class="tag t-down">20L</span>' : ""}</td>`
-        + `<td class="num">${SD.fmtPrice(r.close)}</td><td class="num">${pct(r[retKey])}</td><td class="num">${pct(r.from_hi52)}</td><td class="num">${r.rs_rating ?? "–"}</td><td class="l small gs-th">${esc(r.themes || "—")}</td></tr>`).join("")
-      + "</tbody></table>" : `<p class="empty">Pick a ${label.toLowerCase()} on the left.</p>`, "gc-grow");
-    const colC = chartOn ? col("chart", "Chart", null, '<div id="gChart" class="g-chart"></div>', "gc-grow2") : "";
-    const how = `Rank = strength of the group's average stock vs the equal-weight market against its own ${cfgG.ratio_window || 63}-session average (small superscript = change in ${cfgG.rank_change_sessions || 5} sessions);
-      dot = Leading (green) / Improving (blue) / Weakening (orange) / Lagging (red). Small groups (&lt; ${cfgG.min_members || 5} stocks) get no rank. Hover a group for its numbers.`;
-    view.innerHTML = `<div class="gx"><div class="gx-bar"><div class="seg">${[["sector", "Sector"], ["industry", "Industry"], ["theme", "Theme"]].map(([k, l]) =>
-        `<a class="btn-seg ${k === level ? "on" : ""}" href="#/groups/${k}">${l} <small>${(L[k] || []).length}</small></a>`).join("")}</div>
-      ${seg("gperiod", [["1d", "1D"], ["1w", "1W"], ["1m", "1M"], ["3m", "3M"], ["1y", "1Y"], ["ytd", "YTD"]], p)}
-      <input id="gq" type="search" placeholder="Search ${level}…" value="${esc(gs.q)}" aria-label="Search groups">
-      ${level !== "sector" ? `<label class="chk"><input type="checkbox" id="gsmall" ${gs.small ? "checked" : ""}> Show small groups</label>` : ""}
-      <span class="pk-i" title="${esc(how.replace(/<[^>]+>/g, "").replace(/&lt;/g, "<"))}">i</span></div>
+    const headA = `<b>${plural}</b><small>${list.length}</small>`;
+    const colA = col("a", headA, groupTable(list, "g", gs.gsort, level === "sector" ? "Sector" : "Group", g && g.name, (x) => `#/groups/${level}/${enc(x.name)}`, false));
+    const colB = level === "sector" && g ? col("b", `<b>${esc(g.name)}</b><small>${inds.length} industr${inds.length === 1 ? "y" : "ies"}</small>`,
+      groupTable(indList, "i", gs.isort, "Industry", sub, (x) => `#/groups/sector/${enc(g.name)}/${enc(x.name)}`, true)
+      + `<a class="gx-all ${!sub ? "on" : ""}" href="#/groups/sector/${enc(g.name)}">All ${esc(g.name)} stocks <small>${g.n}</small> <i>→</i></a>`) : "";
+    const cols = gs.cols;
+    const rth = (k, l, cls = "") => th(gs.rsort, "r", k, l, cls);
+    const resHead = stockGroup ? (level === "sector" ? `<span class="gx-crumb">${esc(g.name)} <i>›</i></span><b>${subG ? esc(subG.name) : "All stocks"}</b>` : `<b>${esc(g.name)}</b>`) + `<small>${stocks.length} stocks</small>` : "<b>Stocks</b>";
+    const cellG = (r, c) => (c === "themes" ? `<td class="l gx-th">${esc(r.themes || "—")}</td>` : c === "rs_rating" ? `<td class="num gx-rs${r.rs_rating >= 80 ? " hi" : ""}">${r.rs_rating ?? "–"}</td>`
+      : `<td class="${SD.COLUMNS[c].fmt === "text" ? "l" : "num"}">${cellHTML(r, c)}</td>`);
+    const resBody = stockGroup ? `<div class="gx-rh"><b>Results</b><span class="gx-ri"><label class="gx-rq ${gs.rq ? "on" : ""}">${ICON.filter}<input type="search" id="gxRq" placeholder="Search" value="${esc(gs.rq || "")}"></label>
+        <div class="menu-wrap"><button class="icon-btn sm" id="gxSB" type="button" title="Sort">${ICON.sort}</button><div class="menu right gx-sm" id="gxSM" hidden></div></div>
+        <button class="icon-btn sm" id="gxCB" type="button" title="Columns">${ICON.cols}</button></span></div>
+      <table class="gxt gxr"><thead><tr><th class="l ck"><input type="checkbox" id="gxAll" aria-label="Select all"></th>${rth("symbol", "SYMBOL", "l")}${rth("close", "LTP")}${cols.map((c) => rth(c, esc(GX_SHORT[c] || SD.COLUMNS[c].label).toUpperCase(), SD.COLUMNS[c].fmt === "text" ? "l" : "")).join("")}</tr></thead><tbody>`
+      + stocks.map((r) => `<tr class="${state.gStock === r.key ? "on" : ""}" data-f="r:${esc(r.key)}" data-stock="${esc(r.key)}"><td class="l ck"><input type="checkbox" data-sel="${esc(r.key)}" ${state.selected.has(r.key) ? "checked" : ""} aria-label="Select ${esc(r.symbol)}"></td>`
+        + `<td class="l"><span class="nm">${logo(r)}<b>${esc(r.symbol)}</b>${r.high >= r.high_20d ? '<i class="gx-20 h">20H</i>' : ""}${r.low <= r.low_20d ? '<i class="gx-20 l">20L</i>' : ""}<button type="button" class="ld-w${state.watch.has(r.key) ? " on" : ""}" data-w="${esc(r.key)}" title="Watchlist">${state.watch.has(r.key) ? "★" : "+"}</button></span></td>`
+        + `<td class="num">${SD.fmtPrice(r.close)}</td>${cols.map((c) => cellG(r, c)).join("")}</tr>`).join("")
+      + "</tbody></table>" : `<p class="empty">Pick a ${label.toLowerCase()} on the left.</p>`;
+    const colR = col("res", resHead, resBody, "gc-grow");
+    const colC = chartOn ? col("chart", "<b>Chart</b>", '<div id="gChart" class="g-chart"></div>', "gc-grow2") : "";
+    // ---- remember what to animate: scroll, row places, which column changed
+    const keyA = `${level}|${p}|${q}|${gs.small}`, keyB = `${level}|${name}`, keyR = `${level}|${name}|${sub}`;
+    const animR = gxPrev.keys.r !== keyR, animB = gxPrev.keys.b !== keyB, animA = gxPrev.keys.lv !== level, periodChg = gxPrev.keys.p != null && gxPrev.keys.p !== p;
+    const oldRects = new Map();
+    view.querySelectorAll(".gx [data-f]").forEach((el) => oldRects.set(el.dataset.f, el.getBoundingClientRect().top));
+    const oldScroll = {}; view.querySelectorAll(".gx .gcol").forEach((c) => { oldScroll[c.dataset.col] = c.querySelector(".gcol-b").scrollTop; });
+    const cnt = (k) => (L[k] || []).filter((x) => !(k === "sector" && x.n === 0)).length;
+    view.innerHTML = `<div class="gx${periodChg ? " pchg" : ""}"><div class="gx-bar"><div class="gx-lv">${[["sector", "Sector"], ["industry", "Industry"], ["theme", "Theme"]].map(([k, l]) =>
+        `<a class="${k === level ? "on" : ""}" href="#/groups/${k}">${l} <small>(${cnt(k)})</small></a>`).join("")}</div>
+      <div class="rr-seg gx-pd" data-seg="gperiod">${[["1d", "1D"], ["1w", "1W"], ["1m", "1M"], ["3m", "3M"], ["1y", "1Y"], ["ytd", "YTD"]].map(([v, l]) => `<button type="button" data-v="${v}" class="${v === p ? "on" : ""}">${l}</button>`).join("")}</div>
+      <label class="gx-q">${ICON.filter}<input id="gq" type="search" placeholder="Search ${level}…" value="${esc(gs.q)}" aria-label="Search groups"></label>
+      ${level !== "sector" ? `<label class="gx-chk"><input type="checkbox" id="gsmall" ${gs.small ? "checked" : ""}> Show small groups</label>` : ""}</div>
       ${!isWide && name ? `<div class="crumbs"><a href="#/groups/${level}">‹ All ${plural.toLowerCase()}</a>${sub ? ` · <a href="#/groups/${level}/${enc(name)}">‹ ${esc(name)}</a>` : ""}</div>` : ""}
-      <div class="gx-cols ${isWide ? "wide" : ""} ${name ? "has-sel" : ""} ${sub ? "has-sub" : ""}" id="gCols">${colA}${colB}${colR}${colC}</div></div>`;
-    $("#stPage").innerHTML = `<span>${list.length} of ${all.length} ${plural.toLowerCase()}</span><span class="st-n">data ${SD.fmtDate(state.groups.data_date)}</span>`;
-    // fill the screen height on wide screens
-    const cols = $("#gCols");
-    if (isWide) cols.style.height = Math.max(460, innerHeight - (cols.getBoundingClientRect().top + scrollY) - 64) + "px";
-    const qi = $("#gq"); qi.oninput = () => { gs.q = qi.value; const pos = qi.selectionStart; renderGroups(level, name, sub); const n = $("#gq"); n.focus(); n.setSelectionRange(pos, pos); };
-    if ($("#gsmall")) $("#gsmall").onchange = (e) => { gs.small = e.target.checked; renderGroups(level, name, sub); };
-    const ps = $("[data-seg=gperiod]");
-    ps.onclick = (e) => { const b = e.target.closest("button"); if (!b) return; gs.period = b.dataset.v; store.set("sd-gperiod", gs.period); renderGroups(level, name, sub); };
-    cols.onclick = (e) => {
+      <div class="gx-cols ${isWide ? "wide" : ""} ${name ? "has-sel" : ""} ${sub ? "has-sub" : ""}" id="gCols">${colA}${colB}${colR}${colC}</div></div>
+      <div class="bx-tipbox" id="gxTip" hidden></div>`;
+    const footer = () => {
+      const inGroup = stocks.filter((r) => state.selected.has(r.key)).length;
+      $("#stPage").innerHTML = `<button class="st-btn" id="gxCopy" type="button" title="Copy symbols as NSE:SYMBOL (TradingView watchlist)">Copy</button><button class="st-btn" id="gxCsv" type="button">CSV</button>`
+        + `<span>${stockGroup ? esc(subG ? subG.name : g.name) + " · " : ""}${inGroup} of ${stocks.length} selected</span>${inGroup ? '<button class="st-btn gx-wl" id="gxWl" type="button">+ Watchlist</button>' : ""}`
+        + `<span class="st-n">${list.length} of ${all.length} ${plural.toLowerCase()}</span><span class="st-n">data through ${esc(shortDay(state.groups.data_date))}</span>`;
+      const picked = () => { const s = stocks.filter((r) => state.selected.has(r.key)); return s.length ? s : stocks; };
+      $("#gxCopy").onclick = async () => { const l = picked(), t = l.map((r) => "NSE:" + r.symbol).join(","); try { await navigator.clipboard.writeText(t); $("#gxCopy").textContent = `Copied ${l.length}`; } catch (e) { prompt("Copy these symbols:", t); } };
+      $("#gxCsv").onclick = () => { const blob = new Blob([SD.toCSV(picked(), ["symbol", "name", "close", ...cols])], { type: "text/csv" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${(stockGroup ? stockGroup.name : "group").replace(/[^\w]+/g, "-")}-${state.screenDate}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); };
+      if ($("#gxWl")) $("#gxWl").onclick = () => { stocks.filter((r) => state.selected.has(r.key)).forEach((r) => { if (!state.watch.has(r.key)) toggleWatch(r.key); }); $("#gxWl").textContent = "✓ Added"; view.querySelectorAll(".gxr [data-w]").forEach((b) => { const on = state.watch.has(b.dataset.w); b.classList.toggle("on", on); b.textContent = on ? "★" : "+"; }); };
+    };
+    footer();
+    const colsEl = $("#gCols");
+    if (isWide) colsEl.style.height = Math.max(460, innerHeight - colsEl.getBoundingClientRect().top - 46) + "px";
+    // ---- restore scroll, then glide rows from their old places; fresh columns fade their rows in
+    colsEl.querySelectorAll(".gcol").forEach((c) => { const k = c.dataset.col, keep = k === "a" ? !animA : k === "b" ? !animB : !animR; if (keep && oldScroll[k]) c.querySelector(".gcol-b").scrollTop = oldScroll[k]; });
+    const fresh = { a: animA, b: animB, res: animR };
+    colsEl.querySelectorAll(".gcol").forEach((c) => {
+      const box = c.querySelector(".gcol-b").getBoundingClientRect();
+      let k = 0;
+      c.querySelectorAll("[data-f]").forEach((el) => {
+        const b = el.getBoundingClientRect(); if (b.bottom < box.top - 40 || b.top > box.bottom + 40) return;
+        const o = oldRects.get(el.dataset.f);
+        if (fresh[c.dataset.col] || o == null) el.animate([{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }], { duration: 300, delay: Math.min(k++ * 18, 260), easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards" });
+        else if (Math.abs(o - b.top) > 1) el.animate([{ transform: `translateY(${o - b.top}px)` }, { transform: "none" }], { duration: 420, easing: "cubic-bezier(.2,.8,.2,1)" });
+      });
+    });
+    gxPrev.keys = { lv: level, a: keyA, b: keyB, r: keyR, p };
+    if (periodChg) setTimeout(() => { const x = view.querySelector(".gx"); if (x) x.classList.remove("pchg"); }, 500);
+    // ---- events
+    const again = () => { saveG(); renderGroups(level, name, sub); };
+    const qi = $("#gq"); qi.oninput = () => { gs.q = qi.value; const pos = qi.selectionStart; renderGroups(level, name, sub); const nq = $("#gq"); nq.focus(); nq.setSelectionRange(pos, pos); };
+    if ($("#gxRq")) $("#gxRq").oninput = (e) => { gs.rq = e.target.value; const pos = e.target.selectionStart; renderGroups(level, name, sub); const nq = $("#gxRq"); if (nq) { nq.focus(); nq.setSelectionRange(pos, pos); } };
+    if ($("#gsmall")) $("#gsmall").onchange = (e) => { gs.small = e.target.checked; again(); };
+    $("[data-seg=gperiod]").onclick = (e) => { const b = e.target.closest("button"); if (!b || b.dataset.v === gs.period) return; gs.period = b.dataset.v; store.set("sd-gperiod", gs.period); renderGroups(level, name, sub); };
+    colsEl.onclick = (e) => {
       const sh = e.target.closest("[data-shut]");
       if (sh) { const k = sh.dataset.shut, now = sh.closest(".gcol").classList.contains("shut"); gs.shut[k] = !now; renderGroups(level, name, sub); return; }
-      const v = e.target.closest(".gcol.shut .gcol-v"); if (v) { gs.shut[v.closest(".gcol").dataset.col] = false; renderGroups(level, name, sub); return; }
-      const h = e.target.closest("th[data-gs]");
-      if (h) { const k = h.dataset.gs; gs.dir = gs.sort === k ? (gs.dir === "asc" ? "desc" : "asc") : k === "symbol" ? "asc" : "desc"; gs.sort = k; renderGroups(level, name, sub); return; }
+      const v = e.target.closest(".gcol.shut"); if (v && !e.target.closest(".gcol-x")) { gs.shut[v.dataset.col] = false; renderGroups(level, name, sub); return; }
+      const h = e.target.closest("th[data-sort]");
+      if (h) {
+        const [tbl, k] = h.dataset.sort.split(":"), first = ["name", "symbol"].includes(k) ? "asc" : "desc";
+        if (tbl === "g") gs.gsort = gxClick(gs.gsort, k, first); else if (tbl === "i") gs.isort = gxClick(gs.isort, k, first); else gs.rsort = gxClick(gs.rsort, k, first);
+        again(); return;
+      }
+      if (e.target.id === "gxAll") { stocks.forEach((r) => (e.target.checked ? state.selected.add(r.key) : state.selected.delete(r.key))); colsEl.querySelectorAll(".gxr [data-sel]").forEach((i) => { i.checked = e.target.checked; }); return footer(); }
+      const sel = e.target.closest("[data-sel]"); if (sel) { if (sel.checked) state.selected.add(sel.dataset.sel); else state.selected.delete(sel.dataset.sel); return footer(); }
+      const w = e.target.closest("[data-w]"); if (w) { toggleWatch(w.dataset.w); const on = state.watch.has(w.dataset.w); w.classList.toggle("on", on); w.textContent = on ? "★" : "+"; return; }
       const st = e.target.closest("tr[data-stock]");
       if (st) {
         if (!isWide) { location.hash = "#/i/" + st.dataset.stock.replace(":", "/"); return; }
@@ -334,8 +436,26 @@
       }
       const tr = e.target.closest("tr[data-href]"); if (tr) { state.gStock = null; location.hash = tr.dataset.href; }
     };
+    // sort menu + columns of the results
+    const sm = $("#gxSM");
+    const SORTS = [["symbol", "A - Z", "asc"], ["close", "Price", "desc"], ["mcap_cr", "Market cap", "desc"], ["rs_rating", "RS rating", "desc"], ["from_hi52", "From 52W high", "desc"], ["chg_1d", "1D %", "desc"], ["ret_1w", "1W %", "desc"], ["ret_1m", "1M %", "desc"]];
+    if (sm) {
+      $("#gxSB").onclick = (e) => { e.stopPropagation(); const open = sm.hidden; sm.innerHTML = `<small class="menu-h">Sort by</small>` + SORTS.map(([k, l]) => `<button type="button" data-s="${k}" data-d="${SORTS.find((x) => x[0] === k)[2]}" class="${gs.rsort[0] && gs.rsort[0].k === k ? "on" : ""}">${l}</button>`).join(""); sm.hidden = !open; };
+      sm.onclick = (e) => { e.stopPropagation(); const b = e.target.closest("button[data-s]"); if (!b) return; gs.rsort = [{ k: b.dataset.s, d: b.dataset.d }]; sm.hidden = true; again(); };
+      $("#gxCB").onclick = () => columnSettings(() => { saveG(); renderGroups(level, name, sub); }, { get: () => gs.cols, set: (v) => { gs.cols = v; }, def: GX_DEF_COLS, extra: [], name: "Groups" });
+    }
+    view.onclick = () => { if (sm) sm.hidden = true; };
+    // explanation cards (titles, rank, group numbers)
+    const tip = $("#gxTip");
+    view.onpointerover = (e) => {
+      const t = e.target.closest("[data-tip]"); if (!t) { tip.hidden = true; return; }
+      tip.textContent = t.dataset.tip; tip.hidden = false;
+      const b = t.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight, y = b.bottom + 6 + h < innerHeight - 8 ? b.bottom + 6 : b.top - h - 6;
+      tip.style.transform = `translate(${Math.max(8, Math.min(innerWidth - w - 8, b.left + 10)).toFixed(0)}px, ${y.toFixed(0)}px)`;
+    };
+    view.onpointerleave = () => { tip.hidden = true; };
     if (chartOn) { const r = state.screenByKey.get(state.gStock); if (r) SDChart.open($("#gChart"), r, { kind: "s" }); }
-    const on = cols.querySelector(".gcol[data-col=a] tr.on"); if (on && isWide) on.scrollIntoView({ block: "nearest" });
+    if (animA || animB) { const on = colsEl.querySelector(".gcol[data-col=a] tr.on"); if (on && isWide) on.scrollIntoView({ block: "nearest" }); }
   }
 
   /* ------------------------------------------------------------------ breadth (Phase S10): data/breadth.json */
@@ -536,14 +656,14 @@
       el.addEventListener("pointerleave", () => sync(null));
     });
     // little explanation cards on titles and the reading rows
-    view.addEventListener("pointerover", (e) => {
+    view.onpointerover = (e) => {
       const t = e.target.closest("[data-tip]"); if (!t || !t.dataset.tip) { tip.hidden = true; return; }
       tip.textContent = t.dataset.tip; tip.hidden = false;
       const b = t.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
       const y = b.top - h - 8 > 8 ? b.top - h - 8 : b.bottom + 8;          // above the title: never over the numbers below it
       tip.style.transform = `translate(${Math.max(8, Math.min(innerWidth - w - 8, b.left)).toFixed(0)}px, ${y.toFixed(0)}px)`;
-    });
-    view.addEventListener("pointerleave", () => { tip.hidden = true; });
+    };
+    view.onpointerleave = () => { tip.hidden = true; };
     // options
     const on = (name, fn) => { const g = $(`[data-seg=${name}]`); if (g) g.onclick = (e) => { const b = e.target.closest("button"); if (b && !b.classList.contains("on")) { fn(b.dataset.v); saveB(); renderBreadth(); } }; };
     on("brange", (v) => { bs.range = v; }); on("bhl", (v) => { bs.hl = v; });
@@ -2850,6 +2970,8 @@
     clearGrid();
     view.onkeydown = null;
     view.onclick = null;
+    view.onpointerover = null;
+    view.onpointerleave = null;
     $("#stPage").innerHTML = "";
     if (parts[0] === "stocks" || parts[0] === "scanners") renderStocks();
     else if (parts[0] === "fields") renderFields();

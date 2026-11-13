@@ -25,7 +25,8 @@ def test_overrides_fill_gaps_and_old_style_but_never_beat_nse(tmp_path):
     pd.DataFrame({"symbol": ["GOOD", "OLD", "NONE", "NEW"], "macro": "M", "sector": ["X", "Textiles", "Services", "IT"],
                   "industry": "I", "basic_industry": "B", "source": ["BSE", "BSE", "manual", "manual"], "note": ""}).to_csv(ov, index=False)
     d = classification.load(cls, ov)
-    assert d.loc["GOOD", "sector"] == "Oil Gas & Consumable Fuels" and d.loc["GOOD", "class_source"] == "NSE"
+    # NSE's answer wins over the override; its spelling follows the reference list (punctuation only, 13-Nov-2026)
+    assert d.loc["GOOD", "sector"] == "Oil, Gas & Consumable Fuels" and d.loc["GOOD", "class_source"] == "NSE"
     assert d.loc["OLD", "sector"] == "Textiles" and d.loc["OLD", "class_source"] == "BSE"
     assert d.loc["NONE", "class_source"] == "manual" and d.loc["NEW", "sector"] == "IT"
     assert classification.old_style("AUTOMOBILE") and not classification.old_style("Automobile and Auto Components")

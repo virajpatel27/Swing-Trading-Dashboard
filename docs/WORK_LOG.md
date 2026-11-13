@@ -1130,3 +1130,25 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   shows each verdict on the day it is judged (breakout day + hold_sessions, from breadth config): the last bar is
   today's verdict, the chip "N held, M failed today" uses it, and the card says "breakouts of <date>, judged today".
 - The explanation card of a title now opens above the title, so it never covers the chip / numbers below.
+
+### 2026-11-13: Groups page in the reference's look + one spelling per group
+- Viraj (video 12-Nov "Group 12-11-2026.mp4"): every detail, animation, colours, fonts and sizes like the reference,
+  and check that no sector, industry or theme is missing.
+- Check: the reference list (config/reference_classes.csv) has 23 sectors and 192 industries; we had every one of them,
+  plus three extra names: a 24th sector "Media Entertainment & Publication" (1 NSE-only stock, BRIGHTOUTD) and two
+  industries spelled without commas. classification.load() now gives names that differ only in punctuation the
+  reference spelling (sector + basic_industry) -> 23 sectors, 193 industries (192 + REITs), 96 themes. Test
+  tests/test_reference_classes.py::test_same_name_but_punctuation_takes_the_reference_spelling. Live after the next build.
+- site/app.js renderGroups() rewritten, site/styles.css "Phase N8" block replaced:
+  - Sector (23) | Industry | Theme pills with counts, 1D ... YTD, search, "Show small groups" on the blue frame;
+  - one soft white card per column (groups, the sector's industries with "All <sector> stocks", results, chart) with
+    round fold buttons on the card edges; short sector names like the reference (Auto & Components, Telecom, FMCG, IT);
+  - multi-column sorting on every table: arrows with priority numbers, a click adds a column, the next flips it, the
+    third takes it off; Rank cycles best, worst, biggest climbers, biggest fallers; the default order gives way to the
+    first click; rank change shown only above 5 places (blue up, pink down); explanation card on RANK / MED / 20D H/L;
+  - results: logos, 20H / 20L tags, "+" watchlist, check boxes with "+ Watchlist" in the status bar, search, sort menu,
+    own column list (column drawer; default 1D %, 52W HI, RS, Themes, ATH), Copy / CSV;
+  - animation: rows glide to their new place on every sort (FLIP), a new group's rows fade in one after another,
+    period changes pulse the numbers, columns keep their scroll position across clicks.
+- Breadth + Groups explanation cards now use one listener (view.onpointerover, reset by the router) instead of adding
+  one per redraw. JS 32 / 32, Python all green.

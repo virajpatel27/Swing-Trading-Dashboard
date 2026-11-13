@@ -9,6 +9,7 @@ A second call (shareholding pattern) gives the promoter holding: free float = 10
 """
 from __future__ import annotations
 
+import re
 import time
 from datetime import date
 from pathlib import Path
@@ -112,6 +113,12 @@ def load(path: Path, overrides: Path | None = OVERRIDES, reference: Path | None 
         cls.loc[idx, "sector"] = ref["sector"].where(ref["sector"] != "", cls.loc[idx, "sector"])
         cls.loc[idx, "basic_industry"] = ref["industry"]
         cls.loc[idx, "class_source"] = ("reference list " + ref.get("as_of", pd.Series("", index=idx))).str.strip()
+        # one spelling per group (12-Nov-2026: NSE's "Media Entertainment & Publication" made a 24th sector next to the
+        # reference's "Media, Entertainment & Publication"): names equal apart from punctuation take the reference spelling
+        key = lambda s: re.sub(r"[^a-z0-9]", "", str(s).lower())
+        for col, refcol in (("sector", "sector"), ("basic_industry", "industry")):
+            canon = {key(x): x for x in ref[refcol].unique() if x}
+            cls[col] = cls[col].map(lambda v: canon.get(key(v), v) if v else v)
     return cls
 
 

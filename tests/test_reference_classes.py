@@ -41,3 +41,19 @@ def test_themes_from_reference_only_active_stocks():
     df = themes.from_reference(ref, master)
     assert sorted(map(tuple, df[["theme", "symbol"]].values)) == [("A", "AAA"), ("B", "AAA")]
     assert set(df["source"]) == {"reference list 2026-11-06"}
+
+
+def test_same_name_but_punctuation_takes_the_reference_spelling(tmp_path):
+    """12-Nov-2026: one NSE-only stock with "Media Entertainment & Publication" made a 24th sector."""
+    cls = tmp_path / "classification.csv"
+    pd.DataFrame([{"symbol": "DDD", "macro": "X", "sector": "Media Entertainment & Publication", "industry": "Y",
+                   "basic_industry": "Healthcare Research Analytics & Technology", "source": "NSE"},
+                  {"symbol": "EEE", "macro": "X", "sector": "Chemicals", "industry": "Y", "basic_industry": "Own Name", "source": "NSE"}]
+                 ).to_csv(cls, index=False)
+    ref = tmp_path / "ref.csv"
+    pd.DataFrame([{"symbol": "AAA", "sector": "Media, Entertainment & Publication", "industry": "Healthcare Research, Analytics & Technology",
+                   "themes": "", "as_of": "2026-11-06"}]).to_csv(ref, index=False)
+    c = classification.load(cls, overrides=None, reference=ref)
+    assert c.at["DDD", "sector"] == "Media, Entertainment & Publication"
+    assert c.at["DDD", "basic_industry"] == "Healthcare Research, Analytics & Technology"
+    assert c.at["EEE", "basic_industry"] == "Own Name"

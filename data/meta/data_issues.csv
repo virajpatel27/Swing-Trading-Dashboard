@@ -739,7 +739,7 @@ NSE RUBYMILLS,warn,missing dates,2008-05-30,"18 trading days without a row (firs
 NSE RUCHINFRA,warn,missing dates,2009-01-13,"55 trading days without a row (first 2009-01-13, last 2018-07-19)"
 NSE RUCHIRA,warn,missing dates,2008-11-17,"70 trading days without a row (first 2008-11-17, last 2014-03-22)"
 NSE RUPA,warn,missing dates,2012-03-16,"128 trading days without a row (first 2012-03-16, last 2014-02-24)"
-NSE SAB,warn,missing dates,2026-08-18,"26 trading days without a row (first 2026-08-18, last 2026-11-02)"
+NSE SAB,warn,missing dates,2026-08-18,"33 trading days without a row (first 2026-08-18, last 2026-11-12)"
 NSE SADBHAV,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE SAGARDEEP,warn,missing dates,2016-05-19,"585 trading days without a row (first 2016-05-19, last 2020-03-04)"
 NSE SAGCEM,warn,missing dates,2008-12-03,"75 trading days without a row (first 2008-12-03, last 2014-04-04)"
@@ -803,7 +803,7 @@ NSE SILINV,warn,missing dates,2008-04-03,"399 trading days without a row (first 
 NSE SILVERTUC,warn,missing dates,2018-02-16,"398 trading days without a row (first 2018-02-16, last 2022-04-13)"
 NSE SIMBHALS,warn,missing dates,2026-04-27,"19 trading days without a row (first 2026-04-27, last 2026-05-29)"
 NSE SIMPLEXINF,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
-NSE SIMPLXREA,warn,missing dates,2026-09-01,"13 trading days without a row (first 2026-09-01, last 2026-11-09)"
+NSE SIMPLXREA,warn,missing dates,2026-09-01,"14 trading days without a row (first 2026-09-01, last 2026-11-12)"
 NSE SINTERCOM,warn,missing dates,2018-07-02,"134 trading days without a row (first 2018-07-02, last 2024-05-18)"
 NSE SIRCA,warn,missing dates,2018-07-09,"18 trading days without a row (first 2018-07-09, last 2019-07-17)"
 NSE SITINET,warn,missing dates,2023-07-03,"69 trading days without a row (first 2023-07-03, last 2024-05-31)"
@@ -937,7 +937,7 @@ NSE UNIVASTU,warn,missing dates,2017-08-30,"479 trading days without a row (firs
 NSE UNIVCABLES,warn,missing dates,2008-12-23,"102 trading days without a row (first 2008-12-23, last 2015-11-26)"
 NSE UNIVPHOTO,warn,missing dates,2026-11-08,"1 trading days without a row (first 2026-11-08, last 2026-11-08)"
 NSE UNOMINDA,warn,missing dates,2007-02-27,"41 trading days without a row (first 2007-02-27, last 2014-02-17)"
-NSE UPHOT,warn,missing dates,2026-08-19,"18 trading days without a row (first 2026-08-19, last 2026-11-04)"
+NSE UPHOT,warn,missing dates,2026-08-19,"21 trading days without a row (first 2026-08-19, last 2026-11-12)"
 NSE URAVIDEF,warn,missing dates,2018-04-10,"889 trading days without a row (first 2018-04-10, last 2024-11-14)"
 NSE UTTAMSUGAR,warn,missing dates,2009-05-18,"29 trading days without a row (first 2009-05-18, last 2014-01-10)"
 NSE V2RETAIL,warn,missing dates,2009-05-18,"15 trading days without a row (first 2009-05-18, last 2014-02-04)"
@@ -2475,9 +2475,8 @@ NSE PARSVNATH (adjusted),warn,unexplained jump,2008-01-21,close moved 29.9% (to 
 NSE PARSVNATH (adjusted),warn,unexplained jump,2008-10-24,close moved 21.7% (to 22.425)
 NSE PARSVNATH (adjusted),warn,unexplained jump,2008-10-29,close moved 20.9% (to 19.725)
 NSE PARSVNATH (adjusted),warn,unexplained jump,2018-11-28,close moved 20.0% (to 9.3)
-NSE PASHUPATI (adjusted),warn,unexplained jump,2019-03-19,close moved 20.0% (to 5.640000000000001)
-NSE PASHUPATI (adjusted),warn,unexplained jump,2021-04-12,close moved 20.0% (to 6.38)
-NSE PASHUPATI (adjusted),warn,unexplained jump,2021-07-26,close moved 20.0% (to 9.090000000000002)
+NSE PASHUPATI (adjusted),warn,unexplained jump,2021-04-12,close moved 20.0% (to 2.5520000000000005)
+NSE PASHUPATI (adjusted),warn,unexplained jump,2024-05-08,close moved 20.0% (to 6.168000000000001)
 NSE PATELENG (adjusted),warn,unexplained jump,2008-10-28,close moved 20.0% (to 94.66744936462342)
 NSE PATELENG (adjusted),warn,unexplained jump,2009-05-19,close moved 24.6% (to 208.16119262270695)
 NSE PATINTLOG (adjusted),warn,unexplained jump,2010-01-04,close moved 20.1% (to 15.869880390237231)
@@ -3430,4 +3429,4 @@ BSE BSE SME IPO,warn,bad candle,2023-06-30,O 26094.94 H 26377.13 L 26082.26 C 26
 NSE DVL,warn,corporate action not seen in prices,2021-08-05,bonus 1:2: no matching price change near the ex-date
 NSE GULFPETRO,warn,corporate action not seen in prices,2013-07-09,bonus 23:19: no matching price change near the ex-date
 NSE ORIENTPPR,warn,corporate action without factor,2007-06-08,rights: rights without issue price
-NSE IGLSPIRITS,warn,close differs from BSE,2026-11-12,"NSE 856.85, BSE 809.2 (-5.56 %)"
+NSE SWARAJ,warn,close differs from BSE,2026-11-13,"NSE 350.45, BSE 363.5 (+3.72 %)"

@@ -68,10 +68,13 @@
   }
 
   async function load() {
+    // 13-Nov-2026 (slow first load): the big stock file starts at once, next to the snapshot, instead of after it;
+    // every page that needs it then waits for the same download (loadScreen keeps the promise)
+    loadScreen().catch(() => {});
     try {
-      const [snap, sectors, health] = await Promise.all([getJSON("data/latest.json"), getJSON("data/sectors.json"),
-        getJSON("data/health.json").catch(() => null)]);
-      state.logos = new Set(((await getJSON("logos/index.json").catch(() => null)) || {}).ids || []);
+      const [snap, sectors, health, logos] = await Promise.all([getJSON("data/latest.json"), getJSON("data/sectors.json"),
+        getJSON("data/health.json").catch(() => null), getJSON("logos/index.json").catch(() => null)]);
+      state.logos = new Set((logos || {}).ids || []);
       state.rows = SD.rowsFromSnapshot(snap);
       state.rows.forEach((r) => state.byKey.set(r.key, r));
       state.sectors = sectors;
@@ -1133,13 +1136,17 @@
   }
 
   /* ------------------------------------------------------------------ stocks: results table + chart (Phase S5) */
-  async function loadScreen() {
-    if (state.screen) return state.screen;
-    const snap = await getJSON("data/screen.json");
-    state.screen = SD.screenRows(snap);
-    state.screen.forEach((r) => state.screenByKey.set(r.key, r));
-    state.screenDate = snap.data_date;
-    return state.screen;
+  function loadScreen() {
+    if (state.screen) return Promise.resolve(state.screen);
+    if (!state.screenP) {
+      state.screenP = getJSON("data/screen.json").then((snap) => {
+        state.screen = SD.screenRows(snap);
+        state.screen.forEach((r) => state.screenByKey.set(r.key, r));
+        state.screenDate = snap.data_date;
+        return state.screen;
+      }).catch((e) => { state.screenP = null; throw e; });
+    }
+    return state.screenP;
   }
   const wide = () => matchMedia("(min-width: 1100px)").matches;
   const routeName = () => location.hash.replace(/^#\/?/, "").split("/")[0];
@@ -1494,7 +1501,9 @@
      user edits and own scans in this browser (localStorage "sd-scans"), the formula editor */
   async function loadScans() {
     if (state.scanSpec) return;
-    const [spec, fields] = await Promise.all([getJSON("data/scanners.json"), getJSON("data/fields.json")]);
+    if (!state.scanP) state.scanP = Promise.all([getJSON("data/scanners.json"), getJSON("data/fields.json")]).catch((e) => { state.scanP = null; throw e; });
+    const [spec, fields] = await state.scanP;
+    if (state.scanSpec) return;
     state.scanSpec = spec;
     state.fields = fields.fields.filter((f) => f.screen);
     state.labels = Object.fromEntries(fields.fields.map((f) => [f.id, f.label]));
@@ -2734,18 +2743,23 @@
     return out;
   }
 
-  async function renderHome() {
-    view.innerHTML = SKEL("Loading the warm-up");
+  async function renderHome(again) {
+    if (again !== true || !view.querySelector(".home")) view.innerHTML = SKEL("Loading the warm-up");
     let B = null, flows = null;
-    try { await loadScreen(); } catch (e) { /* the page still shows the parts without stocks */ }
-    try { if (!state.breadth) state.breadth = await getJSON("data/breadth.json"); B = state.breadth; } catch (e) { B = null; }
-    try { if (!state.groups) state.groups = await getJSON("data/group_ranks.json"); } catch (e) { /* no groups yet */ }
-    try { flows = await getJSON("data/fii_dii.json"); } catch (e) { flows = null; }
-    try { if (!state.scanSpec) await loadScans(); } catch (e) { /* no scanners */ }
-    const N = await getNews();
-    let ipos = { recent: [], upcoming: [] };
-    try { ipos = await getJSON("data/ipos.json"); } catch (e) { /* none yet */ }
-    if (routeName() !== "") return;
+    // all downloads at the same time (they used to wait for each other: slow on a slow line); the big stock file does
+    // not hold the page: Home shows first and draws itself again with the stock parts when that file has arrived
+    const tok = (state.homeTok = {});
+    if (!state.screen) loadScreen().then(() => { if (routeName() === "" && state.homeTok === tok) renderHome(true); }).catch(() => {});
+    let ipos = { recent: [], upcoming: [] }, N;
+    [, B, , flows, , N, ipos] = await Promise.all([
+      null,
+      state.breadth ? state.breadth : getJSON("data/breadth.json").then((b) => (state.breadth = b)).catch(() => null),
+      state.groups ? state.groups : getJSON("data/group_ranks.json").then((g) => (state.groups = g)).catch(() => null),
+      getJSON("data/fii_dii.json").catch(() => null),
+      state.scanSpec ? null : loadScans().catch(() => null),
+      getNews(),
+      getJSON("data/ipos.json").catch(() => ipos)]);
+    if (routeName() !== "" || state.homeTok !== tok) return;
     const hs = Object.assign({ part: "50", more: false }, store.get("sd-home", {}));
     const saveHs = () => store.set("sd-home", hs);
     const U = B && (B.universes.liquid || B.universes.all), S = U ? U.series : {};

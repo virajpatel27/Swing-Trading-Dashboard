@@ -1224,3 +1224,15 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   description also the results-due line. Exported as SDChart.settingsDrawer.
 - Checked: light / dark, bars, MA menu, sort, D / W, Broad / Sector, drawer on Major Indices and on a stock chart,
   fast clicking without console errors. JS 32 / 32, Python 220 passed.
+
+### 2026-11-13: Faster first load (Viraj: "website bahu load le chhe")
+- Measured the live site: GitHub Pages answered at only ~12-20 KB/s from the PC today (other CDNs 65-125 KB/s), and
+  the Home page needs ~2.6 MB gzip (screen.json alone 1.75 MB gzip, 288 columns x 2,635 stocks; rounding numbers
+  would save only 7 %, so not done). Every push / data update means one fresh download of those files.
+- site/app.js:
+  - load(): screen.json starts at once next to latest.json (was: only after it); logos/index.json in the same batch;
+  - loadScreen() / loadScans() keep their promise, so pages share one download instead of starting another;
+  - renderHome(): its 7 files load at the same time (were one after another), and Home no longer waits for
+    screen.json: it shows at once and draws itself again with the stock parts (setups, results due, watchlist)
+    when that file has arrived (renderHome(true), no skeleton flash; a token stops a stale draw).
+- Checked in the preview: requests start together, Home complete, no console errors. JS 32 / 32.

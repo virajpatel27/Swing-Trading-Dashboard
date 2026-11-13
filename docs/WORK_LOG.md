@@ -1171,3 +1171,17 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   - status bar: Copy / CSV, "x of N selected", Remove selected, "N stocks · sorted by … · M lists".
 - Signal tone classes are prefixed wt-* (plain "earn" / "base" clashed with other pages' styles).
 - Checked: light, dark, phone, tabs, filters, add / remove. JS 32 / 32, Python all green.
+
+### 2026-11-13: Major Indices page - zoomable charts, Mono theme, toolbar like the reference
+- Viraj (video 12-Nov "Major Indice 12-11-2026.mp4"): every index / sector chart must zoom in and out, the chart
+  theme like the reference (mono candles), smooth animation on every change, roomy sizes.
+- site/app.js renderMajorIndices() rewritten, styles.css "major indices" block (scoped .mix):
+  - one card per index: name (links to the full chart), 1D % and 1W %; chart = full history, opens on the chosen
+    range; mouse wheel / pinch = zoom, drag = move, double click = back to the range, "»" (shows when moved away)
+    glides back to the latest bar; dashed crosshair with date and price labels;
+  - toolbar: Broad (n) | Sector (n), D | W, candles | bars; MA menu (EMA 10 / 21, SMA 50 / 150 / 200, any mix),
+    range 1M ... 5Y, Sort by (usual, 1D / 1W / 1M %, name), Layout 1-4 per row, chart style Mono (default) /
+    Default / Classic / Contrast with a light and a dark shade each;
+  - animation: cards rise one after another, charts fade in, a new range glides (eased visible-range tween), a new
+    layout moves and resizes the cards (FLIP), style / MA / theme changes recolour in place without a redraw.
+- Settings saved in sd-mi (old "ma: false" maps to no MA). JS 32 / 32.

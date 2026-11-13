@@ -1735,3 +1735,55 @@ main.card:has(> .wlx) { background: transparent; border: 0; box-shadow: none; pa
 @media (max-width: 720px) { .wl-bar { flex-wrap: wrap; } .wl-add { margin-left: 0; width: 100%; } .wl-aq { width: 100%; } .wl-sug { width: 100%; } }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wl-c.wt-up { color: #5fd38d; } :root:not([data-theme="light"]) .wl-c.wt-earn { color: #f0a85a; } :root:not([data-theme="light"]) .wl-c.wt-base { color: #f2b35e; } }
 :root[data-theme="dark"] .wl-c.wt-up { color: #5fd38d; } :root[data-theme="dark"] .wl-c.wt-earn { color: #f0a85a; } :root[data-theme="dark"] .wl-c.wt-base { color: #f2b35e; }
+
+/* ---------------------------------------------------------------- major indices (new look 13-Nov-2026)
+   Like the reference video: a quiet text toolbar, menus on the right, roomy white cards with zoomable mono charts. */
+.mix .mi-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin: -4px 0 14px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.mi-tx { display: inline-flex; gap: 2px; }
+.mi-tx button { height: 30px; display: inline-flex; align-items: center; gap: 4px; padding: 0 10px; border: 0; border-radius: 8px; background: none; color: var(--muted); font-size: 13px; cursor: pointer; transition: background .15s, color .15s; }
+.mi-tx button small { font-size: 12px; opacity: .85; }
+.mi-tx button:hover { color: var(--text); background: var(--panel-2); }
+.mi-tx button.on { color: var(--accent); font-weight: 500; }
+.mi-tx.ic button.on { background: var(--accent-soft); }
+.mi-sep { width: 1px; height: 18px; background: var(--line); }
+.mix .mi-r { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.mi-dd .hm-ddb { gap: 6px; height: 32px; }
+.mi-dd .hm-ddb b { color: var(--accent); font-weight: 600; }
+.mi-dd.ico .hm-ddb { width: 34px; padding: 0; justify-content: center; } .mi-dd.ico .hm-ddb svg:last-child { display: none; }
+.mi-dd.right .hm-menu { left: auto; right: 0; }
+.mi-menu { min-width: 190px; }
+.mi-menu button { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.mi-ck { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: 6px; font-size: 12.5px; cursor: pointer; }
+.mi-ck:hover { background: var(--panel-2); } .mi-ck input { accent-color: var(--accent); margin: 0; }
+.mi-ck i { width: 14px; height: 3px; border-radius: 2px; }
+.mi-lay { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 4px; }
+.mi-lay i { width: 4px; height: 9px; border-radius: 1px; background: color-mix(in srgb, var(--muted) 50%, transparent); }
+.mi-menu button.on .mi-lay i { background: var(--accent); }
+.mi-sty { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 2px 4px 6px; }
+.mi-sty button { flex-direction: column; justify-content: center; gap: 6px; padding: 10px 6px !important; border: 1px solid var(--line) !important; border-radius: 9px !important; font-size: 11.5px !important; }
+.mi-sty button.on { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)) !important; background: var(--accent-soft) !important; color: var(--accent) !important; }
+.mi-sw { display: inline-flex; gap: 3px; } .mi-sw i { width: 7px; height: 16px; border-radius: 2px; }
+.mi-hint { margin: 4px 8px 6px; font-size: 10.5px; color: var(--muted); line-height: 1.5; max-width: 200px; }
+.mix .mi-grid { display: grid; grid-template-columns: repeat(var(--mcols, 2), minmax(0, 1fr)); gap: 14px; }
+.mix .mi-card { position: relative; display: flex; flex-direction: column; padding: 12px 6px 4px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); box-shadow: var(--card-shadow);
+  animation: rise .4s ease-out both; animation-delay: calc(min(var(--i), 12) * 40ms); transition: border-color .2s, box-shadow .2s; will-change: transform; }
+.mix .mi-card:hover { border-color: color-mix(in srgb, var(--accent) 30%, var(--line)); box-shadow: 0 10px 30px rgba(20, 35, 70, .08); }
+.mix .mi-h { display: flex; align-items: center; gap: 10px; padding-right: 8px; }
+.mi-n { font-size: 13px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mi-n:hover { color: var(--accent); text-decoration: none; }
+.mi-chg { margin-left: auto; display: inline-flex; align-items: baseline; gap: 5px; font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mi-chg small { color: var(--muted); font-size: 11px; margin-left: 6px; }
+.mi-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); align-self: center; box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+.mix .mi-ch { position: relative; height: 300px; margin-top: 6px; opacity: 0; transition: opacity .45s ease; }
+.mix .mi-ch.on { opacity: 1; }
+.mix .mi-ch .skel { position: absolute; inset: 0; }
+.mix .mi-grid[style*="--mcols:1"] .mi-ch { height: 380px; }
+.mix .mi-grid[style*="--mcols:3"] .mi-ch { height: 250px; }
+.mix .mi-grid[style*="--mcols:4"] .mi-ch { height: 220px; }
+.mi-cv { position: absolute; inset: 0; cursor: crosshair; }
+.mi-end { position: absolute; right: 74px; bottom: 34px; z-index: 3; width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--muted);
+  cursor: pointer; font-size: 14px; box-shadow: 0 2px 8px rgba(20, 35, 70, .1); animation: hmTip .2s ease-out; transition: color .15s, border-color .15s; }
+.mi-end:hover { color: var(--accent); border-color: var(--accent); }
+.mi-end[hidden] { display: none; }
+@media (max-width: 1099px) { .mix .mi-grid { grid-template-columns: repeat(min(var(--mcols, 2), 2), minmax(0, 1fr)); } }
+@media (max-width: 720px) { .mix .mi-grid { grid-template-columns: 1fr; } .mix .mi-r { margin-left: 0; flex-wrap: wrap; } .mix .mi-ch { height: 260px !important; } }

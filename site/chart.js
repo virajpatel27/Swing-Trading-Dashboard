@@ -767,57 +767,66 @@
     showK(sel);
   }
 
-  /* chart settings: a drawer from the right, changes show at once */
-  function settingsDrawer() {
+  /* chart settings: a drawer from the right, changes show at once (reference look 13-Nov-2026: one scrolling panel,
+     Markers / Display tabs jump to their part, chart style cards, checkboxes with a small sample on the right).
+     o.note = a yellow hint on top (Major Indices), o.onChange(cfg) = called after every change. */
+  function settingsDrawer(o = {}) {
     const mk = cfg.marks, ch = cfg.chips, sh = cfg.show;
-    const tog = (name, label, on, small, sample) => `<label class="sd-row"><span><b>${label}</b>${small ? `<small>${small}</small>` : ""}</span>${sample ? `<i class="sd-smp">${sample}</i>` : ""}<input type="checkbox" class="sd-sw" name="${name}" ${on ? "checked" : ""}></label>`;
-    const smp = { pivot: '<svg viewBox="0 0 40 14"><path d="M2 7h36" stroke="#2962ff" stroke-width="2"/></svg>', cup: '<svg viewBox="0 0 40 14"><path d="M2 3Q20 22 38 3" stroke="#2962ff" stroke-width="2" fill="none"/></svg>',
-      vcp: '<svg viewBox="0 0 40 14"><path d="M2 3C8 12 12 12 16 6S24 9 28 8 34 6 38 6" stroke="#2962ff" stroke-width="1.6" fill="none"/></svg>', earn: '<b class="badge e">E</b>', act: '<b class="badge c">C</b>',
-      hl: '<svg viewBox="0 0 40 14"><path d="M2 7h36" stroke="#089981" stroke-dasharray="3 2"/></svg>', sw: "▲▼" };
-    const body = `<div class="seg sm sd-tabs" data-tab><button type="button" data-v="m" class="on">Markers</button><button type="button" data-v="d">Display</button></div>
-      <form class="f" id="sdForm"><div class="sd-pane" data-p="m">
-      <h4>Setups</h4>${tog("pivot", "Pivot / breakout line", mk.pivot, "top of the current base and its low", smp.pivot)}
-      ${tog("cup", "Base (cup) curve", mk.cup !== false, "rounded line under the current base", smp.cup)}
-      ${tog("vcp", "Contractions (VCP)", mk.vcp, "wave of the pullbacks with their depth %", smp.vcp)}
-      ${tog("tight", "Tight areas", mk.tight, "5+ closes within 2 % of each other")}
-      ${tog("inside", "Inside bars", mk.inside, "bar inside the previous bar's range")}
-      <h4>Events</h4>${tog("earnings", "Results days", mk.earnings !== false, "quarterly results", smp.earn)}
-      ${tog("actions", "Corporate actions", mk.actions, "split / bonus / rights / demerger", smp.act)}
-      ${tog("news", "Company filings", mk.news !== false, "orders, deals, management, regulatory ... filed with NSE (hover for details)", '<b class="badge" style="background:#16a34a">O</b>')}
-      ${tog("circuit", "Circuit limits", mk.circuit, "today's price band")}
-      <h4>Price levels</h4>${tog("hilo52", "52-week high & low", mk.hilo52, "dashed lines", smp.hl)}
-      ${tog("swings", "Swing % moves", mk.swings, "", smp.sw)}<label class="f-row sd-sub">Swing size % <input type="number" name="swingPct" value="${mk.swingPct}"></label>
-      </div><div class="sd-pane" data-p="d" hidden>
-      <h4>Chart style</h4><div class="sd-styles">${Object.entries(STYLES).map(([k, s]) => `<label class="sd-style"><input type="radio" name="style" value="${k}" ${cfg.style === k ? "checked" : ""}>
-        <span class="sd-c"><i style="background:${s.up}"></i><i style="background:${s.down}"></i><i style="background:${s.up}"></i></span>${s.label}</label>`).join("")}</div>
-      ${tog("grid", "Grid lines", cfg.grid !== false)}
-      <h4>Around the chart</h4>${tog("s_earn", "Earnings table", sh.earn !== false, "last 5 quarters under the chart")}
-      ${tog("s_desc", "Company line", sh.desc !== false, "name, sector and industry")}${tog("s_due", "Next results date", sh.due !== false, "when the board meets for results")}
-      <h4>Header chips</h4><div class="sd-pills">${[["c_float", "Float", ch.float], ["c_rs", "RS rating", ch.rs], ["c_stage", "Stage", ch.stage], ["c_theme", "Theme", ch.theme !== false], ["c_from", "From high", ch.from]]
-        .map(([n, l, on]) => `<label class="sd-pill"><input type="checkbox" name="${n}" ${on ? "checked" : ""}><span>${l}</span></label>`).join("")}</div>
-      </div></form>
-      <div class="sd-foot"><button class="btn" type="button" data-sd="reset">Reset</button><span></span><button class="btn primary" type="button" data-x>Done</button></div>`;
+    const info = (t) => `<i class="sd-i" title="${esc(t)}">i</i>`;
+    const row = (name, label, on, tip, sample) => `<label class="sd-r"><input type="checkbox" name="${name}" ${on ? "checked" : ""}><span>${label}</span>${tip ? info(tip) : ""}<em class="sd-smp">${sample || ""}</em></label>`;
+    const cdl = (c, y, h) => `<svg viewBox="0 0 10 22" width="9" height="20"><line x1="5" x2="5" y1="${y - 3}" y2="${y + h + 3}" stroke="${c}" stroke-width="1.4"/><rect x="1.5" y="${y}" width="7" height="${h}" rx="1.6" fill="${c}"/></svg>`;
+    const smp = { pivot: '<svg viewBox="0 0 30 8" width="30" height="8"><path d="M1 4h28" stroke="#5b9bd5" stroke-width="1.6"/></svg>',
+      tight: '<i class="sd-tb"></i>', inside: '<i class="sd-io"></i>', earn: '<b class="sd-bd">E</b>', news: '<b class="sd-bd">N</b>',
+      circ: '<svg viewBox="0 0 30 8" width="30" height="8"><path d="M1 4h28" stroke="#d9a441" stroke-width="1.4" stroke-dasharray="2 2"/></svg>',
+      hl: '<svg viewBox="0 0 30 8" width="30" height="8"><path d="M1 2h28M1 6h28" stroke="#e57373" stroke-width="1" stroke-dasharray="3 2"/></svg>', sw: "▾▴" };
+    const body = `<div class="sd-tabs" role="tablist"><button type="button" data-go="m" class="on">Markers</button><button type="button" data-go="d">Display</button></div>
+      <form class="f sd-scroll" id="sdForm">${o.note ? `<p class="sd-note">${esc(o.note)}</p>` : ""}
+      <section data-p="m"><h6>Chart style</h6><div class="sd-styles">${Object.entries(STYLES).map(([k, s]) => `<label class="sd-style"><input type="radio" name="style" value="${k}" ${cfg.style === k ? "checked" : ""}>
+        <span class="sd-c">${cdl(s.up, 4, 11)}${cdl(s.down, 7, 9)}</span>${s.label}</label>`).join("")}</div>
+      <h5>Markers</h5><h6>Setups</h6>${row("pivot", "Pivot / breakout line", mk.pivot, "", smp.pivot)}
+      ${row("tight", "Tight areas", mk.tight, "5 or more closes within 2 % of each other (green band)", smp.tight)}
+      ${row("inside", "Inside bars", mk.inside, "A bar that stays inside the previous bar's high-low range", smp.inside)}
+      <h6>Events</h6>${row("earnings", "Earnings dates", mk.earnings !== false, "E on the quarterly results days", smp.earn)}
+      ${row("news", "News markers", mk.news !== false, "Letters for the company's NSE filings: orders, deals, management, corporate actions ... (hover a letter for details)", smp.news)}
+      ${row("circuit", "Circuit limits", mk.circuit, "", smp.circ)}
+      <h6>Price levels</h6>${row("hilo52", "52-week high & low", mk.hilo52, "", smp.hl)}
+      ${row("swings", "Swing % moves", mk.swings, "", smp.sw)}</section>
+      <section data-p="d"><h5>Display</h5><h6>Around the chart</h6>${row("s_earn", "Earnings snapshot", sh.earn !== false)}
+      ${row("s_desc", "Company description", sh.desc !== false)}
+      <h6>Header chips</h6><div class="sd-pills">${[["c_float", "Float", ch.float], ["c_rs", "RS rating", ch.rs], ["c_stage", "Stage", ch.stage], ["c_theme", "Theme", ch.theme !== false], ["c_from", "From high", ch.from]]
+        .map(([n, l, on]) => `<label class="sd-pill"><input type="checkbox" name="${n}" ${on ? "checked" : ""}><span>${l}</span></label>`).join("")}</div></section>
+      </form>
+      <div class="sd-foot"><button class="btn" type="button" data-sd="reset">Reset</button><button class="btn primary" type="button" data-x>Done</button></div>`;
     const m = modal("Chart settings", body, null, false, "drawer sd");
     const f = m.querySelector("#sdForm");
     const apply = () => {
       const e = f.elements;
       cfg.style = e.style.value;
-      for (const k of ["inside", "actions", "circuit", "hilo52", "swings", "pivot", "vcp", "tight", "earnings", "cup", "news"]) cfg.marks[k] = e[k].checked;
-      cfg.marks.swingPct = Number(e.swingPct.value) || 10;
-      cfg.grid = e.grid.checked;
+      for (const k of ["inside", "circuit", "hilo52", "swings", "pivot", "tight", "earnings", "news"]) cfg.marks[k] = e[k].checked;
+      cfg.marks.cup = cfg.marks.vcp = cfg.marks.pivot;          // the base drawing goes with the pivot line
+      cfg.marks.actions = cfg.marks.news;                        // corporate actions are filings too
       cfg.chips = { float: e.c_float.checked, rs: e.c_rs.checked, stage: e.c_stage.checked, from: e.c_from.checked, theme: e.c_theme.checked };
       const earnWas = cfg.show.earn !== false;
-      cfg.show = { ...cfg.show, earn: e.s_earn.checked, desc: e.s_desc.checked, due: e.s_due.checked };
-      save(); draw(true); renderTools();
-      if (earnWas !== (cfg.show.earn !== false)) earningsTable();
+      cfg.show = { ...cfg.show, earn: e.s_earn.checked, desc: e.s_desc.checked, due: e.s_desc.checked };
+      save();
+      if (cur && cur.daily) { draw(true); renderTools(); if (earnWas !== (cfg.show.earn !== false)) earningsTable(); }
+      if (o.onChange) o.onChange(cfg);
     };
     f.addEventListener("change", apply);
+    // tabs jump to their part; scrolling marks the tab of the part in view
+    const tabs = [...m.querySelectorAll("[data-go]")], secs = [...f.querySelectorAll("section[data-p]")];
+    const mark = (k) => tabs.forEach((b) => b.classList.toggle("on", b.dataset.go === k));
+    const dSec = secs[1];
+    f.addEventListener("scroll", () => mark(dSec.offsetTop - f.offsetTop <= f.scrollTop + 60 || f.scrollTop + f.clientHeight >= f.scrollHeight - 2 ? "d" : "m"));
     m.addEventListener("click", (e) => {
-      const t = e.target.closest("[data-tab] button");
-      if (t) { m.querySelectorAll("[data-tab] button").forEach((b) => b.classList.toggle("on", b === t)); m.querySelectorAll(".sd-pane").forEach((p) => { p.hidden = p.dataset.p !== t.dataset.v; }); }
+      const t = e.target.closest("[data-go]");
+      if (t) { const s = secs.find((x) => x.dataset.p === t.dataset.go); f.scrollTo({ top: t.dataset.go === "m" ? 0 : s.offsetTop - f.offsetTop - 6, behavior: "smooth" }); mark(t.dataset.go); }
       if (e.target.closest("[data-sd=reset]")) {
         cfg.style = DEFAULTS.style; cfg.marks = { ...DEFAULTS.marks }; cfg.chips = { ...DEFAULTS.chips }; cfg.show = { ...DEFAULTS.show }; cfg.grid = DEFAULTS.grid;
-        save(); m.shut(); draw(true); renderTools(); earningsTable(); settingsDrawer();
+        save(); m.shut();
+        if (cur && cur.daily) { draw(true); renderTools(); earningsTable(); }
+        if (o.onChange) o.onChange(cfg);
+        setTimeout(() => settingsDrawer(o), 150);
       }
     });
   }
@@ -951,5 +960,5 @@
     },
   };
 
-  window.SDChart = { open, close, settings: () => cfg, _chart: () => cur && cur.chart, _cur: () => cur, _drawings: drawings, loadLib, modal };
+  window.SDChart = { open, close, settings: () => cfg, settingsDrawer, STYLES, _chart: () => cur && cur.chart, _cur: () => cur, _drawings: drawings, loadLib, modal };
 })();

@@ -684,62 +684,116 @@
     window.addEventListener("resize", bxResize);
   }
 
-  /* Major indices (Phase N10; new look 13-Nov-2026, Viraj's video "Major Indice 12-11-2026"): one card per index, every
-     chart can be zoomed (mouse wheel / pinch) and moved (drag); "»" jumps back to the latest bar, a double click fits the
-     range again. Toolbar like the reference: Broad | Sector, D | W, candles | bars, MA menu, range, sort, layout (1-4 per
-     row), chart style (Mono by default on this page). Range changes glide, layout changes move the cards smoothly. */
-  const MI_MAS = [["e10", "EMA", 10, "#f0a35e"], ["e21", "EMA", 21, "#5b9bd5"], ["s50", "SMA", 50, "#7f8c9b"], ["s150", "SMA", 150, "#a98bd1"], ["s200", "SMA", 200, "#c2a46b"]];
+  /* Major indices (Phase N10; new look 13-Nov-2026, Viraj's video "Major Indice 12-11-2026" + screenshots): one card per
+     index, every chart can be zoomed (mouse wheel / pinch) and moved (drag); "»" jumps back to the latest bar, a double click
+     fits the range again. Toolbar like the reference: Broad | Sector, D | W, candles | bars, MA menu (SMA / EMA groups),
+     range, Sort by (As listed, Top gainers / losers with a period, A-Z, Z-A), layout (1-4 per row) and the shared Chart
+     settings drawer (this page uses its chart style). Nothing reloads the page: every change happens inside the charts
+     (new data / series), cards move to their new place (FLIP) and new cards rise in. */
+  const MI_MAS = [["s10", "SMA", 10, "#f0a35e"], ["s20", "SMA", 20, "#5b9bd5"], ["s50", "SMA", 50, "#2b3f6c"], ["s150", "SMA", 150, "#a06fd0"], ["s200", "SMA", 200, "#3a3f4b"],
+    ["e10", "EMA", 10, "#f0a35e"], ["e20", "EMA", 20, "#a06fd0"], ["e21", "EMA", 21, "#5b9bd5"], ["e50", "EMA", 50, "#e05a5a"], ["e200", "EMA", 200, "#4a8fe0"]];
+  const MI_MA_DEF = ["s50", "s150", "s200", "e10", "e21"];
   const MI_RANGE = [["1m", "1M", 21, 5], ["3m", "3M", 63, 13], ["6m", "6M", 126, 26], ["1y", "1Y", 252, 52], ["2y", "2Y", 504, 104], ["5y", "5Y", 1260, 260]];
-  const MI_STYLE = { mono: { label: "Mono", up: "#a3a9b3", down: "#1f2430", dup: "#c9d0db", ddn: "#5b6577" }, default: { label: "Default", up: "#2f6fe4", down: "#d6336c", dup: "#4ea1ff", ddn: "#ff5d8f" },
+  const MI_STYLE = { mono: { label: "Mono", up: "#a3a9b3", down: "#1f2430", dup: "#c9d0db", ddn: "#5b6577" }, default: { label: "Default", up: "#2962ff", down: "#e91e63", dup: "#4ea1ff", ddn: "#ff5d8f" },
     classic: { label: "Classic", up: "#089981", down: "#f23645", dup: "#26a69a", ddn: "#ef5350" }, contrast: { label: "Contrast", up: "#2962ff", down: "#ff9800", dup: "#4ea1ff", ddn: "#ffa94d" } };
+  /* thick OHLC bars like the reference: a solid stem high-low, the open tick on the left, the close tick on the right
+     (Lightweight Charts custom series; the library's own bars stay thin at this size) */
+  class MiBars {
+    constructor() { this._d = null; this._o = null; }
+    renderer() { return this; }
+    update(d, o) { this._d = d; this._o = o; }
+    priceValueBuilder(b) { return [b.high, b.low, b.close]; }
+    isWhitespace(b) { return b.close == null; }
+    defaultOptions() { return { upColor: "#a3a9b3", downColor: "#1f2430" }; }
+    draw(target, toY) {
+      const d = this._d, o = this._o; if (!d || !d.visibleRange) return;
+      target.useBitmapCoordinateSpace(({ context: ctx, horizontalPixelRatio: hr, verticalPixelRatio: vr }) => {
+        const bs = d.barSpacing, w = Math.max(1, Math.round(Math.min(Math.max(bs * 0.28, 1), 9) * hr)), t = Math.max(1, Math.round(Math.min(bs * 0.34, 11) * hr));
+        for (let i = d.visibleRange.from; i < d.visibleRange.to; i++) {
+          const b = d.bars[i], v = b.originalData; if (v.close == null) continue;
+          const x = Math.round(b.x * hr) - Math.floor(w / 2), y = (p) => Math.round(toY(p) * vr);
+          const yh = y(v.high), yl = y(v.low), yo = y(v.open), yc = y(v.close);
+          ctx.fillStyle = v.close >= v.open ? o.upColor : o.downColor;
+          ctx.fillRect(x, yh, w, Math.max(w, yl - yh));
+          if (bs >= 3) { ctx.fillRect(x - t, yo - Math.floor(w / 2), t, w); ctx.fillRect(x + w, yc - Math.floor(w / 2), t, w); }
+        }
+      });
+    }
+  }
+  const MI_PER = [["1d", "1D %", "chg_1d"], ["1w", "1W %", "chg_1w"], ["1m", "1M %", "chg_1m"], ["3m", "3M %", "chg_3m"]];
   async function renderMajorIndices(tabs) {
-    const mi = Object.assign({ grp: "broad", tf: "D", type: "candle", mas: ["e10", "e21", "s50"], range: "3m", sort: "default", cols: 2, style: "mono" }, store.get("sd-mi", {}));
-    if (!Array.isArray(mi.mas)) mi.mas = mi.ma === false ? [] : ["e10", "e21", "s50"];
-    if (!MI_STYLE[mi.style]) mi.style = "mono";
-    const save = () => store.set("sd-mi", { grp: mi.grp, tf: mi.tf, type: mi.type, mas: mi.mas, range: mi.range, sort: mi.sort, cols: mi.cols, style: mi.style });
+    const mi = Object.assign({ grp: "broad", tf: "D", type: "candle", mas: MI_MA_DEF.slice(), range: "3m", sort: "default", sortP: "1d", cols: 2, v: 0 }, store.get("sd-mi", {}));
+    if (mi.v !== 2) {                       // 13-Nov-2026: the reference's five averages, sort names like the reference
+      mi.v = 2; mi.mas = MI_MA_DEF.slice();
+      if (["1d", "1w", "1m"].includes(mi.sort)) { mi.sortP = mi.sort; mi.sort = "gain"; } else if (mi.sort === "name") mi.sort = "az"; else if (!["default", "gain", "lose", "az", "za"].includes(mi.sort)) mi.sort = "default";
+    }
+    if (!Array.isArray(mi.mas)) mi.mas = MI_MA_DEF.slice();
+    mi.mas = mi.mas.filter((k) => MI_MAS.some((m) => m[0] === k));
+    const save = () => store.set("sd-mi", { grp: mi.grp, tf: mi.tf, type: mi.type, mas: mi.mas, range: mi.range, sort: mi.sort, sortP: mi.sortP, cols: mi.cols, v: mi.v });
     const idx = state.rows.filter((r) => r.kind === "index" && r.exchange === "NSE");
     const BROAD = ["NIFTY_50", "NIFTY_NEXT_50", "NIFTY_100", "NIFTY_200", "NIFTY_500", "NIFTY_MIDCAP_50", "NIFTY_MIDCAP_100", "NIFTY_MIDCAP_150", "NIFTY_SMALLCAP_100", "NIFTY_SMALLCAP_250", "NIFTY_MICROCAP_250", "NIFTY_MIDSMALLCAP_400", "INDIA_VIX"];
     const broad = BROAD.map((id) => idx.find((r) => r.id === id)).filter(Boolean);
     const sect = idx.filter((r) => r.category === "SECTORAL INDICES").sort((a, b) => a.name.localeCompare(b.name));
-    let list = mi.grp === "sector" ? sect : broad;
-    const SORTS = [["default", "Usual order"], ["1d", "1D % (best first)"], ["1w", "1W % (best first)"], ["1m", "1M % (best first)"], ["name", "Name A → Z"]];
-    if (mi.sort === "1d") list = list.slice().sort((a, b) => (b.chg_1d ?? -1e9) - (a.chg_1d ?? -1e9));
-    else if (mi.sort === "1w") list = list.slice().sort((a, b) => (b.chg_1w ?? -1e9) - (a.chg_1w ?? -1e9));
-    else if (mi.sort === "1m") list = list.slice().sort((a, b) => (b.chg_1m ?? -1e9) - (a.chg_1m ?? -1e9));
-    else if (mi.sort === "name") list = list.slice().sort((a, b) => a.name.localeCompare(b.name));
-    const rng = MI_RANGE.find((x) => x[0] === mi.range) || MI_RANGE[1];
+    const perOf = (k) => MI_PER.find((p) => p[0] === k) || MI_PER[0];
+    const sorted = () => {
+      const base = mi.grp === "sector" ? sect : broad, f = perOf(mi.sortP)[2], v = (r) => (r[f] == null || !isFinite(r[f]) ? null : r[f]);
+      if (mi.sort === "gain") return base.slice().sort((a, b) => (v(b) ?? -1e9) - (v(a) ?? -1e9));
+      if (mi.sort === "lose") return base.slice().sort((a, b) => (v(a) ?? 1e9) - (v(b) ?? 1e9));
+      if (mi.sort === "az") return base.slice().sort((a, b) => a.name.localeCompare(b.name));
+      if (mi.sort === "za") return base.slice().sort((a, b) => b.name.localeCompare(a.name));
+      return base;
+    };
+    const rng = () => MI_RANGE.find((x) => x[0] === mi.range) || MI_RANGE[1];
     const CHEV = '<svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const UPDN = '<svg viewBox="0 0 8 12" width="7" height="10" aria-hidden="true"><path d="M1.5 4.5 4 2l2.5 2.5M1.5 7.5 4 10l2.5-2.5" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const TICK = '<svg class="mi-tick" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 6.5 5 9l4.5-5.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     const IC = (d) => `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">${d}</svg>`;
     const dd = (k, label, body, cls = "") => `<div class="hm-dd mi-dd ${cls}" data-dd="${k}"><button type="button" class="hm-ddb">${label}${CHEV}</button><div class="hm-menu mi-menu" hidden>${body}</div></div>`;
     const pctS = (v) => (v == null || !isFinite(v) ? '<span class="muted">–</span>' : `<span class="${v > 0 ? "up" : v < 0 ? "down" : ""}">${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).toFixed(2)}%</span>`);
+    const maMenu = () => ["SMA", "EMA"].map((t) => `<small class="menu-h">${t === "SMA" ? "Simple" : "Exponential"} moving average</small>${MI_MAS.filter((m) => m[1] === t).map(([k, , n, c]) =>
+      `<button type="button" data-ma="${k}" class="mi-ma${mi.mas.includes(k) ? " on" : ""}"><span>${t} ${n}</span>${TICK}<i style="background:${c}"></i></button>`).join("")}`).join('<hr class="mi-hr">');
+    const sortMenu = () => `<small class="menu-h">Sort by</small>${[["default", "As listed"], ["gain", "Top gainers"], ["lose", "Top losers"], ["az", "A–Z"], ["za", "Z–A"]].map(([k, l]) =>
+      `<button type="button" data-sort="${k}" class="${k === mi.sort ? "on" : ""}"><span>${l}</span>${k === "gain" || k === "lose" ? `<em class="mi-per" data-per="${k}" title="Change the period">${perOf(mi.sortP)[1]}${UPDN}</em>` : ""}${TICK}</button>`).join("")}`;
+    const asOf = state.dataDate ? shortDay(state.dataDate).replace(/^\w+,?\s*/, "") : "";
+    const cardHTML = (r, i) => `<div class="mi-card" data-id="${esc(r.id)}" style="--i:${i}"><div class="mi-h"><a class="mi-n" href="#/i/n/${encodeURIComponent(r.id)}" title="Open the full chart">${esc(r.name)}</a>
+        <span class="mi-chg"><i class="mi-dot"></i><small class="mi-asof" title="End-of-day data">${esc(asOf)}</small><small>1D</small>${pctS(r.chg_1d)}<small>1W</small>${pctS(r.chg_1w)}</span><span></span></div>
+        <div class="mi-ch"><i class="skel"></i><button type="button" class="mi-end" title="Back to the latest bar" hidden>»</button></div></div>`;
+    let list = sorted();
     view.innerHTML = `<div class="bx mix">${tabs}<div class="mi-bar">
         <div class="mi-tx" data-seg="mgrp"><button type="button" data-v="broad" class="${mi.grp === "broad" ? "on" : ""}">Broad <small>(${broad.length})</small></button><button type="button" data-v="sector" class="${mi.grp === "sector" ? "on" : ""}">Sector <small>(${sect.length})</small></button></div>
         <i class="mi-sep"></i><div class="mi-tx" data-seg="mtf"><button type="button" data-v="D" class="${mi.tf === "D" ? "on" : ""}">D</button><button type="button" data-v="W" class="${mi.tf === "W" ? "on" : ""}">W</button></div>
         <i class="mi-sep"></i><div class="mi-tx ic" data-seg="mtype"><button type="button" data-v="candle" title="Candles" class="${mi.type === "candle" ? "on" : ""}">${IC('<path d="M8 4v16M16 4v16"/><rect x="5.5" y="8" width="5" height="7" rx="1"/><rect x="13.5" y="6" width="5" height="9" rx="1"/>')}</button><button type="button" data-v="bar" title="Bars" class="${mi.type === "bar" ? "on" : ""}">${IC('<path d="M8 4v16M5 8h3M8 15h3M16 4v16M13 7h3M16 13h3"/>')}</button></div>
         <span class="mi-r">
-          ${dd("ma", `MA <b>${mi.mas.length}</b>`, `<small class="menu-h">Moving averages</small>${MI_MAS.map(([k, t, n, c]) => `<label class="mi-ck"><input type="checkbox" data-ma="${k}" ${mi.mas.includes(k) ? "checked" : ""}><i style="background:${c}"></i>${t} ${n}</label>`).join("")}`)}
-          ${dd("range", `<b>${rng[1]}</b>`, MI_RANGE.map(([k, l]) => `<button type="button" data-range="${k}" class="${k === mi.range ? "on" : ""}">${l}</button>`).join(""))}
-          ${dd("sort", `${IC('<path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4"/>')}Sort by`, `<small class="menu-h">Sort charts by</small>${SORTS.map(([k, l]) => `<button type="button" data-sort="${k}" class="${k === mi.sort ? "on" : ""}">${l}</button>`).join("")}`)}
+          ${dd("ma", `MA <b>${mi.mas.length}</b>`, maMenu(), "mi-mad")}
+          ${dd("range", `<b>${rng()[1]}</b>`, MI_RANGE.map(([k, l]) => `<button type="button" data-range="${k}" class="${k === mi.range ? "on" : ""}">${l}</button>`).join(""))}
+          ${dd("sort", `${IC('<path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4"/>')}Sort by`, sortMenu(), "right mi-sortd")}
           ${dd("lay", `${IC('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/>')}Layout`, `<small class="menu-h">Charts per row</small>${[1, 2, 3, 4].map((n) => `<button type="button" data-cols="${n}" class="${n === mi.cols ? "on" : ""}">${n} per row<span class="mi-lay">${"<i></i>".repeat(n)}</span></button>`).join("")}`, "right")}
-          ${dd("set", IC('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>'), `<small class="menu-h">Chart style</small><div class="mi-sty">${Object.entries(MI_STYLE).map(([k, s]) => `<button type="button" data-style="${k}" class="${k === mi.style ? "on" : ""}"><span class="mi-sw"><i style="background:${s.up}"></i><i style="background:${s.down}"></i></span>${s.label}</button>`).join("")}</div><p class="mi-hint">Wheel = zoom · drag = move · double click = fit · » = latest bar</p>`, "right ico")}
+          <button type="button" class="mi-gear" id="miSet" title="Chart settings">${IC('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>')}</button>
         </span></div>
-      <div class="mi-grid" id="miGrid" style="--mcols:${mi.cols}">${list.map((r, i) => `<div class="mi-card" data-id="${esc(r.id)}" style="--i:${i}"><div class="mi-h"><a class="mi-n" href="#/i/n/${encodeURIComponent(r.id)}" title="Open the full chart">${esc(r.name)}</a>
-        <span class="mi-chg"><i class="mi-dot"></i><small>1D</small>${pctS(r.chg_1d)}<small>1W</small>${pctS(r.chg_1w)}</span></div><div class="mi-ch"><i class="skel"></i><button type="button" class="mi-end" title="Back to the latest bar" hidden>»</button></div></div>`).join("")}</div></div>`;
-    $("#stPage").innerHTML = `<span>${list.length} of ${broad.length + sect.length} indices</span><span class="st-n">${mi.grp === "sector" ? "Sector" : "Broad"} · ${mi.tf === "W" ? "weekly" : "daily"} · ${rng[1]}</span><span class="st-n">end-of-day data ${SD.fmtDate(state.dataDate)}</span>`;
+      <div class="mi-grid" id="miGrid" style="--mcols:${mi.cols}">${list.map(cardHTML).join("")}</div></div>`;
+    const status = () => { $("#stPage").innerHTML = `<span>${list.length} of ${broad.length + sect.length} indices</span><span class="st-n">${mi.grp === "sector" ? "Sector" : "Broad"} · ${mi.tf === "W" ? "weekly" : "daily"} · ${rng()[1]}</span><span class="st-n">end-of-day data ${SD.fmtDate(state.dataDate)}</span>`; };
+    status();
     try { await SDChart.loadLib(); } catch (e) { return; }
     const L = window.LightweightCharts;
-    const charts = [];
-    const colors = () => { const s = MI_STYLE[mi.style], d = document.documentElement.dataset.theme === "dark" || (document.documentElement.dataset.theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
-      return { up: d ? s.dup : s.up, down: d ? s.ddn : s.down }; };
+    let charts = [];
+    const isDark = () => document.documentElement.dataset.theme === "dark" || (document.documentElement.dataset.theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+    const colors = () => { const s = MI_STYLE[(SDChart.settings() || {}).style] || MI_STYLE.mono, d = isDark(); return { up: d ? s.dup : s.up, down: d ? s.ddn : s.down }; };
     const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-    const nBars = () => (mi.tf === "W" ? rng[3] : rng[2]);
+    const nBars = () => (mi.tf === "W" ? rng()[3] : rng()[2]);
+    // bars: thick OHLC bars like the reference (open tick left, close tick right)
     const seriesOpts = () => { const c = colors(); return mi.type === "bar" ? { upColor: c.up, downColor: c.down } : { upColor: c.up, downColor: c.down, wickUpColor: c.up, wickDownColor: c.down, borderVisible: false }; };
+    const addPrice = (o) => {
+      const opts = { ...seriesOpts(), priceLineVisible: false, lastValueVisible: true, priceFormat: { type: "price", precision: 2, minMove: 0.01 } };
+      o.s = mi.type === "bar" ? o.ch.addCustomSeries(new MiBars(), opts, 0) : o.ch.addSeries(L.CandlestickSeries, opts, 0);
+      o.s.setData(o.bars.map((b) => ({ time: b.time, open: b.open, high: b.high, low: b.low, close: b.close })));
+    };
     const setMAs = (o) => {
       o.maS.forEach((x) => o.ch.removeSeries(x)); o.maS = [];
       for (const [k, t, n, c] of MI_MAS) {
         if (!mi.mas.includes(k)) continue;
         const v = t === "EMA" ? SDI.ema(o.bars.map((b) => b.close), n) : o.bars.map((_, i) => { if (i < n - 1) return null; let s = 0; for (let j = i - n + 1; j <= i; j++) s += o.bars[j].close; return s / n; });
-        const ln = o.ch.addSeries(L.LineSeries, { color: c, lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false });
+        const lc = isDark() ? ({ "#2b3f6c": "#8fa6d6", "#3a3f4b": "#aab2c0" }[c] || c) : c;
+        const ln = o.ch.addSeries(L.LineSeries, { color: lc + "a6", lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false });
         ln.setData(o.bars.map((b, i) => (v[i] == null ? { time: b.time } : { time: b.time, value: v[i] })));
         o.maS.push(ln);
       }
@@ -749,75 +803,115 @@
       const to = { from: Math.max(0, o.bars.length - n), to: last };
       if (!cur) { ts.setVisibleLogicalRange(to); return; }
       const t0 = performance.now(), dur = 420, ease = (t) => 1 - Math.pow(1 - t, 3);
-      const step = (now) => { const t = Math.min(1, (now - t0) / dur), e = ease(t); ts.setVisibleLogicalRange({ from: cur.from + (to.from - cur.from) * e, to: cur.to + (to.to - cur.to) * e }); if (t < 1) requestAnimationFrame(step); };
+      const step = (now) => { if (!alive(o)) return; const t = Math.min(1, (now - t0) / dur), e = ease(t); ts.setVisibleLogicalRange({ from: cur.from + (to.from - cur.from) * e, to: cur.to + (to.to - cur.to) * e }); if (t < 1) requestAnimationFrame(step); };
       requestAnimationFrame(step);
     };
+    const alive = (o) => charts.includes(o) && o.card.isConnected;
+    const fade = (o, fn) => { const el = o.card.querySelector(".mi-ch"); el.classList.remove("on"); setTimeout(() => { if (alive(o)) fn(); el.classList.add("on"); }, 160); };
     const draw = async (card) => {
       const el = card.querySelector(".mi-ch");
       let d; try { d = await getJSON(`data/c/n/${encodeURIComponent(card.dataset.id)}.json`); } catch (e) { el.innerHTML = '<p class="empty small">No chart</p>'; return; }
       if (!el.isConnected) return;
-      let bars = SD.candlesFromChart(d, "adjusted");
-      if (mi.tf === "W") bars = SD.toWeekly(bars);
+      const daily = SD.candlesFromChart(d, "adjusted"), weekly = SD.toWeekly(daily);
       el.querySelector(".skel")?.remove();
       const box = document.createElement("div"); box.className = "mi-cv"; el.prepend(box);
-      const muted = css("--muted"), line = css("--line");
+      const muted = css("--muted");
       const ch = L.createChart(box, { autoSize: true, layout: { background: { color: "transparent" }, textColor: muted, fontSize: 10.5, fontFamily: getComputedStyle(document.body).fontFamily, attributionLogo: false },
         grid: { vertLines: { visible: false }, horzLines: { visible: false } }, rightPriceScale: { borderVisible: false, scaleMargins: { top: 0.12, bottom: 0.08 } },
         timeScale: { borderVisible: false, rightOffset: 3, barSpacing: 7, minBarSpacing: 0.6, fixLeftEdge: true },
         crosshair: { mode: 0, vertLine: { color: muted, width: 1, style: 2, labelBackgroundColor: "#1f2430" }, horzLine: { color: muted, width: 1, style: 2, labelBackgroundColor: "#1f2430" } },
         handleScroll: { mouseWheel: false, pressedMouseMove: true, horzTouchDrag: true, vertTouchDrag: false }, handleScale: { mouseWheel: true, pinch: true, axisPressedMouseMove: true, axisDoubleClickReset: true } });
       breadthCharts.push(ch);
-      const s = ch.addSeries(mi.type === "bar" ? L.BarSeries : L.CandlestickSeries, { ...seriesOpts(), priceLineVisible: false, lastValueVisible: true, priceFormat: { type: "price", precision: 2, minMove: 0.01 } });
-      s.setData(bars.map((b) => ({ time: b.time, open: b.open, high: b.high, low: b.low, close: b.close })));
-      const o = { id: card.dataset.id, ch, s, bars, maS: [], card };
-      setMAs(o);
-      ch.timeScale().setVisibleLogicalRange({ from: Math.max(0, bars.length - nBars()), to: bars.length - 1 + 3 });
+      const o = { id: card.dataset.id, ch, daily, weekly, bars: mi.tf === "W" ? weekly : daily, maS: [], card };
+      addPrice(o); setMAs(o);
+      ch.timeScale().setVisibleLogicalRange({ from: Math.max(0, o.bars.length - nBars()), to: o.bars.length - 1 + 3 });
       const end = el.querySelector(".mi-end");
-      ch.timeScale().subscribeVisibleLogicalRangeChange((r) => { if (r) end.hidden = r.to >= bars.length - 1; });
+      ch.timeScale().subscribeVisibleLogicalRangeChange((r) => { if (r) end.hidden = r.to >= o.bars.length - 1; });
       end.onclick = () => glideTo(o, nBars());
       box.addEventListener("dblclick", () => glideTo(o, nBars()));
       charts.push(o); card._mi = o;
       el.classList.add("on");
     };
-    const obs = new IntersectionObserver((ents) => ents.forEach((en) => { if (en.isIntersecting) { obs.unobserve(en.target); draw(en.target); } }), { rootMargin: "300px" });
-    view.querySelectorAll(".mi-card").forEach((c) => obs.observe(c));
+    let obs = null;
+    const watch = (cards) => {
+      if (!obs) obs = new IntersectionObserver((ents) => ents.forEach((en) => { if (en.isIntersecting) { obs.unobserve(en.target); draw(en.target); } }), { rootMargin: "300px" });
+      cards.forEach((c) => obs.observe(c));
+    };
+    watch(view.querySelectorAll(".mi-card"));
+    const grid = $("#miGrid");
+    // FLIP: cards glide from where they were to where they are now
+    const flip = (change) => {
+      const cards = [...grid.children], before = new Map(cards.map((c) => [c, c.getBoundingClientRect()]));
+      change();
+      cards.forEach((c) => { const a = before.get(c), z = c.getBoundingClientRect(); if (!c.isConnected || !a.width || !z.width) return;
+        if (Math.abs(a.left - z.left) < 1 && Math.abs(a.top - z.top) < 1 && Math.abs(a.width - z.width) < 1) return;
+        c.animate([{ transform: `translate(${a.left - z.left}px, ${a.top - z.top}px) scale(${a.width / z.width}, ${a.height / z.height})`, transformOrigin: "0 0" }, { transform: "none", transformOrigin: "0 0" }], { duration: 480, easing: "cubic-bezier(.2,.8,.2,1)" }); });
+    };
+    const reorder = () => {           // sort: move the existing cards (charts stay alive)
+      list = sorted();
+      flip(() => list.forEach((r) => { const c = grid.querySelector(`.mi-card[data-id="${CSS.escape(r.id)}"]`); if (c) grid.appendChild(c); }));
+    };
+    const regroup = () => {           // Broad <-> Sector: only the grid is rebuilt, the toolbar stays
+      charts.forEach((o) => { try { o.ch.remove(); } catch (e) { /* gone */ } const k = breadthCharts.indexOf(o.ch); if (k >= 0) breadthCharts.splice(k, 1); });
+      charts = []; if (obs) obs.disconnect(); obs = null;
+      list = sorted();
+      grid.innerHTML = list.map(cardHTML).join("");
+      watch(grid.querySelectorAll(".mi-card")); status();
+    };
     // ---- toolbar
-    const reRender = () => { save(); renderBreadth("indices"); };
-    view.querySelectorAll(".mi-tx").forEach((g) => { g.onclick = (e) => { const b = e.target.closest("button"); if (!b || b.classList.contains("on")) return; const k = g.dataset.seg;
-      if (k === "mgrp") mi.grp = b.dataset.v; else if (k === "mtf") mi.tf = b.dataset.v; else if (k === "mtype") mi.type = b.dataset.v; reRender(); }; });
+    view.querySelectorAll(".mi-tx").forEach((g) => { g.onclick = (e) => {
+      const b = e.target.closest("button"); if (!b || b.classList.contains("on")) return;
+      const k = g.dataset.seg;
+      g.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
+      if (k === "mgrp") { mi.grp = b.dataset.v; save(); regroup(); return; }
+      if (k === "mtf") { mi.tf = b.dataset.v; save(); status();
+        charts.forEach((o) => fade(o, () => { o.bars = mi.tf === "W" ? o.weekly : o.daily; o.s.setData(o.bars.map((x) => ({ time: x.time, open: x.open, high: x.high, low: x.low, close: x.close }))); setMAs(o);
+          o.ch.timeScale().setVisibleLogicalRange({ from: Math.max(0, o.bars.length - nBars()), to: o.bars.length - 1 + 3 }); }));
+        return; }
+      if (k === "mtype") { mi.type = b.dataset.v; save();
+        charts.forEach((o) => { const r = o.ch.timeScale().getVisibleLogicalRange(); o.ch.removeSeries(o.s); addPrice(o); if (r) o.ch.timeScale().setVisibleLogicalRange(r); });
+      }
+    }; });
     const closeAll = (except) => view.querySelectorAll(".mi-dd.open").forEach((d) => { if (d !== except) { d.classList.remove("open"); d.querySelector(".hm-menu").hidden = true; } });
     view.querySelector(".mi-r").onclick = (e) => {
       e.stopPropagation();
+      if (e.target.closest("#miSet")) {
+        closeAll();
+        SDChart.settingsDrawer({ note: "Major Indices only uses Chart style. Setups, Events, Price levels and Display apply on the other charts.", onChange: () => charts.forEach((o) => o.s.applyOptions(seriesOpts())) });
+        return;
+      }
       const d = e.target.closest(".mi-dd"); if (!d) return;
       if (e.target.closest(".hm-ddb")) { const open = !d.classList.contains("open"); closeAll(d); d.classList.toggle("open", open); d.querySelector(".hm-menu").hidden = !open; return; }
       const b = e.target.closest("button");
-      if (b && b.dataset.range) { mi.range = b.dataset.range; save(); const r2 = MI_RANGE.find((x) => x[0] === mi.range); d.querySelector(".hm-ddb b").textContent = r2[1];
-        d.querySelectorAll("[data-range]").forEach((x) => x.classList.toggle("on", x === b)); closeAll(); charts.forEach((o) => glideTo(o, nBars()));
-        $("#stPage").querySelectorAll(".st-n")[0].textContent = `${mi.grp === "sector" ? "Sector" : "Broad"} · ${mi.tf === "W" ? "weekly" : "daily"} · ${r2[1]}`; return; }
-      if (b && b.dataset.sort) { if (b.dataset.sort !== mi.sort) { mi.sort = b.dataset.sort; reRender(); } else closeAll(); return; }
+      if (b && b.dataset.ma) {           // MA rows toggle in place, the menu stays open
+        const k = b.dataset.ma; mi.mas = mi.mas.includes(k) ? mi.mas.filter((x) => x !== k) : [...mi.mas, k];
+        mi.mas = MI_MAS.map((m) => m[0]).filter((x) => mi.mas.includes(x)); save();
+        b.classList.toggle("on", mi.mas.includes(k)); d.querySelector(".hm-ddb b").textContent = mi.mas.length;
+        charts.forEach(setMAs); return;
+      }
+      if (b && b.dataset.range) { mi.range = b.dataset.range; save(); d.querySelector(".hm-ddb b").textContent = rng()[1];
+        d.querySelectorAll("[data-range]").forEach((x) => x.classList.toggle("on", x === b)); closeAll(); charts.forEach((o) => glideTo(o, nBars())); status(); return; }
+      if (b && b.dataset.sort) {
+        const per = e.target.closest("[data-per]");
+        if (per) {                       // the small "1D %" pill: next period (1D -> 1W -> 1M -> 3M)
+          const i = MI_PER.findIndex((p) => p[0] === mi.sortP); mi.sortP = MI_PER[(i + 1) % MI_PER.length][0];
+          d.querySelectorAll("[data-per]").forEach((x) => { x.innerHTML = perOf(mi.sortP)[1] + UPDN; x.animate([{ transform: "translateY(-3px)", opacity: 0.3 }, { transform: "none", opacity: 1 }], { duration: 220, easing: "ease-out" }); });
+          mi.sort = per.dataset.per;
+        } else { if (b.dataset.sort === mi.sort) { closeAll(); return; } mi.sort = b.dataset.sort; closeAll(); }
+        d.querySelectorAll("[data-sort]").forEach((x) => x.classList.toggle("on", x.dataset.sort === mi.sort));
+        save(); reorder(); return;
+      }
       if (b && b.dataset.cols) {
         const n = Number(b.dataset.cols); closeAll(); if (n === mi.cols) return;
-        const grid = $("#miGrid"), cards = [...grid.children], before = new Map(cards.map((c) => [c, c.getBoundingClientRect()]));
-        mi.cols = n; save(); grid.style.setProperty("--mcols", n);
-        d.querySelectorAll("[data-cols]").forEach((x) => x.classList.toggle("on", x === b));
-        cards.forEach((c) => { const a = before.get(c), z = c.getBoundingClientRect(); if (!a.width || !z.width) return;
-          c.animate([{ transform: `translate(${a.left - z.left}px, ${a.top - z.top}px) scale(${a.width / z.width}, ${a.height / z.height})`, transformOrigin: "0 0" }, { transform: "none", transformOrigin: "0 0" }], { duration: 480, easing: "cubic-bezier(.2,.8,.2,1)" }); });
+        mi.cols = n; save(); d.querySelectorAll("[data-cols]").forEach((x) => x.classList.toggle("on", x === b));
+        flip(() => grid.style.setProperty("--mcols", n));
         setTimeout(() => charts.forEach((o) => glideTo(o, nBars())), 500);
-        return;
       }
-      if (b && b.dataset.style) { mi.style = b.dataset.style; save(); d.querySelectorAll("[data-style]").forEach((x) => x.classList.toggle("on", x === b)); charts.forEach((o) => o.s.applyOptions(seriesOpts())); return; }
-    };
-    view.querySelector(".mi-r").onchange = (e) => {
-      const k = e.target.dataset.ma; if (!k) return;
-      mi.mas = e.target.checked ? [...new Set([...mi.mas, k])] : mi.mas.filter((x) => x !== k);
-      mi.mas = MI_MAS.map((m) => m[0]).filter((x) => mi.mas.includes(x)); save();
-      view.querySelector('[data-dd="ma"] .hm-ddb b').textContent = mi.mas.length;
-      charts.forEach(setMAs);
     };
     view.onclick = () => closeAll();
     // theme switch (moon button) recolours the candles without a redraw
     if (state.miTheme) state.miTheme.disconnect();
-    state.miTheme = new MutationObserver(() => { if (routeName() !== "breadth") { state.miTheme.disconnect(); return; } charts.forEach((o) => { o.s.applyOptions(seriesOpts()); o.ch.applyOptions({ layout: { textColor: css("--muted") } }); }); });
+    state.miTheme = new MutationObserver(() => { if (routeName() !== "breadth") { state.miTheme.disconnect(); return; } charts.forEach((o) => { o.s.applyOptions(seriesOpts()); setMAs(o); o.ch.applyOptions({ layout: { textColor: css("--muted") } }); }); });
     state.miTheme.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   }
 

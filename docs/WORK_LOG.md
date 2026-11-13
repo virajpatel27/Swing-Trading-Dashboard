@@ -1201,3 +1201,26 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Custom scan window: plain header, underline tabs that slide in, the live "N stocks pass this scan" number bumps
   when it changes.
 - Checked in the preview: list (wide / narrow), grid, dark, custom scan count. JS 32 / 32, Python 220 passed.
+
+### 2026-11-13: Major Indices v2 - thick bars, no page reload, MA / Sort menus and Chart settings like the reference
+- Viraj (5 screenshots + video "Major Indice 12-11-2026.mp4"): MA menu in SMA / EMA groups, bars shaped like the
+  reference, candle <-> bar must not reload the page, 1D / 1W in the middle of every chart, Sort by with the
+  reference's options, the Chart settings drawer with all its options.
+- site/app.js renderMajorIndices():
+  - MA menu: Simple (SMA 10 / 20 / 50 / 150 / 200) and Exponential (EMA 10 / 20 / 21 / 50 / 200) with a tick and a
+    colour dash; default SMA 50 / 150 / 200 + EMA 10 / 21 (one-time migration, sd-mi v 2); rows toggle in place;
+  - bars: own Lightweight Charts custom series (MiBars): solid stem, open tick left, close tick right, thickness
+    grows with zoom (the library's bars stay thin);
+  - nothing reloads: candles / bars swap the series, D / W swap the data (short fade), Broad / Sector rebuild only
+    the grid, Sort moves the existing cards (FLIP); guards stop animations on removed charts;
+  - card header: name left, "• date 1D x% 1W y%" centred (end-of-day date instead of the reference's LIVE);
+  - Sort by: As listed, Top gainers, Top losers (each with a period pill 1D -> 1W -> 1M -> 3M), A-Z, Z-A;
+  - gear = the shared Chart settings drawer with the note "Major Indices only uses Chart style ..."; this page now
+    follows the shared chart style; dark MA lines get lighter on a dark page.
+- site/chart.js settingsDrawer(o): reference layout - Markers / Display tabs that jump in one scrolling panel,
+  chart style cards, Setups (Pivot / breakout line, Tight areas, Inside bars), Events (Earnings dates, News markers,
+  Circuit limits), Price levels (52-week high & low, Swing % moves), Display (Earnings snapshot, Company description,
+  header chips). Pivot also switches the base curve / VCP drawing, News also the corporate-action marks, Company
+  description also the results-due line. Exported as SDChart.settingsDrawer.
+- Checked: light / dark, bars, MA menu, sort, D / W, Broad / Sector, drawer on Major Indices and on a stock chart,
+  fast clicking without console errors. JS 32 / 32, Python 220 passed.

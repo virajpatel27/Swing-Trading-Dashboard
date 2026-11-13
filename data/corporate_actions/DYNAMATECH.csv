@@ -23,4 +23,4 @@ ex_date,type,ratio,factor,amount,method,status,subject,source
 2026-02-13,dividend,,1.0,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 5 Per Share,NSE
 2026-08-14,dividend,,1.0,3,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 3 Per Share,NSE
 2026-08-28,dividend,,1.0,5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 5 Per Share,NSE
-2026-11-13,dividend,,,2,,future,Interim Dividend - Rs 2 Per Share,NSE
+2026-11-13,dividend,,1.0,2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Rs 2 Per Share,NSE

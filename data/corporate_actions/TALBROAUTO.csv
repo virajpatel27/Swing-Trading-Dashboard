@@ -25,3 +25,4 @@ ex_date,type,ratio,factor,amount,method,status,subject,source
 2025-09-12,dividend,,1,0.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.50 Per Share,NSE
 2025-11-20,dividend,,1,0.2,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Interim Dividend - Re 0.20 Per Share,NSE
 2026-09-11,dividend,,1,0.55,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Re 0.55 Per Share,NSE
+2026-11-20,dividend,,,0.3,,future,Interim Dividend - Re 0.30 Per Share,NSE

@@ -2136,3 +2136,35 @@ input, textarea, select, [contenteditable="true"], .selectable { -webkit-user-se
 .mix .mi-card:hover { border-color: color-mix(in srgb, var(--line) 70%, transparent); box-shadow: 0 6px 22px rgba(20, 35, 70, .07); }
 .mix .mi-h, .mix .mi-grid[style*="--mcols:4"] .mi-h, .mix .mi-grid[style*="--mcols:3"] .mi-h { grid-template-columns: minmax(max-content, 1fr) auto minmax(0, 1fr); }
 .mix .mi-n { overflow: visible; }
+
+/* ---------------------------------------------------------------- 14-Nov-2026 (Viraj, 10 photos, part 2)
+   top search, legend one per line over the chart, centred chips / 1M 3M / earnings numbers, panel icon by the gear */
+.ws-find { position: relative; flex: 0 0 210px; display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 1px solid color-mix(in srgb, var(--accent) 14%, var(--line)); border-radius: 10px; background: var(--panel); color: var(--muted); }
+.ws-find:focus-within { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); box-shadow: 0 0 0 3px var(--accent-soft); }
+.ws-fi { display: grid; place-items: center; } .ws-fi .ic { width: 15px; height: 15px; }
+.ws-find input { flex: 1; min-width: 0; border: 0; background: none; padding: 0; outline: none; box-shadow: none; font-size: 13px; color: var(--text); }
+.ws-find input::-webkit-search-cancel-button { display: none; }
+.ws-fm { position: absolute; top: calc(100% + 6px); left: 0; width: 360px; z-index: 90; padding: 6px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); box-shadow: 0 14px 38px rgba(20, 35, 70, .16); animation: drop .14s ease-out; }
+.ws-fm[hidden] { display: none; }
+.ws-fr { display: flex; align-items: center; gap: 10px; width: 100%; padding: 7px 8px; border: 0; border-radius: 8px; background: none; text-align: left; cursor: pointer; font: inherit; color: var(--text); }
+.ws-fr.on, .ws-fr:hover { background: color-mix(in srgb, var(--accent) 8%, var(--panel)); }
+.ws-fr span { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ws-fr b { font-size: 13px; font-weight: 600; }
+.ws-fr small { font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ws-fr em { font-style: normal; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.ws-fr .slogo, .ws-fr .mono { width: 22px; height: 22px; flex: none; }
+.ws-fn { padding: 8px; margin: 0; }
+/* legend: over the top-left of the chart, one indicator per line */
+.ch-wrap > .legend { position: absolute; top: 4px; left: 6px; z-index: 5; display: flex; flex-direction: column; align-items: flex-start; gap: 0; margin: 0; min-height: 0; pointer-events: none; }
+.ch-wrap > .legend .lg { pointer-events: auto; background: color-mix(in srgb, var(--panel) 78%, transparent); border-radius: 6px; padding: 0 4px; }
+.ch-wrap > .legend:empty { display: none; }
+/* header: the price line never wraps; 1M / 3M sit in the middle of the pane and do not move on hover */
+.ch-head { position: relative; }
+.ch-head .ch-l2 { flex-wrap: nowrap; white-space: nowrap; overflow: hidden; }
+.ch-head .ch-r { position: absolute; top: 0; left: max(calc(50% - 40px), 470px); margin: 0; gap: 12px; }
+.ch-chips { margin-left: auto; margin-right: auto; }
+.ch-top .ch-spt.on { color: var(--accent); background: var(--accent-soft); }
+/* earnings numbers in the middle of their columns (like the reference) */
+.ce-q { padding-left: 22%; }
+.ce-c { justify-content: space-between; padding: 0 16% 0 22%; }
+@media (max-width: 1400px) { .ce-q { padding-left: 14%; } .ce-c { padding: 0 9% 0 14%; } }

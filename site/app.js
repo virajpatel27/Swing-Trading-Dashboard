@@ -1271,20 +1271,20 @@
     const sectors = [...new Set(state.screen.map((r) => r.sector).filter(Boolean))].sort();
     const sortItem = SD.SORTS.find((x) => x[0] === st.sort);
     const sortName = sortItem ? sortItem[1] : SD.COLUMNS[st.sort] ? SD.COLUMNS[st.sort].label : st.sort === "symbol" ? "Symbol" : st.sort;
-    const bar = scan
+    const finder = `<div class="ws-find" id="wsFind"><span class="ws-fi">${ICON.filter}</span><input id="wsFindQ" type="search" placeholder="Find a stock, e.g. INFY" autocomplete="off" aria-label="Find any NSE stock"><div class="ws-fm" id="wsFindM" hidden></div></div>`;
+    const bar = finder + (scan
       ? `<button class="btn primary" id="newScan" type="button">${ICON.plus}<span>New scan</span></button>
         <div class="menu-wrap"><button class="btn ws-pick" id="scanBtn" type="button" aria-haspopup="true" title="${esc(scan.description || "")}"><b>${esc(scan.name)}</b>${scan.edited ? ' <span class="tag">edited</span>' : ""} <span class="caret">▾</span></button>
           <div class="menu picker" id="scanMenu" hidden></div></div>
         <button class="btn icon" id="csBtn" type="button" title="Custom scan: pick filters">${ICON.cols}</button>
         <button class="btn icon" id="formulaBtn" type="button" title="Formula: see or change the rule">ƒ</button>
         <div class="pins" id="pins">${pinsHTML(scan.id)}</div>`
-      : `<h1 class="ws-title">All stocks</h1><span class="muted small">every NSE main-board stock, all fields of ${SD.fmtDate(state.screenDate)}</span>`;
+      : `<h1 class="ws-title">All stocks</h1><span class="muted small">every NSE main-board stock, all fields of ${SD.fmtDate(state.screenDate)}</span>`);
     const descTxt = scan ? `${scan.description || ""} ${SDS.describe(scan.rule || { all: [] }, state.labels)}${scan.universe === "liquid" ? " · liquid stocks only" : ""}` : "";
     const desc = scan && !(isWide && ui.view === "list") ? `<p class="ws-desc">${esc(scan.description || "")} <span class="rule-en">${esc(SDS.describe(scan.rule || { all: [] }, state.labels))}${scan.universe === "liquid" ? " · liquid stocks only" : ""}</span></p>` : "";
     view.innerHTML = `<div class="ws-bar">${bar}
         <div class="ws-right">${ui.view === "grid" ? `<select id="gSort" aria-label="Grid order">${GRID_SORTS.map(([k, l]) => `<option value="${k}" ${k === ui.gridSort ? "selected" : ""}>${l}</option>`).join("")}</select>
           ${seg("gcols", [["2", "2"], ["3", "3"], ["4", "4"]], String(ui.gridCols))}` : ""}
-          ${ui.view === "list" && isWide ? `<button type="button" class="btn icon ${ui.panel ? "on" : ""}" id="spBtn" title="Stock panel: overview, financials, peers, shareholding"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>` : ""}
           <div class="seg icons" role="group" aria-label="View"><button type="button" data-v="list" class="${ui.view === "list" ? "on" : ""}" title="List + chart">${ICON.list}</button>
           <button type="button" data-v="grid" class="${ui.view === "grid" ? "on" : ""}" title="Grid of charts">${ICON.grid}</button></div></div></div>
       ${desc}
@@ -1304,6 +1304,38 @@
         <button class="ws-strip" id="wsStrip" type="button" title="Back to the results list + chart"><i>›</i><span>RESULTS</span></button>
       </div>`;
     if (scan) wirePins($("#pins"), scan.id);
+    // ---- top search (any NSE stock)
+    {
+      const q = $("#wsFindQ"), m = $("#wsFindM");
+      let hits = [], k = 0;
+      const show = () => {
+        const t = q.value.trim().toUpperCase();
+        if (!t) { m.hidden = true; return; }
+        const all = state.screen;
+        hits = all.filter((r) => r.symbol.startsWith(t)).sort((a, b) => a.symbol.length - b.symbol.length || (b.mcap_cr || 0) - (a.mcap_cr || 0));
+        if (hits.length < 8) hits = hits.concat(all.filter((r) => !r.symbol.startsWith(t) && (r.symbol.includes(t) || String(r.name || "").toUpperCase().includes(t))).sort((a, b) => (b.mcap_cr || 0) - (a.mcap_cr || 0)));
+        hits = hits.slice(0, 8); k = 0;
+        m.innerHTML = hits.length ? hits.map((r, i) => `<button type="button" class="ws-fr${i === k ? " on" : ""}" data-fk="${esc(r.key)}">${logo(r)}<span><b>${esc(r.symbol)}</b><small>${esc(r.name || "")}</small></span><em>${SD.fmtPrice(r.close)}</em>${pct(r.chg_1d)}</button>`).join("")
+          : '<p class="muted small ws-fn">No NSE stock matches.</p>';
+        m.hidden = false;
+      };
+      const pick = (key) => {
+        m.hidden = true; q.value = ""; q.blur();
+        if (!isWide) { location.hash = "#/i/s/" + encodeURIComponent(key.slice(2)); return; }
+        state.current = key; st.universe = "all"; st.sector = ""; st.text = ""; st.limit = PAGE;
+        if (mode === "stocks") renderStocks(); else location.hash = "#/stocks";
+      };
+      q.oninput = show;
+      q.onfocus = () => { if (q.value.trim()) show(); };
+      q.onkeydown = (e) => {
+        if (e.key === "Escape") { m.hidden = true; q.blur(); return; }
+        if (!hits.length || m.hidden) return;
+        if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); k = (k + (e.key === "ArrowDown" ? 1 : hits.length - 1)) % hits.length; m.querySelectorAll(".ws-fr").forEach((b, i) => b.classList.toggle("on", i === k)); }
+        if (e.key === "Enter") { e.preventDefault(); pick(hits[k].key); }
+      };
+      m.onmousedown = (e) => { const b = e.target.closest("[data-fk]"); if (b) { e.preventDefault(); pick(b.dataset.fk); } };
+      q.onblur = () => setTimeout(() => { m.hidden = true; }, 120);
+    }
     let rows = [];
     const stPage = $("#stPage");
     const footer = () => {
@@ -1409,7 +1441,9 @@
       view.querySelectorAll("tr.cur").forEach((x) => x.classList.remove("cur"));
       const tr = view.querySelector(`tr[data-key="${CSS.escape(key)}"]`);
       if (tr) { tr.classList.add("cur"); if (scroll) tr.scrollIntoView({ block: "nearest" }); }
-      SDChart.open($("#pane"), r, { kind: "s" });
+      // the stock-panel toggle sits next to the chart's gear (like the reference)
+      SDChart.open($("#pane"), r, { kind: "s", extraTool: `<button class="btn sm icon ch-spt${ui.panel ? " on" : ""}" data-xtool type="button" title="Stock panel: overview, financials, peers, shareholding"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>`,
+        onExtraTool: () => { ui.panel = !ui.panel; saveUi(); renderStocks(); } });
       if (ui.panel && ui.view === "list") stockPanel($("#side"), r, { onPeer: (pid) => { const k = "s:" + pid; if (rows.some((x) => x.key === k)) openRow(k, true); else location.hash = "#/i/s/" + encodeURIComponent(pid); } });
     };
     $("#tbl").onclick = (e) => {
@@ -1487,7 +1521,6 @@
     $("#sortMenu").onchange = (e) => { if (e.target.id === "sector") { st.sector = e.target.value; st.limit = PAGE; draw(); } };
     const openCols = () => columnSettings(() => draw(), { get: () => st.cols, set: (v) => { st.cols = v; store.set("sd-stocks", { ...store.get("sd-stocks", {}), cols: v, cv: 2 }); }, def: ST_DEF_COLS, extra: CANDLE_COLS, name: "Candles" });
     $("#colBtn").onclick = openCols;
-    if ($("#spBtn")) $("#spBtn").onclick = () => { ui.panel = !ui.panel; saveUi(); renderStocks(); };
     view.querySelector(".ws-right .icons").onclick = (e) => { const b = e.target.closest("button"); if (!b || b.dataset.v === ui.view) return; ui.view = b.dataset.v; saveUi(); renderStocks(); };
     if (ui.view === "grid") {
       $("[data-seg=gcols]").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; ui.gridCols = Number(b.dataset.v); gridLimit = ui.gridCols * 4; saveUi(); setOn(e.currentTarget, b); $("#grid").style.setProperty("--gcols", ui.gridCols); drawGrid(); };
@@ -1570,6 +1603,8 @@
     view.onclick = (e) => { if (!e.target.closest(".menu-wrap")) view.querySelectorAll(".menu").forEach((x) => { x.hidden = true; }); };
     if (isWide && ui.view === "list") {
       const first = state.current && rows.some((r) => r.key === state.current) ? state.current : rows[0] && rows[0].key;
+      const at = rows.findIndex((r) => r.key === first);
+      if (at >= st.limit) { st.limit = Math.ceil((at + 1) / PAGE) * PAGE; draw(); }
       if (first) openRow(first, true);
     }
   }

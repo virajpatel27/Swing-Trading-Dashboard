@@ -1305,3 +1305,22 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   choices mapped), EMAs in period order.
 - Checked in the preview: toolbar does not move while the grid scrolls, names full at 2 / 3 / 4 per row, centred
   1D / 1W (4 per row: 3 long names shift it 7-40 px), EMA list, no console errors. JS 32 / 32.
+
+### 2026-11-14: Chart follows pane drags, steady header, stacked legend, top stock search, centred numbers
+- Viraj (10 photos): badges / volume label did not follow when a pane divider was dragged (only after a click); the
+  description jumped while moving the mouse; indicators must be listed one under another; a top search for any NSE
+  stock that opens it in All stocks; chips, 1M / 3M and earnings numbers in the middle; the stock-panel icon next to
+  the chart's gear (list / grid stay top right).
+- site/chart.js:
+  - pointermove with a pressed button on the chart -> badges, volume label and drawings are re-placed every frame;
+  - header(): only the price line is redrawn on hover; description / company line drawn once per stock (no jump),
+    the price line never wraps, 1M / 3M placed in the middle of the pane (fixed spot);
+  - legend moved into the chart box: top-left overlay, one indicator per line;
+  - tools row: optional page button after the gear (opts.extraTool / opts.onExtraTool).
+- site/app.js renderStocks(): "Find a stock" box first in the bar (every NSE stock by symbol / name, arrows +
+  Enter, logo, price, 1D); a pick opens All stocks (#/stocks) with that stock charted, filters cleared and the list
+  long enough to show its row (phones: the stock page); stock-panel toggle moved to the chart toolbar.
+- site/styles.css: search box + results menu, legend overlay, centred chips (margin auto), earnings value / % placed
+  inside the column like the reference.
+- Checked in the preview: search -> All stocks with RELIANCE opened and highlighted, legend stacked, panel icon
+  toggles the panel, no console errors. JS 32 / 32.

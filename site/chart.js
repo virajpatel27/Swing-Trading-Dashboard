@@ -142,8 +142,8 @@
     close();
     if (!aboutP) aboutP = fetch("data/about.json").then((x) => (x.ok ? x.json() : {})).catch(() => ({})).then((j) => { ABOUT = j || {}; return ABOUT; });
     await aboutP;
-    box.innerHTML = `<div class="ch-top" id="chTools"></div><div class="ch-head" id="chHead"></div><div class="legend" id="chLegend"></div>
-      <div class="ch-wrap"><div class="ch-canvas" id="chCanvas"><i class="skel ch-skel"></i></div>
+    box.innerHTML = `<div class="ch-top" id="chTools"></div><div class="ch-head" id="chHead"></div>
+      <div class="ch-wrap"><div class="legend" id="chLegend"></div><div class="ch-canvas" id="chCanvas"><i class="skel ch-skel"></i></div>
       <svg class="ch-pat" id="chPat"></svg><svg class="ch-svg" id="chSvg"></svg><div class="ch-dbar" id="chDraw"></div>
       <div class="ch-vol muted" id="chVol"></div><div class="ch-news" id="chNews" hidden></div><button class="ch-end" id="chEnd" type="button" title="Back to the latest bar" hidden>${ic("end")}</button></div>
       <div class="ch-earn" id="chEarn"></div><div class="ch-note muted" id="chNote"></div>`;
@@ -475,6 +475,11 @@
       const i = times.indexOf(p.time);
       if (i >= 0) header(i, vflags);
     });
+    // dragging a pane divider (price / volume / indicators): badges, volume label and drawings follow at once
+    let dragRaf = 0;
+    const follow = () => { dragRaf = 0; if (!cur || cur.chart !== chart) return; if (cur.placeEv) cur.placeEv(); if (cur.onPaint) cur.onPaint(); drawings.render(); };
+    canvas.addEventListener("pointermove", (e) => { if (e.buttons && !dragRaf) dragRaf = requestAnimationFrame(follow); });
+    canvas.addEventListener("pointerup", () => setTimeout(follow, 30));
     // "back to the latest bar" button when scrolled into the past
     const endBtn = cur.box.querySelector("#chEnd");
     chart.timeScale().subscribeVisibleLogicalRangeChange((r) => { if (endBtn && r) endBtn.hidden = r.to >= bars.length - 1; });
@@ -519,6 +524,7 @@
       el.style.top = `${pr.bottom - wr.top - 24}px`;
       el.querySelectorAll(".ev-b").forEach((b) => { const x = ts.timeToCoordinate(b.dataset.t); const off = x == null || x < 6 || x > w - 6; b.hidden = off; if (!off) b.style.left = `${pr.left - wr.left + x}px`; });
     };
+    cur.placeEv = place;
     chart.timeScale().subscribeVisibleLogicalRangeChange(place);
     chart.timeScale().subscribeSizeChange(place);
     requestAnimationFrame(() => requestAnimationFrame(place));
@@ -544,12 +550,18 @@
     const w = cfg.tf === "W";
     const f = vflags ? vflags[i] : null;
     const due = r.next_result && cfg.show.due !== false ? `<span class="ch-due">Results due ${esc(S.fmtDate(r.next_result))}</span>` : "";
-    cur.box.querySelector("#chHead").innerHTML = `<div class="ch-l2"><b class="ch-sym">${esc(r.symbol || r.name)}</b><span class="muted">${w ? "1W" : "1D"}</span>
+    const hd = cur.box.querySelector("#chHead");
+    if (!hd.querySelector(".ch-l2")) hd.innerHTML = '<div class="ch-l2"></div><div class="ch-st"></div>';
+    const stKey = `${r.key || r.id}|${cfg.show.desc}|${cfg.show.due}|${ABOUT[r.symbol] ? 1 : 0}`;
+    if (hd.dataset.k !== stKey) {
+      hd.dataset.k = stKey;
+      hd.querySelector(".ch-st").innerHTML = `${cfg.show.desc !== false && ABOUT[r.symbol] ? `<p class="ch-about">${esc(ABOUT[r.symbol])}</p>` : ""}
+      ${cfg.show.desc !== false ? `<div class="ch-desc muted">${esc(r.name || "")}${r.sector ? ` · ${esc(r.sector)} › ${esc(r.basic_industry || r.industry || "")}` : ""}${due}</div>` : due ? `<div class="ch-desc">${due}</div>` : ""}`;
+    }
+    hd.querySelector(".ch-l2").innerHTML = `<b class="ch-sym">${esc(r.symbol || r.name)}</b><span class="muted">${w ? "1W" : "1D"}</span>
       <span>O <b>${fmt(b.open)}</b></span><span>H <b>${fmt(b.high)}</b></span><span>L <b>${fmt(b.low)}</b></span><span>C <b>${fmt(b.close)}</b></span>
       <span class="${S.colorClass(chg)}">${chgAbs == null ? "" : (chgAbs > 0 ? "+" : "") + fmt(chgAbs)} (${S.fmtPct(chg)})</span>
-      <span class="ch-r"><span>1M <b class="${S.colorClass(back(w ? 4 : 21))}">${S.fmtPct(back(w ? 4 : 21))}</b></span><span>3M <b class="${S.colorClass(back(w ? 13 : 63))}">${S.fmtPct(back(w ? 13 : 63))}</b></span></span></div>
-      ${cfg.show.desc !== false && ABOUT[r.symbol] ? `<p class="ch-about">${esc(ABOUT[r.symbol])}</p>` : ""}
-      ${cfg.show.desc !== false ? `<div class="ch-desc muted">${esc(r.name || "")}${r.sector ? ` · ${esc(r.sector)} › ${esc(r.basic_industry || r.industry || "")}` : ""}${due}</div>` : due ? `<div class="ch-desc">${due}</div>` : ""}`;
+      <span class="ch-r"><span>1M <b class="${S.colorClass(back(w ? 4 : 21))}">${S.fmtPct(back(w ? 4 : 21))}</b></span><span>3M <b class="${S.colorClass(back(w ? 13 : 63))}">${S.fmtPct(back(w ? 13 : 63))}</b></span></span>`;
     const vl = cur.box.querySelector("#chVol");
     if (vl) {
       const top = cur.volPane != null ? drawings.paneTopOf(cur.volPane) : null;
@@ -619,8 +631,9 @@
       <button class="btn sm ${cfg.ind.ma.on ? "on" : ""}" data-act="ma" type="button" title="Moving averages on / off">MA</button>
       <button class="btn sm" data-act="ind" type="button"><i class="fx">ƒx</i> Indicators <span class="caret">▾</span></button>
       <span class="ch-chips">${chipsHTML()}</span>
-      <button class="btn sm icon" data-act="set" type="button" title="Chart settings">${ic("gear")}</button>`;
+      <button class="btn sm icon" data-act="set" type="button" title="Chart settings">${ic("gear")}</button>${cur.opts && cur.opts.extraTool ? cur.opts.extraTool : ""}`;
     box.onclick = (e) => {
+      if (e.target.closest("[data-xtool]") && cur.opts && cur.opts.onExtraTool) return cur.opts.onExtraTool(e);
       const sb = e.target.closest("[data-seg] button");
       if (sb) {
         const g = sb.closest("[data-seg]").dataset.seg;

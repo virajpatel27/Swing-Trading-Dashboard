@@ -776,9 +776,28 @@
       `<button type="button" data-ma="${k}" class="mi-ma${mi.mas.includes(k) ? " on" : ""}"><span>${t} ${n}</span>${TICK}<i style="background:${c}"></i></button>`).join("")}`).join('<hr class="mi-hr">');
     const sortMenu = () => `<div class="mi-sh"><b>Sort by</b><button type="button" data-sreset title="Back to the listed order">↻</button></div>${[["default", "As listed"], ["gain", "Top gainers"], ["lose", "Top losers"], ["az", "A–Z"], ["za", "Z–A"]].map(([k, l]) =>
       `<button type="button" data-sort="${k}" class="${k === mi.sort ? "on" : ""}"><span>${l}</span>${k === "gain" || k === "lose" ? `<em class="mi-per" data-per="${k}" title="Change the period">${perOf(mi.sortP)[1]}${UPDN}</em>` : ""}${TICK}</button>`).join("")}`;
+    // returns in the card header (Viraj 14-Nov): 1D / 1W for the 1M-6M ranges; for 1Y / 2Y / 5Y every period up to it
+    // (5Y: 1M ... 10Y and Max), from the chart's daily closes once loaded (before that from the snapshot)
+    const LONG = { "1y": ["1M", "3M", "6M", "1Y"], "2y": ["1M", "3M", "6M", "1Y", "2Y"], "5y": ["1M", "3M", "6M", "1Y", "2Y", "5Y", "10Y", "Max"] };
+    const NB = { "1M": 21, "3M": 63, "6M": 126, "1Y": 252, "2Y": 504, "5Y": 1260, "10Y": 2520 };
+    const ROWF = { "1M": "chg_1m", "3M": "chg_3m", "6M": "chg_6m", "1Y": "chg_1y", "5Y": "chg_5y" };
+    const pctL = (v) => (v == null || !isFinite(v) ? '<span class="muted">–</span>' : `<span class="${v > 0 ? "up" : v < 0 ? "down" : ""}">${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v) >= 100 ? Math.abs(v).toFixed(0) : Math.abs(v).toFixed(1)}%</span>`);
+    const chgInner = (r, o) => {
+      const L = LONG[mi.range];
+      if (!L) return `<small>1D</small>${pctS(r.chg_1d)}<small>1W</small>${pctS(r.chg_1w)}`;
+      const d = o && o.daily, last = d && d.length ? d[d.length - 1].close : null;
+      return L.map((k) => {
+        let v = null;
+        if (last != null) { if (k === "Max") v = (last / d[0].close - 1) * 100; else if (d.length > NB[k]) v = (last / d[d.length - 1 - NB[k]].close - 1) * 100; }
+        else if (ROWF[k]) v = r[ROWF[k]];
+        return `<small>${k}</small>${pctL(v)}`;
+      }).join("");
+    };
+    const rowOf = new Map([...broad, ...sect].map((r) => [r.id, r]));
+    const updChg = (card) => { const r = rowOf.get(card.dataset.id), sp = card.querySelector(".mi-chg"); if (!r || !sp) return; sp.classList.toggle("long", !!LONG[mi.range]); sp.innerHTML = chgInner(r, card._mi); };
     const cardHTML = (r, i) => `<div class="mi-card" data-id="${esc(r.id)}" style="--i:${i}"><div class="mi-h"><a class="mi-n" href="#/i/n/${encodeURIComponent(r.id)}" title="${esc(miName(r))} - open the full chart">${esc(miName(r))}</a>
-        <span class="mi-chg"><small>1D</small>${pctS(r.chg_1d)}<small>1W</small>${pctS(r.chg_1w)}</span><span></span></div>
-        <div class="mi-ch"><i class="skel"></i><button type="button" class="mi-end" title="Back to the latest bar" hidden>»</button></div></div>`;
+        <span class="mi-chg${LONG[mi.range] ? " long" : ""}">${chgInner(r)}</span><span></span></div>
+        <div class="mi-ch"><div class="mi-ohlc" aria-hidden="true"></div><i class="skel"></i><button type="button" class="mi-end" title="Back to the latest bar" hidden>»</button></div></div>`;
     let list = sorted();
     view.innerHTML = `<div class="bx mix">${tabs}<div class="mi-bar">
         <div class="mi-tx" data-seg="mgrp"><button type="button" data-v="broad" class="${mi.grp === "broad" ? "on" : ""}">Broad <small>(${broad.length})</small></button><button type="button" data-v="sector" class="${mi.grp === "sector" ? "on" : ""}">Sector <small>(${sect.length})</small></button></div>
@@ -862,6 +881,16 @@
       end.onclick = () => glideTo(o, nBars());
       box.addEventListener("dblclick", () => glideTo(o, nBars()));
       charts.push(o); card._mi = o;
+      updChg(card);
+      // hover a candle: its open / high / low / close and the change from the bar before, under the name
+      const ol = el.querySelector(".mi-ohlc"), f2 = (x) => x.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      ch.subscribeCrosshairMove((p) => {
+        const i = p && p.point && p.logical != null ? Math.round(p.logical) : -1, b = o.bars[i];
+        if (!b) { ol.classList.remove("on"); return; }
+        const pv = o.bars[i - 1], c = pv ? b.close - pv.close : null, pc = pv ? (c / pv.close) * 100 : null, cls = c == null ? "" : c >= 0 ? "up" : "down";
+        ol.innerHTML = `<span>O <b>${f2(b.open)}</b></span><span>H <b>${f2(b.high)}</b></span><span>L <b>${f2(b.low)}</b></span><span>C <b>${f2(b.close)}</b></span>${c == null ? "" : `<em class="${cls}">${c >= 0 ? "+" : "−"}${f2(Math.abs(c))} (${c >= 0 ? "+" : "−"}${Math.abs(pc).toFixed(2)}%)</em>`}`;
+        ol.classList.add("on");
+      });
       el.classList.add("on");
     };
     let obs = null;
@@ -922,7 +951,9 @@
         charts.forEach(setMAs); return;
       }
       if (b && b.dataset.range) { mi.range = b.dataset.range; save(); d.querySelector(".hm-ddb b").textContent = rng()[1];
-        d.querySelectorAll("[data-range]").forEach((x) => x.classList.toggle("on", x === b)); closeAll(); charts.forEach((o) => glideTo(o, nBars())); status(); return; }
+        d.querySelectorAll("[data-range]").forEach((x) => x.classList.toggle("on", x === b)); closeAll(); charts.forEach((o) => glideTo(o, nBars())); status();
+        grid.querySelectorAll(".mi-card").forEach((cd) => { updChg(cd); const sp = cd.querySelector(".mi-chg"); sp.animate([{ opacity: 0, transform: "translateY(-3px)" }, { opacity: 1, transform: "none" }], { duration: 220, easing: "ease-out" }); });
+        return; }
       if (e.target.closest("[data-sreset]")) { mi.sort = "default"; mi.sortP = "1d"; d.querySelectorAll("[data-sort]").forEach((x) => x.classList.toggle("on", x.dataset.sort === "default")); d.querySelectorAll("[data-per]").forEach((x) => { x.innerHTML = perOf("1d")[1] + UPDN; }); save(); reorder(); return; }
       if (b && b.dataset.sort) {
         const per = e.target.closest("[data-per]");

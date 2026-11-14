@@ -1356,3 +1356,17 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Checked in the preview: results end at New scan, no logo, 1M / 3M centre = chips centre, watchlist menu (new
   list, tick, star, close), grid = 2 rows, no description. The preview pane was hidden, so the chart library's own
   sizes (pane heights, pencil spot, swing labels) could not be looked at on screen. JS 32 / 32.
+
+### 2026-11-14: Major Indices - hover OHLC under the name, return lists for long ranges
+- Viraj (5 photos): hovering a candle on any index card must show its O / H / L / C and the change (under the index
+  name); with range 1Y / 2Y / 5Y the header shows every period's return up to it (1Y: 1M 3M 6M 1Y; 2Y: + 2Y;
+  5Y: 1M 3M 6M 1Y 2Y 5Y 10Y Max); 1M / 3M / 6M keep 1D / 1W.
+- site/app.js renderMajorIndices(): .mi-ohlc overlay at the chart's top-left, filled from the crosshair's logical
+  index (works for D and W), fades out when the mouse leaves; chgInner() / updChg(): returns from the card's daily
+  closes once its chart is loaded (21 / 63 / 126 / 252 / 504 / 1260 / 2520 sessions, Max = first close), before that
+  from the snapshot fields (2Y / 10Y / Max show "–" until the chart loads); a range change refreshes every header.
+- site/styles.css: hover line style; .mi-card is a size container: on cards narrower than 760 px the long list
+  moves to a centred second line under the name.
+- Checked in the preview: 1Y / 2Y / 5Y headers from the snapshot, card layout intact at 4 per row, no console
+  errors. The preview window was minimized, so the charts did not draw there: the hover line and the chart-based
+  10Y / Max values are not seen on screen yet. JS 32 / 32.

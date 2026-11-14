@@ -2214,3 +2214,17 @@ html:has(.ws-main.grid.wide), body:has(.ws-main.grid.wide) { overflow: hidden; }
 .ws-main.grid.wide .grid::-webkit-scrollbar { display: none; width: 0; }
 .ws-main.grid.wide .grid .g-ch { height: var(--g-ch, 280px) !important; }
 .ws-main.grid.wide .ws-strip { position: static; height: 100%; min-height: 0; }
+
+/* major indices: hover OHLC under the name, long return lists (1Y / 2Y / 5Y) move to a second line on narrow cards */
+.mix .mi-card { container-type: inline-size; }
+.mi-ohlc { position: absolute; top: 0; left: 2px; z-index: 4; display: flex; gap: 10px; align-items: baseline; padding: 1px 6px; border-radius: 6px; font-size: 11.5px; color: var(--muted);
+  font-variant-numeric: tabular-nums; white-space: nowrap; background: color-mix(in srgb, var(--panel) 86%, transparent); pointer-events: none; opacity: 0; transform: translateY(-2px); transition: opacity .12s, transform .12s; }
+.mi-ohlc.on { opacity: 1; transform: none; }
+.mi-ohlc b { color: var(--text); font-weight: 500; }
+.mi-ohlc em { font-style: normal; font-weight: 500; }
+.mix .mi-chg.long { gap: 3px; flex-wrap: wrap; justify-content: center; }
+@container (max-width: 760px) {
+  .mix .mi-h:has(.mi-chg.long) { grid-template-columns: minmax(0, 1fr); row-gap: 4px; }
+  .mix .mi-chg.long { grid-column: 1 / -1; justify-self: center; }
+  .mix .mi-h:has(.mi-chg.long) > span:last-child { display: none; }
+}

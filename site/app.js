@@ -25,7 +25,11 @@
       store.get("sd-stocks", {}), { limit: PAGE }),
     selected: new Set(), current: null,
   };
-  state.stocks.cols = state.stocks.cols.filter((c) => SD.COLUMNS[c]);
+  const CANDLE_COLS = [["dcandle", "Daily Candle"], ["wcandle", "Weekly Candle"]];
+  const ST_DEF_COLS = ["dcandle", "wcandle", ...SD.DEFAULT_COLUMNS];
+  state.stocks.cols = state.stocks.cols.filter((c) => SD.COLUMNS[c] || c === "dcandle" || c === "wcandle");
+  if ((state.stocks.cv || 0) < 2) { state.stocks.cv = 2; state.stocks.cols = [...ST_DEF_COLS.filter((c) => !state.stocks.cols.includes(c) && (c === "dcandle" || c === "wcandle")), ...state.stocks.cols]; }
+  if (!state.stocks.perfP) state.stocks.perfP = "chg_1d";
   state.market.limit = PAGE;
   state.screener.limit = PAGE;
 
@@ -1226,14 +1230,15 @@
     const pins = store.get("sd-pins", []).map((p) => allScans().find((s) => s.id === p)).filter(Boolean);
     const bar = scan
       ? `<button class="btn primary" id="newScan" type="button">${ICON.plus}<span>New scan</span></button>
-        <div class="menu-wrap"><button class="btn ws-pick" id="scanBtn" type="button" aria-haspopup="true"><b>${esc(scan.name)}</b>${scan.edited ? ' <span class="tag">edited</span>' : ""} <span class="caret">▾</span></button>
+        <div class="menu-wrap"><button class="btn ws-pick" id="scanBtn" type="button" aria-haspopup="true" title="${esc(scan.description || "")}"><b>${esc(scan.name)}</b>${scan.edited ? ' <span class="tag">edited</span>' : ""} <span class="caret">▾</span></button>
           <div class="menu picker" id="scanMenu" hidden></div></div>
         <button class="btn icon" id="csBtn" type="button" title="Custom scan: pick filters">${ICON.cols}</button>
         <button class="btn icon" id="formulaBtn" type="button" title="Formula: see or change the rule">ƒ</button>
         <div class="pins">${pins.length ? pins.map((s) => `<a class="pin-chip ${s.id === scan.id ? "on" : ""}" href="#/scanners/${encodeURIComponent(s.id)}">${esc(s.name)}</a>`).join("")
           : '<span class="muted small">Pin a scanner from the menu to show it here</span>'}</div>`
       : `<h1 class="ws-title">All stocks</h1><span class="muted small">every NSE main-board stock, all fields of ${SD.fmtDate(state.screenDate)}</span>`;
-    const desc = scan ? `<p class="ws-desc">${esc(scan.description || "")} <span class="rule-en">${esc(SDS.describe(scan.rule || { all: [] }, state.labels))}${scan.universe === "liquid" ? " · liquid stocks only" : ""}</span></p>` : "";
+    const descTxt = scan ? `${scan.description || ""} ${SDS.describe(scan.rule || { all: [] }, state.labels)}${scan.universe === "liquid" ? " · liquid stocks only" : ""}` : "";
+    const desc = scan && !(isWide && ui.view === "list") ? `<p class="ws-desc">${esc(scan.description || "")} <span class="rule-en">${esc(SDS.describe(scan.rule || { all: [] }, state.labels))}${scan.universe === "liquid" ? " · liquid stocks only" : ""}</span></p>` : "";
     view.innerHTML = `<div class="ws-bar">${bar}
         <div class="ws-right">${ui.view === "grid" ? `<select id="gSort" aria-label="Grid order">${GRID_SORTS.map(([k, l]) => `<option value="${k}" ${k === ui.gridSort ? "selected" : ""}>${l}</option>`).join("")}</select>
           ${seg("gcols", [["2", "2"], ["3", "3"], ["4", "4"]], String(ui.gridCols))}` : ""}
@@ -1243,15 +1248,11 @@
       ${desc}
       <div class="ws-main ${ui.view} ${isWide ? "wide" : ""} ${ui.panel && isWide ? "withp" : ""}" id="wsMain" style="--list-w:${ui.listW}px">
         <section class="results">
-          <div class="res-h"><b>Results</b><span class="res-c"><span class="count" id="resN"></span><button class="flt-chip" id="fltChip" type="button" hidden></button></span>
-            <button class="icon-btn sm ${ui.filters ? "on" : ""}" id="fltBtn" type="button" title="Search and filters">${ICON.filter}</button>
-            <div class="menu-wrap"><button class="icon-btn sm" id="sortBtn" type="button" title="Sort: ${esc(sortName)}">${ICON.sort}</button>
-              <div class="menu right" id="sortMenu" hidden><small class="menu-h">Sort by · now ${esc(sortName)} ${st.dir === "asc" ? "▲" : "▼"}</small>${SD.SORTS.map(([k, label]) => `<button type="button" data-sort="${k}" class="${k === st.sort ? "on" : ""}">${label}</button>`).join("")}
-              <button type="button" data-flip>Reverse order ⇅</button></div></div>
-            <button class="icon-btn sm" id="colBtn" type="button" title="Columns">${ICON.cols}</button></div>
-          <div class="res-f" ${ui.filters ? "" : "hidden"}>${seg("uni", [["all", "All"], ["liquid", "Liquid"], ["n500", "Nifty 500"], ["fno", "F&O"]], st.universe)}
-            <select id="sector" aria-label="Sector"><option value="">All sectors</option>${sectors.map((x) => `<option ${x === st.sector ? "selected" : ""}>${esc(x)}</option>`).join("")}</select>
-            <input id="q" type="search" placeholder="Search in results" value="${esc(st.text)}" aria-label="Search in results"></div>
+          <div class="res-h"><span class="res-t" id="resT" ${st.text ? "hidden" : ""}><b>Results</b><span class="res-c"><span class="count" id="resN"></span><button class="flt-chip" id="fltChip" type="button" hidden></button></span></span>
+            <label class="res-q" id="resQ" ${st.text ? "" : "hidden"}>${ICON.filter}<input id="q" type="search" placeholder="Search symbol…" value="${esc(st.text)}" aria-label="Search symbol" autocomplete="off"><button type="button" id="qX" aria-label="Clear search">✕</button></label>
+            <button class="icon-btn sm" id="qBtn" type="button" title="Search symbol">${ICON.filter}</button>
+            <div class="menu-wrap"><button class="icon-btn sm" id="sortBtn" type="button" title="Sort by">${ICON.sort}</button><div class="menu right rs-sort" id="sortMenu" hidden></div></div>
+            <button class="icon-btn sm" id="colBtn" type="button" title="Column settings">${ICON.cols}</button></div>
           <div id="tbl" class="res-list"></div>
         </section>
         <div class="res-drag" id="resDrag" role="separator" aria-orientation="vertical" title="Drag to make the list wider or narrower"></div>
@@ -1280,14 +1281,6 @@
       $("#copy").onclick = copySel;
       $("#csv").onclick = csvSel;
     };
-    // how many extra columns fit in the list: wider list = more columns (phones: all, scroll sideways)
-    // a wider list shows the daily / weekly candle first (like the reference), then more of your columns
-    const candlesOn = () => !isWide || ui.view !== "list" || $("#wsMain .results").clientWidth >= 470;
-    const fitCols = () => {
-      if (!isWide || ui.view !== "list") return st.cols;
-      const w = $("#wsMain .results").clientWidth - (candlesOn() ? 200 : 0);
-      return st.cols.slice(0, Math.max(0, Math.floor((w - 250) / 86)));
-    };
     /** a tiny candle: the day (open / high / low / close) or the week (direction and size of the 1W move) */
     const glyph = (o, h, l, c) => {
       if ([o, h, l, c].some((v) => v == null || !isFinite(v))) return "";
@@ -1298,28 +1291,28 @@
     const dCandle = (r) => `<span class="cgc">${glyph(r.open, r.high, r.low, r.close)}${pctC(r.chg_1d)}</span>`;
     const wCandle = (r) => { const w = r.ret_1w; if (w == null) return '<span class="muted">–</span>'; const o = r.close / (1 + w / 100);
       return `<span class="cgc">${glyph(o, Math.max(o, r.close, r.high ?? r.close), Math.min(o, r.close, r.low ?? r.close), r.close)}${pctC(w)}</span>`; };
-    let shownCols = -1;
+    const colKey = (c) => (c === "dcandle" ? "chg_1d" : c === "wcandle" ? "ret_1w" : c);
+    const colLabel = (c) => (CANDLE_COLS.find((x) => x[0] === c) || [])[1] || (SD.COLUMNS[c] ? SD.COLUMNS[c].label : c);
     const draw = () => {
       rows = SD.sortRows(SD.filterStocks(base, st), st.sort, st.dir);
       if (ui.view === "grid") { drawGrid(); footer(); return; }
-      const cols = fitCols();
-      shownCols = cols.length + (candlesOn() ? 100 : 0);
+      const cols = st.cols;
       const ar = (c) => `<i class="gx-ar${st.sort === c ? "" : " off"}">${st.sort === c ? (st.dir === "asc" ? "↑" : "↓") : "↕"}</i>`;
-      const cdl = candlesOn();
       const head = `<th class="l ck"><input type="checkbox" id="selAll" aria-label="Select all shown"></th><th class="l sticky ${st.sort === "symbol" ? "sorted" : ""}" data-col="symbol">${ar("symbol")}Symbol</th>`
         + `<th data-col="close" class="${st.sort === "close" ? "sorted" : ""}">${ar("close")}Last Price</th>`
-        + (cdl ? `<th data-col="chg_1d" class="${st.sort === "chg_1d" ? "sorted" : ""}">${ar("chg_1d")}Daily Candle</th><th data-col="ret_1w" class="${st.sort === "ret_1w" ? "sorted" : ""}">${ar("ret_1w")}Weekly Candle</th>` : "")
-        + cols.map((c) => `<th data-col="${c}" class="${SD.COLUMNS[c].fmt === "text" ? "l " : ""}${st.sort === c ? "sorted" : ""}">${ar(c)}${esc(SD.COLUMNS[c].label)}</th>`).join("");
+        + cols.map((c) => { const k = colKey(c), txt = SD.COLUMNS[c] && SD.COLUMNS[c].fmt === "text";
+          return `<th data-col="${k}" data-c="${c}" class="${txt ? "l " : ""}${c === "dcandle" || c === "wcandle" ? "cdl " : ""}${st.sort === k ? "sorted" : ""}"><span class="th-w">${ar(k)}<span>${esc(colLabel(c))}</span></span></th>`; }).join("")
+        + `<th class="fill"><button type="button" class="add-col" id="addCol" title="Add or remove columns">+</button></th>`;
       const body = rows.slice(0, st.limit).map((r) => `<tr data-key="${esc(r.key)}" class="${state.current === r.key ? "cur" : ""}">`
         + `<td class="l ck"><input type="checkbox" data-sel="${esc(r.key)}" ${state.selected.has(r.key) ? "checked" : ""} aria-label="Select ${esc(r.symbol)}"></td>`
-        + `<td class="l sticky name"><div class="nm" title="${esc(r.name)}">${logo(r)}<b>${esc(r.symbol)}</b></div></td><td class="num">${SD.fmtPrice(r.close)}</td>`
-        + (cdl ? `<td class="num">${dCandle(r)}</td><td class="num">${wCandle(r)}</td>` : "")
-        + cols.map((c) => `<td class="${SD.COLUMNS[c].fmt === "text" ? "l" : "num"}">${cellHTML(r, c)}</td>`).join("") + "</tr>").join("");
+        + `<td class="l sticky name"><div class="nm" title="${esc(r.name)}">${logo(r)}<b>${esc(r.symbol)}</b><button type="button" class="rw-w${state.watch.has(r.key) ? " on" : ""}" data-w="${esc(r.key)}" title="${state.watch.has(r.key) ? "In your watchlist" : "Add to watchlist"}">${state.watch.has(r.key) ? "★" : "+"}</button></div></td><td class="num">${SD.fmtPrice(r.close)}</td>`
+        + cols.map((c) => (c === "dcandle" ? `<td class="num cdl">${dCandle(r)}</td>` : c === "wcandle" ? `<td class="num cdl">${wCandle(r)}</td>`
+          : `<td class="${SD.COLUMNS[c] && SD.COLUMNS[c].fmt === "text" ? "l" : "num"}">${cellHTML(r, c)}</td>`)).join("") + '<td class="fill"></td></tr>').join("");
       const more = rows.length > st.limit ? `<button class="btn more" data-more type="button">Show more (${rows.length - st.limit} left)</button>` : "";
       $("#tbl").innerHTML = rows.length ? `<div class="table-wrap"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>${more}</div>`
         : `<div class="table-wrap"><div class="empty">Nothing matches.</div></div>`;
       footer();
-      store.set("sd-stocks", { universe: st.universe, sector: st.sector, sort: st.sort, dir: st.dir, cols: st.cols });
+      store.set("sd-stocks", { universe: st.universe, sector: st.sector, sort: st.sort, dir: st.dir, cols: st.cols, cv: st.cv, perfP: st.perfP });
     };
     // grid of mini charts: candles of the last ~6 months + 20 / 50-day averages, drawn when the card scrolls into view
     let gridLimit = ui.gridCols * 4;
@@ -1377,6 +1370,9 @@
       if (ui.panel && ui.view === "list") stockPanel($("#side"), r, { onPeer: (pid) => { const k = "s:" + pid; if (rows.some((x) => x.key === k)) openRow(k, true); else location.hash = "#/i/s/" + encodeURIComponent(pid); } });
     };
     $("#tbl").onclick = (e) => {
+      if (e.target.closest("#addCol")) return openCols();
+      const w = e.target.closest("[data-w]");
+      if (w) { e.stopPropagation(); toggleWatch(w.dataset.w); const on = state.watch.has(w.dataset.w); w.classList.toggle("on", on); w.textContent = on ? "★" : "+"; w.title = on ? "In your watchlist" : "Add to watchlist"; return; }
       const th = e.target.closest("th[data-col]");
       if (th) { const c = th.dataset.col; st.dir = st.sort === c ? (st.dir === "asc" ? "desc" : "asc") : c === "symbol" ? "asc" : "desc"; st.sort = c; return draw(); }
       if (e.target.id === "selAll") { rows.slice(0, st.limit).forEach((r) => (e.target.checked ? state.selected.add(r.key) : state.selected.delete(r.key))); return draw(); }
@@ -1402,47 +1398,87 @@
       const i = rows.findIndex((r) => r.key === state.current), j = i + (e.key === "ArrowDown" ? 1 : -1);
       if (rows[j]) { e.preventDefault(); if (j >= st.limit) { st.limit += PAGE; draw(); } openRow(rows[j].key, true); }
     };
-    $("[data-seg=uni]").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; st.universe = b.dataset.v; st.limit = PAGE; setOn(e.currentTarget, b); draw(); };
-    $("#sector").onchange = (e) => { st.sector = e.target.value; st.limit = PAGE; draw(); };
-    $("#q").oninput = (e) => { st.text = e.target.value; st.limit = PAGE; draw(); };
-    $("#fltChip").onclick = () => { st.universe = "all"; st.sector = ""; st.text = ""; st.limit = PAGE; renderStocks(); };
-    $("#fltBtn").onclick = () => { ui.filters = !ui.filters; saveUi(); $(".res-f").hidden = !ui.filters; $("#fltBtn").classList.toggle("on", ui.filters); if (ui.filters) $("#q").focus(); };
-    const toggleMenu = (id) => { const m = $(id); const open = m.hidden; view.querySelectorAll(".menu").forEach((x) => { x.hidden = true; }); m.hidden = !open; return open; };
-    $("#sortBtn").onclick = () => toggleMenu("#sortMenu");
-    $("#sortMenu").onclick = (e) => {
-      const b = e.target.closest("button"); if (!b) return;
-      if (b.dataset.flip != null) st.dir = st.dir === "asc" ? "desc" : "asc";
-      else { const s = SD.SORTS.find((x) => x[0] === b.dataset.sort); st.sort = s[0]; st.dir = s[2]; }
-      renderStocks();
+    // search like the reference: the magnifier turns the "Results" title into a search box
+    const searchOn = (on) => {
+      $("#resT").hidden = on; $("#resQ").hidden = !on; $("#qBtn").classList.toggle("on", on);
+      if (on) { const q = $("#q"); q.focus(); q.select(); $("#resQ").animate([{ opacity: 0, transform: "translateX(-6px)" }, { opacity: 1, transform: "none" }], { duration: 180, easing: "ease-out" }); }
+      else if (st.text) { st.text = ""; $("#q").value = ""; st.limit = PAGE; draw(); }
     };
-    $("#colBtn").onclick = () => columnSettings(() => { shownCols = -1; draw(); });
+    $("#qBtn").onclick = () => searchOn($("#resQ").hidden);
+    $("#qX").onclick = () => searchOn(false);
+    $("#q").oninput = (e) => { st.text = e.target.value; st.limit = PAGE; draw(); };
+    $("#q").onkeydown = (e) => { if (e.key === "Escape") searchOn(false); };
+    $("#fltChip").onclick = () => { st.universe = "all"; st.sector = ""; st.text = ""; st.limit = PAGE; renderStocks(); };
+    const toggleMenu = (id) => { const m = $(id); const open = m.hidden; view.querySelectorAll(".menu").forEach((x) => { x.hidden = true; }); m.hidden = !open; return open; };
+    // Sort by like the reference: A-Z ... Performance (period pill); the chosen one shows its direction, a second
+    // click turns it around; the round arrow goes back to the scan's own order. "Show" = universe / sector filters.
+    const PERF = [["chg_1d", "1D %"], ["ret_1w", "1W %"], ["ret_1m", "1M %"], ["ret_3m", "3M %"]];
+    const RS_SORTS = [["symbol", "A – Z", "asc"], ["close", "Price", "desc"], ["turnover_cr", "Price × Volume", "desc"], ["mcap_cr", "Market cap", "desc"],
+      ["rs_rating", "RS rating", "desc"], ["from_hi52", "From 52W high", "desc"], ["perf", "Performance", "desc"]];
+    const UPDN = '<svg viewBox="0 0 8 12" width="7" height="10" aria-hidden="true"><path d="M1.5 4.5 4 2l2.5 2.5M1.5 7.5 4 10l2.5-2.5" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const sortMenuHTML = () => {
+      const isPerf = PERF.some((x) => x[0] === st.sort), perfP = isPerf ? st.sort : st.perfP;
+      return `<div class="rs-h"><b>Sort by</b><button type="button" data-sreset title="Back to the scan's own order">↻</button></div>`
+        + RS_SORTS.map(([k, l]) => { const on = k === "perf" ? isPerf : st.sort === k;
+          return `<button type="button" data-sort="${k}" class="${on ? "on" : ""}"><span>${l}</span>${k === "perf" ? `<em class="rs-per" data-per title="Change the period">${(PERF.find((x) => x[0] === perfP) || PERF[0])[1]}${UPDN}</em>` : ""}<i class="rs-ar">${on ? (st.dir === "asc" ? "↑" : "↓") : ""}</i></button>`; }).join("")
+        + `<div class="rs-show"><small>Show</small>${seg("uni", [["all", "All"], ["liquid", "Liquid"], ["n500", "Nifty 500"], ["fno", "F&O"]], st.universe)}
+          <select id="sector" aria-label="Sector"><option value="">All sectors</option>${sectors.map((x) => `<option ${x === st.sector ? "selected" : ""}>${esc(x)}</option>`).join("")}</select></div>`;
+    };
+    $("#sortBtn").onclick = () => { $("#sortMenu").innerHTML = sortMenuHTML(); toggleMenu("#sortMenu"); };
+    $("#sortMenu").onclick = (e) => {
+      e.stopPropagation();
+      const m = $("#sortMenu");
+      const uni = e.target.closest("[data-seg=uni] button");
+      if (uni) { st.universe = uni.dataset.v; st.limit = PAGE; setOn(uni.parentElement, uni); draw(); return; }
+      if (e.target.closest("[data-sreset]")) { const d = scan && scan.sort ? [scan.sort.field, scan.sort.dir] : ["rs_rating", "desc"]; st.sort = d[0]; st.dir = d[1]; }
+      else if (e.target.closest("[data-per]")) { const i = PERF.findIndex((x) => x[0] === (PERF.some((y) => y[0] === st.sort) ? st.sort : st.perfP)); st.perfP = PERF[(i + 1) % PERF.length][0]; st.sort = st.perfP; st.dir = "desc"; }
+      else {
+        const b = e.target.closest("button[data-sort]"); if (!b) return;
+        const it = RS_SORTS.find((x) => x[0] === b.dataset.sort), k = it[0] === "perf" ? st.perfP : it[0];
+        if (st.sort === k) st.dir = st.dir === "asc" ? "desc" : "asc"; else { st.sort = k; st.dir = it[2]; }
+      }
+      st.limit = PAGE; draw(); m.innerHTML = sortMenuHTML();
+      m.querySelectorAll(".rs-ar").forEach((x) => x.textContent && x.animate([{ transform: "translateY(-3px)", opacity: 0.3 }, { transform: "none", opacity: 1 }], { duration: 200, easing: "ease-out" }));
+      $("#tbl").scrollTop = 0;
+    };
+    $("#sortMenu").onchange = (e) => { if (e.target.id === "sector") { st.sector = e.target.value; st.limit = PAGE; draw(); } };
+    const openCols = () => columnSettings(() => draw(), { get: () => st.cols, set: (v) => { st.cols = v; store.set("sd-stocks", { ...store.get("sd-stocks", {}), cols: v, cv: 2 }); }, def: ST_DEF_COLS, extra: CANDLE_COLS, name: "Candles" });
+    $("#colBtn").onclick = openCols;
     if ($("#spBtn")) $("#spBtn").onclick = () => { ui.panel = !ui.panel; saveUi(); renderStocks(); };
     view.querySelector(".ws-right .icons").onclick = (e) => { const b = e.target.closest("button"); if (!b || b.dataset.v === ui.view) return; ui.view = b.dataset.v; saveUi(); renderStocks(); };
     if (ui.view === "grid") {
       $("[data-seg=gcols]").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; ui.gridCols = Number(b.dataset.v); gridLimit = ui.gridCols * 4; saveUi(); setOn(e.currentTarget, b); $("#grid").style.setProperty("--gcols", ui.gridCols); drawGrid(); };
       $("#gSort").onchange = (e) => { ui.gridSort = e.target.value; saveUi(); drawGrid(); };
     }
-    // drag the divider: wider list shows more columns
+    // drag the divider (like the reference): the chart gets narrower down to a minimum, after that the list slides OVER
+    // the chart (which keeps its size behind it), up to the full width of the page
     const drag = $("#resDrag"), wsMain = $("#wsMain");
+    const layout = () => {
+      if (!isWide || ui.view !== "list" || !wsMain.isConnected) return;
+      const avail = wsMain.clientWidth, minRight = ui.panel ? 760 : 470;
+      ui.listW = Math.round(Math.min(Math.max(ui.listW, 240), avail - 8));
+      const col = Math.max(240, Math.min(ui.listW, avail - 8 - minRight));
+      wsMain.style.setProperty("--list-w", col + "px");
+      wsMain.style.setProperty("--list-real", ui.listW + "px");
+      wsMain.style.setProperty("--ov", ui.listW - col + "px");
+      wsMain.classList.toggle("over", ui.listW > col);
+    };
+    layout();
     drag.onpointerdown = (e) => {
       if (!isWide) return;
       e.preventDefault(); drag.setPointerCapture(e.pointerId); wsMain.classList.add("dragging");
-      const left = wsMain.getBoundingClientRect().left, max = wsMain.clientWidth - 360;
-      drag.onpointermove = (ev) => {
-        ui.listW = Math.round(Math.min(Math.max(ev.clientX - left, 240), max));
-        wsMain.style.setProperty("--list-w", ui.listW + "px");
-        if (fitCols().length + (candlesOn() ? 100 : 0) !== shownCols) draw();
-      };
+      const left = wsMain.getBoundingClientRect().left;
+      drag.onpointermove = (ev) => { ui.listW = ev.clientX - left; layout(); };
       drag.onpointerup = () => { drag.onpointermove = drag.onpointerup = null; wsMain.classList.remove("dragging"); saveUi(); window.dispatchEvent(new Event("resize")); };
     };
     // list + chart fill the screen down to the status bar
     const fitH = () => {
       if (!wsMain.isConnected) { window.removeEventListener("resize", fitH); return; }
-      if (isWide && ui.view === "list") wsMain.style.height = Math.max(480, innerHeight - (wsMain.getBoundingClientRect().top + scrollY) - 64) + "px";
+      if (isWide && ui.view === "list") { wsMain.style.height = Math.max(440, innerHeight - (wsMain.getBoundingClientRect().top + scrollY) - 46) + "px"; layout(); }
     };
     fitH();
     window.addEventListener("resize", fitH);
-    drag.ondblclick = () => { ui.listW = 300; saveUi(); wsMain.style.setProperty("--list-w", "300px"); draw(); window.dispatchEvent(new Event("resize")); };
+    drag.ondblclick = () => { wsMain.classList.add("glide"); ui.listW = 300; saveUi(); layout(); setTimeout(() => { wsMain.classList.remove("glide"); window.dispatchEvent(new Event("resize")); }, 320); };
     const picked = () => (state.selected.size ? rows.filter((r) => state.selected.has(r.key)) : rows);
     async function copySel() {
       const list = picked(), txt = list.map((r) => "NSE:" + r.symbol).join(",");
@@ -1450,7 +1486,7 @@
       setTimeout(() => { const b = $("#copy"); if (b) b.textContent = "Copy"; }, 2000);
     }
     function csvSel() {
-      const cols = ["symbol", "name", "close", ...st.cols];
+      const cols = ["symbol", "name", "close", ...st.cols.map(colKey).filter((c, i, a) => SD.COLUMNS[c] && a.indexOf(c) === i)];
       const blob = new Blob([SD.toCSV(picked(), cols)], { type: "text/csv" });
       const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${scan ? scan.id : "stocks"}-${state.screenDate}.csv`; a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 2000);
@@ -1674,52 +1710,71 @@
     o = o || { get: () => st.cols, set: (v) => { st.cols = v; store.set("sd-stocks", { ...store.get("sd-stocks", {}), cols: v }); }, def: SD.DEFAULT_COLUMNS, extra: [] };
     const lab = (c) => ((o.extra || []).find((x) => x[0] === c) || [])[1] || (SD.COLUMNS[c] ? SD.COLUMNS[c].label : c);
     const cats = (o.extra && o.extra.length ? [[o.name || "This page", o.extra]] : []).concat(SD.COLUMN_GROUPS);
+    const openG = new Set([cats[0][0]]);
     const m = document.createElement("div");
-    m.className = "modal-bg drawer";
-    const groups = () => cats.map(([g, cols]) => `<details ${g === cats[0][0] ? "open" : ""}><summary>${g} <small>${cols.filter(([id]) => o.get().includes(id)).length}/${cols.length}</small></summary>`
-      + cols.map(([id, label]) => `<label class="f-row" data-t="${esc(label.toLowerCase())}"><input type="checkbox" value="${id}" ${o.get().includes(id) ? "checked" : ""}> ${esc(label)}</label>`).join("") + "</details>").join("");
-    const mine = () => o.get().map((c, i) => `<div class="mine-row"><span>${esc(lab(c))}</span><span>`
-      + `<button class="btn sm" data-up="${i}" type="button" aria-label="Move up">↑</button><button class="btn sm" data-down="${i}" type="button" aria-label="Move down">↓</button>`
-      + `<button class="btn sm" data-rm="${c}" type="button" aria-label="Remove">✕</button></span></div>`).join("");
-    m.innerHTML = `<div class="modal wide" role="dialog" aria-label="Column settings"><div class="modal-h"><b>Column settings</b>
-      <small class="muted cs-saved">✓ Changes saved automatically</small><button class="icon-btn" data-x type="button" aria-label="Close">✕</button></div><div class="modal-b cols-grid">
-      <div><h4>Your columns <small id="nCols">${o.get().length}</small> <button class="btn sm" id="colReset" type="button">Reset</button></h4><div id="mine">${mine()}</div>
-      <p class="muted small">Changes show at once and are saved in this browser. Make the list wider to see more of them.</p></div>
-      <div><h4>Add columns</h4><input type="search" id="colQ" placeholder="Find a column, e.g. RSI" aria-label="Search columns"><div id="colGroups">${groups()}</div></div></div></div>`;
+    m.className = "modal-bg drawer cst";
+    // reference look (14-Nov-2026): left = search + groups with "chosen / all" counts, right = "Your columns" with drag
+    // handles and x; every change shows at once in the table behind
+    const cnt = (cols) => { const n = cols.filter(([id]) => o.get().includes(id)).length; return `<small class="${n ? "on" : ""}">${n}/${cols.length}</small>`; };
+    const groups = () => cats.map(([g, cols], k) => `<section class="cst-g${openG.has(g) ? " open" : ""}" data-g="${k}"><button type="button" class="cst-gh" data-gk="${k}"><i class="cst-car">›</i><span>${esc(g)}</span>${cnt(cols)}</button>`
+      + `<div class="cst-gb"><div>${cols.map(([id, label]) => `<label class="cst-r${o.get().includes(id) ? " on" : ""}" data-t="${esc(label.toLowerCase())}"><input type="checkbox" value="${id}" ${o.get().includes(id) ? "checked" : ""}><span>${esc(label)}</span></label>`).join("")}</div></div></section>`).join("");
+    const mine = () => o.get().map((c) => `<div class="cst-m" draggable="true" data-c="${esc(c)}"><i class="cst-hd" aria-hidden="true">≡</i><span>${esc(lab(c))}</span><button type="button" data-rm="${esc(c)}" aria-label="Remove ${esc(lab(c))}">✕</button></div>`).join("")
+      || '<p class="muted small cst-none">No extra columns. Tick some on the left.</p>';
+    m.innerHTML = `<div class="modal" role="dialog" aria-label="Column settings"><div class="modal-h"><b>Column settings</b>
+      <small class="cst-saved"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M5 8.2 7 10l4-4.2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Changes saved automatically</small>
+      <button class="icon-btn" data-x type="button" aria-label="Close">✕</button></div>
+      <div class="cst-b"><div class="cst-l"><label class="cst-q">${ICON.filter}<input type="search" id="colQ" placeholder="Find a column, e.g. RSI" aria-label="Find a column" autocomplete="off"></label><div class="cst-gs" id="colGroups">${groups()}</div></div>
+      <div class="cst-rt"><div class="cst-mh"><b>Your columns</b><i class="cst-n" id="nCols">${o.get().length}</i><button type="button" class="cst-reset" id="colReset" title="Back to the starting columns">↻</button></div><div class="cst-ml" id="mine">${mine()}</div></div></div></div>`;
     document.body.appendChild(m);
-    const refresh = () => {
+    const flash = () => { const s = m.querySelector(".cst-saved"); s.classList.remove("ping"); void s.offsetWidth; s.classList.add("ping"); };
+    const refresh = (added) => {
       m.querySelector("#mine").innerHTML = mine();
       m.querySelector("#nCols").textContent = o.get().length;
-      m.querySelectorAll("#colGroups input").forEach((i) => { i.checked = o.get().includes(i.value); });
-      m.querySelectorAll("#colGroups details").forEach((d, k) => { const sm = d.querySelector("summary small"); if (sm) sm.textContent = `${cats[k][1].filter(([id]) => o.get().includes(id)).length}/${cats[k][1].length}`; });
-      done();
+      m.querySelectorAll("#colGroups input").forEach((i) => { i.checked = o.get().includes(i.value); i.closest(".cst-r").classList.toggle("on", i.checked); });
+      m.querySelectorAll("#colGroups .cst-g").forEach((d) => { const k = Number(d.dataset.g); d.querySelector(".cst-gh small").outerHTML = cnt(cats[k][1]); });
+      if (added) { const row = m.querySelector(`.cst-m[data-c="${CSS.escape(added)}"]`); if (row) { row.classList.add("new"); row.scrollIntoView({ block: "nearest", behavior: "smooth" }); } }
+      flash(); done();
     };
     m.addEventListener("change", (e) => {
       if (!e.target.matches("#colGroups input")) return;
       const v = e.target.value, cur = o.get();
       o.set(e.target.checked ? [...cur.filter((c) => c !== v), v] : cur.filter((c) => c !== v));
-      refresh();
+      refresh(e.target.checked ? v : null);
     });
-    const shut = () => { m.remove(); document.removeEventListener("keydown", onKey); };
+    const shut = () => { m.classList.add("closing"); setTimeout(() => m.remove(), 160); document.removeEventListener("keydown", onKey); };
     const onKey = (e) => { if (e.key === "Escape") shut(); };
     document.addEventListener("keydown", onKey);
     m.addEventListener("click", (e) => {
       if (e.target === m || e.target.closest("[data-x]")) return shut();
+      const gh = e.target.closest("[data-gk]");
+      if (gh) { const sec = gh.parentElement, g = cats[Number(gh.dataset.gk)][0]; sec.classList.toggle("open"); if (sec.classList.contains("open")) openG.add(g); else openG.delete(g); return; }
       const t = e.target.closest("button"); if (!t) return;
-      const cur = o.get().slice();
-      if (t.id === "colReset") o.set(o.def.slice());
-      else if (t.dataset.rm) o.set(cur.filter((c) => c !== t.dataset.rm));
-      else if (t.dataset.up != null || t.dataset.down != null) {
-        const i = Number(t.dataset.up != null ? t.dataset.up : t.dataset.down), j = t.dataset.up != null ? i - 1 : i + 1;
-        if (j >= 0 && j < cur.length) { [cur[i], cur[j]] = [cur[j], cur[i]]; o.set(cur); }
-      } else return;
-      refresh();
+      if (t.id === "colReset") { o.set(o.def.slice()); refresh(); return; }
+      if (t.dataset.rm) { const row = t.closest(".cst-m"); row.classList.add("out"); setTimeout(() => { o.set(o.get().filter((c) => c !== t.dataset.rm)); refresh(); }, 160); }
+    });
+    // drag to reorder (like the reference's handles)
+    const ml = m.querySelector("#mine");
+    let dragC = null;
+    ml.addEventListener("dragstart", (e) => { const r = e.target.closest(".cst-m"); if (!r) return; dragC = r.dataset.c; r.classList.add("drag"); e.dataTransfer.effectAllowed = "move"; try { e.dataTransfer.setData("text/plain", dragC); } catch (x) { /* old browsers */ } });
+    ml.addEventListener("dragover", (e) => {
+      if (!dragC) return; e.preventDefault();
+      const r = e.target.closest(".cst-m"), src = ml.querySelector(".cst-m.drag"); if (!r || !src || r === src) return;
+      const b = r.getBoundingClientRect(), after = e.clientY > b.top + b.height / 2;
+      const before = new Map([...ml.children].map((x) => [x, x.getBoundingClientRect().top]));
+      ml.insertBefore(src, after ? r.nextSibling : r);
+      [...ml.children].forEach((x) => { const dy = before.get(x) - x.getBoundingClientRect().top; if (dy) x.animate([{ transform: `translateY(${dy}px)` }, { transform: "none" }], { duration: 160, easing: "ease-out" }); });
+    });
+    ml.addEventListener("dragend", () => {
+      if (!dragC) return; dragC = null;
+      const order = [...ml.querySelectorAll(".cst-m")].map((x) => x.dataset.c);
+      if (order.join() !== o.get().join()) { o.set(order); refresh(); } else ml.querySelectorAll(".drag").forEach((x) => x.classList.remove("drag"));
     });
     m.querySelector("#colQ").oninput = (e) => {
-      const q = e.target.value.toLowerCase();
-      m.querySelectorAll("#colGroups label").forEach((l) => { l.style.display = l.dataset.t.includes(q) ? "" : "none"; });
-      if (q) m.querySelectorAll("#colGroups details").forEach((d) => { d.open = true; });
+      const q = e.target.value.trim().toLowerCase();
+      m.querySelectorAll("#colGroups .cst-r").forEach((l) => { l.hidden = !!q && !l.dataset.t.includes(q); });
+      m.querySelectorAll("#colGroups .cst-g").forEach((d) => { const any = [...d.querySelectorAll(".cst-r")].some((l) => !l.hidden); d.hidden = !!q && !any; d.classList.toggle("open", q ? any : openG.has(cats[Number(d.dataset.g)][0])); });
     };
+    setTimeout(() => m.querySelector("#colQ").focus({ preventScroll: true }), 60);
   }
 
   /* ------------------------------------------------------------------ detail + chart */

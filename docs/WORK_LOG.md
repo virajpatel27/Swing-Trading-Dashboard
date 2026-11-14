@@ -1236,3 +1236,25 @@ Newest at the bottom. Each entry: what was done, why, what is next.
     screen.json: it shows at once and draws itself again with the stock parts (setups, results due, watchlist)
     when that file has arrived (renderHome(true), no skeleton flash; a token stops a stale draw).
 - Checked in the preview: requests start together, Home complete, no console errors. JS 32 / 32.
+
+### 2026-11-14: Scanner workspace v3 - page fits the screen, results over the chart, columns like the reference
+- Viraj (5 screenshots + videos "Result Setting 2" and "result setting" 12-11-2026): the chart part must fit the
+  page (no scrolling up / down / sideways) and look bigger; the Results list must work like the reference (search,
+  Sort by, column settings, fixed-width columns, room after the last column, drag the list wider over the chart up
+  to the full page).
+- site/app.js renderStocks():
+  - wide list: the scan description line is hidden (tooltip on the scan button) so the workspace fits;
+  - chart pane = flex column: tools, header, chart (fills the rest, volume pane inside), compact earnings; no scroll;
+  - every chosen column is shown at a fixed width (two-line headers), sideways scroll when the list is narrow,
+    blank room + a "+" button after the last column (opens Column settings); Daily / Weekly Candle are now normal
+    columns ("Candles" group; one-time migration puts them first, sd-stocks cv 2);
+  - drag: the chart narrows down to a minimum, after that the list slides OVER the chart (chart keeps its size) up to
+    the full width; double click glides back to 300 px;
+  - header: magnifier = inline "Search symbol..." box (Esc / x closes); Sort by menu like the reference (A-Z, Price,
+    Price x Volume, Market cap, RS rating, From 52W high, Performance with a 1D / 1W / 1M / 3M pill, arrow on the
+    chosen one, second click turns it around, round arrow = scan's own order) + "Show" (universe, sector);
+  - row hover shows "+" next to the symbol = add to watchlist.
+- columnSettings() (all pages): drawer in two parts - left: search + collapsible groups with chosen / all counts,
+  right: "Your columns" with count, reset, drag handles (FLIP while dragging) and x; "Changes saved automatically".
+- Checked in the preview: fit (no pane scroll), drag over the chart, sort / period / reset, search, column add /
+  remove / reset, no console errors. JS 32 / 32.

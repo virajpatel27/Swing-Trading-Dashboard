@@ -565,7 +565,14 @@
     $("#stPage").innerHTML = `<span>${f0(lastOf(S.n))} ${bs.uni === "liquid" ? "liquid " : ""}stocks</span><span class="st-n">data through ${esc(shortDay(B.data_date))}</span>`;
 
     // ---- the six charts (drawn at the box's real pixel width)
-    const H = 156, PL = 42, PR = 8, PT = 8, PB = 22;
+    // the page fits the window (Viraj 14-Nov: no page scrolling): the six charts share the height that is left
+    let H = 156;
+    if (matchMedia("(min-width: 1200px)").matches) {
+      const over = document.documentElement.scrollHeight - innerHeight + 8;
+      H = Math.max(104, Math.min(240, 156 - Math.ceil(over / 3)));
+      view.querySelectorAll(".bx-svg").forEach((e) => { e.style.height = H + "px"; });
+    }
+    const PL = 42, PR = 8, PT = 8, PB = 22;
     const CH = [];
     const day = (j, extra) => `<small class="bx-d">${esc(bxDM(days[j]))}${extra ? ` · ${extra}` : ""}</small>`;
     const word = (t, tone) => `<span class="bx-w ${tone || ""}">${t}</span>`;
@@ -790,8 +797,12 @@
     const mixEl = view.querySelector(".mix");
     const fitMix = () => {
       if (!mixEl.isConnected) { window.removeEventListener("resize", fitMix); return; }
-      if (matchMedia("(min-width: 1100px)").matches) mixEl.style.height = Math.max(420, innerHeight - (mixEl.getBoundingClientRect().top + scrollY) - 40) + "px";
-      else mixEl.style.height = "";
+      if (matchMedia("(min-width: 1100px)").matches) {
+        mixEl.style.height = Math.max(420, innerHeight - (mixEl.getBoundingClientRect().top + scrollY) - 62) + "px";
+        // exactly two rows of cards in view, whatever the layout (Viraj 14-Nov): bigger charts
+        const g = mixEl.querySelector(".mi-grid"), c = g && g.querySelector(".mi-card"), ce = c && c.querySelector(".mi-ch");
+        if (c && ce) { const extra = c.offsetHeight - ce.offsetHeight; g.style.setProperty("--mi-ch", Math.max(180, Math.floor((g.clientHeight - 14 - 16) / 2) - extra) + "px"); }
+      } else mixEl.style.height = "";
     };
     fitMix(); window.addEventListener("resize", fitMix);
     try { await SDChart.loadLib(); } catch (e) { return; }

@@ -1324,3 +1324,15 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   inside the column like the reference.
 - Checked in the preview: search -> All stocks with RELIANCE opened and highlighted, legend stacked, panel icon
   toggles the panel, no console errors. JS 32 / 32.
+
+### 2026-11-14: Breadth / Major Indices fit the window, full-width tab bar, 2 rows of index cards
+- Viraj (4 photos): the Market Breadth | Major Indices bar must reach the card's edges; the Breadth page must not
+  scroll; Major Indices shows exactly 2 rows of cards (bigger charts) in any layout; "Sort by" header on one line
+  with a small reset icon.
+- site/styles.css: .bx.mix no longer clips (overflow visible) so the tab bar's negative margins reach the edges;
+  index chart height = --mi-ch on wide screens; Sort header button 26 px, title nowrap.
+- site/app.js: renderBreadth() measures the overflow before drawing and shares it over the three chart rows
+  (chart height 104-240 px, was a fixed 156); renderMajorIndices() fitMix(): page height = window minus the status
+  bar, --mi-ch = half the grid's height minus the card header (two rows in view; resize recalculates).
+- Checked in the preview at 1860 x 880: Breadth and Major Indices page height = window, tab bar = card width, row 3
+  starts below the visible grid, Sort header one line, no console errors. JS 32 / 32.

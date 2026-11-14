@@ -2168,3 +2168,13 @@ input, textarea, select, [contenteditable="true"], .selectable { -webkit-user-se
 .ce-q { padding-left: 22%; }
 .ce-c { justify-content: space-between; padding: 0 16% 0 22%; }
 @media (max-width: 1400px) { .ce-q { padding-left: 14%; } .ce-c { padding: 0 9% 0 14%; } }
+
+/* 14-Nov-2026 (Viraj): the tab bar reaches the card's edges on Major Indices too (the card must not clip it);
+   two rows of index cards fill the view; Sort by header on one line with a small reset icon */
+@media (min-width: 1100px) {
+  .bx.mix { overflow: visible; }
+  .mix .mi-grid .mi-ch { height: var(--mi-ch, 300px) !important; }
+}
+.mi-sortd .hm-menu .mi-sh { gap: 12px; }
+.mi-sortd .hm-menu .mi-sh b { white-space: nowrap; }
+.mi-sortd .hm-menu .mi-sh button { width: 26px; min-width: 26px; height: 26px; padding: 0; margin: 0; flex: none; display: grid; place-items: center; font-size: 14px; }

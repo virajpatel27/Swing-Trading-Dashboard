@@ -1425,3 +1425,30 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - config/fields.yaml stage text, docs/formulas.md regenerated, docs/calibration.md, JS fixtures regenerated
   (tests/js/make_expected.py). JS 32 / 32, Python 220 passed. Every scanner that uses stage (Stage 2 breakout,
   Recent breakout, VCP, Tight range ...) follows the new stages at the next deploy.
+
+### 2026-11-14: Custom Scanner options like the reference, "All" in lists, Filters window on every scanner
+- Viraj (20 photos + the "New Scan" videos): every dropdown must offer the reference's options; Sector / Basic
+  Industry / Theme need an "All" tick and the chosen items on top when the list is opened again; the button beside
+  the scanner opens the same window and changes the open scanner (New scan = a brand-new scan).
+- site/app.js CS filters rewritten with the reference option lists:
+  - Stock Universe: Watchlist (tick lists, coloured tags), Index (Nifty 50 / 200 / 500, Midcap 150, Smallcap 250 from
+    data/index_members.json; "Any" until one is picked), Stage S1-S4 (S2 = 2 + 2A, S4 = 4 + 4A), Exclude Circuit
+    (5% & 2% limits / 2% / 5% / 10% & below via price_band), Listing Age (Older / Newer than + 3M ... 3Y), Mcap
+    300-5,00,000, Price 20-1,50,000, Free Float 0-100;
+  - Technicals: MA Order = four MA pills (10 / 20 / 50 / 200, "—" to skip) with > / < between; Price Above / Below MA
+    (10 SMA, 20 SMA, 50 EMA, 200 SMA; shown "50E, 200S"); % from 52W High / ATH as the reference's positive "% below";
+    Return 1W ... 1Y; ADR (20 days; no 5-day ADR in our data);
+  - Strength & Volume: Overall RS 50-100, From Leading Theme/Industry Yes / No, 1-Month / 3-Month RS, Industry Rank
+    (1M / 3M), Sector Rank (1M / 3M), Avg Rupee Vol 20D (our field), Price x Volume, Relative Volume, Delivery;
+  - Earnings: Streaks as "Last 2 / 3 / 4 Quarters", Earnings Declared Last 7 / 30 / 90 Days, Earnings Gap-Up In and
+    Big Earnings Move In Last 5 / 10 / 20 / 60 Sessions; Fundamentals with the reference defaults;
+  - compare pills are > / < like the reference; our extra filters stay at the end of their sections; older saved
+    builder states get the missing parts filled in.
+- Lists (multi): "All" tick (sector, basic industry, theme), chosen items are moved to the top whenever a list
+  opens, summary "All" / names / "N chosen".
+- Filters mode (customScan({mode: "filters", scan})): title "Filters", "N filters on · Works on every scanner",
+  "N stocks pass these filters" (inside the open scanner), Load saved / Save filter set (sd-filter-sets), Reset,
+  Apply filters -> sd-scan-filters; renderStocks() lays that set on top of every scanner (index members loaded when
+  needed), the button shows a count badge and the results show an "N filters" chip (click = clear).
+- Checked in the preview: option lists of all rows above, All on / off (24 / 0), chosen-first on reopen, Filters on
+  Trend Template 306 -> Nifty 500 -> 78 applied, chip clears it, no console errors.

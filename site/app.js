@@ -1348,6 +1348,12 @@
       if (state.lastScan !== scan.id) { state.lastScan = scan.id; if (scan.sort) { st.sort = scan.sort.field; st.dir = scan.sort.dir; } st.limit = PAGE; }
       store.set("sd-scan", scan.id);
       base = SDS.run(state.screen, scan);
+      // Filters window (button beside the scanner): one filter set laid on top of every scanner
+      const flt = store.get("sd-scan-filters", null);
+      if (flt && csActive(flt)) {
+        if (!state.members && flt.f.index && flt.f.index.on) { try { state.members = await getJSON("data/index_members.json"); } catch (e) { state.members = {}; } }
+        base = SDS.run(base, csScan(flt));
+      }
     }
     const ui = Object.assign({ view: "list", gridCols: 3, gridSort: "scan", listW: 300, filters: false, panel: true }, store.get("sd-ws", {}));
     const saveUi = () => store.set("sd-ws", ui);
@@ -1360,7 +1366,7 @@
       ? `<button class="btn primary" id="newScan" type="button">${ICON.plus}<span>New scan</span></button>
         <div class="menu-wrap"><button class="btn ws-pick" id="scanBtn" type="button" aria-haspopup="true" title="${esc(scan.description || "")}"><b>${esc(scan.name)}</b>${scan.edited ? ' <span class="tag">edited</span>' : ""} <span class="caret">▾</span></button>
           <div class="menu picker" id="scanMenu" hidden></div></div>
-        <button class="btn icon" id="csBtn" type="button" title="Custom scan: pick filters">${ICON.cols}</button>
+        <button class="btn icon cs-fbtn${csActive(store.get("sd-scan-filters", null)) ? " on" : ""}" id="csBtn" type="button" title="Filters: work on every scanner">${ICON.cols}${csActive(store.get("sd-scan-filters", null)) ? `<i class="cs-badge">${csActive(store.get("sd-scan-filters", null))}</i>` : ""}</button>
         <button class="btn icon" id="formulaBtn" type="button" title="Formula: see or change the rule">ƒ</button>
         <div class="pins" id="pins">${pinsHTML(scan.id)}</div>`
       : `<h1 class="ws-title">All stocks</h1><span class="muted small">every NSE main-board stock, all fields of ${SD.fmtDate(state.screenDate)}</span>`);
@@ -1430,7 +1436,7 @@
       // a remembered filter (universe / sector / search, shared with the Stocks page) must never hide stocks silently:
       // show it as a chip with "shown / all" (Viraj 11-Nov: Big Reversal showed 1 of 18 under a forgotten "Nifty 500")
       const on = [st.universe !== "all" ? { liquid: "Liquid", n500: "Nifty 500", fno: "F&O" }[st.universe] || st.universe : "",
-        st.sector, st.text.trim() ? `"${st.text.trim()}"` : ""].filter(Boolean);
+        st.sector, st.text.trim() ? `"${st.text.trim()}"` : "", scan && csActive(store.get("sd-scan-filters", null)) ? `${csActive(store.get("sd-scan-filters", null))} filter${csActive(store.get("sd-scan-filters", null)) === 1 ? "" : "s"}` : ""].filter(Boolean);
       $("#resN").textContent = on.length ? `${rows.length.toLocaleString("en-IN")} / ${base.length.toLocaleString("en-IN")}` : rows.length.toLocaleString("en-IN");
       const chip = $("#fltChip");
       chip.hidden = !on.length;
@@ -1569,7 +1575,7 @@
     $("#qX").onclick = () => searchOn(false);
     $("#q").oninput = (e) => { st.text = e.target.value; st.limit = PAGE; draw(); };
     $("#q").onkeydown = (e) => { if (e.key === "Escape") searchOn(false); };
-    $("#fltChip").onclick = () => { st.universe = "all"; st.sector = ""; st.text = ""; st.limit = PAGE; renderStocks(); };
+    $("#fltChip").onclick = () => { st.universe = "all"; st.sector = ""; st.text = ""; st.limit = PAGE; store.set("sd-scan-filters", null); renderStocks(); };
     const toggleMenu = (id) => { const m = $(id); const open = m.hidden; view.querySelectorAll(".menu").forEach((x) => { x.hidden = true; }); m.hidden = !open; return open; };
     // Sort by like the reference: A-Z ... Performance (period pill); the chosen one shows its direction, a second
     // click turns it around; the round arrow goes back to the scan's own order. "Show" = universe / sector filters.
@@ -1698,7 +1704,7 @@
       };
       $("#formulaBtn").onclick = () => formulaEditor(scan, (id) => { state.lastScan = null; if (id === scan.id) renderStocks(); else location.hash = "#/scanners/" + encodeURIComponent(id); });
       $("#newScan").onclick = () => customScan({ fresh: true });
-      $("#csBtn").onclick = () => customScan({ load: scan.builder ? scan : null });
+      $("#csBtn").onclick = () => customScan({ mode: "filters", scan });
     }
     view.onclick = (e) => { if (!e.target.closest(".menu-wrap")) view.querySelectorAll(".menu").forEach((x) => { x.hidden = true; }); };
     if (isWide && ui.view === "list") {
@@ -3280,123 +3286,147 @@
   /* ------------------------------------------------------------------ custom scan window (Phase N3): 5 tabs of filters, live count,
      save / load. A filter makes conditions of the same rule format as every scanner (scan.js), so saved scans work everywhere. */
   const CS_TABS = [["u", "Stock Universe"], ["t", "Technicals"], ["s", "Strength & Volume"], ["e", "Earnings"], ["f", "Fundamentals"]];
-  const MA_OPTS = [["ema10", "10 EMA"], ["ema20", "20 EMA"], ["ema21", "21 EMA"], ["ema50", "50 EMA"], ["ema200", "200 EMA"],
-    ["sma10", "10 SMA"], ["sma20", "20 SMA"], ["sma50", "50 SMA"], ["sma150", "150 SMA"], ["sma200", "200 SMA"]];
-  const gt = (a, b) => ({ field: a, op: ">", field2: b, mult: 1 });
-  // t tab, s section, id, l label, ty type, h hint; types: flag, range, cmp, combo, multi, pick, period, mas
+  /* Custom scanner filters (reference option lists, 14-Nov-2026). t tab, s section, id, l label, ty type, h hint.
+     types: flag, range (neg = the reference's positive "% below"), cmp, period, pick (opt [key, label, rule | rule[]]),
+     multi (opt [key, label, values[]]; dyn = from the data; wl = watchlists; all = an "All" tick), mas, index, age, maord */
+  const MA4 = [["sma10", "10 SMA"], ["sma20", "20 SMA"], ["ema50", "50 EMA"], ["sma200", "200 SMA"]];
+  const MA_ORD = [["sma10", "10"], ["sma20", "20"], ["sma50", "50"], ["sma200", "200"]];
+  const AGE = [["3m", "3 Months", 91], ["6m", "6 Months", 182], ["1y", "1 Year", 365], ["2y", "2 Years", 730], ["3y", "3 Years", 1095]];
+  const IDX = [["NIFTY_50", "Nifty 50"], ["NIFTY_200", "Nifty 200"], ["NIFTY_500", "Nifty 500"], ["NIFTY_MIDCAP_150", "Midcap 150"], ["NIFTY_SMALLCAP_250", "Smallcap 250"]];
+  const BANDS = ["2", "5", "10", "20", "No Band"], bandsBut = (...x) => ({ field: "price_band", op: "in", value: BANDS.filter((b) => !x.includes(b)) });
+  const qtrs = (field, ns) => ns.map((n) => [String(n), `Last ${n} Quarters`, { field, op: ">=", value: n }]);
+  const sess = (extra) => [5, 10, 20, 60].map((n) => [String(n), `Last ${n} Sessions`, [extra, { field: "earn_sessions", op: "<=", value: n }]]);
+  const NOT_LEAD = ["Improving", "Weakening", "Lagging"];
   const CS = [
     { t: "u", s: "Lists & indices", id: "liquid", l: "Liquid Stocks", ty: "flag", h: "Enough rupee volume to buy and sell easily (our liquid rule)", uni: true },
-    { t: "u", s: "Lists & indices", id: "wl", l: "Watchlist", ty: "pick", wl: true, opts: [] },
-    { t: "u", s: "Lists & indices", id: "index", l: "Index", ty: "pick", opts: [["n500", "Nifty 500 only", { field: "n500", op: "is", value: true }], ["out", "Outside Nifty 500", { field: "n500", op: "is", value: false }]] },
-    { t: "u", s: "Lists & indices", id: "fno", l: "F&O Stocks", ty: "pick", opts: [["only", "Include only", { field: "fno", op: "is", value: true }], ["ex", "Exclude", { field: "fno", op: "is", value: false }]] },
-    { t: "u", s: "Lists & indices", id: "stage", l: "Stage", ty: "multi", field: "stage", opts: [["2", "2 Uptrend"], ["2A", "2A Early uptrend"], ["1", "1 Basing"], ["3", "3 Topping"], ["4A", "4A Improving"], ["4", "4 Downtrend"]], def: ["2"] },
-    { t: "u", s: "Lists & indices", id: "circuit", l: "Exclude Circuit", ty: "flag", h: "drop 2 % and 5 % price bands", rule: { field: "price_band", op: "in", value: ["10", "20", "No Band"] } },
-    { t: "u", s: "Sector & industry", id: "sector", l: "Sector", ty: "multi", field: "sector", dyn: "sector" },
-    { t: "u", s: "Sector & industry", id: "bind", l: "Basic Industry", ty: "multi", field: "basic_industry", dyn: "basic_industry" },
-    { t: "u", s: "Sector & industry", id: "theme", l: "Theme", ty: "multi", field: "theme", dyn: "theme" },
-    { t: "u", s: "Size & price", id: "mcap", l: "Mcap (₹ Cr.)", ty: "range", field: "mcap_cr", def: [500, 500000] },
-    { t: "u", s: "Size & price", id: "price", l: "Price (₹)", ty: "range", field: "close", def: [50, 10000] },
-    { t: "u", s: "Size & price", id: "ffpct", l: "Free Float (%)", ty: "range", field: "float_pct", def: [25, 100] },
+    { t: "u", s: "Lists & indices", id: "wl", l: "Watchlist", ty: "multi", wl: true },
+    { t: "u", s: "Lists & indices", id: "index", l: "Index", ty: "index" },
+    { t: "u", s: "Lists & indices", id: "fno", l: "F&O Stocks", ty: "pick", opts: [["only", "Include Only", { field: "fno", op: "is", value: true }], ["ex", "Exclude", { field: "fno", op: "is", value: false }]] },
+    { t: "u", s: "Lists & indices", id: "stage", l: "Stage", ty: "multi", field: "stage", opts: [["1", "S1 · Basing", ["1"]], ["2", "S2 · Uptrend", ["2", "2A"]], ["3", "S3 · Topping", ["3"]], ["4", "S4 · Downtrend", ["4", "4A"]]], def: ["2"] },
+    { t: "u", s: "Lists & indices", id: "circuit", l: "Exclude Circuit", ty: "pick", opts: [["52", "5% & 2% limits", bandsBut("2", "5")], ["2", "2% limit", bandsBut("2")], ["5", "5% limit", bandsBut("5")], ["10", "10% & below", bandsBut("2", "5", "10")]] },
+    { t: "u", s: "Sector & industry", id: "sector", l: "Sector", ty: "multi", field: "sector", dyn: "sector", all: true },
+    { t: "u", s: "Sector & industry", id: "bind", l: "Basic Industry", ty: "multi", field: "basic_industry", dyn: "basic_industry", all: true },
+    { t: "u", s: "Sector & industry", id: "theme", l: "Theme", ty: "multi", field: "theme", dyn: "theme", all: true },
+    { t: "u", s: "Size & price", id: "mcap", l: "Mcap (₹ Cr.)", ty: "range", field: "mcap_cr", def: [300, 500000] },
+    { t: "u", s: "Size & price", id: "price", l: "Price (₹)", ty: "range", field: "close", def: [20, 150000] },
+    { t: "u", s: "Size & price", id: "ffpct", l: "Free Float (%)", ty: "range", field: "float_pct", def: [0, 100] },
     { t: "u", s: "Size & price", id: "ffmc", l: "Float Mcap (₹ Cr.)", ty: "range", field: "float_mcap_cr", def: [300, 100000] },
-    { t: "u", s: "Size & price", id: "listage", l: "Listing Age", ty: "combo", parts: [["days_listed", ">=", 180, "older than (days)"]] },
-    { t: "t", s: "Moving averages", id: "maorder", l: "MA Order", ty: "pick", opts: [
-      ["mm", "Close > 50 > 150 > 200 SMA", [gt("close", "sma50"), gt("sma50", "sma150"), gt("sma150", "sma200")]],
-      ["e3", "10 > 20 > 50 EMA", [gt("ema10", "ema20"), gt("ema20", "ema50")]],
-      ["e4", "10 > 21 > 50 > 200 EMA", [gt("ema10", "ema21"), gt("ema21", "ema50"), gt("ema50", "ema200")]],
-      ["s2", "50 SMA > 200 SMA", [gt("sma50", "sma200")]]] },
+    { t: "u", s: "Size & price", id: "listage", l: "Listing Age", ty: "age" },
+    { t: "t", s: "Moving averages", id: "maorder", l: "MA Order", ty: "maord", wide: true },
+    { t: "t", s: "Moving averages", id: "above", l: "Price Above MA", ty: "mas", dir: ">", def: ["ema50", "sma200"] },
+    { t: "t", s: "Moving averages", id: "below", l: "Price Below MA", ty: "mas", dir: "<", def: [] },
     { t: "t", s: "Moving averages", id: "s200up", l: "200 SMA Rising (1M)", ty: "flag", rule: { field: "sma200_chg_1m", op: ">", value: 0 } },
-    { t: "t", s: "Moving averages", id: "above", l: "Price Above MA", ty: "mas", dir: ">", def: ["sma50", "sma200"] },
-    { t: "t", s: "Moving averages", id: "below", l: "Price Below MA", ty: "mas", dir: "<", def: ["ema20"] },
     { t: "t", s: "Moving averages", id: "near50", l: "% from 50 SMA", ty: "range", field: "from_sma50", def: [0, 10] },
-    { t: "t", s: "Distance from highs & lows", id: "fromhi", l: "% from 52W High", ty: "range", field: "from_hi52", def: [-25, 0] },
-    { t: "t", s: "Distance from highs & lows", id: "fromlo", l: "% from 52W Low", ty: "cmp", field: "from_lo52", def: [">=", 30] },
-    { t: "t", s: "Distance from highs & lows", id: "fromath", l: "% from ATH", ty: "range", field: "from_ath", def: [-15, 0] },
+    { t: "t", s: "Distance from highs & lows", id: "fromhi", l: "% from 52W High", ty: "range", field: "from_hi52", neg: true, def: [0, 20], h: "How far below the 52-week high (0 = at the high)" },
+    { t: "t", s: "Distance from highs & lows", id: "fromlo", l: "% from 52W Low", ty: "range", field: "from_lo52", def: [25, 100] },
+    { t: "t", s: "Distance from highs & lows", id: "fromath", l: "% from ATH", ty: "range", field: "from_ath", neg: true, def: [0, 25], h: "How far below the all-time high" },
     { t: "t", s: "Distance from highs & lows", id: "pivot", l: "% to Pivot", ty: "range", field: "dist_pivot", def: [-5, 0], h: "minus = below the base top" },
-    { t: "t", s: "Momentum & range", id: "rsi", l: "RSI (14D)", ty: "range", field: "rsi14", def: [50, 70] },
-    { t: "t", s: "Momentum & range", id: "ret", l: "Return", ty: "period", opts: [["ret_1w", "1 week"], ["ret_1m", "1 month"], ["ret_3m", "3 months"], ["ret_6m", "6 months"], ["ret_1y", "1 year"], ["ret_ytd", "This year"]], def: ["ret_1m", ">=", 20] },
-    { t: "t", s: "Momentum & range", id: "chg", l: "Daily Change (%)", ty: "range", field: "chg_1d", def: [2, 20] },
-    { t: "t", s: "Momentum & range", id: "gap", l: "Gap Up (%)", ty: "cmp", field: "gap_up", def: [">=", 2] },
-    { t: "t", s: "Momentum & range", id: "range", l: "Day Range (%)", ty: "cmp", field: "range_pct", def: ["<=", 3] },
-    { t: "t", s: "Momentum & range", id: "adr", l: "ADR (%)", ty: "cmp", field: "adr_pct", def: [">=", 3] },
+    { t: "t", s: "Momentum & range", id: "rsi", l: "RSI (14D)", ty: "cmp", field: "rsi14", def: ["<", 30] },
+    { t: "t", s: "Momentum & range", id: "ret", l: "Return", ty: "period", opts: [["ret_1w", "1 Week"], ["ret_1m", "1 Month"], ["ret_3m", "3 Month"], ["ret_6m", "6 Month"], ["ret_1y", "1 Year"]], def: ["ret_1m", ">", 20] },
+    { t: "t", s: "Momentum & range", id: "chg", l: "Daily Change (%)", ty: "cmp", field: "chg_1d", def: [">", 2] },
+    { t: "t", s: "Momentum & range", id: "gap", l: "Gap Up (%)", ty: "cmp", field: "gap_up", def: [">", 2] },
+    { t: "t", s: "Momentum & range", id: "range", l: "Day Range (%)", ty: "range", field: "range_pct", def: [1, 8] },
+    { t: "t", s: "Momentum & range", id: "adr", l: "ADR (%)", ty: "period", opts: [["adr_pct", "20 Days"]], def: ["adr_pct", ">", 2.6] },
     { t: "t", s: "Momentum & range", id: "st", l: "Supertrend Up", ty: "flag", rule: { field: "supertrend_dir", op: "==", value: 1 } },
-    { t: "t", s: "Momentum & range", id: "tight", l: "Tight Closes (%)", ty: "cmp", field: "tight_pct", def: ["<=", 2] },
-    { t: "t", s: "Momentum & range", id: "depth", l: "Base Depth (%)", ty: "cmp", field: "base_depth", def: ["<=", 25] },
-    { t: "t", s: "Momentum & range", id: "vcp", l: "VCP Contractions", ty: "cmp", field: "vcp_contractions", def: [">=", 2] },
+    { t: "t", s: "Momentum & range", id: "tight", l: "Tight Closes (%)", ty: "cmp", field: "tight_pct", def: ["<", 2] },
+    { t: "t", s: "Momentum & range", id: "depth", l: "Base Depth (%)", ty: "cmp", field: "base_depth", def: ["<", 25] },
+    { t: "t", s: "Momentum & range", id: "vcp", l: "VCP Contractions", ty: "cmp", field: "vcp_contractions", def: [">", 1] },
     { t: "t", s: "Momentum & range", id: "inside", l: "Inside Day", ty: "flag", rule: { field: "inside_day", op: "is", value: true } },
-    { t: "s", s: "Relative strength", id: "rs", l: "Overall RS", ty: "range", field: "rs_rating", def: [70, 99] },
-    { t: "s", s: "Relative strength", id: "rschg", l: "RS Change (1W)", ty: "cmp", field: "rs_chg_1w", def: [">=", 5] },
+    { t: "s", s: "Relative strength", id: "rs", l: "Overall RS", ty: "range", field: "rs_rating", def: [50, 100] },
+    { t: "s", s: "Relative strength", id: "lead", l: "From Leading Theme/Industry", ty: "pick", opts: [
+      ["yes", "Yes", { any: [{ field: "theme_status", op: "in", value: ["Leading"] }, { field: "industry_tag", op: "in", value: ["Leading"] }] }],
+      ["no", "No", { all: [{ field: "theme_status", op: "in", value: NOT_LEAD }, { field: "industry_tag", op: "in", value: NOT_LEAD }] }]], fields: ["theme_status", "industry_tag"] },
+    { t: "s", s: "Relative strength", id: "rs1m", l: "1-Month RS", ty: "cmp", field: "rs_rating_1m", def: [">", 70] },
+    { t: "s", s: "Relative strength", id: "rs3m", l: "3-Month RS", ty: "cmp", field: "rs_rating_3m", def: [">", 70] },
+    { t: "s", s: "Relative strength", id: "rschg", l: "RS Change (1W)", ty: "cmp", field: "rs_chg_1w", def: [">", 5] },
     { t: "s", s: "Relative strength", id: "rshi", l: "RS Line at 52W High", ty: "flag", rule: { field: "rs_line_52w_high", op: "is", value: true } },
     { t: "s", s: "Relative strength", id: "rsfirst", l: "RS High Before Price", ty: "flag", rule: { field: "rs_new_high_before_price", op: "is", value: true } },
     { t: "s", s: "Relative strength", id: "mans", l: "Mansfield RS Above 0", ty: "flag", rule: { field: "mansfield_rs", op: ">", value: 0 } },
-    { t: "s", s: "Industry & theme rank", id: "secrank", l: "Sector Rank", ty: "cmp", field: "sector_rank", def: ["<=", 5] },
-    { t: "s", s: "Industry & theme rank", id: "indrank", l: "Industry Rank", ty: "cmp", field: "industry_rank", def: ["<=", 20] },
+    { t: "s", s: "Industry & theme rank", id: "indrank1m", l: "Industry Rank (1M)", ty: "cmp", field: "industry_rank_1m", def: ["<", 40] },
+    { t: "s", s: "Industry & theme rank", id: "indrank", l: "Industry Rank (3M)", ty: "cmp", field: "industry_rank", def: ["<", 40] },
+    { t: "s", s: "Industry & theme rank", id: "secrank1m", l: "Sector Rank (1M)", ty: "cmp", field: "sector_rank_1m", def: ["<", 6] },
+    { t: "s", s: "Industry & theme rank", id: "secrank", l: "Sector Rank (3M)", ty: "cmp", field: "sector_rank", def: ["<", 6] },
     { t: "s", s: "Industry & theme rank", id: "indtag", l: "Industry Status", ty: "multi", field: "industry_tag", opts: [["Leading", "Leading"], ["Improving", "Improving"], ["Weakening", "Weakening"], ["Lagging", "Lagging"]], def: ["Leading"] },
     { t: "s", s: "Industry & theme rank", id: "themetag", l: "Theme Status", ty: "multi", field: "theme_status", opts: [["Leading", "Leading"], ["Improving", "Improving"], ["Weakening", "Weakening"], ["Lagging", "Lagging"]], def: ["Leading"] },
-    { t: "s", s: "Volume", id: "turn20", l: "Avg Rupee Vol 20D (Cr.)", ty: "cmp", field: "turnover_avg20_cr", def: [">=", 5] },
-    { t: "s", s: "Volume", id: "turn", l: "Price × Volume (Cr.)", ty: "cmp", field: "turnover_cr", def: [">=", 10] },
-    { t: "s", s: "Volume", id: "rvol", l: "Relative Volume", ty: "cmp", field: "rvol", def: [">=", 1.5] },
-    { t: "s", s: "Volume", id: "deliv", l: "Delivery (%)", ty: "cmp", field: "deliv_pct", def: [">=", 50] },
+    { t: "s", s: "Volume", id: "turn30", l: "Avg Rupee Vol 20D (Cr.)", ty: "cmp", field: "turnover_avg20_cr", def: [">", 5] },
+    { t: "s", s: "Volume", id: "turn", l: "Price × Volume (Cr.)", ty: "cmp", field: "turnover_cr", def: [">", 5] },
+    { t: "s", s: "Volume", id: "rvol", l: "Relative Volume", ty: "cmp", field: "rvol", def: [">", 1.5] },
+    { t: "s", s: "Volume", id: "deliv", l: "Delivery (%)", ty: "cmp", field: "deliv_pct", def: [">", 40] },
     { t: "s", s: "Volume", id: "hv", l: "High Volume", ty: "pick", opts: [["hve", "Highest ever", { field: "hve", op: "is", value: true }], ["hvy", "Highest in a year", { field: "hvy", op: "is", value: true }], ["hvq", "Highest in a quarter", { field: "hvq", op: "is", value: true }]] },
     { t: "s", s: "Volume", id: "pp", l: "Pocket Pivot", ty: "flag", rule: { field: "pocket_pivot", op: "is", value: true } },
     { t: "s", s: "Volume", id: "dry", l: "Volume Dry-up", ty: "flag", rule: { field: "dry_up", op: "is", value: true } },
-    { t: "e", s: "Growth", id: "sq", l: "Sales QoQ (%)", ty: "cmp", field: "sales_g_qoq", def: [">=", 10] },
-    { t: "e", s: "Growth", id: "sy", l: "Sales YoY (%)", ty: "cmp", field: "sales_g_yoy", def: [">=", 20] },
-    { t: "e", s: "Growth", id: "pq", l: "Net Profit QoQ (%)", ty: "cmp", field: "np_g_qoq", def: [">=", 10] },
-    { t: "e", s: "Growth", id: "py", l: "Net Profit YoY (%)", ty: "cmp", field: "np_g_yoy", def: [">=", 25] },
-    { t: "e", s: "Growth", id: "eq", l: "EPS QoQ (%)", ty: "cmp", field: "eps_g_qoq", def: [">=", 10] },
-    { t: "e", s: "Growth", id: "ey", l: "EPS YoY (%)", ty: "cmp", field: "eps_g_yoy", def: [">=", 25] },
-    { t: "e", s: "Streaks", id: "sup", l: "Sales Rising For (Q)", ty: "cmp", field: "sales_up_qtrs", def: [">=", 3] },
-    { t: "e", s: "Streaks", id: "eup", l: "EPS Rising For (Q)", ty: "cmp", field: "eps_up_qtrs", def: [">=", 3] },
-    { t: "e", s: "Streaks", id: "pup", l: "Net Profit Up For (Q)", ty: "cmp", field: "np_qoq_up_qtrs", def: [">=", 2] },
-    { t: "e", s: "Streaks", id: "eacc", l: "EPS Speeding Up (Q)", ty: "cmp", field: "eps_g_accel_qtrs", def: [">=", 2] },
-    { t: "e", s: "Streaks", id: "mup", l: "Net Margin Up For (Q)", ty: "cmp", field: "npm_up_qtrs", def: [">=", 2] },
-    { t: "e", s: "Results & reaction", id: "recent", l: "Earnings Declared", ty: "combo", parts: [["days_since_result", "<=", 30, "days"]] },
-    { t: "e", s: "Results & reaction", id: "egap", l: "Earnings Gap-Up", ty: "combo", parts: [["earn_gap_pct", ">=", 3, "gap ≥ %"], ["earn_sessions", "<=", 20, "within sessions"]] },
-    { t: "e", s: "Results & reaction", id: "emove", l: "Big Earnings Move (%)", ty: "cmp", field: "earn_chg_pct", def: [">=", 5] },
+    { t: "e", s: "Growth", id: "sq", l: "Sales QoQ (%)", ty: "cmp", field: "sales_g_qoq", def: [">", 15] },
+    { t: "e", s: "Growth", id: "sy", l: "Sales YoY (%)", ty: "cmp", field: "sales_g_yoy", def: [">", 20] },
+    { t: "e", s: "Growth", id: "pq", l: "Net Profit QoQ (%)", ty: "cmp", field: "np_g_qoq", def: [">", 20] },
+    { t: "e", s: "Growth", id: "py", l: "Net Profit YoY (%)", ty: "cmp", field: "np_g_yoy", def: [">", 25] },
+    { t: "e", s: "Growth", id: "eq", l: "EPS QoQ (%)", ty: "cmp", field: "eps_g_qoq", def: [">", 20] },
+    { t: "e", s: "Growth", id: "ey", l: "EPS YoY (%)", ty: "cmp", field: "eps_g_yoy", def: [">", 25] },
+    { t: "e", s: "Streaks", id: "sup", l: "Sales Rising For", ty: "pick", opts: qtrs("sales_up_qtrs", [2, 3, 4]), def: "3" },
+    { t: "e", s: "Streaks", id: "eup", l: "EPS Rising For", ty: "pick", opts: qtrs("eps_up_qtrs", [2, 3, 4]), def: "2" },
+    { t: "e", s: "Streaks", id: "pup", l: "Net Profit Rising For", ty: "pick", opts: qtrs("np_qoq_up_qtrs", [2, 3, 4]), def: "2" },
+    { t: "e", s: "Streaks", id: "eacc", l: "EPS Speeding Up For", ty: "pick", opts: qtrs("eps_g_accel_qtrs", [2, 3, 4]), def: "2" },
+    { t: "e", s: "Streaks", id: "mup", l: "Net Margin Up For", ty: "pick", opts: qtrs("npm_up_qtrs", [2, 3, 4]), def: "2" },
+    { t: "e", s: "Results & reaction", id: "recent", l: "Earnings Declared", ty: "pick", opts: [7, 30, 90].map((n) => [String(n), `Last ${n} Days`, { field: "days_since_result", op: "<=", value: n }]), def: "30" },
+    { t: "e", s: "Results & reaction", id: "egap", l: "Earnings Gap-Up In", ty: "pick", opts: sess({ field: "earn_gap_pct", op: ">=", value: 3 }), def: "20", h: "Opened 3 % or more above the day before on the results day" },
+    { t: "e", s: "Results & reaction", id: "emove", l: "Big Earnings Move In", ty: "pick", opts: sess({ field: "earn_chg_pct", op: ">=", value: 5 }), def: "20", h: "Closed 5 % or more up on the results day" },
     { t: "e", s: "Results & reaction", id: "soon", l: "Results Due In (Days)", ty: "range", field: "days_to_result", def: [0, 14] },
     { t: "e", s: "Results & reaction", id: "eheld", l: "Results Move Held", ty: "flag", rule: { field: "earn_held", op: "is", value: true } },
-    { t: "f", s: "Growth & quality", id: "scagr", l: "Sales Growth (CAGR %)", ty: "period", opts: [["sales_cagr_3y", "3 years"], ["sales_cagr_5y", "5 years"], ["sales_cagr_10y", "10 years"]], def: ["sales_cagr_5y", ">=", 15] },
-    { t: "f", s: "Growth & quality", id: "pcagr", l: "Profit Growth (CAGR %)", ty: "period", opts: [["np_cagr_3y", "3 years"], ["np_cagr_5y", "5 years"], ["np_cagr_10y", "10 years"]], def: ["np_cagr_5y", ">=", 15] },
-    { t: "f", s: "Growth & quality", id: "attm", l: "Sales Growth TTM (%)", ty: "cmp", field: "sales_g_ttm", def: [">=", 15] },
-    { t: "f", s: "Growth & quality", id: "opm", l: "Operating Margin (%)", ty: "cmp", field: "opm_ttm", def: [">=", 12] },
-    { t: "f", s: "Growth & quality", id: "roe", l: "ROE (%)", ty: "cmp", field: "roe", def: [">=", 15] },
-    { t: "f", s: "Growth & quality", id: "roce", l: "ROCE (%)", ty: "cmp", field: "roce", def: [">=", 15] },
-    { t: "f", s: "Growth & quality", id: "de", l: "Debt / Equity", ty: "cmp", field: "debt_equity", def: ["<=", 0.5] },
-    { t: "f", s: "Valuation", id: "pe", l: "P/E", ty: "range", field: "pe", def: [5, 40] },
-    { t: "f", s: "Valuation", id: "peg", l: "PEG Ratio", ty: "cmp", field: "peg", def: ["<=", 1.5] },
-    { t: "f", s: "Valuation", id: "dy", l: "Div Yield (%)", ty: "cmp", field: "div_yield", def: [">=", 1] },
-    { t: "f", s: "Valuation", id: "pb", l: "Price / Book", ty: "cmp", field: "pb", def: ["<=", 5] },
-    { t: "f", s: "Holding", id: "prom", l: "Promoter (%)", ty: "cmp", field: "prom_hold", def: [">=", 50] },
-    { t: "f", s: "Holding", id: "promc", l: "Promoter Change 1Q (pts)", ty: "cmp", field: "prom_chg_1q", def: [">=", 0.5] },
-    { t: "f", s: "Holding", id: "fii", l: "FII (%)", ty: "cmp", field: "fii_hold", def: [">=", 5] },
-    { t: "f", s: "Holding", id: "fiic", l: "FII Change 1Q (pts)", ty: "cmp", field: "fii_chg_1q", def: [">=", 0.5] },
+    { t: "f", s: "Growth & quality", id: "scagr", l: "Sales Growth 5Y (%)", ty: "cmp", field: "sales_cagr_5y", def: [">", 12] },
+    { t: "f", s: "Growth & quality", id: "prom", l: "Promoter (%)", ty: "cmp", field: "prom_hold", def: [">", 40] },
+    { t: "f", s: "Growth & quality", id: "roe", l: "ROE (%)", ty: "cmp", field: "roe", def: [">", 15] },
+    { t: "f", s: "Growth & quality", id: "roce", l: "ROCE (%)", ty: "cmp", field: "roce", def: [">", 15] },
+    { t: "f", s: "Growth & quality", id: "de", l: "Debt / Equity", ty: "cmp", field: "debt_equity", def: ["<", 1] },
+    { t: "f", s: "Growth & quality", id: "pcagr", l: "Profit Growth 5Y (%)", ty: "cmp", field: "np_cagr_5y", def: [">", 15] },
+    { t: "f", s: "Growth & quality", id: "attm", l: "Sales Growth TTM (%)", ty: "cmp", field: "sales_g_ttm", def: [">", 15] },
+    { t: "f", s: "Growth & quality", id: "opm", l: "Operating Margin (%)", ty: "cmp", field: "opm_ttm", def: [">", 12] },
+    { t: "f", s: "Valuation", id: "pe", l: "P/E", ty: "range", field: "pe", def: [0, 60] },
+    { t: "f", s: "Valuation", id: "peg", l: "PEG Ratio", ty: "cmp", field: "peg", def: ["<", 1.5] },
+    { t: "f", s: "Valuation", id: "dy", l: "Div Yield (%)", ty: "cmp", field: "div_yield", def: [">", 0] },
+    { t: "f", s: "Valuation", id: "pb", l: "Price / Book", ty: "cmp", field: "pb", def: ["<", 5] },
+    { t: "f", s: "Holding", id: "promc", l: "Promoter Change 1Q (pts)", ty: "cmp", field: "prom_chg_1q", def: [">", 0.5] },
+    { t: "f", s: "Holding", id: "fii", l: "FII (%)", ty: "cmp", field: "fii_hold", def: [">", 5] },
+    { t: "f", s: "Holding", id: "fiic", l: "FII Change 1Q (pts)", ty: "cmp", field: "fii_chg_1q", def: [">", 0.5] },
   ];
-  const csFieldsOf = (f) => (f.field ? [f.field] : f.parts ? f.parts.map((p) => p[0]) : f.rule ? [f.rule.field] : []);
+  const csFieldsOf = (f) => (f.fields ? f.fields : f.field ? [f.field] : f.rule ? [f.rule.field] : f.ty === "maord" ? ["sma10"] : f.ty === "mas" ? ["close"] : f.ty === "index" ? ["symbol"] : f.ty === "age" ? ["days_listed"]
+    : f.ty === "period" ? f.opts.map((o) => o[0]) : f.opts && f.opts[0] && f.opts[0][2] ? [].concat(...f.opts.map((o) => [].concat(o[2]).map((c) => c.field).filter(Boolean))) : []);
   /** the conditions of one filter (an array) from its values */
   function csRule(f, v) {
     v = v || {};
-    const n = (x) => (x === "" || x == null || Number.isNaN(Number(x)) ? null : Number(x));
+    const n = (x) => (x === "" || x == null || Number.isNaN(Number(String(x).replace(/,/g, ""))) ? null : Number(String(x).replace(/,/g, "")));
     switch (f.ty) {
       case "flag": return f.uni ? [] : [f.rule];
       case "range": {
-        const a = n(v.a), b = n(v.b);
+        let a = n(v.a), b = n(v.b);
+        if (f.neg) [a, b] = [b == null ? null : -b, a == null ? null : -a];
         if (a != null && b != null) return [{ field: f.field, op: "between", value: [Math.min(a, b), Math.max(a, b)] }];
         if (a != null) return [{ field: f.field, op: ">=", value: a }];
         if (b != null) return [{ field: f.field, op: "<=", value: b }];
         return [];
       }
       case "cmp": return n(v.x) == null ? [] : [{ field: f.field, op: v.op || f.def[0], value: n(v.x) }];
-      case "combo": return f.parts.map((p, i) => (n((v.x || [])[i]) == null ? null : { field: p[0], op: p[1], value: n(v.x[i]) })).filter(Boolean);
       case "period": return n(v.x) == null ? [] : [{ field: v.f || f.def[0], op: v.op || f.def[1], value: n(v.x) }];
-      case "multi": return (v.sel || []).length ? [{ field: f.field, op: "in", value: v.sel.slice() }] : [];
-      case "pick": { const o = f.opts.find((x) => x[0] === v.p) || f.opts[0]; return Array.isArray(o[2]) ? o[2] : [o[2]]; }
+      case "multi": {
+        const sel = v.sel || [];
+        if (!sel.length) return [];
+        if (f.wl) { const keys = new Set(); wlStore().lists.filter((l) => sel.includes(l.id)).forEach((l) => l.items.forEach((i) => keys.add(i.k))); return [{ field: "key", op: "in", value: [...keys] }]; }
+        const vals = f.opts && f.opts[0] && f.opts[0][2] ? [].concat(...sel.map((s) => (f.opts.find((o) => o[0] === s) || [s, s, [s]])[2])) : sel.slice();
+        return [{ field: f.field, op: "in", value: vals }];
+      }
+      case "pick": { const o = (f.opts || []).find((x) => x[0] === v.p) || (f.opts || [])[0]; if (!o || !o[2]) return []; return Array.isArray(o[2]) ? o[2] : [o[2]]; }
+      case "index": { const m = state.members && state.members[v.p]; return m ? [{ field: "symbol", op: "in", value: m.symbols.slice() }] : []; }
+      case "age": { const o = AGE.find((x) => x[0] === v.m) || AGE[1]; return [{ field: "days_listed", op: v.d === "newer" ? "<=" : ">=", value: o[2] }]; }
+      case "maord": {
+        const items = [0, 1, 2, 3].map((i) => ({ ma: (v.a || [])[i], op: (v.o || [])[i] })).filter((x) => x.ma);
+        return items.slice(0, -1).map((x, j) => ({ field: x.ma, op: x.op === "<" ? "<" : ">", field2: items[j + 1].ma, mult: 1 }));
+      }
       case "mas": return (v.sel || []).map((m) => ({ field: "close", op: f.dir, field2: m, mult: 1 }));
       default: return [];
     }
   }
   const csDefault = (f) => ({ range: { a: f.def && f.def[0], b: f.def && f.def[1] }, cmp: { op: f.def && f.def[0], x: f.def && f.def[1] },
-    combo: { x: (f.parts || []).map((p) => p[2]) }, period: { f: f.def && f.def[0], op: f.def && f.def[1], x: f.def && f.def[2] },
-    multi: { sel: (f.def || []).slice() }, pick: { p: f.opts && f.opts[0][0] }, mas: { sel: (f.def || []).slice() }, flag: {} }[f.ty] || {});
+    period: { f: f.def && f.def[0], op: f.def && f.def[1], x: f.def && f.def[2] }, multi: { sel: (f.def || []).slice() },
+    pick: { p: f.def || (f.opts && f.opts[0][0]) }, mas: { sel: (f.def || []).slice() }, flag: {}, index: { p: "" }, age: { d: "older", m: "6m" },
+    maord: { a: ["sma10", "sma20", "sma50", "sma200"], o: [">", ">", ">"] } }[f.ty] || {});
   /** builder state {name, f: {id: {on, v}}} -> {universe, rule} */
   function csScan(cs) {
     const all = [];
@@ -3409,10 +3439,10 @@
     }
     return { universe, rule: { all } };
   }
-
+  const csActive = (cs) => (cs && cs.f ? Object.entries(cs.f).filter(([id, s]) => s && s.on && CS.some((f) => f.id === id)).length : 0);
   const csGroup = (v) => { const x = Number(String(v).replace(/,/g, "")); return String(v).trim() === "" || !isFinite(x) ? String(v) : Math.abs(x) >= 1000 ? x.toLocaleString("en-IN", { maximumFractionDigits: 2 }) : String(v).replace(/,/g, ""); };
   /** the selects of the custom scanner become pill buttons with their own option list (the select stays hidden and
-      keeps the value, so the rest of the code reads it as before) */
+      keeps the value, so the rest of the code reads it as before); hidden options (the "Any" placeholder) are not listed */
   function csPills(root) {
     const chev = '<svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     root.querySelectorAll("select[data-k]").forEach((sel) => {
@@ -3427,10 +3457,10 @@
         const open = document.querySelector(".cs-pop");
         if (open) { const was = open._for === b; open._close(); if (was) return; }
         const pop = document.createElement("div"); pop.className = "cs-pop"; pop._for = b;
-        pop.innerHTML = [...sel.options].map((o, i) => `<button type="button" data-i="${i}" class="${i === sel.selectedIndex ? "on" : ""}">${esc(o.text)}</button>`).join("");
+        pop.innerHTML = [...sel.options].map((o, i) => (o.hidden ? "" : `<button type="button" data-i="${i}" class="${i === sel.selectedIndex ? "on" : ""}">${esc(o.text)}</button>`)).join("");
         document.body.appendChild(pop); b.classList.add("open");
         const r = b.getBoundingClientRect();
-        pop.style.minWidth = `${Math.max(r.width, 120)}px`;
+        pop.style.minWidth = `${Math.max(r.width, 110)}px`;
         pop.style.left = `${Math.min(r.left, innerWidth - pop.offsetWidth - 8)}px`;
         pop.style.top = `${r.bottom + pop.offsetHeight + 6 > innerHeight ? r.top - pop.offsetHeight - 4 : r.bottom + 4}px`;
         const close = () => { pop.remove(); b.classList.remove("open"); document.removeEventListener("mousedown", out, true); };
@@ -3442,58 +3472,79 @@
     });
   }
 
+  /** The custom scanner window. opts.fresh / opts.load: build a scan ("New scan").
+      opts.mode "filters" + opts.scan: the Filters window (button beside the scanner) - the same filters, laid ON TOP of
+      whichever scanner is open ("Works on every scanner"), applied with "Apply filters" (saved in sd-scan-filters). */
   function customScan(opts = {}) {
+    const isF = opts.mode === "filters";
     const known = new Set((state.fields || []).map((f) => f.id));
-    // watchlist filter: one choice per list of this browser (stocks in it at the time the scan runs / is saved)
-    const wlF = CS.find((x) => x.id === "wl");
-    if (wlF) wlF.opts = wlStore().lists.map((l) => [l.id, l.name, { field: "key", op: "in", value: l.items.map((i) => i.k) }]);
-    const avail = (f) => (f.id === "wl" ? f.opts.length > 0 : csFieldsOf(f).every((x) => known.has(x) || ["close", "n500", "fno", "price_band", "stage", "sector", "basic_industry", "theme", "days_listed", "key"].includes(x)));
+    const free = ["close", "n500", "fno", "price_band", "stage", "sector", "basic_industry", "theme", "days_listed", "key", "symbol"];
+    const avail = (f) => (f.wl ? wlStore().lists.length > 0 : csFieldsOf(f).every((x) => known.has(x) || free.includes(x)));
     const list = CS.filter(avail);
-    const u = userScans();
-    let cs = opts.load && opts.load.builder ? clone(opts.load.builder) : opts.fresh ? { name: "", f: {} } : store.get("sd-cs-draft", null) || { name: "", f: {} };
-    let loadedId = opts.load && opts.load.builder ? opts.load.id : opts.fresh ? null : cs.loadedId || null;
+    let cs = isF ? clone(store.get("sd-scan-filters", null) || { f: {} }) : opts.load && opts.load.builder ? clone(opts.load.builder) : opts.fresh ? { name: "", f: {} } : store.get("sd-cs-draft", null) || { name: "", f: {} };
+    if (!cs.f) cs.f = {};
+    let loadedId = isF ? null : opts.load && opts.load.builder ? opts.load.id : opts.fresh ? null : cs.loadedId || null;
     delete cs.loadedId;
     let tab = store.get("sd-cs-tab", "u");
     const dyn = {};
     for (const k of ["sector", "basic_industry", "theme"]) dyn[k] = [...new Set(state.screen.map((r) => r[k]).filter(Boolean))].sort().map((x) => [x, x]);
+    const base = isF && opts.scan ? SDS.run(state.screen, opts.scan) : state.screen;
+    if (!state.members) getJSON("data/index_members.json").then((mm) => { state.members = mm; count(); }).catch(() => { state.members = {}; });
     const m = document.createElement("div");
     m.className = "modal-bg cs-bg";
-    // reference look (14-Nov-2026): title + name chip + "N filters", End of day / Live switch (this site is end-of-day
-    // only), Load saved / Save scanner, tabs with counts, a search with the "/" key, two columns of filter rows
     const CSCHEV = '<svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     const SRCH = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>';
-    m.innerHTML = `<div class="modal cs" role="dialog" aria-label="Custom scanner">
-      <div class="cs-h"><b class="cs-ttl">Custom Scanner</b><input class="cs-name" id="csName" placeholder="Untitled scan" value="${esc(cs.name || "")}" aria-label="Scan name" maxlength="60"><span class="cs-nf" id="csNf">0 filters</span>
-        <span class="cs-mode" title="This site uses end-of-day data (live prices are not available)"><b>End of day</b><i class="cs-tg" aria-hidden="true"></i><small>Live</small></span>
+    const TICK = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17 19 7"/></svg>';
+    const head = isF
+      ? `<b class="cs-ttl">Filters</b><span class="cs-nf" id="csNf">No filters on · Works on every scanner</span>`
+      : `<b class="cs-ttl">Custom Scanner</b><input class="cs-name" id="csName" placeholder="Untitled scan" value="${esc(cs.name || "")}" aria-label="Scan name" maxlength="60"><span class="cs-nf" id="csNf">0 filters</span>
+        <span class="cs-mode" title="This site uses end-of-day data (live prices are not available)"><b>End of day</b><i class="cs-tg" aria-hidden="true"></i><small>Live</small></span>`;
+    m.innerHTML = `<div class="modal cs" role="dialog" aria-label="${isF ? "Filters" : "Custom scanner"}">
+      <div class="cs-h">${head}
         <span class="cs-hr"><div class="menu-wrap"><button class="btn cs-hb" id="csLoad" type="button">Load saved ${CSCHEV}</button><div class="menu right" id="csLoadM" hidden></div></div>
-        <button class="btn cs-hb" id="csSave" type="button">Save scanner</button><button class="icon-btn cs-x" data-x type="button" aria-label="Close">✕</button></span></div>
+        <button class="btn cs-hb" id="csSave" type="button">${isF ? "Save filter set" : "Save scanner"}</button><button class="icon-btn cs-x" data-x type="button" aria-label="Close">✕</button></span></div>
       <div class="cs-tabs"><div class="cs-tl" role="tablist">${CS_TABS.map(([k, l]) => `<button type="button" role="tab" data-tab="${k}" class="${k === tab ? "on" : ""}">${l}<i data-tc="${k}"></i></button>`).join("")}</div>
-        <label class="cs-q">${SRCH}<input type="search" id="csQ" placeholder="Find a filter, e.g. RSI" aria-label="Find a filter" autocomplete="off"><kbd>/</kbd></label></div>
+        ${isF ? '<span class="cs-fcount" id="csFC"></span><input type="hidden" id="csQ" value="">' : `<label class="cs-q">${SRCH}<input type="search" id="csQ" placeholder="Find a filter, e.g. RSI" aria-label="Find a filter" autocomplete="off"><kbd>/</kbd></label>`}</div>
       <div class="cs-b" id="csB"></div>
-      <div class="cs-f"><span id="csCount"></span><button class="btn cs-reset" id="csReset" type="button">Reset</button><button class="btn primary cs-run" id="csRun" type="button">${SRCH}Run scan</button></div></div>`;
+      <div class="cs-f"><span id="csCount"></span><button class="btn cs-reset" id="csReset" type="button">Reset</button>${isF ? `<button class="btn primary cs-run" id="csApply" type="button">${TICK}Apply filters</button>` : `<button class="btn primary cs-run" id="csRun" type="button">${SRCH}Run scan</button>`}</div></div>`;
     document.body.appendChild(m);
-    const st = (id) => cs.f[id] || (cs.f[id] = { on: false, v: csDefault(CS.find((x) => x.id === id)) });
+    const st = (id) => {
+      const f = CS.find((x) => x.id === id), d = csDefault(f);
+      if (!cs.f[id]) cs.f[id] = { on: false, v: d };
+      const s = cs.f[id];
+      if (!s.v || typeof s.v !== "object") s.v = d;
+      for (const k of Object.keys(d)) if (s.v[k] === undefined) s.v[k] = d[k];        // older saved scans: fill new parts
+      return s;
+    };
+    const optsOf = (f) => (f.wl ? wlStore().lists.map((l, i) => [l.id, l.name, null, WL_COLS[i % WL_COLS.length]]) : f.ty === "mas" ? MA4 : f.dyn ? dyn[f.dyn] : f.opts || []);
+    const short = (f, k, l) => (f.ty === "mas" ? k.replace(/^(sma|ema)(\d+)$/, (x, t, nn) => nn + (t === "ema" ? "E" : "S")) : l);
+    const sumText = (f, sel) => { const o = optsOf(f); if (!sel.length) return "Any"; if (f.all && sel.length === o.length) return "All";
+      return sel.length <= 2 ? sel.map((s) => short(f, s, (o.find((x) => x[0] === s) || [s, s])[1])).join(", ") : `${sel.length} chosen`; };
     const ctrl = (f) => {
       const v = st(f.id).v;
       const num = (name, val, w) => `<input type="text" inputmode="decimal" class="cs-n" data-k="${name}" value="${val == null || val === "" ? "" : esc(csGroup(val))}" style="width:${w || 84}px">`;
-      const opSel = (name, val, ops) => `<select data-k="${name}">${(ops || [">=", "<=", ">", "<"]).map((o) => `<option ${o === val ? "selected" : ""}>${o}</option>`).join("")}</select>`;
+      const sel = (name, val, os, any) => `<select data-k="${name}">${any ? `<option value="" hidden ${!val ? "selected" : ""}>${any}</option>` : ""}${os.map(([k, l]) => `<option value="${esc(k)}" ${k === val ? "selected" : ""}>${esc(l)}</option>`).join("")}</select>`;
+      const opSel = (name, val) => sel(name, val === ">=" ? ">" : val === "<=" ? "<" : val, [[">", ">"], ["<", "<"]]);
       switch (f.ty) {
         case "flag": return "";
         case "range": return `<span class="cs-w">Between</span>${num("a", v.a)}<span class="cs-w">and</span>${num("b", v.b)}`;
-        case "cmp": return `${opSel("op", v.op)} ${num("x", v.x)}`;
-        case "combo": return f.parts.map((p, i) => `<span class="cs-w">${esc(p[3])}</span>${num("x" + i, (v.x || [])[i], 70)}`).join("");
-        case "period": return `<select data-k="f">${f.opts.map(([k, l]) => `<option value="${k}" ${k === v.f ? "selected" : ""}>${l}</option>`).join("")}</select> ${opSel("op", v.op)} ${num("x", v.x, 70)}`;
-        case "pick": return `<select data-k="p">${f.opts.map(([k, l]) => `<option value="${k}" ${k === v.p ? "selected" : ""}>${esc(l)}</option>`).join("")}</select>`;
+        case "cmp": return `${opSel("op", v.op)}${num("x", v.x)}`;
+        case "period": return `${sel("f", v.f, f.opts)}${opSel("op", v.op)}${num("x", v.x, 76)}`;
+        case "pick": return sel("p", v.p, f.opts.map((o) => [o[0], o[1]]));
+        case "index": return sel("p", v.p, IDX, "Any");
+        case "age": return `${sel("d", v.d, [["older", "Older than"], ["newer", "Newer than"]])}${sel("m", v.m, AGE.map((o) => [o[0], o[1]]))}`;
+        case "maord": return [0, 1, 2, 3].map((i) => sel("a" + i, (v.a || [])[i] || "", i ? [["", "—"], ...MA_ORD] : MA_ORD) + (i < 3 ? opSel("o" + i, (v.o || [])[i] || ">") : "")).join("");
         case "multi": case "mas": {
-          const opts = f.ty === "mas" ? MA_OPTS : f.dyn ? dyn[f.dyn] : f.opts, sel = v.sel || [];
-          const txt = sel.length ? (sel.length <= 2 ? sel.map((s) => (opts.find((o) => o[0] === s) || [s, s])[1]).join(", ") : `${sel.length} chosen`) : "Any";
-          return `<details class="cs-ms"><summary><span>${esc(txt)}</span>${CSCHEV}</summary><div class="cs-ml">${opts.length > 12 ? '<input type="search" class="cs-mq" placeholder="Search">' : ""}
-            ${opts.map(([k, l]) => `<label data-t="${esc(String(l).toLowerCase())}"><input type="checkbox" data-sel="${esc(k)}" ${sel.includes(k) ? "checked" : ""}> ${esc(l)}</label>`).join("")}</div></details>`;
+          const os = optsOf(f), chosen = v.sel || [];
+          const item = ([k, l, , col]) => `<label data-t="${esc(String(l).toLowerCase())}"><input type="checkbox" data-sel="${esc(k)}" ${chosen.includes(k) ? "checked" : ""}>${col ? `<i class="wm-tag" style="--c:${col}"></i>` : ""}<span>${esc(l)}</span></label>`;
+          const ordered = [...os.filter((o) => chosen.includes(o[0])), ...os.filter((o) => !chosen.includes(o[0]))];   // chosen ones first
+          return `<details class="cs-ms"><summary><span>${esc(sumText(f, chosen))}</span>${CSCHEV}</summary><div class="cs-ml">${os.length > 10 ? '<input type="search" class="cs-mq" placeholder="Search">' : ""}
+            ${f.all ? `<label class="cs-all"><input type="checkbox" data-all ${chosen.length && chosen.length === os.length ? "checked" : ""}><span>All</span></label>` : ""}<div class="cs-mi">${ordered.map(item).join("")}</div></div></details>`;
         }
         default: return "";
       }
     };
-    const rowHTML = (f) => `<div class="cs-row ${st(f.id).on ? "on" : ""}" data-id="${f.id}" data-t="${esc((f.l + " " + (f.h || "") + " " + csFieldsOf(f).map((x) => state.labels[x] || x).join(" ")).toLowerCase())}">
+    const rowHTML = (f) => `<div class="cs-row ${st(f.id).on ? "on" : ""}${f.wide ? " wide" : ""}" data-id="${f.id}" data-t="${esc((f.l + " " + (f.h || "") + " " + csFieldsOf(f).map((x) => state.labels[x] || x).join(" ")).toLowerCase())}">
       <label class="cs-on"${f.h ? ` title="${esc(f.h)}"` : ""}><input type="checkbox" data-on ${st(f.id).on ? "checked" : ""}> <span>${esc(f.l)}</span></label><div class="cs-c">${ctrl(f)}</div></div>`;
     const drawBody = () => {
       const q = m.querySelector("#csQ").value.trim().toLowerCase();
@@ -3505,59 +3556,77 @@
       csPills(m.querySelector("#csB"));
       secCounts();
     };
-    // "2 of 6 on" next to each section title
     const secCounts = () => m.querySelectorAll(".cs-sec").forEach((sec) => { const ids = sec.dataset.ids.split(" "), on = ids.filter((id) => cs.f[id] && cs.f[id].on).length; sec.querySelector(".cs-on-n").textContent = on ? `${on} of ${ids.length} on` : ""; });
     let timer = null;
     const count = () => {
       clearTimeout(timer);
       timer = setTimeout(() => {
-        const sc = csScan(cs), n = SDS.run(state.screen, sc).length, active = Object.entries(cs.f).filter(([id, s]) => s.on && list.some((f) => f.id === id));
-        const was = (m.querySelector("#csCount b") || {}).textContent;
-        m.querySelector("#csCount").innerHTML = `<b class="${was && was !== n.toLocaleString("en-IN") ? "bump" : ""}">${n.toLocaleString("en-IN")}</b> stocks pass this scan<i class="cs-dot">·</i><span>${active.length} filter${active.length === 1 ? "" : "s"} active across all tabs</span>`;
-        m.querySelector("#csNf").textContent = `${active.length} filter${active.length === 1 ? "" : "s"}`;
+        if (!m.isConnected) return;
+        const sc = csScan(cs), nn = SDS.run(base, sc).length, act = csActive(cs), fs = `${act} filter${act === 1 ? "" : "s"}`, txt = nn.toLocaleString("en-IN");
+        if (isF) {
+          m.querySelector("#csNf").textContent = act ? `${fs} on · Works on every scanner` : "No filters on · Works on every scanner";
+          const was = (m.querySelector("#csFC b") || {}).textContent;
+          m.querySelector("#csFC").innerHTML = `<b class="${was && was !== txt ? "bump" : ""}">${txt}</b> stocks pass these filters`;
+          m.querySelector("#csCount").innerHTML = `<span>${fs} active across all tabs</span>`;
+        } else {
+          const was = (m.querySelector("#csCount b") || {}).textContent;
+          m.querySelector("#csCount").innerHTML = `<b class="${was && was !== txt ? "bump" : ""}">${txt}</b> stocks pass this scan<i class="cs-dot">·</i><span>${fs} active across all tabs</span>`;
+          m.querySelector("#csNf").textContent = fs;
+          cs.name = m.querySelector("#csName").value.trim();
+          store.set("sd-cs-draft", { ...cs, loadedId });
+        }
         secCounts();
-        for (const [k] of CS_TABS) { const c = active.filter(([id]) => (CS.find((f) => f.id === id) || {}).t === k).length; m.querySelector(`[data-tc="${k}"]`).textContent = c || ""; }
-        cs.name = m.querySelector("#csName").value.trim();
-        store.set("sd-cs-draft", { ...cs, loadedId });
+        for (const [k] of CS_TABS) { const c = Object.entries(cs.f).filter(([id, s]) => s.on && (CS.find((f) => f.id === id) || {}).t === k).length; m.querySelector(`[data-tc="${k}"]`).textContent = c || ""; }
       }, 90);
     };
     const readRow = (row) => {
       const f = CS.find((x) => x.id === row.dataset.id), s = st(f.id), g = (k) => { const el = row.querySelector(`[data-k="${k}"]`); return el ? String(el.value).replace(/,/g, "").trim() : undefined; };
       if (f.ty === "range") s.v = { a: g("a"), b: g("b") };
       else if (f.ty === "cmp") s.v = { op: g("op"), x: g("x") };
-      else if (f.ty === "combo") s.v = { x: f.parts.map((p, i) => g("x" + i)) };
       else if (f.ty === "period") s.v = { f: g("f"), op: g("op"), x: g("x") };
-      else if (f.ty === "pick") s.v = { p: g("p") };
-      else if (f.ty === "multi" || f.ty === "mas") s.v = { sel: [...row.querySelectorAll("[data-sel]:checked")].map((x) => x.dataset.sel) };
+      else if (f.ty === "pick" || f.ty === "index") s.v = { p: g("p") };
+      else if (f.ty === "age") s.v = { d: g("d"), m: g("m") };
+      else if (f.ty === "maord") s.v = { a: [0, 1, 2, 3].map((i) => g("a" + i)), o: [0, 1, 2].map((i) => g("o" + i)) };
+      else if (f.ty === "multi" || f.ty === "mas") s.v = { sel: optsOf(f).map((o) => o[0]).filter((k) => { const el = row.querySelector(`[data-sel="${CSS.escape(k)}"]`); return el && el.checked; }) };
     };
+    const turnOn = (row) => { const s = st(row.dataset.id); if (!s.on) { s.on = true; row.classList.add("on"); row.querySelector("[data-on]").checked = true; } };
     const shut = () => { document.querySelectorAll(".cs-pop").forEach((x) => (x._close ? x._close() : x.remove())); m.classList.add("closing"); setTimeout(() => m.remove(), 140); document.removeEventListener("keydown", onKey, true); };
     const onKey = (e) => {
       const pop = document.querySelector(".cs-pop");
       if (e.key === "Escape" && pop) { pop._close(); return; }
       if (e.key === "Escape" && !e.target.closest("details[open]")) shut();
-      if (e.key === "/" && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) { e.preventDefault(); e.stopPropagation(); m.querySelector("#csQ").focus(); }
+      if (!isF && e.key === "/" && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) { e.preventDefault(); e.stopPropagation(); m.querySelector("#csQ").focus(); }
     };
     document.addEventListener("keydown", onKey, true);
     m.addEventListener("change", (e) => {
       const row = e.target.closest(".cs-row");
       if (!row) return;
-      if (e.target.matches("[data-on]")) { st(row.dataset.id).on = e.target.checked; row.classList.toggle("on", e.target.checked); }
-      else {
-        readRow(row);
-        if (!st(row.dataset.id).on) { st(row.dataset.id).on = true; row.classList.add("on"); row.querySelector("[data-on]").checked = true; }
-        if (e.target.matches("[data-sel]")) { const f = CS.find((x) => x.id === row.dataset.id), opts = f.ty === "mas" ? MA_OPTS : f.dyn ? dyn[f.dyn] : f.opts, sel = st(f.id).v.sel;
-          row.querySelector("summary").textContent = sel.length ? (sel.length <= 2 ? sel.map((s) => (opts.find((o) => o[0] === s) || [s, s])[1]).join(", ") : `${sel.length} chosen`) : "Choose…"; }
+      if (e.target.matches("[data-on]")) { st(row.dataset.id).on = e.target.checked; row.classList.toggle("on", e.target.checked); count(); return; }
+      if (e.target.matches("[data-all]")) row.querySelectorAll("[data-sel]").forEach((x) => { x.checked = e.target.checked; });
+      readRow(row);
+      turnOn(row);
+      if (e.target.matches("[data-sel], [data-all]")) {
+        const f = CS.find((x) => x.id === row.dataset.id), sel = st(f.id).v.sel, all = row.querySelector("[data-all]");
+        if (all) all.checked = sel.length > 0 && sel.length === optsOf(f).length;
+        row.querySelector("summary span").textContent = sumText(f, sel);
       }
       count();
     });
+    // a list opens with the chosen items on top
+    m.addEventListener("toggle", (e) => {
+      const d = e.target; if (!d.matches || !d.matches("details.cs-ms") || !d.open) return;
+      const box = d.querySelector(".cs-mi"); if (!box) return;
+      [...box.children].sort((a, b) => Number(b.querySelector("input").checked) - Number(a.querySelector("input").checked)).forEach((x) => box.appendChild(x));
+      box.scrollTop = 0; d.querySelector(".cs-ml").scrollTop = 0;
+    }, true);
     m.addEventListener("input", (e) => {
       if (e.target.id === "csQ") return drawBody();
       if (e.target.id === "csName") return count();
-      if (e.target.classList.contains("cs-mq")) { const q = e.target.value.toLowerCase(); e.target.parentElement.querySelectorAll("label").forEach((l) => { l.hidden = !l.dataset.t.includes(q); }); return; }
-      if (e.target.classList.contains("cs-n")) { const row = e.target.closest(".cs-row"); readRow(row); if (!st(row.dataset.id).on) { st(row.dataset.id).on = true; row.classList.add("on"); row.querySelector("[data-on]").checked = true; } count(); }
+      if (e.target.classList.contains("cs-mq")) { const q = e.target.value.toLowerCase(); e.target.parentElement.querySelectorAll(".cs-mi label").forEach((l) => { l.hidden = !l.dataset.t.includes(q); }); return; }
+      if (e.target.classList.contains("cs-n")) { const row = e.target.closest(".cs-row"); readRow(row); turnOn(row); count(); }
     });
     m.addEventListener("focusout", (e) => { if (e.target.classList && e.target.classList.contains("cs-n")) e.target.value = csGroup(e.target.value); });
-    const savedList = () => userScans().mine.filter((x) => x.builder);
+    const savedList = () => (isF ? store.get("sd-filter-sets", []) : userScans().mine.filter((x) => x.builder));
     m.addEventListener("click", (e) => {
       if (e.target === m || e.target.closest("[data-x]")) return shut();
       const t = e.target.closest("[data-tab]");
@@ -3565,18 +3634,29 @@
       if (!e.target.closest(".cs-ms")) m.querySelectorAll(".cs-ms[open]").forEach((d) => { d.open = false; });
       if (e.target.closest("#csLoad")) {
         const menu = m.querySelector("#csLoadM"), sv = savedList();
-        menu.innerHTML = (sv.length ? sv.map((x) => `<button type="button" data-ld="${esc(x.id)}">${esc(x.id === "custom-last" ? "Last run" + (x.builder.name ? ": " + x.builder.name : "") : x.name)}</button>`).join("") : '<small class="menu-h">No saved custom scans yet.</small>')
-          + '<button type="button" data-ld="">New, empty scan</button>';
+        menu.innerHTML = (sv.length ? sv.map((x) => `<button type="button" data-ld="${esc(x.id)}">${esc(isF ? x.name : x.id === "custom-last" ? "Last run" + (x.builder.name ? ": " + x.builder.name : "") : x.name)}</button>`).join("")
+          : `<small class="menu-h">${isF ? "No saved filter sets yet" : "No saved custom scans yet"}</small>`) + `<button type="button" data-ld="">${isF ? "No filters" : "New, empty scan"}</button>`;
         menu.hidden = !menu.hidden; return;
       }
       const ld = e.target.closest("[data-ld]");
       if (ld) {
         const x = savedList().find((y) => y.id === ld.dataset.ld);
-        cs = x ? clone(x.builder) : { name: "", f: {} }; loadedId = x ? x.id : null;
-        m.querySelector("#csName").value = cs.name || ""; m.querySelector("#csLoadM").hidden = true; drawBody(); count(); return;
+        if (isF) cs = x ? { f: clone(x.f) } : { f: {} };
+        else { cs = x ? clone(x.builder) : { name: "", f: {} }; loadedId = x ? x.id : null; m.querySelector("#csName").value = cs.name || ""; }
+        m.querySelector("#csLoadM").hidden = true; drawBody(); count(); return;
       }
       if (!e.target.closest("#csLoadM")) m.querySelector("#csLoadM").hidden = true;
-      if (e.target.closest("#csReset")) { cs = { name: m.querySelector("#csName").value, f: {} }; drawBody(); count(); return; }
+      if (e.target.closest("#csReset")) { cs = isF ? { f: {} } : { name: m.querySelector("#csName").value, f: {} }; drawBody(); count(); return; }
+      if (isF) {
+        if (e.target.closest("#csSave")) {
+          const nm = prompt("Name of this filter set:", "My filters"); if (!nm) return;
+          const sets = store.get("sd-filter-sets", []).filter((x) => x.name !== nm.slice(0, 60));
+          sets.push({ id: "fs-" + Date.now().toString(36), name: nm.slice(0, 60), f: clone(cs.f) }); store.set("sd-filter-sets", sets);
+          const b = m.querySelector("#csSave"); b.textContent = "Saved ✓"; setTimeout(() => { b.textContent = "Save filter set"; }, 1500); return;
+        }
+        if (e.target.closest("#csApply")) { store.set("sd-scan-filters", csActive(cs) ? clone(cs) : null); shut(); state.lastScan = null; renderStocks(); }
+        return;
+      }
       const save = e.target.closest("#csSave"), run = e.target.closest("#csRun");
       if (save || run) {
         cs.name = m.querySelector("#csName").value.trim();
@@ -3597,7 +3677,7 @@
     });
     drawBody();
     count();
-    setTimeout(() => m.querySelector("#csQ").focus(), 50);
+    if (!isF) setTimeout(() => m.querySelector("#csQ").focus(), 50);
   }
 
   /* ------------------------------------------------------------------ financials (Phase S8): data/f/<id>.json, fin.js */

@@ -1258,3 +1258,18 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   right: "Your columns" with count, reset, drag handles (FLIP while dragging) and x; "Changes saved automatically".
 - Checked in the preview: fit (no pane scroll), drag over the chart, sort / period / reset, search, column add /
   remove / reset, no console errors. JS 32 / 32.
+
+### 2026-11-14: Major Indices v3 - reference index lists, names that fit, 1D sort, gear icon, bar shape
+- Viraj (7 screenshots): exactly the reference's sector charts; names must show properly at 3 / 4 per row; no date
+  before 1D / 1W; gainers / losers on 1D; a proper gear icon; bars shaped like the reference.
+- site/app.js renderMajorIndices():
+  - Broad = the reference's 12 (India VIX removed); Sector = the reference's 21 in its order: Auto, Capital Markets,
+    Cement, Chemicals, Commodities, Consumer Durables, Energy, FMCG, Healthcare Index, IPO, IT, India Defence, India
+    Tourism, Infrastructure, Media, Metal, Oil & Gas, PSU Bank, Pharma, Private Bank, Realty (some are NSE thematic);
+  - names written like the reference ("Nifty Oil & Gas", acronyms IT / IPO / FMCG / PSU kept, "Nifty MidSmallcap 400");
+  - header: no dot / date; smaller name font and a narrower right column at 3-4 per row (only Consumer Durables is
+    cut at 4 per row, as in the reference);
+  - Sort by: header with a reset arrow; one-time reset of the period to 1D (v3);
+  - gear: a real cog icon, no border;
+  - bars: stem at least 2 px, ticks a bit longer (a 1 px stem looked like a thin bar at 3-4 per row).
+- Checked in the preview (dark, 4 per row, bars, all 21 names). JS 32 / 32.

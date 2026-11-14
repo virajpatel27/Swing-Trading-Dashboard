@@ -2034,3 +2034,20 @@ th.l .th-w { justify-content: flex-start; text-align: left; }
 @keyframes cstIn { from { background: color-mix(in srgb, var(--accent) 16%, var(--panel)); transform: translateX(8px); } to { background: var(--panel); transform: none; } }
 @keyframes cstOut { to { opacity: 0; transform: translateX(14px); } }
 @media (max-width: 720px) { .cst-b { grid-template-columns: 1fr; grid-template-rows: 1fr auto; } .cst-l { border-right: 0; border-bottom: 1px solid var(--line); } .cst-rt { max-height: 40vh; } }
+
+/* major indices v3 (14-Nov-2026): reference names (Nifty Auto ...), no date / dot, smaller header so long names fit
+   at 3-4 per row, plain gear icon, "Sort by" header with a reset arrow */
+.mix .mi-card { padding: 10px 6px 4px 12px; }
+.mix .mi-h { grid-template-columns: minmax(0, 1fr) auto minmax(0, .55fr); gap: 8px; min-height: 22px; }
+.mix .mi-n { font-size: 12.5px; font-weight: 600; letter-spacing: .005em; }
+.mix .mi-chg { gap: 3px; font-size: 11.5px; }
+.mix .mi-chg small { font-size: 10.5px; margin-left: 6px; }
+.mix .mi-chg small:first-child { margin-left: 0; }
+.mix .mi-grid[style*="--mcols:4"] .mi-h, .mix .mi-grid[style*="--mcols:3"] .mi-h { grid-template-columns: minmax(0, 1fr) auto minmax(0, .2fr); }
+.mi-gear { width: 32px; height: 32px; border: 0; border-radius: 8px; background: none; }
+.mi-gear:hover { background: var(--panel-2); color: var(--accent); }
+.mi-gear svg { width: 17px; height: 17px; }
+.mi-sh { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px 8px 10px; }
+.mi-sh b { font-size: 12.5px; font-weight: 600; }
+.mi-sh button { width: 26px; height: 26px; border: 0; border-radius: 7px; background: none; color: var(--muted); cursor: pointer; font-size: 15px; padding: 0; justify-content: center !important; }
+.mi-sh button:hover { color: var(--accent); background: var(--panel-2); }

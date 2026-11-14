@@ -715,14 +715,15 @@
     draw(target, toY) {
       const d = this._d, o = this._o; if (!d || !d.visibleRange) return;
       target.useBitmapCoordinateSpace(({ context: ctx, horizontalPixelRatio: hr, verticalPixelRatio: vr }) => {
-        const bs = d.barSpacing, w = Math.max(1, Math.round(Math.min(Math.max(bs * 0.28, 1), 9) * hr)), t = Math.max(1, Math.round(Math.min(bs * 0.34, 11) * hr));
+        // like the reference: the stem never gets thinner than 2 px (a 1 px stem looks like a plain thin bar), ticks a bit longer
+        const bs = d.barSpacing, w = Math.round(Math.min(Math.max(bs * 0.3, 2), 7) * hr), t = Math.round(Math.min(Math.max(bs * 0.36, 2), 9) * hr);
         for (let i = d.visibleRange.from; i < d.visibleRange.to; i++) {
           const b = d.bars[i], v = b.originalData; if (v.close == null) continue;
           const x = Math.round(b.x * hr) - Math.floor(w / 2), y = (p) => Math.round(toY(p) * vr);
           const yh = y(v.high), yl = y(v.low), yo = y(v.open), yc = y(v.close);
           ctx.fillStyle = v.close >= v.open ? o.upColor : o.downColor;
           ctx.fillRect(x, yh, w, Math.max(w, yl - yh));
-          if (bs >= 3) { ctx.fillRect(x - t, yo - Math.floor(w / 2), t, w); ctx.fillRect(x + w, yc - Math.floor(w / 2), t, w); }
+          if (bs >= 2.5) { ctx.fillRect(x - t, yo - Math.floor(w / 2), t, w); ctx.fillRect(x + w, yc - Math.floor(w / 2), t, w); }
         }
       });
     }
@@ -734,20 +735,26 @@
       mi.v = 2; mi.mas = MI_MA_DEF.slice();
       if (["1d", "1w", "1m"].includes(mi.sort)) { mi.sortP = mi.sort; mi.sort = "gain"; } else if (mi.sort === "name") mi.sort = "az"; else if (!["default", "gain", "lose", "az", "za"].includes(mi.sort)) mi.sort = "default";
     }
+    if ((mi.v3 || 0) < 1) { mi.v3 = 1; mi.sortP = "1d"; }   // 14-Nov-2026 (Viraj): gainers / losers start on 1D like the reference
     if (!Array.isArray(mi.mas)) mi.mas = MI_MA_DEF.slice();
     mi.mas = mi.mas.filter((k) => MI_MAS.some((m) => m[0] === k));
-    const save = () => store.set("sd-mi", { grp: mi.grp, tf: mi.tf, type: mi.type, mas: mi.mas, range: mi.range, sort: mi.sort, sortP: mi.sortP, cols: mi.cols, v: mi.v });
+    const save = () => store.set("sd-mi", { grp: mi.grp, tf: mi.tf, type: mi.type, mas: mi.mas, range: mi.range, sort: mi.sort, sortP: mi.sortP, cols: mi.cols, v: mi.v, v3: mi.v3 });
     const idx = state.rows.filter((r) => r.kind === "index" && r.exchange === "NSE");
-    const BROAD = ["NIFTY_50", "NIFTY_NEXT_50", "NIFTY_100", "NIFTY_200", "NIFTY_500", "NIFTY_MIDCAP_50", "NIFTY_MIDCAP_100", "NIFTY_MIDCAP_150", "NIFTY_SMALLCAP_100", "NIFTY_SMALLCAP_250", "NIFTY_MICROCAP_250", "NIFTY_MIDSMALLCAP_400", "INDIA_VIX"];
+    const BROAD = ["NIFTY_50", "NIFTY_NEXT_50", "NIFTY_100", "NIFTY_200", "NIFTY_500", "NIFTY_MIDCAP_50", "NIFTY_MIDCAP_100", "NIFTY_MIDCAP_150", "NIFTY_SMALLCAP_100", "NIFTY_SMALLCAP_250", "NIFTY_MICROCAP_250", "NIFTY_MIDSMALLCAP_400"];
     const broad = BROAD.map((id) => idx.find((r) => r.id === id)).filter(Boolean);
-    const sect = idx.filter((r) => r.category === "SECTORAL INDICES").sort((a, b) => a.name.localeCompare(b.name));
+    const SECT = ["NIFTY_AUTO", "NIFTY_CAPITAL_MARKETS", "NIFTY_CEMENT", "NIFTY_CHEMICALS", "NIFTY_COMMODITIES", "NIFTY_CONSUMER_DURABLES", "NIFTY_ENERGY", "NIFTY_FMCG",
+      "NIFTY_HEALTHCARE_INDEX", "NIFTY_IPO", "NIFTY_IT", "NIFTY_INDIA_DEFENCE", "NIFTY_INDIA_TOURISM", "NIFTY_INFRASTRUCTURE", "NIFTY_MEDIA", "NIFTY_METAL", "NIFTY_OIL___GAS",
+      "NIFTY_PSU_BANK", "NIFTY_PHARMA", "NIFTY_PRIVATE_BANK", "NIFTY_REALTY"];
+    const sect = SECT.map((id) => idx.find((r) => r.id === id)).filter(Boolean);
+    const KEEP = new Set(["IT", "IPO", "FMCG", "PSU", "VIX", "PSE", "CPSE", "MNC", "ESG"]);
+    const miName = (r) => (r.id === "NIFTY_MIDSMALLCAP_400" ? "Nifty MidSmallcap 400" : String(r.name).split(" ").map((w) => (KEEP.has(w) ? w : w.charAt(0) + w.slice(1).toLowerCase())).join(" "));
     const perOf = (k) => MI_PER.find((p) => p[0] === k) || MI_PER[0];
     const sorted = () => {
       const base = mi.grp === "sector" ? sect : broad, f = perOf(mi.sortP)[2], v = (r) => (r[f] == null || !isFinite(r[f]) ? null : r[f]);
       if (mi.sort === "gain") return base.slice().sort((a, b) => (v(b) ?? -1e9) - (v(a) ?? -1e9));
       if (mi.sort === "lose") return base.slice().sort((a, b) => (v(a) ?? 1e9) - (v(b) ?? 1e9));
-      if (mi.sort === "az") return base.slice().sort((a, b) => a.name.localeCompare(b.name));
-      if (mi.sort === "za") return base.slice().sort((a, b) => b.name.localeCompare(a.name));
+      if (mi.sort === "az") return base.slice().sort((a, b) => miName(a).localeCompare(miName(b)));
+      if (mi.sort === "za") return base.slice().sort((a, b) => miName(b).localeCompare(miName(a)));
       return base;
     };
     const rng = () => MI_RANGE.find((x) => x[0] === mi.range) || MI_RANGE[1];
@@ -759,11 +766,10 @@
     const pctS = (v) => (v == null || !isFinite(v) ? '<span class="muted">–</span>' : `<span class="${v > 0 ? "up" : v < 0 ? "down" : ""}">${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).toFixed(2)}%</span>`);
     const maMenu = () => ["SMA", "EMA"].map((t) => `<small class="menu-h">${t === "SMA" ? "Simple" : "Exponential"} moving average</small>${MI_MAS.filter((m) => m[1] === t).map(([k, , n, c]) =>
       `<button type="button" data-ma="${k}" class="mi-ma${mi.mas.includes(k) ? " on" : ""}"><span>${t} ${n}</span>${TICK}<i style="background:${c}"></i></button>`).join("")}`).join('<hr class="mi-hr">');
-    const sortMenu = () => `<small class="menu-h">Sort by</small>${[["default", "As listed"], ["gain", "Top gainers"], ["lose", "Top losers"], ["az", "A–Z"], ["za", "Z–A"]].map(([k, l]) =>
+    const sortMenu = () => `<div class="mi-sh"><b>Sort by</b><button type="button" data-sreset title="Back to the listed order">↻</button></div>${[["default", "As listed"], ["gain", "Top gainers"], ["lose", "Top losers"], ["az", "A–Z"], ["za", "Z–A"]].map(([k, l]) =>
       `<button type="button" data-sort="${k}" class="${k === mi.sort ? "on" : ""}"><span>${l}</span>${k === "gain" || k === "lose" ? `<em class="mi-per" data-per="${k}" title="Change the period">${perOf(mi.sortP)[1]}${UPDN}</em>` : ""}${TICK}</button>`).join("")}`;
-    const asOf = state.dataDate ? shortDay(state.dataDate).replace(/^\w+,?\s*/, "") : "";
-    const cardHTML = (r, i) => `<div class="mi-card" data-id="${esc(r.id)}" style="--i:${i}"><div class="mi-h"><a class="mi-n" href="#/i/n/${encodeURIComponent(r.id)}" title="Open the full chart">${esc(r.name)}</a>
-        <span class="mi-chg"><i class="mi-dot"></i><small class="mi-asof" title="End-of-day data">${esc(asOf)}</small><small>1D</small>${pctS(r.chg_1d)}<small>1W</small>${pctS(r.chg_1w)}</span><span></span></div>
+    const cardHTML = (r, i) => `<div class="mi-card" data-id="${esc(r.id)}" style="--i:${i}"><div class="mi-h"><a class="mi-n" href="#/i/n/${encodeURIComponent(r.id)}" title="${esc(miName(r))} - open the full chart">${esc(miName(r))}</a>
+        <span class="mi-chg"><small>1D</small>${pctS(r.chg_1d)}<small>1W</small>${pctS(r.chg_1w)}</span><span></span></div>
         <div class="mi-ch"><i class="skel"></i><button type="button" class="mi-end" title="Back to the latest bar" hidden>»</button></div></div>`;
     let list = sorted();
     view.innerHTML = `<div class="bx mix">${tabs}<div class="mi-bar">
@@ -775,7 +781,7 @@
           ${dd("range", `<b>${rng()[1]}</b>`, MI_RANGE.map(([k, l]) => `<button type="button" data-range="${k}" class="${k === mi.range ? "on" : ""}">${l}</button>`).join(""))}
           ${dd("sort", `${IC('<path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4"/>')}Sort by`, sortMenu(), "right mi-sortd")}
           ${dd("lay", `${IC('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/>')}Layout`, `<small class="menu-h">Charts per row</small>${[1, 2, 3, 4].map((n) => `<button type="button" data-cols="${n}" class="${n === mi.cols ? "on" : ""}">${n} per row<span class="mi-lay">${"<i></i>".repeat(n)}</span></button>`).join("")}`, "right")}
-          <button type="button" class="mi-gear" id="miSet" title="Chart settings">${IC('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>')}</button>
+          <button type="button" class="mi-gear" id="miSet" title="Chart settings">${IC('<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>')}</button>
         </span></div>
       <div class="mi-grid" id="miGrid" style="--mcols:${mi.cols}">${list.map(cardHTML).join("")}</div></div>`;
     const status = () => { $("#stPage").innerHTML = `<span>${list.length} of ${broad.length + sect.length} indices</span><span class="st-n">${mi.grp === "sector" ? "Sector" : "Broad"} · ${mi.tf === "W" ? "weekly" : "daily"} · ${rng()[1]}</span><span class="st-n">end-of-day data ${SD.fmtDate(state.dataDate)}</span>`; };
@@ -898,6 +904,7 @@
       }
       if (b && b.dataset.range) { mi.range = b.dataset.range; save(); d.querySelector(".hm-ddb b").textContent = rng()[1];
         d.querySelectorAll("[data-range]").forEach((x) => x.classList.toggle("on", x === b)); closeAll(); charts.forEach((o) => glideTo(o, nBars())); status(); return; }
+      if (e.target.closest("[data-sreset]")) { mi.sort = "default"; mi.sortP = "1d"; d.querySelectorAll("[data-sort]").forEach((x) => x.classList.toggle("on", x.dataset.sort === "default")); d.querySelectorAll("[data-per]").forEach((x) => { x.innerHTML = perOf("1d")[1] + UPDN; }); save(); reorder(); return; }
       if (b && b.dataset.sort) {
         const per = e.target.closest("[data-per]");
         if (per) {                       // the small "1D %" pill: next period (1D -> 1W -> 1M -> 3M)

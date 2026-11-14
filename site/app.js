@@ -698,7 +698,7 @@
      settings drawer (this page uses its chart style). Nothing reloads the page: every change happens inside the charts
      (new data / series), cards move to their new place (FLIP) and new cards rise in. */
   const MI_MAS = [["s10", "SMA", 10, "#f0a35e"], ["s20", "SMA", 20, "#5b9bd5"], ["s50", "SMA", 50, "#2b3f6c"], ["s150", "SMA", 150, "#a06fd0"], ["s200", "SMA", 200, "#3a3f4b"],
-    ["e10", "EMA", 10, "#f0a35e"], ["e20", "EMA", 20, "#a06fd0"], ["e21", "EMA", 21, "#5b9bd5"], ["e50", "EMA", 50, "#e05a5a"], ["e200", "EMA", 200, "#4a8fe0"]];
+    ["e10", "EMA", 10, "#f0a35e"], ["e21", "EMA", 21, "#5b9bd5"], ["e50", "EMA", 50, "#e05a5a"], ["e150", "EMA", 150, "#a06fd0"], ["e200", "EMA", 200, "#4a8fe0"]];
   const MI_MA_DEF = ["s50", "s150", "s200", "e10", "e21"];
   const MI_RANGE = [["1m", "1M", 21, 5], ["3m", "3M", 63, 13], ["6m", "6M", 126, 26], ["1y", "1Y", 252, 52], ["2y", "2Y", 504, 104], ["5y", "5Y", 1260, 260]];
   const MI_STYLE = { mono: { label: "Mono", up: "#a3a9b3", down: "#1f2430", dup: "#c9d0db", ddn: "#5b6577" }, default: { label: "Default", up: "#2962ff", down: "#e91e63", dup: "#4ea1ff", ddn: "#ff5d8f" },
@@ -735,7 +735,8 @@
       mi.v = 2; mi.mas = MI_MA_DEF.slice();
       if (["1d", "1w", "1m"].includes(mi.sort)) { mi.sortP = mi.sort; mi.sort = "gain"; } else if (mi.sort === "name") mi.sort = "az"; else if (!["default", "gain", "lose", "az", "za"].includes(mi.sort)) mi.sort = "default";
     }
-    if ((mi.v3 || 0) < 1) { mi.v3 = 1; mi.sortP = "1d"; }   // 14-Nov-2026 (Viraj): gainers / losers start on 1D like the reference
+    if ((mi.v3 || 0) < 1) { mi.v3 = 1; mi.sortP = "1d"; }
+    mi.mas = (mi.mas || []).map((k) => (k === "e20" ? "e150" : k));   // 14-Nov-2026 (Viraj): gainers / losers start on 1D like the reference
     if (!Array.isArray(mi.mas)) mi.mas = MI_MA_DEF.slice();
     mi.mas = mi.mas.filter((k) => MI_MAS.some((m) => m[0] === k));
     const save = () => store.set("sd-mi", { grp: mi.grp, tf: mi.tf, type: mi.type, mas: mi.mas, range: mi.range, sort: mi.sort, sortP: mi.sortP, cols: mi.cols, v: mi.v, v3: mi.v3 });
@@ -786,6 +787,13 @@
       <div class="mi-grid" id="miGrid" style="--mcols:${mi.cols}">${list.map(cardHTML).join("")}</div></div>`;
     const status = () => { $("#stPage").innerHTML = `<span>${list.length} of ${broad.length + sect.length} indices</span><span class="st-n">${mi.grp === "sector" ? "Sector" : "Broad"} · ${mi.tf === "W" ? "weekly" : "daily"} · ${rng()[1]}</span><span class="st-n">end-of-day data ${SD.fmtDate(state.dataDate)}</span>`; };
     status();
+    const mixEl = view.querySelector(".mix");
+    const fitMix = () => {
+      if (!mixEl.isConnected) { window.removeEventListener("resize", fitMix); return; }
+      if (matchMedia("(min-width: 1100px)").matches) mixEl.style.height = Math.max(420, innerHeight - (mixEl.getBoundingClientRect().top + scrollY) - 40) + "px";
+      else mixEl.style.height = "";
+    };
+    fitMix(); window.addEventListener("resize", fitMix);
     try { await SDChart.loadLib(); } catch (e) { return; }
     const L = window.LightweightCharts;
     let charts = [];

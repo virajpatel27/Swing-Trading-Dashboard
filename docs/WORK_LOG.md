@@ -1291,3 +1291,17 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   the scanner workspace is shown (html / body overflow hidden via :has).
 - Checked in the preview: earnings grid + fold, badges placed at the right dates, unpin, drag reorder, no page
   scroll, no console errors. JS 32 / 32.
+
+### 2026-11-14: No scrollbars, no text selection, Major Indices toolbar fixed, EMA 150
+- Viraj (10 photos): remove the page's scroll bar (scroll with the mouse), hide the drawer scroll bars, nothing on the
+  site should be selectable, 1D / 1W in the middle with full index names, quieter card borders, the toolbar must
+  not move away when scrolling (like the reference), EMA list without 20 and with 150.
+- site/styles.css: html / body and drawers have no visible scrollbar (wheel / touch still scroll); body
+  user-select none (inputs stay selectable); Major Indices (wide screens): .bx.mix is a flex column with the
+  window's height, tabs + toolbar stay, only the card grid scrolls (hidden scrollbar); header columns
+  minmax(max-content, 1fr) auto minmax(0, 1fr): centred 1D / 1W, a long name pushes it a little instead of being
+  cut; softer card border, hover = shadow only.
+- site/app.js renderMajorIndices(): fitMix() sets the page height (resize too); MI_MAS EMA 20 -> EMA 150 (saved
+  choices mapped), EMAs in period order.
+- Checked in the preview: toolbar does not move while the grid scrolls, names full at 2 / 3 / 4 per row, centred
+  1D / 1W (4 per row: 3 long names shift it 7-40 px), EMA list, no console errors. JS 32 / 32.

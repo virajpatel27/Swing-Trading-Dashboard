@@ -2113,3 +2113,26 @@ html:has(.ws-main.list.wide:not(.ldx)), body:has(.ws-main.list.wide:not(.ldx)) {
 .pin-x { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; border: 0; border-radius: 5px; background: none; color: var(--muted); font-size: 10px; cursor: pointer; opacity: 0; transition: opacity .15s, background .15s; }
 .pin-c:hover .pin-hd, .pin-c:hover .pin-x { opacity: 1; }
 .pin-x:hover { background: color-mix(in srgb, var(--down) 12%, transparent); color: var(--down); }
+
+/* ---------------------------------------------------------------- 14-Nov-2026 (Viraj, 10 photos)
+   no page / drawer scrollbars (scroll with the mouse wheel), no text selection on the site, Major Indices: toolbar
+   stays while only the cards scroll, 1D / 1W in the middle, quieter card borders */
+html, body { scrollbar-width: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.modal-bg.drawer, .modal-bg.drawer * { scrollbar-width: none; }
+.modal-bg.drawer ::-webkit-scrollbar { display: none; width: 0; height: 0; }
+body { -webkit-user-select: none; user-select: none; }
+input, textarea, select, [contenteditable="true"], .selectable { -webkit-user-select: text; user-select: text; }
+@media (min-width: 1100px) {
+  .bx.mix { display: flex; flex-direction: column; overflow: hidden; }
+  .bx.mix > .bx-tabs, .bx.mix > .mi-bar { flex: none; }
+  .mix .mi-grid { flex: 1 1 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; padding: 2px 2px 14px; margin: 0 -2px; align-content: start; }
+  .mix .mi-grid::-webkit-scrollbar { display: none; width: 0; }
+}
+.mix .mi-h, .mix .mi-grid[style*="--mcols:4"] .mi-h, .mix .mi-grid[style*="--mcols:3"] .mi-h { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 10px; }
+.mix .mi-chg { justify-self: center; font-size: 11px; gap: 3px; }
+.mix .mi-chg small { font-size: 10px; margin-left: 5px; }
+.mix .mi-card { border-color: color-mix(in srgb, var(--line) 70%, transparent); box-shadow: 0 1px 2px rgba(20, 35, 70, .04); }
+.mix .mi-card:hover { border-color: color-mix(in srgb, var(--line) 70%, transparent); box-shadow: 0 6px 22px rgba(20, 35, 70, .07); }
+.mix .mi-h, .mix .mi-grid[style*="--mcols:4"] .mi-h, .mix .mi-grid[style*="--mcols:3"] .mi-h { grid-template-columns: minmax(max-content, 1fr) auto minmax(0, 1fr); }
+.mix .mi-n { overflow: visible; }

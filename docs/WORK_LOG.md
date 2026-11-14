@@ -1471,3 +1471,11 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - JS fixtures regenerated (tests/js/make_expected.py); JS 32 / 32.
 - Open: Stage 2 Breakout (precision 0.88) and High Volume (0.83) are engine events and need a per-day rebuild to tune;
   the reference's Intraday folder (top gainers / losers, near 52W high / low, ORB ...) does not exist here yet.
+
+### 2026-11-14: Stage 2 Breakout tuned to the reference; High Volume left as is
+- Viraj: improve Stage 2 Breakout (88%) and High Volume (83%); do NOT build the Intraday folder.
+- swingdash/engine.py events(): Stage 2 breakout now needs a "fresh" Stage 2 (entered <= 6 sessions before, or the
+  run started from Basing / Topping); config/indicators.yaml s2b_entered / s2b_from; config/fields.yaml text,
+  docs/formulas.md regenerated. Precision 0.88 -> 0.95, recall 0.98 -> 0.95 (4 export days, real engine).
+- High Volume: no price / volume condition matched the reference better; unchanged. Details: docs/calibration.md.
+- Tests: Python 220 / 220, JS 32 / 32; secret check 0 problems.

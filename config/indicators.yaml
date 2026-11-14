@@ -38,6 +38,8 @@ events:                           # event scans (engine.events), calibrated 07-N
   br_below: 6                     #   previous close >= 6 % under SMA200
   s2b_rvol: 2.0                   # Stage 2 breakout: close above the previous 50-day high on >= 2 x 20-day volume, Stage 2
   s2b_window: 6                   #   kept 6 sessions
+  s2b_entered: 6                  #   ... Stage 2 entered at most 6 sessions before ("entered"), or
+  s2b_from: ["1", "3"]            #   the Stage 2 run started from Basing / Topping (14-Nov-2026: precision 0.88 -> 0.96)
   so_min_drop: 1.5                # shakeout: intraday drop >= 1.5 % and >= the usual daily range,
   so_sma50_tol: 3                 #   low within 3 % of SMA50 (close before it above SMA50),
   so_recovery: 2                  #   back to the close before the drop within 2 sessions, in an uptrend

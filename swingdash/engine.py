@@ -371,8 +371,15 @@ def events(f: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     # Stage 2 breakout: close above the highest high of the previous 50 sessions on >= 2 x volume, close in the top
     # quarter of the day, Stage 2 that day (kept s2b_window sessions)
     st = f["stage"].astype(str) if "stage" in f else pd.Series("", index=f.index)
+    # like the reference (14-Nov-2026): the breakout counts when Stage 2 was ENTERED at most s2b_entered sessions ago, or
+    # when the Stage 2 run started from Basing / Topping ("from base" / "from top"); not deep inside a long uptrend
+    s2 = st.str.replace("A", "", regex=False)
+    is2 = s2 == "2"
+    run2 = is2.astype(int).groupby((~is2).cumsum()).cumsum()                 # sessions in Stage 2 so far (incl. today)
+    came_from = s2.where(~is2).ffill()                                         # the stage before the current Stage 2 run
+    fresh = (run2 <= int(cfg.get("s2b_entered", 6))) | came_from.isin([str(x) for x in cfg.get("s2b_from", ["1", "3"])])
     s2b = (c > h.shift(1).rolling(50, min_periods=1).max()) & (f["rvol"] >= float(cfg.get("s2b_rvol", 2.0))) \
-        & (f["close_pos"] >= float(cfg.get("hv_close_pos", 75))) & st.isin(["2", "2A"])
+        & (f["close_pos"] >= float(cfg.get("hv_close_pos", 75))) & st.isin(["2", "2A"]) & fresh
     out["s2b_age"] = event_age(s2b, int(cfg.get("s2b_window", 6))).to_numpy()
     # Shakeout: an intraday drop of >= the usual daily range (20-day mean of (high-low)/close) that holds within 3 % of
     # SMA50 (the close before it above SMA50), recovered to the close before the drop within 2 sessions, in an uptrend

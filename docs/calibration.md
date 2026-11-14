@@ -266,3 +266,10 @@ Precision / recall over the 4 export days (before -> after):
 
 11-Nov video after the change: 4% Breakout 75 vs 77 (16 / 16 samples), Outperformers 31 vs 31.
 
+
+## Stage 2 Breakout / High Volume re-checked 14-Nov-2026 (exports 02 / 04 / 05 / 06-Nov)
+- Stage 2 Breakout: the reference pivot = our 50-day high and its RVol = ours. Our extra stocks sat deep inside long
+  Stage 2 runs that came from Stage 4. New rule: Stage 2 entered at most 6 sessions before (s2b_entered) OR the
+  Stage 2 run started from Basing / Topping (s2b_from). Real engine: precision 0.88 -> 0.95, recall 0.98 -> 0.95.
+- High Volume: unchanged (0.83 / 0.99). Reference ADR = ours; move, close position and volume of matched and extra
+  stocks overlap; no extra condition beat the current F1 (best 0.903 vs 0.902).

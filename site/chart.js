@@ -266,35 +266,27 @@
     }
     // markers on the price
     const marks = [];
-    if (!pv && C.marks.actions && cur.data.m) {
-      for (const m of cur.data.m) {
-        const t = `${String(m.d).slice(0, 4)}-${String(m.d).slice(4, 6)}-${String(m.d).slice(6, 8)}`;
-        const b = [...bars].reverse().find((x) => x.time <= t);
-        if (b) marks.push({ time: b.time, position: "belowBar", color: "#f59e0b", shape: "circle", text: "C", size: 0.8 });
-      }
-    }
-    // company filings with NSE (news): one marker per bar with the most telling category letter, details in a card on hover
-    if (!pv) cur.newsAt = new Map();
-    if (!pv && C.marks.news !== false && cur.news && cur.news.length) {
-      const PRI = "ODRMFKCAEP", COL = { E: "#7e57c2", K: "#0ea5e9", O: "#16a34a", D: "#2962ff", C: "#f59e0b", F: "#a855f7", M: "#64748b", R: "#db2777", A: "#14b8a6", P: "#94a3b8" };
-      for (const n of cur.news) {
-        const d = n[0].slice(0, 10), b = bars.find((x) => x.time >= d);
-        if (!b) continue;
-        if (!cur.newsAt.has(b.time)) cur.newsAt.set(b.time, []);
-        cur.newsAt.get(b.time).push(n);
-      }
-      for (const [t, list] of cur.newsAt) {
-        const cats = [...new Set(list.map((n) => n[2]))].sort((a, b) => PRI.indexOf(a) - PRI.indexOf(b));
-        const show = cats.filter((c) => !(c === "E" && C.marks.earnings) && c !== "P");
-        if (!show.length) continue;
-        marks.push({ time: t, position: "belowBar", color: COL[show[0]], shape: "circle", text: show[0] + (list.length > 1 ? String(list.length) : ""), size: 0.7 });
-      }
-    }
-    if (!pv && C.marks.earnings && cur.data.e) {             // results days: "E" on the first bar on / after the day
-      for (const d of cur.data.e) {
-        const t = `${String(d).slice(0, 4)}-${String(d).slice(4, 6)}-${String(d).slice(6, 8)}`;
-        const b = bars.find((x) => x.time >= t);
-        if (b) marks.push({ time: b.time, position: "belowBar", color: "#7e57c2", shape: "circle", text: "E", size: 0.8 });
+    // results days, corporate actions and company filings: one row of small round badges at the bottom of the price pane
+    // (like the reference), a count bubble when a day has several filings; hover a bar for the details card
+    if (!pv) { cur.newsAt = new Map(); cur.evs = new Map(); }
+    if (!pv) {
+      const add = (t, c, n) => { if (!cur.evs.has(t)) cur.evs.set(t, { cats: [], n: 0 }); const e = cur.evs.get(t); if (!e.cats.includes(c)) e.cats.push(c); e.n += n || 0; };
+      const dOf = (d) => `${String(d).slice(0, 4)}-${String(d).slice(4, 6)}-${String(d).slice(6, 8)}`;
+      if (C.marks.earnings && cur.data.e) for (const d of cur.data.e) { const b = bars.find((x) => x.time >= dOf(d)); if (b) add(b.time, "E"); }
+      if (C.marks.actions && cur.data.m) for (const m of cur.data.m) { const b = [...bars].reverse().find((x) => x.time <= dOf(m.d)); if (b) add(b.time, "C"); }
+      if (C.marks.news !== false && cur.news && cur.news.length) {
+        const PRI = "ODRMFKCAEP";
+        for (const n of cur.news) {
+          const b = bars.find((x) => x.time >= n[0].slice(0, 10));
+          if (!b) continue;
+          if (!cur.newsAt.has(b.time)) cur.newsAt.set(b.time, []);
+          cur.newsAt.get(b.time).push(n);
+        }
+        for (const [t, list] of cur.newsAt) {
+          const cats = [...new Set(list.map((n) => n[2]))].sort((x, y) => PRI.indexOf(x) - PRI.indexOf(y)).filter((c) => !(c === "E" && C.marks.earnings) && c !== "P");
+          if (!cats.length) continue;
+          cats.forEach((c, k) => add(t, c, k === 0 ? list.length : 0));
+        }
       }
     }
     if (!pv && C.marks.swings) {
@@ -354,6 +346,7 @@
     }
     marks.sort((a, b) => (a.time < b.time ? -1 : a.time > b.time ? 1 : 0));
     if (marks.length) L.createSeriesMarkers(price, marks);
+    if (!pv) eventRow(chart, pricePane);
     if (!pv && C.marks.hilo52 && bars.length) {
       const n = weekly ? 52 : 252, last = bars.slice(-n);
       price.createPriceLine({ price: Math.max(...last.map((b) => b.high)), color: st.up, lineWidth: 1, lineStyle: 2, title: "52W H" });
@@ -509,6 +502,31 @@
     };
   }
 
+  const EV_COL = { E: "#5b6fd6", C: "#e0527a", M: "#7b8494", O: "#16a34a", D: "#2962ff", K: "#0ea5e9", F: "#a855f7", R: "#db2777", A: "#14b8a6" };
+  const EV_NAME = { E: "Results", C: "Corporate action", M: "Management", O: "Orders & business", D: "Deals & expansion", K: "Con-call / meet", F: "Fund raising", R: "Regulatory & legal", A: "Credit rating" };
+  function eventRow(chart, pi) {
+    const wrap = cur.box.querySelector(".ch-wrap");
+    let el = wrap.querySelector("#chEv");
+    if (!el) { el = document.createElement("div"); el.id = "chEv"; el.className = "ch-ev"; wrap.appendChild(el); }
+    const evs = [...(cur.evs || new Map())];
+    el.innerHTML = evs.map(([t, e]) => `<span class="ev-b" data-t="${t}" title="${esc(S.fmtDate(t))}: ${esc(e.cats.map((c) => EV_NAME[c] || c).join(", "))}">${e.cats.slice(0, 3).map((c, k) =>
+      `<i class="ev" style="--c:${EV_COL[c] || "#94a3b8"}">${c}${k === 0 && e.n > 1 ? `<sup>${e.n > 9 ? "9+" : e.n}</sup>` : ""}</i>`).join("")}</span>`).join("");
+    const place = () => {
+      if (!cur || cur.chart !== chart || !el.isConnected) return;
+      const pane = chart.panes()[pi], pe = pane && pane.getHTMLElement();
+      if (!pe) return;
+      const wr = wrap.getBoundingClientRect(), pr = pe.getBoundingClientRect(), ts = chart.timeScale(), w = ts.width();
+      el.style.top = `${pr.bottom - wr.top - 24}px`;
+      el.querySelectorAll(".ev-b").forEach((b) => { const x = ts.timeToCoordinate(b.dataset.t); const off = x == null || x < 6 || x > w - 6; b.hidden = off; if (!off) b.style.left = `${pr.left - wr.left + x}px`; });
+    };
+    chart.timeScale().subscribeVisibleLogicalRangeChange(place);
+    chart.timeScale().subscribeSizeChange(place);
+    requestAnimationFrame(() => requestAnimationFrame(place));
+    setTimeout(place, 120); setTimeout(place, 600);          // also when the page is in the background (no animation frames)
+    if (cur.evRO) cur.evRO.disconnect();
+    cur.evRO = new ResizeObserver(place); cur.evRO.observe(wrap);
+  }
+
   function header(i, vflags) {
     if (!cur || !cur.bars) return;
     const b = cur.bars[i], p = cur.bars[i - 1], r = cur.row;
@@ -561,33 +579,36 @@
     const eps = rowOf("eps"), sales = rowOf("sales"), n = t.ends.length, from = Math.max(0, n - 5);
     const fq = (end) => { const y = +end.slice(0, 4), m = +end.slice(5, 7); const q = { 6: 1, 9: 2, 12: 3, 3: 4 }[m]; const fy = m >= 4 ? y + 1 : y; return q ? `Q${q} FY${String(fy).slice(2)}` : F.label(end); };
     const ch = (a, b) => (a == null || b == null || b === 0 ? null : ((a - b) / Math.abs(b)) * 100);
-    const pc = (x) => (x == null ? '<i class="muted">—</i>' : `<i class="${x >= 0 ? "up" : "down"}">${x > 0 ? "+" : ""}${Math.round(x)}%</i>`);
+    const pc = (x) => (x == null ? '<i class="muted">—</i>' : `<i class="${x >= 0 ? "up" : "down"}">${x > 0 ? "+" : x < 0 ? "−" : ""}${Math.abs(Math.round(x))}%</i>`);
     const cells = (vals, d) => t.ends.slice(from).map((e, j) => {
       const i = from + j;
-      return `<td class="${i === n - 1 ? "last" : ""}"><b>${vals[i] == null ? "–" : fmt(vals[i], d)}</b><span>${pc(ch(vals[i], vals[i - 4]))}${pc(ch(vals[i], vals[i - 1]))}</span></td>`;
+      return `<div class="ce-c"><b>${vals[i] == null ? "–" : fmt(vals[i], d)}</b><span>${pc(ch(vals[i], vals[i - 4]))}${pc(ch(vals[i], vals[i - 1]))}</span></div>`;
     }).join("");
-    const open = cfg.show.earnOpen !== false;
-    box.innerHTML = `<button type="button" class="ce-h" aria-expanded="${open}"><span class="caret">▾</span> Earnings <small class="muted">YoY / QoQ · ${basis === "C" ? "consolidated" : "standalone"}</small></button>
-      <div class="ce-b ${open ? "" : "shut"}"><div class="ce-in"><table><thead><tr><th></th>${t.ends.slice(from).map((e, j) => `<th class="${from + j === n - 1 ? "last" : ""}">${fq(e)}</th>`).join("")}</tr></thead>
-      <tbody><tr><th>EPS ₹<small>YoY<br>QoQ</small></th>${cells(eps, 2)}</tr><tr><th>${doc.kind === "bank" || doc.kind === "nbfc" ? "Revenue" : doc.kind === "insurance" ? "Premium" : "Sales"} Cr<small>YoY<br>QoQ</small></th>${cells(sales, 0)}</tr></tbody></table></div></div>`;
+    const open = cfg.show.earnOpen !== false, k = n - from;
+    const sl = doc.kind === "bank" || doc.kind === "nbfc" ? "Revenue" : doc.kind === "insurance" ? "Premium" : "Sales";
+    box.innerHTML = `<div class="ce" style="--qn:${k}"><div class="ce-r ce-hd"><button type="button" class="ce-h" aria-expanded="${open}" title="Quarterly results, ${basis === "C" ? "consolidated" : "standalone"} (click to fold)"><span class="caret">▾</span>Earnings</button>${t.ends.slice(from).map((e, j) => `<div class="ce-q${from + j === n - 1 ? " last" : ""}">${fq(e)}</div>`).join("")}</div>
+      <div class="ce-b ${open ? "" : "shut"}"><div class="ce-in"><div class="ce-r"><div class="ce-k"><span>EPS <small>₹</small></span><em>YoY<br>QoQ</em></div>${cells(eps, 2)}</div>
+      <div class="ce-r"><div class="ce-k"><span>${sl} <small>Cr</small></span><em>YoY<br>QoQ</em></div>${cells(sales, 0)}</div></div></div></div>`;
     box.querySelector(".ce-h").onclick = () => {
       cfg.show.earnOpen = !(cfg.show.earnOpen !== false); save();
       box.querySelector(".ce-b").classList.toggle("shut", cfg.show.earnOpen === false);
       box.querySelector(".ce-h").setAttribute("aria-expanded", String(cfg.show.earnOpen !== false));
+      setTimeout(() => window.dispatchEvent(new Event("resize")), 280);
     };
   }
 
   /* ------------------------------------------------------------------ toolbar, menus */
   function chipsHTML() {
     const r = cur.row, chips = [];
-    if (cfg.chips.float && r.float_mcap_cr != null) chips.push(`<span class="chip-s" title="Free-float market cap">F ₹${fmt(r.float_mcap_cr, 0)} Cr</span>`);
-    if (cfg.chips.rs && r.rs_rating != null) chips.push(`<span class="chip-s" title="RS rating 1-99">RS ${r.rs_rating}</span>`);
-    if (cfg.chips.stage && r.stage) chips.push(`<span class="chip-s" style="color:${STAGE_COL[r.stage]};background:${STAGE_COL[r.stage]}1f">${esc(String(r.stage).replace("A", ""))} ${STAGE_TXT[r.stage]}</span>`);
+    const chip = (k, v, col, tip) => `<span class="chip-t" title="${esc(tip)}"><i>${k}</i><b${col ? ` style="color:${col}"` : ""}>${v}</b></span>`;
+    if (cfg.chips.float && r.float_mcap_cr != null) chips.push(chip("F", `₹${fmt(r.float_mcap_cr, 0)} Cr`, "", "Free-float market cap"));
+    if (cfg.chips.rs && r.rs_rating != null) chips.push(chip("RS", r.rs_rating, r.rs_rating >= 80 ? "var(--accent)" : "", "RS rating 1-99"));
+    if (cfg.chips.stage && r.stage) chips.push(`<span class="chip-t" title="Stage ${esc(String(r.stage))}"><b style="color:${STAGE_COL[r.stage]}">${esc(String(r.stage).replace("A", ""))} ${STAGE_TXT[r.stage]}</b></span>`);
     if (cfg.chips.theme !== false && r.theme_status) {
-      const tc = { Leading: "#089981", Improving: "#2962ff", Weakening: "#ff9800", Lagging: "#f23645" }[r.theme_status] || css("--muted");
-      chips.push(`<span class="chip-s" style="color:${tc};background:${tc}1f" title="Theme ${esc(r.theme || "")}: ${esc(r.theme_status)}">T ${esc(r.theme_status)}</span>`);
+      const tc = { Leading: "#089981", Improving: "#2962ff", Weakening: "#ff9800", Lagging: "#f23645" }[r.theme_status] || "#787b86";
+      chips.push(chip("T", esc(r.theme_status), tc, `Theme ${r.theme || ""}: ${r.theme_status}`));
     }
-    if (cfg.chips.from && r.from_hi52 != null) chips.push(`<span class="chip-s" title="From 52-week high">D ${S.fmtPct(r.from_hi52)}</span>`);
+    if (cfg.chips.from && r.from_hi52 != null) chips.push(chip("D", S.fmtPct(r.from_hi52), "", "From 52-week high"));
     return chips.join("");
   }
 

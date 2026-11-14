@@ -1193,6 +1193,35 @@
     while (gridCharts.length) { try { gridCharts.pop().remove(); } catch (e) { /* gone */ } }
   }
   const scanCounts = new Map();                      // scan id + rule -> count, for the picker
+  /* pinned scans in the top bar like the reference: name + "N Stocks", a grip to drag them into another order and x to
+     unpin (14-Nov-2026) */
+  function pinsHTML(curId) {
+    const list = store.get("sd-pins", []).map((x) => allScans().find((s) => s.id === x)).filter(Boolean);
+    if (!list.length) return '<span class="muted small">Pin a scanner from the menu to show it here</span>';
+    return list.map((s) => { const n = scanCount(s);
+      return `<div class="pin-c${s.id === curId ? " on" : ""}" draggable="true" data-pid="${esc(s.id)}"><i class="pin-hd" aria-hidden="true">⠿</i><a href="#/scanners/${encodeURIComponent(s.id)}" draggable="false"><b>${esc(s.name)}</b><small>${n == null ? "–" : n.toLocaleString("en-IN")} Stocks</small></a><button type="button" class="pin-x" data-unpin="${esc(s.id)}" title="Unpin" aria-label="Unpin ${esc(s.name)}">✕</button></div>`; }).join("");
+  }
+  function wirePins(box, curId) {
+    if (!box) return;
+    box.onclick = (e) => {
+      const x = e.target.closest("[data-unpin]"); if (!x) return;
+      e.preventDefault();
+      const card = x.closest(".pin-c"); card.classList.add("out");
+      setTimeout(() => { store.set("sd-pins", store.get("sd-pins", []).filter((id) => id !== x.dataset.unpin)); box.innerHTML = pinsHTML(curId);
+        document.querySelectorAll(`.pk-pin[data-pin="${CSS.escape(x.dataset.unpin)}"]`).forEach((b) => b.classList.remove("on")); }, 170);
+    };
+    let src = null;
+    box.ondragstart = (e) => { src = e.target.closest(".pin-c"); if (!src) return; src.classList.add("drag"); e.dataTransfer.effectAllowed = "move"; try { e.dataTransfer.setData("text/plain", src.dataset.pid); } catch (er) { /* old browsers */ } };
+    box.ondragover = (e) => {
+      if (!src) return; e.preventDefault();
+      const t = e.target.closest(".pin-c"); if (!t || t === src) return;
+      const r = t.getBoundingClientRect(), after = e.clientX > r.left + r.width / 2;
+      const before = new Map([...box.children].map((c) => [c, c.getBoundingClientRect().left]));
+      box.insertBefore(src, after ? t.nextSibling : t);
+      [...box.children].forEach((c) => { const dx = before.get(c) - c.getBoundingClientRect().left; if (dx) c.animate([{ transform: `translateX(${dx}px)` }, { transform: "none" }], { duration: 180, easing: "ease-out" }); });
+    };
+    box.ondragend = () => { if (!src) return; src.classList.remove("drag"); src = null; store.set("sd-pins", [...box.querySelectorAll(".pin-c")].map((c) => c.dataset.pid)); };
+  }
   function scanCount(sc) {
     const k = sc.id + JSON.stringify(sc.rule) + sc.universe + state.screenDate;
     if (!scanCounts.has(k)) { try { scanCounts.set(k, SDS.run(state.screen, sc).length); } catch (e) { scanCounts.set(k, null); } }
@@ -1234,15 +1263,13 @@
     const sectors = [...new Set(state.screen.map((r) => r.sector).filter(Boolean))].sort();
     const sortItem = SD.SORTS.find((x) => x[0] === st.sort);
     const sortName = sortItem ? sortItem[1] : SD.COLUMNS[st.sort] ? SD.COLUMNS[st.sort].label : st.sort === "symbol" ? "Symbol" : st.sort;
-    const pins = store.get("sd-pins", []).map((p) => allScans().find((s) => s.id === p)).filter(Boolean);
     const bar = scan
       ? `<button class="btn primary" id="newScan" type="button">${ICON.plus}<span>New scan</span></button>
         <div class="menu-wrap"><button class="btn ws-pick" id="scanBtn" type="button" aria-haspopup="true" title="${esc(scan.description || "")}"><b>${esc(scan.name)}</b>${scan.edited ? ' <span class="tag">edited</span>' : ""} <span class="caret">▾</span></button>
           <div class="menu picker" id="scanMenu" hidden></div></div>
         <button class="btn icon" id="csBtn" type="button" title="Custom scan: pick filters">${ICON.cols}</button>
         <button class="btn icon" id="formulaBtn" type="button" title="Formula: see or change the rule">ƒ</button>
-        <div class="pins">${pins.length ? pins.map((s) => `<a class="pin-chip ${s.id === scan.id ? "on" : ""}" href="#/scanners/${encodeURIComponent(s.id)}">${esc(s.name)}</a>`).join("")
-          : '<span class="muted small">Pin a scanner from the menu to show it here</span>'}</div>`
+        <div class="pins" id="pins">${pinsHTML(scan.id)}</div>`
       : `<h1 class="ws-title">All stocks</h1><span class="muted small">every NSE main-board stock, all fields of ${SD.fmtDate(state.screenDate)}</span>`;
     const descTxt = scan ? `${scan.description || ""} ${SDS.describe(scan.rule || { all: [] }, state.labels)}${scan.universe === "liquid" ? " · liquid stocks only" : ""}` : "";
     const desc = scan && !(isWide && ui.view === "list") ? `<p class="ws-desc">${esc(scan.description || "")} <span class="rule-en">${esc(SDS.describe(scan.rule || { all: [] }, state.labels))}${scan.universe === "liquid" ? " · liquid stocks only" : ""}</span></p>` : "";
@@ -1268,6 +1295,7 @@
         <div class="grid" id="grid" style="--gcols:${ui.gridCols}"></div>
         <button class="ws-strip" id="wsStrip" type="button" title="Back to the results list + chart"><i>›</i><span>RESULTS</span></button>
       </div>`;
+    if (scan) wirePins($("#pins"), scan.id);
     let rows = [];
     const stPage = $("#stPage");
     const footer = () => {
@@ -1522,9 +1550,7 @@
           const p = store.get("sd-pins", []), id = pin.dataset.pin;
           store.set("sd-pins", p.includes(id) ? p.filter((x) => x !== id) : [...p, id].slice(-8));
           pin.classList.toggle("on");
-          const chips = view.querySelector(".pins"), list = store.get("sd-pins", []).map((x) => allScans().find((s) => s.id === x)).filter(Boolean);
-          chips.innerHTML = list.length ? list.map((s) => `<a class="pin-chip ${s.id === scan.id ? "on" : ""}" href="#/scanners/${encodeURIComponent(s.id)}">${esc(s.name)}</a>`).join("")
-            : '<span class="muted small">Pin a scanner from the menu to show it here</span>';
+          const chips = view.querySelector("#pins"); chips.innerHTML = pinsHTML(scan.id);
           return;
         }
         if (e.target.closest("a")) $("#scanMenu").hidden = true;

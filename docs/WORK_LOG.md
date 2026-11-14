@@ -1273,3 +1273,21 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   - gear: a real cog icon, no border;
   - bars: stem at least 2 px, ticks a bit longer (a 1 px stem looked like a thin bar at 3-4 per row).
 - Checked in the preview (dark, 4 per row, bars, all 21 names). JS 32 / 32.
+
+### 2026-11-14: Reference polish - earnings grid, thin scrollbars, pinned scan cards, event badges, plain chips
+- Viraj (8 photos): earnings sized like the reference; thin up / down / sideways scrollbars; the big page scrollbar
+  gone so the chart page is full size; pinned scans like the reference (name + N Stocks, drag, remove); results /
+  filings shown as small round badges on the chart; header chips like the reference.
+- site/chart.js:
+  - earningsTable(): one grid (header row with the fold button "Earnings" and the quarters, last quarter blue;
+    label column "EPS ₹ / Sales Cr" with small YoY / QoQ; value left, YoY over QoQ right; thin column lines);
+  - events: results days (E), corporate actions (C) and NSE filings (letters by category) are no longer chart
+    markers but one row of round badges at the bottom of the price pane (eventRow(): placed by date, follows zoom /
+    drag / resize, count bubble when a day has several filings; hover a bar for the existing details card);
+  - chipsHTML(): plain text (muted letter + value) instead of pills.
+- site/app.js: pinsHTML() / wirePins(): pinned scans as cards "name / N Stocks" with a grip (drag to reorder, FLIP
+  while moving, order saved in sd-pins) and x to unpin; the scan picker's pin button refreshes them.
+- site/styles.css: thin rounded scrollbars everywhere (Chrome / Edge; thin bar in Firefox); no page scrollbar while
+  the scanner workspace is shown (html / body overflow hidden via :has).
+- Checked in the preview: earnings grid + fold, badges placed at the right dates, unpin, drag reorder, no page
+  scroll, no console errors. JS 32 / 32.

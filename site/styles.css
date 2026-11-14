@@ -2051,3 +2051,65 @@ th.l .th-w { justify-content: flex-start; text-align: left; }
 .mi-sh b { font-size: 12.5px; font-weight: 600; }
 .mi-sh button { width: 26px; height: 26px; border: 0; border-radius: 7px; background: none; color: var(--muted); cursor: pointer; font-size: 15px; padding: 0; justify-content: center !important; }
 .mi-sh button:hover { color: var(--accent); background: var(--panel-2); }
+
+/* ---------------------------------------------------------------- reference polish 14-Nov-2026 (Viraj's 8 photos)
+   earnings grid, thin scrollbars, no page scrollbar on the workspace, pinned scan cards, event badges, plain chips */
+/* thin rounded scrollbars everywhere (Chrome / Edge); Firefox gets its thin bar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--muted) 38%, transparent); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background-color: color-mix(in srgb, var(--muted) 62%, transparent); }
+::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+::-webkit-scrollbar-corner { background: transparent; }
+@supports not selector(::-webkit-scrollbar) { * { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--muted) 45%, transparent) transparent; } }
+/* the scanner workspace fills the window: no page scrollbar */
+html:has(.ws-main.list.wide:not(.ldx)), body:has(.ws-main.list.wide:not(.ldx)) { overflow: hidden; }
+/* earnings like the reference: one grid, header row with the fold button, label column with YoY / QoQ */
+.ce { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; font-variant-numeric: tabular-nums; }
+.ce-r { display: grid; grid-template-columns: 116px repeat(var(--qn, 5), minmax(0, 1fr)); align-items: stretch; }
+.ce-hd { background: color-mix(in srgb, var(--accent) 6%, var(--panel)); }
+.ce .ce-h { width: auto; display: flex; align-items: center; gap: 7px; padding: 0 12px; height: 30px; border: 0; border-radius: 0; background: none; font: 600 12px/1 var(--font); color: var(--text); cursor: pointer; text-align: left; }
+.ce .ce-h .caret { font-size: 9px; color: var(--text); transition: transform .2s; }
+.ce .ce-h[aria-expanded="false"] .caret { transform: rotate(-90deg); }
+.ce-q { display: flex; align-items: center; padding: 0 14px; border-left: 1px solid var(--line); font-size: 11.5px; color: var(--muted); font-weight: 500; }
+.ce-q.last { color: var(--accent); }
+.ce .ce-in .ce-r + .ce-r { border-top: 1px solid var(--line); }
+.ce .ce-in > .ce-r:first-child { border-top: 1px solid var(--line); }
+.ce-k { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 0 10px 0 12px; font-size: 12px; font-weight: 600; color: var(--text); }
+.ce-k small { font-weight: 400; color: var(--muted); font-size: 11px; }
+.ce-k em { font-style: normal; font-size: 10px; line-height: 1.35; color: var(--muted); text-align: right; font-weight: 400; }
+.ce-c { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 40px; padding: 0 14px; border-left: 1px solid var(--line); }
+.ce-c b { font-size: 12.5px; font-weight: 500; color: var(--text); }
+.ce-c span { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.35; }
+.ce-c i { font-style: normal; font-size: 11.5px; }
+.ws-main.list.wide .chart-pane .ce-c { min-height: 38px; }
+.ws-main.list.wide .chart-pane .ce .ce-h { height: 30px; padding: 0 12px; }
+/* event badges at the bottom of the price pane */
+.ch-ev { position: absolute; left: 0; right: 0; height: 22px; pointer-events: none; z-index: 3; }
+.ev-b { position: absolute; top: 2px; display: inline-flex; gap: 2px; transform: translateX(-50%); animation: hmTip .25s ease-out; }
+.ev-b[hidden] { display: none; }
+.ev { position: relative; width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; font: 600 8.5px/1 var(--font); font-style: normal; color: var(--c);
+  background: color-mix(in srgb, var(--c) 12%, var(--panel)); border: 1px solid color-mix(in srgb, var(--c) 55%, transparent); }
+.ev sup { position: absolute; top: -6px; right: -6px; min-width: 12px; height: 12px; padding: 0 2px; border-radius: 6px; background: #c2410c; color: #fff; font: 700 7.5px/12px var(--font); text-align: center; }
+/* header chips: plain text like the reference */
+.ch-chips { gap: 14px; }
+.chip-t { display: inline-flex; align-items: baseline; gap: 4px; font-size: 12px; white-space: nowrap; cursor: default; }
+.chip-t i { font-style: normal; color: var(--muted); font-size: 11px; }
+.chip-t b { font-weight: 500; color: var(--text); }
+/* pinned scans: name + count, grip, x */
+.pins { flex-wrap: nowrap; gap: 0; overflow-x: auto; padding-left: 4px; }
+.pin-c { position: relative; display: flex; align-items: center; gap: 6px; padding: 4px 30px 4px 22px; min-width: 120px; border-left: 1px solid color-mix(in srgb, var(--accent) 18%, var(--line)); border-radius: 8px; cursor: grab; transition: background .15s, opacity .17s, transform .17s; }
+.pin-c:first-child { border-left: 0; }
+.pin-c:hover { background: color-mix(in srgb, var(--accent) 7%, transparent); }
+.pin-c.on { background: color-mix(in srgb, var(--accent) 11%, transparent); }
+.pin-c.drag { opacity: .4; }
+.pin-c.out { opacity: 0; transform: scale(.94); }
+.pin-c a { display: flex; flex-direction: column; gap: 2px; color: var(--text); text-decoration: none; min-width: 0; }
+.pin-c a:hover { text-decoration: none; }
+.pin-c b { font-size: 12.5px; font-weight: 500; white-space: nowrap; }
+.pin-c.on b { color: var(--accent); }
+.pin-c small { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.pin-hd { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); font-style: normal; font-size: 11px; color: var(--muted); opacity: 0; transition: opacity .15s; }
+.pin-x { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; border: 0; border-radius: 5px; background: none; color: var(--muted); font-size: 10px; cursor: pointer; opacity: 0; transition: opacity .15s, background .15s; }
+.pin-c:hover .pin-hd, .pin-c:hover .pin-x { opacity: 1; }
+.pin-x:hover { background: color-mix(in srgb, var(--down) 12%, transparent); color: var(--down); }

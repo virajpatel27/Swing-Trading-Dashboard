@@ -2228,3 +2228,9 @@ html:has(.ws-main.grid.wide), body:has(.ws-main.grid.wide) { overflow: hidden; }
   .mix .mi-chg.long { grid-column: 1 / -1; justify-self: center; }
   .mix .mi-h:has(.mi-chg.long) > span:last-child { display: none; }
 }
+
+/* results: no lines between the stocks, the row under the mouse lights up; symbol column width set by fitName() */
+.res-list td, .res-list th { border-bottom: 0; }
+.res-list thead th { box-shadow: inset 0 -1px 0 var(--line); }
+.res-list th.sticky[data-col="symbol"], .res-list td.name { box-sizing: border-box; width: var(--nm-w, 150px); min-width: var(--nm-w, 150px); max-width: var(--nm-w, 150px); }
+.res-list tbody tr:hover td, .res-list tbody tr:hover .sticky { background: color-mix(in srgb, var(--accent) 6%, var(--panel)); }

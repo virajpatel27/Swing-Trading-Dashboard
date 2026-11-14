@@ -1370,3 +1370,17 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Checked in the preview: 1Y / 2Y / 5Y headers from the snapshot, card layout intact at 4 per row, no console
   errors. The preview window was minimized, so the charts did not draw there: the hover line and the chart-based
   10Y / Max values are not seen on screen yet. JS 32 / 32.
+
+### 2026-11-14: Volume axis fixed, no gap above earnings, no row lines, list = Symbol + Last Price
+- Viraj (5 photos): the volume axis still showed 3,00,00,000.00; a gap was left between the volume bars and the
+  earnings; lines between the stocks should go (hover highlight only); the default list must show exactly Symbol
+  and Last Price (no half-cut candle column).
+- Cause of the axis: the chart-wide localization.priceFormatter (Indian 2-decimals) overrode every series' own
+  format. site/chart.js: removed it; the price series (candles and bars) carry that format instead (custom
+  formatter, minMove 0.01), so the volume axis uses its short Cr / L / K labels; volume pane scaleMargins bottom 0
+  (bars sit on the time axis, no empty strip).
+- site/app.js renderStocks(): fitName() measures the check-box and Last Price columns and gives the symbol column
+  the rest of the default width (--nm-w), so the next column starts exactly at the list's edge.
+- site/styles.css: no row borders in the results list (header keeps a thin line), softer hover highlight.
+- Checked in the preview: price column ends at the list's visible edge, row borders 0, volume formatter 3.0Cr,
+  price formatter 1,23,456.70, no console errors. JS 32 / 32.

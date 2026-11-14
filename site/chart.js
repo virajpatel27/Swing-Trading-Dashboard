@@ -204,7 +204,7 @@
       grid: { vertLines: { color: css("--line") + (C.grid === false ? "00" : "") }, horzLines: { color: css("--line") + (C.grid === false ? "00" : "") } },
       rightPriceScale: { borderColor: css("--line") }, timeScale: { borderColor: css("--line"), rightOffset: 5, visible: true },
       crosshair: { mode: 0, vertLine: { style: 3, labelBackgroundColor: css("--text") }, horzLine: { style: 3, labelBackgroundColor: css("--text") } },
-      localization: { priceFormatter: (p) => fmt(p, 2) }, handleScroll: !pv, handleScale: !pv,
+      handleScroll: !pv, handleScale: !pv,
     });
     if (!pv) cur.chart = chart;
     const alive = () => (pv ? pv.alive() : cur && cur.chart === chart);
@@ -222,8 +222,9 @@
     const rs = benchBars ? I.rsLine(bars, benchBars) : null;
     if (rsAbove && rs) { pricePane = 1; paneNo = 1; }
     // price
-    const priceOpts = { upColor: st.up, downColor: st.down, wickUpColor: st.up, wickDownColor: st.down, borderVisible: false, thinBars: false };
-    const price = C.type === "bar" ? chart.addSeries(L.BarSeries, { upColor: st.up, downColor: st.down }, pricePane)
+    const inrFmt = { type: "custom", formatter: (x) => fmt(x, 2), minMove: 0.01 };
+    const priceOpts = { upColor: st.up, downColor: st.down, wickUpColor: st.up, wickDownColor: st.down, borderVisible: false, thinBars: false, priceFormat: inrFmt };
+    const price = C.type === "bar" ? chart.addSeries(L.BarSeries, { upColor: st.up, downColor: st.down, priceFormat: inrFmt }, pricePane)
       : chart.addSeries(L.CandlestickSeries, priceOpts, pricePane);
     price.setData(bars.map((b) => ({ time: b.time, open: b.open, high: b.high, low: b.low, close: b.close })));
     if (!pv) cur.price = price;
@@ -384,6 +385,7 @@
       const vs = chart.addSeries(L.HistogramSeries, { priceFormat: { type: "custom", formatter: axVol, minMove: 1 },
         priceScaleId: onPrice ? "vol" : "right", lastValueVisible: false, priceLineVisible: false }, pane);
       if (onPrice) vs.priceScale().applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
+      else vs.priceScale().applyOptions({ scaleMargins: { top: 0.12, bottom: 0 } });
       const grey = css("--muted") + "66";
       vs.setData(bars.map((b, i) => {
         const f = vflags[i];

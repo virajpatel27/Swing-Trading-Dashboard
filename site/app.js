@@ -1625,6 +1625,15 @@
     };
     const autoW = () => { const nb = $("#newScan") || $("#wsFind"); return nb ? Math.round(nb.getBoundingClientRect().right - wsMain.getBoundingClientRect().left) : 300; };
     if (isWide && ui.view === "list" && ui.lwAuto !== false) { ui.listW = autoW(); }
+    // the symbol column takes what is left of that width, so the default list shows exactly Symbol + Last Price
+    // (no half-cut candle column; Viraj 14-Nov); wider lists then show the other columns
+    const fitName = () => {
+      const t = $("#tbl table"), tb = $("#tbl"); if (!t || !isWide || ui.view !== "list") return;
+      const ck = t.querySelector("th.ck"), pr = t.querySelector('th[data-col="close"]'); if (!ck || !pr) return;
+      const sb = tb.offsetWidth - tb.clientWidth, w = autoW() - ck.offsetWidth - pr.offsetWidth - sb - 2;
+      wsMain.style.setProperty("--nm-w", `${Math.max(130, w)}px`);
+    };
+    fitName();
     layout();
     drag.onpointerdown = (e) => {
       if (!isWide) return;

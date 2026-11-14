@@ -250,3 +250,19 @@ NSE's SME board before -> 0.95 / 0.985 (was 0.83 / 1.00).
 
 Not matched: the reference's "spread" sub-mode (columns contraction / days_tight) - it only appears together with tight+long.
 SME migrants (VTMLTD): the reference counts only main-board days (no 3-month return, RS 46-48 vs our 96) - a wider topic.
+
+## Classic scans re-checked 14-Nov-2026 (video "Classic Scan 12-11-2026" + full exports 02 / 04 / 05 / 06-Nov)
+The video was recorded during market hours on 12-Nov; its scan lists equal OUR 11-Nov results (the reference runs the
+scans on the previous close and shows live prices): 151 / 156 visible sample stocks found, 20-SMA Pullback exact.
+Precision / recall over the 4 export days (before -> after):
+
+| Scan | Change | Before | After |
+|---|---|---|---|
+| 4% Breakout | RVol >= 2 (the reference never lists RVol < 2.0) | 0.71 / 0.97 | 0.94 / 0.96 |
+| Outperformers | RS 1W >= 90, 1M >= 85, 3M >= 78 (at least; our 3M RS sits ~2 points apart) | 0.96 / 0.84 | 0.93 / 0.98 |
+| Doublers | gain vs the close 252 sessions back (new field ret_252; the export's ref_date is 252 sessions back) | 0.89 / 0.95 | 0.93 / 0.99 |
+| unchanged | Trend Template 0.97 / 0.99, 20-SMA Pullback 1.00 / 1.00, 1M Gainers 0.95 / 1.00, 3M Gainers 0.92 / 0.99, New Listing 0.98 / 0.95, Recent Breakout 0.93 / 0.91 | | |
+| open | Stage 2 Breakout 0.88 / 0.98 and High Volume 0.83 / 0.99 (engine events: need a rebuild per day to tune) | | |
+
+11-Nov video after the change: 4% Breakout 75 vs 77 (16 / 16 samples), Outperformers 31 vs 31.
+

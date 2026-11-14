@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S9**. Fields: **322**.
+Current phase: **S9**. Fields: **323**.
 
 ## Sources
 
@@ -132,6 +132,7 @@ Current phase: **S9**. Fields: **322**.
 | `ret_3m` | 3M change % | percent | (close / close 63 sessions ago - 1) x 100 | close | data/snapshot/screen.json |
 | `ret_6m` | 6M change % | percent | (close / close 126 sessions ago - 1) x 100 | close | data/snapshot/screen.json |
 | `ret_1y` | 1Y change % | percent | (close / close 251 sessions ago - 1) x 100 | close | data/snapshot/screen.json |
+| `ret_252` | Gain vs 252 sessions ago % | percent | (close / close 252 sessions ago - 1) x 100 (Doublers, the reference's look-back) | close | data/snapshot/screen.json |
 | `ret_ytd` | YTD % | percent | (close / last close of the previous calendar year - 1) x 100 | close | data/snapshot/screen.json |
 | `sma10` | SMA 10 | rupees | Average of the last 10 closes | close | data/snapshot/screen.json |
 | `sma20` | SMA 20 | rupees | Average of the last 20 closes | close | data/snapshot/screen.json |

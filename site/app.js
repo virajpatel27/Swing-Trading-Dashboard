@@ -1324,7 +1324,7 @@
     const folders = [];
     for (const s of allScans()) { let f = folders.find((x) => x[0] === (s.folder || "Other")); if (!f) folders.push(f = [s.folder || "Other", []]); f[1].push(s); }
     return `<div class="pk-q">${ICON.filter}<input type="search" id="pkQ" placeholder="Search scanners" aria-label="Search scanners"></div>`
-      + folders.map(([f, list]) => `<details class="pk-f" ${list.some((s) => s.id === current) ? "open" : ""}><summary>${esc(f)} <small>${list.length}</small></summary>`
+      + folders.map(([f, list]) => `<details class="pk-f" ${list.some((s) => s.id === current) ? "open" : ""}><summary><i class="pk-car" aria-hidden="true">›</i><svg class="pk-fi" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>${esc(f)}</span>${list.some((s) => s.id === current) ? '<b class="pk-ck" aria-label="The open scanner is in here">✓</b>' : ""}</summary>`
         + list.map((s) => `<div class="pk-row ${s.id === current ? "on" : ""}" data-t="${esc((s.name + " " + (s.description || "")).toLowerCase())}">`
           + `<button type="button" class="pk-pin ${pins.includes(s.id) ? "on" : ""}" data-pin="${esc(s.id)}" title="${pins.includes(s.id) ? "Unpin" : "Pin to the top bar"}" aria-label="Pin ${esc(s.name)}">${ICON.pin}</button>`
           + `<a href="#/scanners/${encodeURIComponent(s.id)}">${esc(s.name)}</a>`

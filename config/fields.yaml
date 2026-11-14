@@ -128,6 +128,7 @@ fields:
   - {id: ret_3m, label: "3M change %", type: percent, formula: "(close / close 63 sessions ago - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: ret_6m, label: "6M change %", type: percent, formula: "(close / close 126 sessions ago - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: ret_1y, label: "1Y change %", type: percent, formula: "(close / close 251 sessions ago - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: ret_252, label: "Gain vs 252 sessions ago %", type: percent, formula: "(close / close 252 sessions ago - 1) x 100 (Doublers, the reference's look-back)", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: ret_ytd, label: "YTD %", type: percent, formula: "(close / last close of the previous calendar year - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: sma10, label: "SMA 10", type: rupees, formula: "Average of the last 10 closes", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: sma20, label: "SMA 20", type: rupees, formula: "Average of the last 20 closes", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}

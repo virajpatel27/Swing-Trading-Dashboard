@@ -206,6 +206,7 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
     f["gap_up"] = (o / pc - 1) * 100
     for k, n in {"1w": 5, "10d": 10, "1m": 21, "3m": 63, "6m": 126, "1y": 251}.items():   # 1y = 251 (calibrated)
         f[f"ret_{k}"] = (c / c.shift(n) - 1) * 100
+    f["ret_252"] = (c / c.shift(252) - 1) * 100            # Doublers: the reference compares with the close 252 sessions back
     year_end = c.groupby(d.dt.year).transform("last").shift(1)
     first_of_year = d.dt.year != d.dt.year.shift(1)
     prev_year_close = year_end.where(first_of_year).ffill()

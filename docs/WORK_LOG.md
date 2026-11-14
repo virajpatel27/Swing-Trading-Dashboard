@@ -1452,3 +1452,22 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   needed), the button shows a count badge and the results show an "N filters" chip (click = clear).
 - Checked in the preview: option lists of all rows above, All on / off (24 / 0), chosen-first on reopen, Filters on
   Trend Template 306 -> Nifty 500 -> 78 applied, chip clears it, no console errors.
+
+### 2026-11-14: Classic scans checked against the reference video, three re-tuned, scanner menu like the reference
+- Viraj (video "Classic Scan 12-11-2026"): every classic scan must give the same stocks as the reference, and the scan
+  menu / drawing must look the same.
+- Finding: the video was recorded during market hours on 12-Nov (its prices lie between our 11- and 12-Nov closes);
+  its lists equal our 11-Nov scan results (151 / 156 visible stocks, 20-SMA Pullback exact). Full comparison with
+  the reference exports of 02 / 04 / 05 / 06-Nov: docs/calibration.md.
+- Changes (config/scanners.json; engine field):
+  - 4% Breakout: RVol >= 2 (was 1.5): precision 0.71 -> 0.94;
+  - Outperformers: at least 90 / 85 / 78 (was above 90 / 85 / 80): recall 0.84 -> 0.98;
+  - Doublers: new screen field ret_252 (gain vs 252 sessions back, swingdash/engine.py + config/fields.yaml,
+    docs/formulas.md regenerated): precision 0.89 -> 0.93, recall 0.95 -> 0.99;
+  - folders renamed / ordered like the reference: My Scans, Classic Scans (Trend Template, Stage 2 Breakout,
+    Recent Breakout, 4% Breakout, 20-SMA Pullback, High Volume, 1M / 3M Gainers, Outperformers, Doublers, New Listing
+    (IPO)), Special Setups (the reference's own-brand folder name is not copied), Earnings, Fundamentals.
+- site/app.js scanPicker(): folder rows with a chevron, folder icon and a tick on the open scanner's folder (CSS).
+- JS fixtures regenerated (tests/js/make_expected.py); JS 32 / 32.
+- Open: Stage 2 Breakout (precision 0.88) and High Volume (0.83) are engine events and need a per-day rebuild to tune;
+  the reference's Intraday folder (top gainers / losers, near 52W high / low, ORB ...) does not exist here yet.

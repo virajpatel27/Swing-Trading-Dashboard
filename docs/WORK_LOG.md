@@ -1384,3 +1384,25 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - site/styles.css: no row borders in the results list (header keeps a thin line), softer hover highlight.
 - Checked in the preview: price column ends at the list's visible edge, row borders 0, volume formatter 3.0Cr,
   price formatter 1,23,456.70, no console errors. JS 32 / 32.
+
+### 2026-11-14: Custom Scanner window like the reference (videos "New Scan" 1 + 2)
+- Viraj: the New scan window must look and work like the reference: size, fonts, borders, every option's layout and
+  the option lists inside the dropdowns.
+- site/app.js:
+  - CS filters regrouped into the reference sections, read left -> right in two columns, Title Case labels:
+    Stock Universe (Lists & indices / Sector & industry / Size & price), Technicals (Moving averages / Distance
+    from highs & lows / Momentum & range), Strength & Volume (Relative strength / Industry & theme rank / Volume),
+    Earnings (Growth / Streaks / Results & reaction), Fundamentals (Growth & quality / Valuation / Holding); all
+    81 filters kept, the rules are unchanged;
+  - new Watchlist filter (one choice per list of this browser: key in the list's stocks when the scan runs);
+  - window: "Custom Scanner" + name chip + "N filters", End of day / Live switch (shown off: this site is end-of-day
+    only), Load saved / Save scanner, tabs with count chips and underline, search with "/" hint; sections with a line
+    and "N of M on"; rows = check box + label column + controls; csPills() turns every select into a pill button
+    with its own option list (the hidden select keeps the value); multi lists say "Any" when empty; number boxes
+    show Indian grouping (5,00,000; commas are stripped when read); footer "N stocks pass this scan · N filters
+    active across all tabs", Reset, Run scan.
+- site/styles.css: custom scanner v2 block (1450 px window, gradient header, 52 px rows, 34 px pills / boxes,
+  option list popup, two columns -> one column under 900 px).
+- Checked in the preview: all five tabs and sections, pill list (pick turns the filter on, counts update), typed
+  10000 -> 10,000, search "rsi", Run scan result count = the window's count (365), no console errors. The window
+  could not be screenshot (app window behind others). JS 32 / 32.

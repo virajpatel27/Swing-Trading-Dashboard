@@ -3279,96 +3279,97 @@
 
   /* ------------------------------------------------------------------ custom scan window (Phase N3): 5 tabs of filters, live count,
      save / load. A filter makes conditions of the same rule format as every scanner (scan.js), so saved scans work everywhere. */
-  const CS_TABS = [["u", "Stock universe"], ["t", "Technicals"], ["s", "Strength & volume"], ["e", "Earnings"], ["f", "Fundamentals"]];
+  const CS_TABS = [["u", "Stock Universe"], ["t", "Technicals"], ["s", "Strength & Volume"], ["e", "Earnings"], ["f", "Fundamentals"]];
   const MA_OPTS = [["ema10", "10 EMA"], ["ema20", "20 EMA"], ["ema21", "21 EMA"], ["ema50", "50 EMA"], ["ema200", "200 EMA"],
     ["sma10", "10 SMA"], ["sma20", "20 SMA"], ["sma50", "50 SMA"], ["sma150", "150 SMA"], ["sma200", "200 SMA"]];
   const gt = (a, b) => ({ field: a, op: ">", field2: b, mult: 1 });
   // t tab, s section, id, l label, ty type, h hint; types: flag, range, cmp, combo, multi, pick, period, mas
   const CS = [
-    { t: "u", s: "Universe", id: "liquid", l: "Liquid stocks", ty: "flag", h: "enough rupee volume to buy and sell easily (our liquid rule)", uni: true },
-    { t: "u", s: "Universe", id: "index", l: "Index", ty: "pick", opts: [["n500", "Nifty 500 only", { field: "n500", op: "is", value: true }], ["out", "Outside Nifty 500", { field: "n500", op: "is", value: false }]] },
-    { t: "u", s: "Universe", id: "fno", l: "F&O stocks", ty: "pick", opts: [["only", "Include only", { field: "fno", op: "is", value: true }], ["ex", "Exclude", { field: "fno", op: "is", value: false }]] },
-    { t: "u", s: "Universe", id: "stage", l: "Stage", ty: "multi", field: "stage", opts: [["2", "2 Uptrend"], ["2A", "2A Early uptrend"], ["1", "1 Basing"], ["3", "3 Topping"], ["4A", "4A Improving"], ["4", "4 Downtrend"]], def: ["2"] },
-    { t: "u", s: "Universe", id: "circuit", l: "Exclude circuit stocks", ty: "flag", h: "drop 2 % and 5 % price bands", rule: { field: "price_band", op: "in", value: ["10", "20", "No Band"] } },
-    { t: "u", s: "Universe", id: "listage", l: "Listing age", ty: "combo", parts: [["days_listed", ">=", 180, "older than (days)"]] },
-    { t: "u", s: "Groups", id: "sector", l: "Sector", ty: "multi", field: "sector", dyn: "sector" },
-    { t: "u", s: "Groups", id: "bind", l: "Basic industry", ty: "multi", field: "basic_industry", dyn: "basic_industry" },
-    { t: "u", s: "Groups", id: "theme", l: "Theme", ty: "multi", field: "theme", dyn: "theme" },
-    { t: "u", s: "Size", id: "mcap", l: "Market cap (₹ Cr)", ty: "range", field: "mcap_cr", def: [500, 500000] },
-    { t: "u", s: "Size", id: "price", l: "Price (₹)", ty: "range", field: "close", def: [50, 10000] },
-    { t: "u", s: "Size", id: "ffpct", l: "Free float %", ty: "range", field: "float_pct", def: [25, 100] },
-    { t: "u", s: "Size", id: "ffmc", l: "Float market cap (₹ Cr)", ty: "range", field: "float_mcap_cr", def: [300, 100000] },
-    { t: "t", s: "Moving averages", id: "maorder", l: "MA order", ty: "pick", opts: [
+    { t: "u", s: "Lists & indices", id: "liquid", l: "Liquid Stocks", ty: "flag", h: "Enough rupee volume to buy and sell easily (our liquid rule)", uni: true },
+    { t: "u", s: "Lists & indices", id: "wl", l: "Watchlist", ty: "pick", wl: true, opts: [] },
+    { t: "u", s: "Lists & indices", id: "index", l: "Index", ty: "pick", opts: [["n500", "Nifty 500 only", { field: "n500", op: "is", value: true }], ["out", "Outside Nifty 500", { field: "n500", op: "is", value: false }]] },
+    { t: "u", s: "Lists & indices", id: "fno", l: "F&O Stocks", ty: "pick", opts: [["only", "Include only", { field: "fno", op: "is", value: true }], ["ex", "Exclude", { field: "fno", op: "is", value: false }]] },
+    { t: "u", s: "Lists & indices", id: "stage", l: "Stage", ty: "multi", field: "stage", opts: [["2", "2 Uptrend"], ["2A", "2A Early uptrend"], ["1", "1 Basing"], ["3", "3 Topping"], ["4A", "4A Improving"], ["4", "4 Downtrend"]], def: ["2"] },
+    { t: "u", s: "Lists & indices", id: "circuit", l: "Exclude Circuit", ty: "flag", h: "drop 2 % and 5 % price bands", rule: { field: "price_band", op: "in", value: ["10", "20", "No Band"] } },
+    { t: "u", s: "Sector & industry", id: "sector", l: "Sector", ty: "multi", field: "sector", dyn: "sector" },
+    { t: "u", s: "Sector & industry", id: "bind", l: "Basic Industry", ty: "multi", field: "basic_industry", dyn: "basic_industry" },
+    { t: "u", s: "Sector & industry", id: "theme", l: "Theme", ty: "multi", field: "theme", dyn: "theme" },
+    { t: "u", s: "Size & price", id: "mcap", l: "Mcap (₹ Cr.)", ty: "range", field: "mcap_cr", def: [500, 500000] },
+    { t: "u", s: "Size & price", id: "price", l: "Price (₹)", ty: "range", field: "close", def: [50, 10000] },
+    { t: "u", s: "Size & price", id: "ffpct", l: "Free Float (%)", ty: "range", field: "float_pct", def: [25, 100] },
+    { t: "u", s: "Size & price", id: "ffmc", l: "Float Mcap (₹ Cr.)", ty: "range", field: "float_mcap_cr", def: [300, 100000] },
+    { t: "u", s: "Size & price", id: "listage", l: "Listing Age", ty: "combo", parts: [["days_listed", ">=", 180, "older than (days)"]] },
+    { t: "t", s: "Moving averages", id: "maorder", l: "MA Order", ty: "pick", opts: [
       ["mm", "Close > 50 > 150 > 200 SMA", [gt("close", "sma50"), gt("sma50", "sma150"), gt("sma150", "sma200")]],
       ["e3", "10 > 20 > 50 EMA", [gt("ema10", "ema20"), gt("ema20", "ema50")]],
       ["e4", "10 > 21 > 50 > 200 EMA", [gt("ema10", "ema21"), gt("ema21", "ema50"), gt("ema50", "ema200")]],
       ["s2", "50 SMA > 200 SMA", [gt("sma50", "sma200")]]] },
-    { t: "t", s: "Moving averages", id: "above", l: "Price above MA", ty: "mas", dir: ">", def: ["sma50", "sma200"] },
-    { t: "t", s: "Moving averages", id: "below", l: "Price below MA", ty: "mas", dir: "<", def: ["ema20"] },
-    { t: "t", s: "Moving averages", id: "s200up", l: "200 SMA rising (1 month)", ty: "flag", rule: { field: "sma200_chg_1m", op: ">", value: 0 } },
-    { t: "t", s: "Moving averages", id: "near50", l: "Distance from 50 SMA %", ty: "range", field: "from_sma50", def: [0, 10] },
-    { t: "t", s: "Highs and lows", id: "fromhi", l: "% from 52W high", ty: "range", field: "from_hi52", def: [-25, 0] },
-    { t: "t", s: "Highs and lows", id: "fromlo", l: "% from 52W low", ty: "cmp", field: "from_lo52", def: [">=", 30] },
-    { t: "t", s: "Highs and lows", id: "fromath", l: "% from all-time high", ty: "range", field: "from_ath", def: [-15, 0] },
-    { t: "t", s: "Highs and lows", id: "pivot", l: "Distance to pivot %", ty: "range", field: "dist_pivot", def: [-5, 0], h: "minus = below the base top" },
-    { t: "t", s: "Momentum", id: "rsi", l: "RSI (14)", ty: "range", field: "rsi14", def: [50, 70] },
-    { t: "t", s: "Momentum", id: "ret", l: "Return", ty: "period", opts: [["ret_1w", "1 week"], ["ret_1m", "1 month"], ["ret_3m", "3 months"], ["ret_6m", "6 months"], ["ret_1y", "1 year"], ["ret_ytd", "This year"]], def: ["ret_1m", ">=", 20] },
-    { t: "t", s: "Momentum", id: "chg", l: "Daily change %", ty: "range", field: "chg_1d", def: [2, 20] },
-    { t: "t", s: "Momentum", id: "gap", l: "Gap up %", ty: "cmp", field: "gap_up", def: [">=", 2] },
-    { t: "t", s: "Momentum", id: "st", l: "Supertrend up", ty: "flag", rule: { field: "supertrend_dir", op: "==", value: 1 } },
-    { t: "t", s: "Range and setups", id: "range", l: "Day range %", ty: "cmp", field: "range_pct", def: ["<=", 3] },
-    { t: "t", s: "Range and setups", id: "adr", l: "ADR % (20 days)", ty: "cmp", field: "adr_pct", def: [">=", 3] },
-    { t: "t", s: "Range and setups", id: "tight", l: "Tight closes % (5 days)", ty: "cmp", field: "tight_pct", def: ["<=", 2] },
-    { t: "t", s: "Range and setups", id: "depth", l: "Base depth %", ty: "cmp", field: "base_depth", def: ["<=", 25] },
-    { t: "t", s: "Range and setups", id: "vcp", l: "VCP contractions", ty: "cmp", field: "vcp_contractions", def: [">=", 2] },
-    { t: "t", s: "Range and setups", id: "inside", l: "Inside day", ty: "flag", rule: { field: "inside_day", op: "is", value: true } },
-    { t: "s", s: "Relative strength", id: "rs", l: "RS rating", ty: "range", field: "rs_rating", def: [70, 99] },
-    { t: "s", s: "Relative strength", id: "rschg", l: "RS rating change, 1 week", ty: "cmp", field: "rs_chg_1w", def: [">=", 5] },
-    { t: "s", s: "Relative strength", id: "rshi", l: "RS line at 52W high", ty: "flag", rule: { field: "rs_line_52w_high", op: "is", value: true } },
-    { t: "s", s: "Relative strength", id: "rsfirst", l: "RS new high before price", ty: "flag", rule: { field: "rs_new_high_before_price", op: "is", value: true } },
-    { t: "s", s: "Relative strength", id: "mans", l: "Mansfield RS above 0", ty: "flag", rule: { field: "mansfield_rs", op: ">", value: 0 } },
-    { t: "s", s: "Groups", id: "secrank", l: "Sector rank", ty: "cmp", field: "sector_rank", def: ["<=", 5] },
-    { t: "s", s: "Groups", id: "indrank", l: "Industry rank", ty: "cmp", field: "industry_rank", def: ["<=", 20] },
-    { t: "s", s: "Groups", id: "indtag", l: "Industry status", ty: "multi", field: "industry_tag", opts: [["Leading", "Leading"], ["Improving", "Improving"], ["Weakening", "Weakening"], ["Lagging", "Lagging"]], def: ["Leading"] },
-    { t: "s", s: "Groups", id: "themetag", l: "Theme status", ty: "multi", field: "theme_status", opts: [["Leading", "Leading"], ["Improving", "Improving"], ["Weakening", "Weakening"], ["Lagging", "Lagging"]], def: ["Leading"] },
-    { t: "s", s: "Volume", id: "turn20", l: "Avg ₹ volume 20 days (Cr)", ty: "cmp", field: "turnover_avg20_cr", def: [">=", 5] },
-    { t: "s", s: "Volume", id: "turn", l: "Price × volume today (Cr)", ty: "cmp", field: "turnover_cr", def: [">=", 10] },
-    { t: "s", s: "Volume", id: "rvol", l: "Relative volume (× 20-day avg)", ty: "cmp", field: "rvol", def: [">=", 1.5] },
-    { t: "s", s: "Volume", id: "deliv", l: "Delivery %", ty: "cmp", field: "deliv_pct", def: [">=", 50] },
-    { t: "s", s: "Volume", id: "hv", l: "High volume", ty: "pick", opts: [["hve", "Highest ever", { field: "hve", op: "is", value: true }], ["hvy", "Highest in a year", { field: "hvy", op: "is", value: true }], ["hvq", "Highest in a quarter", { field: "hvq", op: "is", value: true }]] },
-    { t: "s", s: "Volume", id: "pp", l: "Pocket pivot", ty: "flag", rule: { field: "pocket_pivot", op: "is", value: true } },
-    { t: "s", s: "Volume", id: "dry", l: "Volume dry-up", ty: "flag", rule: { field: "dry_up", op: "is", value: true } },
-    { t: "e", s: "Latest quarter", id: "sy", l: "Sales growth YoY %", ty: "cmp", field: "sales_g_yoy", def: [">=", 20] },
-    { t: "e", s: "Latest quarter", id: "sq", l: "Sales growth QoQ %", ty: "cmp", field: "sales_g_qoq", def: [">=", 10] },
-    { t: "e", s: "Latest quarter", id: "py", l: "Net profit growth YoY %", ty: "cmp", field: "np_g_yoy", def: [">=", 25] },
-    { t: "e", s: "Latest quarter", id: "pq", l: "Net profit growth QoQ %", ty: "cmp", field: "np_g_qoq", def: [">=", 10] },
-    { t: "e", s: "Latest quarter", id: "ey", l: "EPS growth YoY %", ty: "cmp", field: "eps_g_yoy", def: [">=", 25] },
-    { t: "e", s: "Latest quarter", id: "eq", l: "EPS growth QoQ %", ty: "cmp", field: "eps_g_qoq", def: [">=", 10] },
-    { t: "e", s: "Streaks", id: "sup", l: "Sales rising for (quarters)", ty: "cmp", field: "sales_up_qtrs", def: [">=", 3] },
-    { t: "e", s: "Streaks", id: "eup", l: "EPS rising for (quarters)", ty: "cmp", field: "eps_up_qtrs", def: [">=", 3] },
-    { t: "e", s: "Streaks", id: "pup", l: "Net profit up QoQ for (quarters)", ty: "cmp", field: "np_qoq_up_qtrs", def: [">=", 2] },
-    { t: "e", s: "Streaks", id: "eacc", l: "EPS growth speeding up (quarters)", ty: "cmp", field: "eps_g_accel_qtrs", def: [">=", 2] },
-    { t: "e", s: "Streaks", id: "mup", l: "Net margin up for (quarters)", ty: "cmp", field: "npm_up_qtrs", def: [">=", 2] },
-    { t: "e", s: "Results days", id: "recent", l: "Results declared in the last (days)", ty: "combo", parts: [["days_since_result", "<=", 30, "days"]] },
-    { t: "e", s: "Results days", id: "soon", l: "Results due in the next (days)", ty: "range", field: "days_to_result", def: [0, 14] },
-    { t: "e", s: "Results days", id: "egap", l: "Results gap-up", ty: "combo", parts: [["earn_gap_pct", ">=", 3, "gap ≥ %"], ["earn_sessions", "<=", 20, "within sessions"]] },
-    { t: "e", s: "Results days", id: "emove", l: "Big move on results day %", ty: "cmp", field: "earn_chg_pct", def: [">=", 5] },
-    { t: "e", s: "Results days", id: "eheld", l: "Results move held", ty: "flag", rule: { field: "earn_held", op: "is", value: true } },
-    { t: "f", s: "Growth", id: "scagr", l: "Sales growth (CAGR %)", ty: "period", opts: [["sales_cagr_3y", "3 years"], ["sales_cagr_5y", "5 years"], ["sales_cagr_10y", "10 years"]], def: ["sales_cagr_5y", ">=", 15] },
-    { t: "f", s: "Growth", id: "pcagr", l: "Profit growth (CAGR %)", ty: "period", opts: [["np_cagr_3y", "3 years"], ["np_cagr_5y", "5 years"], ["np_cagr_10y", "10 years"]], def: ["np_cagr_5y", ">=", 15] },
-    { t: "f", s: "Growth", id: "attm", l: "Sales growth TTM %", ty: "cmp", field: "sales_g_ttm", def: [">=", 15] },
-    { t: "f", s: "Returns on capital", id: "roe", l: "ROE %", ty: "cmp", field: "roe", def: [">=", 15] },
-    { t: "f", s: "Returns on capital", id: "roce", l: "ROCE %", ty: "cmp", field: "roce", def: [">=", 15] },
-    { t: "f", s: "Returns on capital", id: "opm", l: "Operating margin TTM %", ty: "cmp", field: "opm_ttm", def: [">=", 12] },
-    { t: "f", s: "Returns on capital", id: "de", l: "Debt / equity", ty: "cmp", field: "debt_equity", def: ["<=", 0.5] },
+    { t: "t", s: "Moving averages", id: "s200up", l: "200 SMA Rising (1M)", ty: "flag", rule: { field: "sma200_chg_1m", op: ">", value: 0 } },
+    { t: "t", s: "Moving averages", id: "above", l: "Price Above MA", ty: "mas", dir: ">", def: ["sma50", "sma200"] },
+    { t: "t", s: "Moving averages", id: "below", l: "Price Below MA", ty: "mas", dir: "<", def: ["ema20"] },
+    { t: "t", s: "Moving averages", id: "near50", l: "% from 50 SMA", ty: "range", field: "from_sma50", def: [0, 10] },
+    { t: "t", s: "Distance from highs & lows", id: "fromhi", l: "% from 52W High", ty: "range", field: "from_hi52", def: [-25, 0] },
+    { t: "t", s: "Distance from highs & lows", id: "fromlo", l: "% from 52W Low", ty: "cmp", field: "from_lo52", def: [">=", 30] },
+    { t: "t", s: "Distance from highs & lows", id: "fromath", l: "% from ATH", ty: "range", field: "from_ath", def: [-15, 0] },
+    { t: "t", s: "Distance from highs & lows", id: "pivot", l: "% to Pivot", ty: "range", field: "dist_pivot", def: [-5, 0], h: "minus = below the base top" },
+    { t: "t", s: "Momentum & range", id: "rsi", l: "RSI (14D)", ty: "range", field: "rsi14", def: [50, 70] },
+    { t: "t", s: "Momentum & range", id: "ret", l: "Return", ty: "period", opts: [["ret_1w", "1 week"], ["ret_1m", "1 month"], ["ret_3m", "3 months"], ["ret_6m", "6 months"], ["ret_1y", "1 year"], ["ret_ytd", "This year"]], def: ["ret_1m", ">=", 20] },
+    { t: "t", s: "Momentum & range", id: "chg", l: "Daily Change (%)", ty: "range", field: "chg_1d", def: [2, 20] },
+    { t: "t", s: "Momentum & range", id: "gap", l: "Gap Up (%)", ty: "cmp", field: "gap_up", def: [">=", 2] },
+    { t: "t", s: "Momentum & range", id: "range", l: "Day Range (%)", ty: "cmp", field: "range_pct", def: ["<=", 3] },
+    { t: "t", s: "Momentum & range", id: "adr", l: "ADR (%)", ty: "cmp", field: "adr_pct", def: [">=", 3] },
+    { t: "t", s: "Momentum & range", id: "st", l: "Supertrend Up", ty: "flag", rule: { field: "supertrend_dir", op: "==", value: 1 } },
+    { t: "t", s: "Momentum & range", id: "tight", l: "Tight Closes (%)", ty: "cmp", field: "tight_pct", def: ["<=", 2] },
+    { t: "t", s: "Momentum & range", id: "depth", l: "Base Depth (%)", ty: "cmp", field: "base_depth", def: ["<=", 25] },
+    { t: "t", s: "Momentum & range", id: "vcp", l: "VCP Contractions", ty: "cmp", field: "vcp_contractions", def: [">=", 2] },
+    { t: "t", s: "Momentum & range", id: "inside", l: "Inside Day", ty: "flag", rule: { field: "inside_day", op: "is", value: true } },
+    { t: "s", s: "Relative strength", id: "rs", l: "Overall RS", ty: "range", field: "rs_rating", def: [70, 99] },
+    { t: "s", s: "Relative strength", id: "rschg", l: "RS Change (1W)", ty: "cmp", field: "rs_chg_1w", def: [">=", 5] },
+    { t: "s", s: "Relative strength", id: "rshi", l: "RS Line at 52W High", ty: "flag", rule: { field: "rs_line_52w_high", op: "is", value: true } },
+    { t: "s", s: "Relative strength", id: "rsfirst", l: "RS High Before Price", ty: "flag", rule: { field: "rs_new_high_before_price", op: "is", value: true } },
+    { t: "s", s: "Relative strength", id: "mans", l: "Mansfield RS Above 0", ty: "flag", rule: { field: "mansfield_rs", op: ">", value: 0 } },
+    { t: "s", s: "Industry & theme rank", id: "secrank", l: "Sector Rank", ty: "cmp", field: "sector_rank", def: ["<=", 5] },
+    { t: "s", s: "Industry & theme rank", id: "indrank", l: "Industry Rank", ty: "cmp", field: "industry_rank", def: ["<=", 20] },
+    { t: "s", s: "Industry & theme rank", id: "indtag", l: "Industry Status", ty: "multi", field: "industry_tag", opts: [["Leading", "Leading"], ["Improving", "Improving"], ["Weakening", "Weakening"], ["Lagging", "Lagging"]], def: ["Leading"] },
+    { t: "s", s: "Industry & theme rank", id: "themetag", l: "Theme Status", ty: "multi", field: "theme_status", opts: [["Leading", "Leading"], ["Improving", "Improving"], ["Weakening", "Weakening"], ["Lagging", "Lagging"]], def: ["Leading"] },
+    { t: "s", s: "Volume", id: "turn20", l: "Avg Rupee Vol 20D (Cr.)", ty: "cmp", field: "turnover_avg20_cr", def: [">=", 5] },
+    { t: "s", s: "Volume", id: "turn", l: "Price × Volume (Cr.)", ty: "cmp", field: "turnover_cr", def: [">=", 10] },
+    { t: "s", s: "Volume", id: "rvol", l: "Relative Volume", ty: "cmp", field: "rvol", def: [">=", 1.5] },
+    { t: "s", s: "Volume", id: "deliv", l: "Delivery (%)", ty: "cmp", field: "deliv_pct", def: [">=", 50] },
+    { t: "s", s: "Volume", id: "hv", l: "High Volume", ty: "pick", opts: [["hve", "Highest ever", { field: "hve", op: "is", value: true }], ["hvy", "Highest in a year", { field: "hvy", op: "is", value: true }], ["hvq", "Highest in a quarter", { field: "hvq", op: "is", value: true }]] },
+    { t: "s", s: "Volume", id: "pp", l: "Pocket Pivot", ty: "flag", rule: { field: "pocket_pivot", op: "is", value: true } },
+    { t: "s", s: "Volume", id: "dry", l: "Volume Dry-up", ty: "flag", rule: { field: "dry_up", op: "is", value: true } },
+    { t: "e", s: "Growth", id: "sq", l: "Sales QoQ (%)", ty: "cmp", field: "sales_g_qoq", def: [">=", 10] },
+    { t: "e", s: "Growth", id: "sy", l: "Sales YoY (%)", ty: "cmp", field: "sales_g_yoy", def: [">=", 20] },
+    { t: "e", s: "Growth", id: "pq", l: "Net Profit QoQ (%)", ty: "cmp", field: "np_g_qoq", def: [">=", 10] },
+    { t: "e", s: "Growth", id: "py", l: "Net Profit YoY (%)", ty: "cmp", field: "np_g_yoy", def: [">=", 25] },
+    { t: "e", s: "Growth", id: "eq", l: "EPS QoQ (%)", ty: "cmp", field: "eps_g_qoq", def: [">=", 10] },
+    { t: "e", s: "Growth", id: "ey", l: "EPS YoY (%)", ty: "cmp", field: "eps_g_yoy", def: [">=", 25] },
+    { t: "e", s: "Streaks", id: "sup", l: "Sales Rising For (Q)", ty: "cmp", field: "sales_up_qtrs", def: [">=", 3] },
+    { t: "e", s: "Streaks", id: "eup", l: "EPS Rising For (Q)", ty: "cmp", field: "eps_up_qtrs", def: [">=", 3] },
+    { t: "e", s: "Streaks", id: "pup", l: "Net Profit Up For (Q)", ty: "cmp", field: "np_qoq_up_qtrs", def: [">=", 2] },
+    { t: "e", s: "Streaks", id: "eacc", l: "EPS Speeding Up (Q)", ty: "cmp", field: "eps_g_accel_qtrs", def: [">=", 2] },
+    { t: "e", s: "Streaks", id: "mup", l: "Net Margin Up For (Q)", ty: "cmp", field: "npm_up_qtrs", def: [">=", 2] },
+    { t: "e", s: "Results & reaction", id: "recent", l: "Earnings Declared", ty: "combo", parts: [["days_since_result", "<=", 30, "days"]] },
+    { t: "e", s: "Results & reaction", id: "egap", l: "Earnings Gap-Up", ty: "combo", parts: [["earn_gap_pct", ">=", 3, "gap ≥ %"], ["earn_sessions", "<=", 20, "within sessions"]] },
+    { t: "e", s: "Results & reaction", id: "emove", l: "Big Earnings Move (%)", ty: "cmp", field: "earn_chg_pct", def: [">=", 5] },
+    { t: "e", s: "Results & reaction", id: "soon", l: "Results Due In (Days)", ty: "range", field: "days_to_result", def: [0, 14] },
+    { t: "e", s: "Results & reaction", id: "eheld", l: "Results Move Held", ty: "flag", rule: { field: "earn_held", op: "is", value: true } },
+    { t: "f", s: "Growth & quality", id: "scagr", l: "Sales Growth (CAGR %)", ty: "period", opts: [["sales_cagr_3y", "3 years"], ["sales_cagr_5y", "5 years"], ["sales_cagr_10y", "10 years"]], def: ["sales_cagr_5y", ">=", 15] },
+    { t: "f", s: "Growth & quality", id: "pcagr", l: "Profit Growth (CAGR %)", ty: "period", opts: [["np_cagr_3y", "3 years"], ["np_cagr_5y", "5 years"], ["np_cagr_10y", "10 years"]], def: ["np_cagr_5y", ">=", 15] },
+    { t: "f", s: "Growth & quality", id: "attm", l: "Sales Growth TTM (%)", ty: "cmp", field: "sales_g_ttm", def: [">=", 15] },
+    { t: "f", s: "Growth & quality", id: "opm", l: "Operating Margin (%)", ty: "cmp", field: "opm_ttm", def: [">=", 12] },
+    { t: "f", s: "Growth & quality", id: "roe", l: "ROE (%)", ty: "cmp", field: "roe", def: [">=", 15] },
+    { t: "f", s: "Growth & quality", id: "roce", l: "ROCE (%)", ty: "cmp", field: "roce", def: [">=", 15] },
+    { t: "f", s: "Growth & quality", id: "de", l: "Debt / Equity", ty: "cmp", field: "debt_equity", def: ["<=", 0.5] },
     { t: "f", s: "Valuation", id: "pe", l: "P/E", ty: "range", field: "pe", def: [5, 40] },
-    { t: "f", s: "Valuation", id: "peg", l: "PEG", ty: "cmp", field: "peg", def: ["<=", 1.5] },
-    { t: "f", s: "Valuation", id: "pb", l: "Price / book", ty: "cmp", field: "pb", def: ["<=", 5] },
-    { t: "f", s: "Valuation", id: "dy", l: "Dividend yield %", ty: "cmp", field: "div_yield", def: [">=", 1] },
-    { t: "f", s: "Holding", id: "prom", l: "Promoter holding %", ty: "cmp", field: "prom_hold", def: [">=", 50] },
-    { t: "f", s: "Holding", id: "promc", l: "Promoter change, 1 quarter (pts)", ty: "cmp", field: "prom_chg_1q", def: [">=", 0.5] },
-    { t: "f", s: "Holding", id: "fii", l: "FII holding %", ty: "cmp", field: "fii_hold", def: [">=", 5] },
-    { t: "f", s: "Holding", id: "fiic", l: "FII change, 1 quarter (pts)", ty: "cmp", field: "fii_chg_1q", def: [">=", 0.5] },
+    { t: "f", s: "Valuation", id: "peg", l: "PEG Ratio", ty: "cmp", field: "peg", def: ["<=", 1.5] },
+    { t: "f", s: "Valuation", id: "dy", l: "Div Yield (%)", ty: "cmp", field: "div_yield", def: [">=", 1] },
+    { t: "f", s: "Valuation", id: "pb", l: "Price / Book", ty: "cmp", field: "pb", def: ["<=", 5] },
+    { t: "f", s: "Holding", id: "prom", l: "Promoter (%)", ty: "cmp", field: "prom_hold", def: [">=", 50] },
+    { t: "f", s: "Holding", id: "promc", l: "Promoter Change 1Q (pts)", ty: "cmp", field: "prom_chg_1q", def: [">=", 0.5] },
+    { t: "f", s: "Holding", id: "fii", l: "FII (%)", ty: "cmp", field: "fii_hold", def: [">=", 5] },
+    { t: "f", s: "Holding", id: "fiic", l: "FII Change 1Q (pts)", ty: "cmp", field: "fii_chg_1q", def: [">=", 0.5] },
   ];
   const csFieldsOf = (f) => (f.field ? [f.field] : f.parts ? f.parts.map((p) => p[0]) : f.rule ? [f.rule.field] : []);
   /** the conditions of one filter (an array) from its values */
@@ -3409,9 +3410,44 @@
     return { universe, rule: { all } };
   }
 
+  const csGroup = (v) => { const x = Number(String(v).replace(/,/g, "")); return String(v).trim() === "" || !isFinite(x) ? String(v) : Math.abs(x) >= 1000 ? x.toLocaleString("en-IN", { maximumFractionDigits: 2 }) : String(v).replace(/,/g, ""); };
+  /** the selects of the custom scanner become pill buttons with their own option list (the select stays hidden and
+      keeps the value, so the rest of the code reads it as before) */
+  function csPills(root) {
+    const chev = '<svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    root.querySelectorAll("select[data-k]").forEach((sel) => {
+      if (sel.dataset.pill) return;
+      sel.dataset.pill = "1"; sel.hidden = true;
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "cs-dd";
+      const label = () => { const o = sel.options[sel.selectedIndex]; b.innerHTML = `<span>${esc(o ? o.text : "")}</span>${chev}`; };
+      label(); sel.after(b);
+      b.onclick = (e) => {
+        e.stopPropagation();
+        const open = document.querySelector(".cs-pop");
+        if (open) { const was = open._for === b; open._close(); if (was) return; }
+        const pop = document.createElement("div"); pop.className = "cs-pop"; pop._for = b;
+        pop.innerHTML = [...sel.options].map((o, i) => `<button type="button" data-i="${i}" class="${i === sel.selectedIndex ? "on" : ""}">${esc(o.text)}</button>`).join("");
+        document.body.appendChild(pop); b.classList.add("open");
+        const r = b.getBoundingClientRect();
+        pop.style.minWidth = `${Math.max(r.width, 120)}px`;
+        pop.style.left = `${Math.min(r.left, innerWidth - pop.offsetWidth - 8)}px`;
+        pop.style.top = `${r.bottom + pop.offsetHeight + 6 > innerHeight ? r.top - pop.offsetHeight - 4 : r.bottom + 4}px`;
+        const close = () => { pop.remove(); b.classList.remove("open"); document.removeEventListener("mousedown", out, true); };
+        const out = (ev) => { if (!pop.contains(ev.target) && !b.contains(ev.target)) close(); };
+        pop._close = close;
+        setTimeout(() => document.addEventListener("mousedown", out, true));
+        pop.onclick = (ev) => { const it = ev.target.closest("[data-i]"); if (!it) return; sel.selectedIndex = Number(it.dataset.i); label(); close(); sel.dispatchEvent(new Event("change", { bubbles: true })); };
+      };
+    });
+  }
+
   function customScan(opts = {}) {
     const known = new Set((state.fields || []).map((f) => f.id));
-    const avail = (f) => csFieldsOf(f).every((x) => known.has(x) || ["close", "n500", "fno", "price_band", "stage", "sector", "basic_industry", "theme", "days_listed"].includes(x));
+    // watchlist filter: one choice per list of this browser (stocks in it at the time the scan runs / is saved)
+    const wlF = CS.find((x) => x.id === "wl");
+    if (wlF) wlF.opts = wlStore().lists.map((l) => [l.id, l.name, { field: "key", op: "in", value: l.items.map((i) => i.k) }]);
+    const avail = (f) => (f.id === "wl" ? f.opts.length > 0 : csFieldsOf(f).every((x) => known.has(x) || ["close", "n500", "fno", "price_band", "stage", "sector", "basic_industry", "theme", "days_listed", "key"].includes(x)));
     const list = CS.filter(avail);
     const u = userScans();
     let cs = opts.load && opts.load.builder ? clone(opts.load.builder) : opts.fresh ? { name: "", f: {} } : store.get("sd-cs-draft", null) || { name: "", f: {} };
@@ -3422,60 +3458,71 @@
     for (const k of ["sector", "basic_industry", "theme"]) dyn[k] = [...new Set(state.screen.map((r) => r[k]).filter(Boolean))].sort().map((x) => [x, x]);
     const m = document.createElement("div");
     m.className = "modal-bg cs-bg";
-    m.innerHTML = `<div class="modal cs" role="dialog" aria-label="Custom scan">
-      <div class="cs-h"><b>Custom scan</b><input class="cs-name" id="csName" placeholder="Untitled scan" value="${esc(cs.name || "")}" aria-label="Scan name" maxlength="60">
-        <div class="menu-wrap"><button class="btn sm" id="csLoad" type="button">Load saved ▾</button><div class="menu right" id="csLoadM" hidden></div></div>
-        <button class="btn sm" id="csSave" type="button">Save scan</button><button class="icon-btn" data-x type="button" aria-label="Close">✕</button></div>
+    // reference look (14-Nov-2026): title + name chip + "N filters", End of day / Live switch (this site is end-of-day
+    // only), Load saved / Save scanner, tabs with counts, a search with the "/" key, two columns of filter rows
+    const CSCHEV = '<svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const SRCH = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>';
+    m.innerHTML = `<div class="modal cs" role="dialog" aria-label="Custom scanner">
+      <div class="cs-h"><b class="cs-ttl">Custom Scanner</b><input class="cs-name" id="csName" placeholder="Untitled scan" value="${esc(cs.name || "")}" aria-label="Scan name" maxlength="60"><span class="cs-nf" id="csNf">0 filters</span>
+        <span class="cs-mode" title="This site uses end-of-day data (live prices are not available)"><b>End of day</b><i class="cs-tg" aria-hidden="true"></i><small>Live</small></span>
+        <span class="cs-hr"><div class="menu-wrap"><button class="btn cs-hb" id="csLoad" type="button">Load saved ${CSCHEV}</button><div class="menu right" id="csLoadM" hidden></div></div>
+        <button class="btn cs-hb" id="csSave" type="button">Save scanner</button><button class="icon-btn cs-x" data-x type="button" aria-label="Close">✕</button></span></div>
       <div class="cs-tabs"><div class="cs-tl" role="tablist">${CS_TABS.map(([k, l]) => `<button type="button" role="tab" data-tab="${k}" class="${k === tab ? "on" : ""}">${l}<i data-tc="${k}"></i></button>`).join("")}</div>
-        <input type="search" id="csQ" placeholder="Find a filter, e.g. RSI" aria-label="Find a filter"></div>
+        <label class="cs-q">${SRCH}<input type="search" id="csQ" placeholder="Find a filter, e.g. RSI" aria-label="Find a filter" autocomplete="off"><kbd>/</kbd></label></div>
       <div class="cs-b" id="csB"></div>
-      <div class="cs-f"><span id="csCount"></span><button class="btn" id="csReset" type="button">Reset</button><button class="btn primary" id="csRun" type="button">Run scan</button></div></div>`;
+      <div class="cs-f"><span id="csCount"></span><button class="btn cs-reset" id="csReset" type="button">Reset</button><button class="btn primary cs-run" id="csRun" type="button">${SRCH}Run scan</button></div></div>`;
     document.body.appendChild(m);
     const st = (id) => cs.f[id] || (cs.f[id] = { on: false, v: csDefault(CS.find((x) => x.id === id)) });
     const ctrl = (f) => {
       const v = st(f.id).v;
-      const num = (name, val, w) => `<input type="number" step="any" data-k="${name}" value="${val == null ? "" : esc(val)}" style="width:${w || 84}px">`;
+      const num = (name, val, w) => `<input type="text" inputmode="decimal" class="cs-n" data-k="${name}" value="${val == null || val === "" ? "" : esc(csGroup(val))}" style="width:${w || 84}px">`;
       const opSel = (name, val, ops) => `<select data-k="${name}">${(ops || [">=", "<=", ">", "<"]).map((o) => `<option ${o === val ? "selected" : ""}>${o}</option>`).join("")}</select>`;
       switch (f.ty) {
-        case "flag": return f.h ? `<small class="muted">${esc(f.h)}</small>` : "";
-        case "range": return `Between ${num("a", v.a)} and ${num("b", v.b)}`;
+        case "flag": return "";
+        case "range": return `<span class="cs-w">Between</span>${num("a", v.a)}<span class="cs-w">and</span>${num("b", v.b)}`;
         case "cmp": return `${opSel("op", v.op)} ${num("x", v.x)}`;
-        case "combo": return f.parts.map((p, i) => `<span class="muted">${esc(p[3])}</span> ${num("x" + i, (v.x || [])[i], 70)}`).join(" ");
+        case "combo": return f.parts.map((p, i) => `<span class="cs-w">${esc(p[3])}</span>${num("x" + i, (v.x || [])[i], 70)}`).join("");
         case "period": return `<select data-k="f">${f.opts.map(([k, l]) => `<option value="${k}" ${k === v.f ? "selected" : ""}>${l}</option>`).join("")}</select> ${opSel("op", v.op)} ${num("x", v.x, 70)}`;
         case "pick": return `<select data-k="p">${f.opts.map(([k, l]) => `<option value="${k}" ${k === v.p ? "selected" : ""}>${esc(l)}</option>`).join("")}</select>`;
         case "multi": case "mas": {
           const opts = f.ty === "mas" ? MA_OPTS : f.dyn ? dyn[f.dyn] : f.opts, sel = v.sel || [];
-          const txt = sel.length ? (sel.length <= 2 ? sel.map((s) => (opts.find((o) => o[0] === s) || [s, s])[1]).join(", ") : `${sel.length} chosen`) : "Choose…";
-          return `<details class="cs-ms"><summary>${esc(txt)}</summary><div class="cs-ml">${opts.length > 12 ? '<input type="search" class="cs-mq" placeholder="Search">' : ""}
+          const txt = sel.length ? (sel.length <= 2 ? sel.map((s) => (opts.find((o) => o[0] === s) || [s, s])[1]).join(", ") : `${sel.length} chosen`) : "Any";
+          return `<details class="cs-ms"><summary><span>${esc(txt)}</span>${CSCHEV}</summary><div class="cs-ml">${opts.length > 12 ? '<input type="search" class="cs-mq" placeholder="Search">' : ""}
             ${opts.map(([k, l]) => `<label data-t="${esc(String(l).toLowerCase())}"><input type="checkbox" data-sel="${esc(k)}" ${sel.includes(k) ? "checked" : ""}> ${esc(l)}</label>`).join("")}</div></details>`;
         }
         default: return "";
       }
     };
     const rowHTML = (f) => `<div class="cs-row ${st(f.id).on ? "on" : ""}" data-id="${f.id}" data-t="${esc((f.l + " " + (f.h || "") + " " + csFieldsOf(f).map((x) => state.labels[x] || x).join(" ")).toLowerCase())}">
-      <label class="cs-on"><input type="checkbox" data-on ${st(f.id).on ? "checked" : ""}> <span>${esc(f.l)}</span></label><div class="cs-c">${ctrl(f)}</div></div>`;
+      <label class="cs-on"${f.h ? ` title="${esc(f.h)}"` : ""}><input type="checkbox" data-on ${st(f.id).on ? "checked" : ""}> <span>${esc(f.l)}</span></label><div class="cs-c">${ctrl(f)}</div></div>`;
     const drawBody = () => {
       const q = m.querySelector("#csQ").value.trim().toLowerCase();
       const shown = q ? list.filter((f) => (f.l + " " + (f.h || "") + " " + csFieldsOf(f).map((x) => state.labels[x] || x).join(" ")).toLowerCase().includes(q)) : list.filter((f) => f.t === tab);
       const secs = [];
       for (const f of shown) { const key = q ? (CS_TABS.find((x) => x[0] === f.t) || ["", ""])[1] + " · " + f.s : f.s; let s = secs.find((x) => x[0] === key); if (!s) secs.push(s = [key, []]); s[1].push(f); }
-      m.querySelector("#csB").innerHTML = secs.length ? secs.map(([s, fs]) => `<section class="cs-sec"><h4>${esc(s)}</h4>${fs.map(rowHTML).join("")}</section>`).join("")
+      m.querySelector("#csB").innerHTML = secs.length ? secs.map(([s, fs]) => `<section class="cs-sec" data-ids="${fs.map((f) => f.id).join(" ")}"><h4><span>${esc(s)}</span><i></i><em class="cs-on-n"></em></h4><div class="cs-grid">${fs.map(rowHTML).join("")}</div></section>`).join("")
         : '<p class="empty">No filter matches.</p>';
+      csPills(m.querySelector("#csB"));
+      secCounts();
     };
+    // "2 of 6 on" next to each section title
+    const secCounts = () => m.querySelectorAll(".cs-sec").forEach((sec) => { const ids = sec.dataset.ids.split(" "), on = ids.filter((id) => cs.f[id] && cs.f[id].on).length; sec.querySelector(".cs-on-n").textContent = on ? `${on} of ${ids.length} on` : ""; });
     let timer = null;
     const count = () => {
       clearTimeout(timer);
       timer = setTimeout(() => {
         const sc = csScan(cs), n = SDS.run(state.screen, sc).length, active = Object.entries(cs.f).filter(([id, s]) => s.on && list.some((f) => f.id === id));
         const was = (m.querySelector("#csCount b") || {}).textContent;
-        m.querySelector("#csCount").innerHTML = `<b class="${was && was !== n.toLocaleString("en-IN") ? "bump" : ""}">${n.toLocaleString("en-IN")}</b> stocks pass this scan · ${active.length} filter${active.length === 1 ? "" : "s"} active across all tabs`;
+        m.querySelector("#csCount").innerHTML = `<b class="${was && was !== n.toLocaleString("en-IN") ? "bump" : ""}">${n.toLocaleString("en-IN")}</b> stocks pass this scan<i class="cs-dot">·</i><span>${active.length} filter${active.length === 1 ? "" : "s"} active across all tabs</span>`;
+        m.querySelector("#csNf").textContent = `${active.length} filter${active.length === 1 ? "" : "s"}`;
+        secCounts();
         for (const [k] of CS_TABS) { const c = active.filter(([id]) => (CS.find((f) => f.id === id) || {}).t === k).length; m.querySelector(`[data-tc="${k}"]`).textContent = c || ""; }
         cs.name = m.querySelector("#csName").value.trim();
         store.set("sd-cs-draft", { ...cs, loadedId });
       }, 90);
     };
     const readRow = (row) => {
-      const f = CS.find((x) => x.id === row.dataset.id), s = st(f.id), g = (k) => { const el = row.querySelector(`[data-k="${k}"]`); return el ? el.value : undefined; };
+      const f = CS.find((x) => x.id === row.dataset.id), s = st(f.id), g = (k) => { const el = row.querySelector(`[data-k="${k}"]`); return el ? String(el.value).replace(/,/g, "").trim() : undefined; };
       if (f.ty === "range") s.v = { a: g("a"), b: g("b") };
       else if (f.ty === "cmp") s.v = { op: g("op"), x: g("x") };
       else if (f.ty === "combo") s.v = { x: f.parts.map((p, i) => g("x" + i)) };
@@ -3483,8 +3530,10 @@
       else if (f.ty === "pick") s.v = { p: g("p") };
       else if (f.ty === "multi" || f.ty === "mas") s.v = { sel: [...row.querySelectorAll("[data-sel]:checked")].map((x) => x.dataset.sel) };
     };
-    const shut = () => { m.classList.add("closing"); setTimeout(() => m.remove(), 140); document.removeEventListener("keydown", onKey, true); };
+    const shut = () => { document.querySelectorAll(".cs-pop").forEach((x) => (x._close ? x._close() : x.remove())); m.classList.add("closing"); setTimeout(() => m.remove(), 140); document.removeEventListener("keydown", onKey, true); };
     const onKey = (e) => {
+      const pop = document.querySelector(".cs-pop");
+      if (e.key === "Escape" && pop) { pop._close(); return; }
       if (e.key === "Escape" && !e.target.closest("details[open]")) shut();
       if (e.key === "/" && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) { e.preventDefault(); e.stopPropagation(); m.querySelector("#csQ").focus(); }
     };
@@ -3505,8 +3554,9 @@
       if (e.target.id === "csQ") return drawBody();
       if (e.target.id === "csName") return count();
       if (e.target.classList.contains("cs-mq")) { const q = e.target.value.toLowerCase(); e.target.parentElement.querySelectorAll("label").forEach((l) => { l.hidden = !l.dataset.t.includes(q); }); return; }
-      if (e.target.type === "number") { const row = e.target.closest(".cs-row"); readRow(row); if (!st(row.dataset.id).on) { st(row.dataset.id).on = true; row.classList.add("on"); row.querySelector("[data-on]").checked = true; } count(); }
+      if (e.target.classList.contains("cs-n")) { const row = e.target.closest(".cs-row"); readRow(row); if (!st(row.dataset.id).on) { st(row.dataset.id).on = true; row.classList.add("on"); row.querySelector("[data-on]").checked = true; } count(); }
     });
+    m.addEventListener("focusout", (e) => { if (e.target.classList && e.target.classList.contains("cs-n")) e.target.value = csGroup(e.target.value); });
     const savedList = () => userScans().mine.filter((x) => x.builder);
     m.addEventListener("click", (e) => {
       if (e.target === m || e.target.closest("[data-x]")) return shut();
@@ -3541,7 +3591,7 @@
         uu.mine = uu.mine.some((x) => x.id === id) ? uu.mine.map((x) => (x.id === id ? entry : x)) : [...uu.mine, entry];
         saveUserScans(uu); loadedId = id;
         store.set("sd-cs-draft", { ...cs, loadedId });
-        if (save) { const b = m.querySelector("#csSave"); b.textContent = "Saved ✓"; setTimeout(() => { b.textContent = "Save scan"; }, 1500); }
+        if (save) { const b = m.querySelector("#csSave"); b.textContent = "Saved ✓"; setTimeout(() => { b.textContent = "Save scanner"; }, 1500); }
         if (run) { shut(); state.lastScan = null; if (location.hash === "#/scanners/" + encodeURIComponent(id)) renderStocks(); else location.hash = "#/scanners/" + encodeURIComponent(id); }
       }
     });

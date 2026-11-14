@@ -2234,3 +2234,87 @@ html:has(.ws-main.grid.wide), body:has(.ws-main.grid.wide) { overflow: hidden; }
 .res-list thead th { box-shadow: inset 0 -1px 0 var(--line); }
 .res-list th.sticky[data-col="symbol"], .res-list td.name { box-sizing: border-box; width: var(--nm-w, 150px); min-width: var(--nm-w, 150px); max-width: var(--nm-w, 150px); }
 .res-list tbody tr:hover td, .res-list tbody tr:hover .sticky { background: color-mix(in srgb, var(--accent) 6%, var(--panel)); }
+
+/* ---------------------------------------------------------------- custom scanner v2 (14-Nov-2026, Viraj's videos
+   "New Scan" 1 + 2): large window, soft blue header with name chip / filter count / End of day switch, tabs with
+   count chips and an underline, "/" search, sections in two columns (check box, label, controls), pill dropdowns
+   with their own option list, roomy number boxes, footer with the live count and a blue Run scan */
+.modal-bg.cs-bg { padding-top: 3vh; align-items: flex-start; }
+.modal.cs { width: min(1450px, 95vw); max-width: none; height: min(880px, 92vh); max-height: none; display: flex; flex-direction: column; border-radius: 18px; overflow: hidden; padding: 0; box-shadow: 0 30px 80px rgba(15, 30, 70, .28); }
+.modal.cs .cs-h, .modal.cs .cs-tabs { background: linear-gradient(100deg, color-mix(in srgb, var(--accent) 16%, var(--panel)) 0%, color-mix(in srgb, var(--accent) 11%, var(--panel)) 55%, color-mix(in srgb, #a78bfa 14%, var(--panel)) 100%); }
+.modal.cs .cs-h { display: flex; align-items: center; gap: 12px; padding: 16px 22px 10px; border-bottom: 0; }
+.cs-ttl { font-size: 16px; font-weight: 600; color: var(--text); white-space: nowrap; }
+.modal.cs .cs-name { flex: 0 1 auto; width: 13ch; min-width: 9ch; height: 28px; padding: 0 10px; border: 0; border-radius: 7px; background: color-mix(in srgb, var(--panel) 85%, transparent); font-size: 12.5px; font-weight: 500; color: var(--text); }
+.modal.cs .cs-name:focus { outline: none; box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent); background: var(--panel); }
+.cs-nf { height: 28px; display: inline-flex; align-items: center; padding: 0 10px; border-radius: 7px; background: color-mix(in srgb, var(--panel) 85%, transparent); font-size: 12.5px; color: var(--text); white-space: nowrap; }
+.cs-mode { display: inline-flex; align-items: center; gap: 10px; margin-left: 18px; font-size: 13px; cursor: default; }
+.cs-mode b { font-weight: 500; color: var(--accent); }
+.cs-mode small { font-size: 13px; color: var(--muted); }
+.cs-tg { position: relative; width: 38px; height: 22px; border-radius: 999px; background: color-mix(in srgb, var(--muted) 30%, var(--panel)); }
+.cs-tg::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .2); }
+.cs-hr { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.cs-hb { height: 36px; display: inline-flex; align-items: center; gap: 8px; padding: 0 14px; border: 0 !important; border-radius: 9px; background: var(--panel) !important; color: var(--text); font-size: 13px; font-weight: 500; box-shadow: 0 1px 2px rgba(20, 35, 70, .06); }
+.cs-hb:hover { box-shadow: 0 2px 8px rgba(20, 35, 70, .12); }
+.cs-hb svg { color: var(--muted); }
+.modal.cs .cs-x { width: 34px; height: 34px; border: 0; background: none; color: var(--muted); font-size: 15px; }
+.modal.cs .cs-x:hover { color: var(--text); background: color-mix(in srgb, var(--panel) 60%, transparent); }
+.modal.cs .cs-tabs { display: flex; align-items: center; gap: 12px; padding: 0 22px; border-bottom: 1px solid var(--line); }
+.modal.cs .cs-tl { gap: 30px; }
+.modal.cs .cs-tl button { position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 12px 0 13px; border: 0; border-radius: 0; background: none; font-size: 14px; font-weight: 500; color: var(--muted); cursor: pointer; }
+.modal.cs .cs-tl button:hover { color: var(--text); background: none; }
+.modal.cs .cs-tl button.on { color: var(--text); font-weight: 600; background: none; }
+.modal.cs .cs-tl button::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; border-radius: 2px; background: var(--accent); transform: scaleX(0); transition: transform .2s ease; }
+.modal.cs .cs-tl button.on::after { transform: scaleX(1); }
+.modal.cs .cs-tl i { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 4px; background: var(--panel); color: var(--text); border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--line)); font: 600 11px/16px var(--font); font-style: normal; display: inline-grid; place-items: center; }
+.modal.cs .cs-tl i:empty { display: none; }
+.cs-q { margin-left: auto; display: flex; align-items: center; gap: 8px; width: 266px; height: 34px; padding: 0 6px 0 12px; border-radius: 9px; background: var(--panel); color: var(--muted); box-shadow: 0 1px 2px rgba(20, 35, 70, .06); }
+.cs-q input { flex: 1; min-width: 0; border: 0 !important; background: none !important; padding: 0 !important; outline: none; box-shadow: none !important; font-size: 13px; color: var(--text); height: auto; }
+.cs-q input::-webkit-search-cancel-button { display: none; }
+.cs-q kbd { min-width: 20px; height: 20px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 5px; font: 11px/1 var(--font); color: var(--muted); background: var(--panel); }
+.modal.cs .cs-b { flex: 1; min-height: 0; overflow-y: auto; columns: auto; padding: 10px 32px 18px; scrollbar-width: none; }
+.modal.cs .cs-b::-webkit-scrollbar { display: none; }
+.modal.cs .cs-sec { margin: 0 0 6px; break-inside: auto; }
+.modal.cs .cs-sec h4 { display: flex; align-items: center; gap: 14px; margin: 18px 0 8px; font-size: 11.5px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.modal.cs .cs-sec h4::after { display: none; }
+.modal.cs .cs-sec h4 i { flex: 1; height: 1px; background: var(--line); }
+.modal.cs .cs-sec h4 em { font-style: normal; font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 12px; color: var(--muted); }
+.modal.cs .cs-sec:first-child h4 i { background: transparent; }
+.cs-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; row-gap: 2px; }
+.modal.cs .cs-row { display: grid; grid-template-columns: 230px minmax(0, 1fr); align-items: center; gap: 0; min-height: 52px; padding: 0 8px; border-radius: 10px; transition: background .12s; }
+.modal.cs .cs-row:hover { background: color-mix(in srgb, var(--accent) 4%, var(--panel)); }
+.modal.cs .cs-on { flex: none; gap: 14px; font-size: 13.5px; color: var(--text); }
+.modal.cs .cs-on input { width: 18px; height: 18px; border-radius: 5px; accent-color: var(--accent); }
+.modal.cs .cs-row.on .cs-on span { font-weight: 500; }
+.modal.cs .cs-c { opacity: 1; gap: 10px; font-size: 13px; color: var(--text); flex-wrap: nowrap; }
+.cs-w { color: var(--text); font-size: 13px; }
+.modal.cs .cs-c input.cs-n { height: 34px; padding: 0 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font-size: 13px; color: var(--text); font-variant-numeric: tabular-nums; transition: border-color .15s, box-shadow .15s; }
+.modal.cs .cs-c input.cs-n:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.cs-dd, .modal.cs .cs-ms summary { height: 34px; display: inline-flex; align-items: center; gap: 10px; padding: 0 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font: inherit; font-size: 13px; color: var(--text); cursor: pointer; white-space: nowrap; max-width: 260px; transition: border-color .15s, box-shadow .15s; }
+.cs-dd span, .modal.cs .cs-ms summary span { overflow: hidden; text-overflow: ellipsis; }
+.cs-dd svg, .modal.cs .cs-ms summary svg { flex: none; color: var(--muted); transition: transform .2s; }
+.cs-dd:hover, .modal.cs .cs-ms summary:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+.cs-dd.open, .modal.cs .cs-ms[open] summary { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.cs-dd.open svg, .modal.cs .cs-ms[open] summary svg { transform: rotate(180deg); }
+.modal.cs .cs-ms summary::after { display: none; }
+.cs-pop { position: fixed; z-index: 140; max-height: 300px; overflow-y: auto; padding: 6px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); box-shadow: 0 14px 36px rgba(20, 35, 70, .16); animation: drop .12s ease-out; scrollbar-width: none; }
+.cs-pop button { display: block; width: 100%; padding: 9px 12px; border: 0; border-radius: 8px; background: none; font: inherit; font-size: 13px; color: var(--text); text-align: left; cursor: pointer; white-space: nowrap; }
+.cs-pop button:hover { background: var(--panel-2); }
+.cs-pop button.on { color: var(--accent); font-weight: 500; }
+.modal.cs .cs-ml { width: 260px; padding: 6px; border-radius: 12px; box-shadow: 0 14px 36px rgba(20, 35, 70, .16); left: 0; right: auto; }
+.modal.cs .cs-ml label { padding: 7px 8px; font-size: 13px; }
+.modal.cs .cs-ml input[type="checkbox"] { accent-color: var(--accent); }
+.modal.cs .cs-f { display: flex; align-items: center; gap: 10px; padding: 14px 28px; border-top: 1px solid var(--line); background: color-mix(in srgb, var(--accent) 3%, var(--panel)); }
+.modal.cs .cs-f #csCount { margin-right: auto; display: inline-flex; align-items: baseline; gap: 8px; font-size: 13px; color: var(--text); }
+.modal.cs .cs-f #csCount b { font-size: 16px; font-weight: 600; color: var(--accent); }
+.modal.cs .cs-f #csCount span { color: var(--muted); }
+.cs-dot { font-style: normal; color: var(--muted); margin: 0 4px; }
+.cs-reset { height: 38px; padding: 0 18px; border-radius: 9px; font-weight: 500; }
+.cs-run { height: 38px; display: inline-flex; align-items: center; gap: 8px; padding: 0 20px; border-radius: 9px; font-weight: 600; }
+@media (max-width: 900px) {
+  .cs-grid { grid-template-columns: 1fr; }
+  .modal.cs .cs-row { grid-template-columns: 150px minmax(0, 1fr); }
+  .cs-mode, .cs-nf { display: none; }
+  .cs-q { width: 100%; margin: 0 0 8px; }
+  .modal.cs .cs-tabs { flex-wrap: wrap; }
+  .modal.cs .cs-tl { gap: 18px; overflow-x: auto; }
+}

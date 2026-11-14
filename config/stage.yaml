@@ -1,19 +1,24 @@
-# Stage analysis. Re-tuned 07-Nov-2026 on 02/04/05/06-Nov against the reference app (docs/calibration.md):
-# 93.6 % equal (was 87.4 % with the 03-Nov rule). Change this file, not the code (site/ind.js has the same defaults).
+# Stage analysis. Re-tuned 14-Nov-2026 on 02/04/05/06-Nov against the reference app (docs/calibration.md):
+# stocks with 200+ sessions 97.6 % equal (was 95.2 %): Basing 44/50 (was 32), Topping 420/440 (was 389).
+# Change this file, not the code (site/ind.js has the same defaults).
 #   Uptrend (2)    close above the long average (also when it dips below the fast one, unless the run was extended)
 #   Topping (3)    above the long average, below the fast one, after an extended run:
-#                  short average > long x (1 + top_ext) AND close > long x (1 + top_above)
-#   Basing (1)     at / below the long average, back above the fast average and (within base_tol) above the mid one
+#                  short average > long x (1 + top_ext) AND close > long x (1 + top_above);
+#                  top_stays: once Topping, it stays Topping while the close is below the fast average (above the long)
+#   Basing (1)     at / below the long average, back above the fast average, base_above over the base (100-day)
+#                  average and not more than base_floor below the long average
 #   Downtrend (4)  the rest below the long average
 #   Early uptrend (2A)  the first early_days sessions of an Uptrend that came from Basing / Downtrend
 #   Improving (4A)      a Downtrend whose close is back above the fast average (but not Basing)
 long_ma: 200            # sessions; stocks with fewer sessions use the `young` rule
 fast_ma: 50
-mid_ma: 150
-short_ma: 20
-top_ext: 0.06
-top_above: 0.03
-base_tol: 0.008
+short_ma: 10
+top_ext: 0.08
+top_above: 0.02
+top_stays: true
+base_ma: 100
+base_above: 0.005
+base_floor: 0.10
 min_sessions: 64        # fewer sessions: no stage
 early_days: 30
 young:                  # min_sessions .. long_ma sessions (92 % equal)

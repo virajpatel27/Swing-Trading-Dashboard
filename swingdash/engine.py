@@ -139,18 +139,33 @@ def days_since_max(s: pd.Series, n: int) -> pd.Series:
 def stage(c: pd.Series, cfg: dict) -> pd.Series:
     """Stage per day (config/stage.yaml): 1 Basing, 2A Early uptrend, 2 Uptrend, 3 Topping, 4 Downtrend, 4A Improving.
     Stocks with long_ma sessions or more:
-      above SMA200: 2, except below SMA50 after an extended run (SMA20 > SMA200 x 1.06 and close > SMA200 x 1.03) = 3
-      at / below SMA200: 1 when back above SMA50 and (almost) above SMA150, 4A when above SMA50 only, else 4
+      above SMA200: 2, except below SMA50 after an extended run (SMA10 > SMA200 x 1.08 and close > SMA200 x 1.02) = 3;
+        a Topping stays Topping while the close stays below SMA50 (and above SMA200)
+      at / below SMA200: 1 when back above SMA50, 0.5 % above SMA100 and at most 10 % below SMA200, 4A when above
+        SMA50 only, else 4
     Younger stocks (min_sessions on): above SMA50 = 2 (3 when the close drops 1.5 % below SMA10), else 1 when 2 % above
     SMA30, else 4."""
     mn, L = int(cfg.get("min_sessions", 64)), int(cfg.get("long_ma", 200))
     sma = lambda k: c.rolling(int(k)).mean()
-    long_, fast, mid, short = sma(L), sma(cfg.get("fast_ma", 50)), sma(cfg.get("mid_ma", 150)), sma(cfg.get("short_ma", 20))
+    long_, fast, short = sma(L), sma(cfg.get("fast_ma", 50)), sma(cfg.get("short_ma", 10))
+    base_ma = sma(cfg.get("base_ma", 100))
     above_long, above_fast = c > long_, c >= fast
-    extended = (short > long_ * (1 + float(cfg.get("top_ext", 0.06)))) & (c > long_ * (1 + float(cfg.get("top_above", 0.03))))
-    basing = above_fast & (c > mid * (1 - float(cfg.get("base_tol", 0.008))))
+    extended = (short > long_ * (1 + float(cfg.get("top_ext", 0.08)))) & (c > long_ * (1 + float(cfg.get("top_above", 0.02))))
+    # Basing (re-tuned 14-Nov-2026): back above the fast average AND above the base (100-day) average, and not more
+    # than base_floor below the long one
+    basing = above_fast & (c > base_ma * (1 + float(cfg.get("base_above", 0.005)))) & (c > long_ * (1 - float(cfg.get("base_floor", 0.10))))
     old = np.where(above_long, np.where(above_fast | ~extended, "2", "3"),
                    np.where(basing, "1", np.where(above_fast, "4A", "4")))
+    # Topping stays Topping while the close is still below the fast average and above the long one (14-Nov-2026)
+    if cfg.get("top_stays", True):
+        cand = (old == "2") & above_long.to_numpy() & ~above_fast.to_numpy()
+        if cand.any():
+            start = cand & ~np.concatenate([[False], cand[:-1]])
+            grp = np.cumsum(start)
+            prev3 = np.concatenate([[False], old[:-1] == "3"])
+            keep = np.zeros(grp.max() + 1, dtype=bool)
+            keep[grp[start]] = prev3[start]
+            old = np.where(cand & keep[grp], "3", old)
     # young stocks (min_sessions .. long_ma sessions): the same idea on shorter averages
     y = cfg.get("young") or {}
     y_long, y_fast, y_mid = sma(y.get("long_ma", 50)), sma(y.get("fast_ma", 10)), sma(y.get("mid_ma", 30))

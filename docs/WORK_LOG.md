@@ -1406,3 +1406,22 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Checked in the preview: all five tabs and sections, pill list (pick turns the filter on, counts update), typed
   10000 -> 10,000, search "rsi", Run scan result count = the window's count (365), no console errors. The window
   could not be screenshot (app window behind others). JS 32 / 32.
+
+### 2026-11-14: Stage 1 (Basing) and Stage 3 (Topping) re-tuned against the reference
+- Viraj: compare our stage with the reference and with a pasted 'Weinstein Stage Analysis' script, then improve
+  Stage 1 and Stage 3 (the script itself to be dropped).
+- Comparison (reference exports 02 / 04 / 05 / 06-Nov, 4,053 stock-days): our rule 94.8 %, the pasted script 52.8 %
+  (weekly 30 SMA with a 5 % band and trend memory: most Stage 2 / 4 become 3 / 1) -> it is not the reference's rule.
+- Study (features at every reference stock-day, grid searches): Basing stocks sit above the 100-day average (median
+  +3 %) while real Downtrends sit below it (-2 %); a reference Topping stays Topping while the price is under the
+  50-day average even after the stretch fades.
+- swingdash/engine.py stage() + site/ind.js stage() (same rule), config/stage.yaml:
+  - Topping: SMA10 > SMA200 x 1.08 and close > SMA200 x 1.02 (was SMA20 x 1.06 / 1.03); top_stays: a Topping stays
+    while the close is below SMA50 and above SMA200;
+  - Basing: above SMA50, base_above 0.5 % over SMA100 (base_ma), at most base_floor 10 % below SMA200 (was: within
+    0.8 % of SMA150); mid_ma / base_tol removed. Young stocks (64-199 sessions) unchanged.
+- Result: 94.8 % -> 96.9 % overall; 200+ sessions 95.2 % -> 97.6 % (Basing 32 -> 44 of 50, wrong Basing 12 -> 6;
+  Topping 389 -> 420 of 440, wrong Topping 88 -> 51; Uptrend 936 -> 973; Downtrend 2033 -> 2038).
+- config/fields.yaml stage text, docs/formulas.md regenerated, docs/calibration.md, JS fixtures regenerated
+  (tests/js/make_expected.py). JS 32 / 32, Python 220 passed. Every scanner that uses stage (Stage 2 breakout,
+  Recent breakout, VCP, Tight range ...) follows the new stages at the next deploy.

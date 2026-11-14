@@ -31,7 +31,7 @@ Where a definition was chosen because it matched, the setting is in `config/indi
 | From 52W high / low | standard | 93.8 % / 97.3 % within 0.2 pt |
 | RS line at 52W high | benchmark Nifty Smallcap 250 (their default; Nifty 500: 98.5 %) | 99.2 % |
 | RS new high before price | as above, price below its 52W high | 98.8 % |
-| Stage | re-tuned 07-Nov, see below | 96.4 % (4 days) |
+| Stage | re-tuned 14-Nov (Basing / Topping), see below | 96.9 % (4 days, 4,053 stock-days; 200+ sessions 97.6 %) |
 | RS rating | re-tuned 07-Nov, see below | 80.4 % within 3 (88 % on stocks with full history) |
 | RS change 1W / rating 1M ago | as above, 5 / 21 sessions back | 69 % / 66 % within 3 |
 | Beta 1Y | daily returns vs Nifty 50, 252 sessions | 78.5 % within 0.05 (median gap 0.025) |
@@ -133,6 +133,7 @@ Breakouts: the reference judged 14 (6 held, 8 failed) on 30-Oct, "27 % held this
 | field | change | before | after |
 |---|---|---|---|
 | Stage (64+ sessions) | above SMA200 stays 2 below SMA50 unless the run was extended (SMA20 > SMA200 x 1.06 and close > SMA200 x 1.03 -> 3); Basing = below SMA200, above SMA50 and within 0.8 % of SMA150 (the SMA200 slope rule is gone) | 87.4 % | 96.4 % (96.3 / 96.5 / 95.9 / 97.1 per day) |
+| Stage, 200+ sessions (14-Nov) | Topping: SMA10 > SMA200 x 1.08 and close > SMA200 x 1.02, and a Topping STAYS while the close is below SMA50 (above SMA200); Basing: above SMA50, 0.5 % above SMA100, at most 10 % below SMA200. Basing 32 -> 44 / 50, Topping 389 -> 420 / 440, Uptrend 936 -> 973 / 1001, Downtrend 2033 -> 2038 / 2071. Young stocks unchanged (a search gave +1 of 486). The pasted 'Weinstein Stage Analysis' script (weekly 30 SMA, 5 % band) matched only 52.8 % | 95.2 % | 97.6 % |
 | Stage, stocks with 64-199 sessions | own rule on SMA50 / SMA10 / SMA30 (the reference shows no SMA200 for them) | 67 % | 92 % |
 | RS rating | stocks rated from the 11th session (return since the first session when younger than 3 months); percentile rounded down | 70.9 % within 3 | 80.4 % (88.1 % on stocks whose full history we have) |
 

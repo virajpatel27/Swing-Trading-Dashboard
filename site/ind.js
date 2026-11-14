@@ -155,19 +155,23 @@
   function stage(c, cfg = {}) {
     const d = (k, v) => (cfg[k] == null ? v : cfg[k]), y = cfg.young || {}, yd = (k, v) => (y[k] == null ? v : y[k]);
     const mn = d("min_sessions", 64), L = d("long_ma", 200), early = d("early_days", 30);
-    const lg = smaMin(c, L, L), fa = smaMin(c, d("fast_ma", 50), d("fast_ma", 50)), md = smaMin(c, d("mid_ma", 150), d("mid_ma", 150));
-    const sh = smaMin(c, d("short_ma", 20), d("short_ma", 20));
+    const lg = smaMin(c, L, L), fa = smaMin(c, d("fast_ma", 50), d("fast_ma", 50)), bm = smaMin(c, d("base_ma", 100), d("base_ma", 100));
+    const sh = smaMin(c, d("short_ma", 10), d("short_ma", 10)), stays = d("top_stays", true);
     const yl = smaMin(c, yd("long_ma", 50), yd("long_ma", 50)), yf = smaMin(c, yd("fast_ma", 10), yd("fast_ma", 10));
     const ym = smaMin(c, yd("mid_ma", 30), yd("mid_ma", 30));
     const out = new Array(c.length).fill(null);
-    let prev = null, run = 0, fromLow = false;
+    let prev = null, run = 0, fromLow = false, prevOld = null;
     for (let i = 0; i < c.length; i++) {
-      if (i + 1 < mn || c[i] == null) continue;
+      if (c[i] == null) { prevOld = null; continue; }
+      if (i + 1 < mn) continue;
       let b;
       if (i + 1 >= L) {
         const aL = c[i] > lg[i], aF = c[i] >= fa[i];
-        const ext = sh[i] > lg[i] * (1 + d("top_ext", 0.06)) && c[i] > lg[i] * (1 + d("top_above", 0.03));
-        b = aL ? (aF || !ext ? "2" : "3") : aF && c[i] > md[i] * (1 - d("base_tol", 0.008)) ? "1" : aF ? "4A" : "4";
+        const ext = sh[i] > lg[i] * (1 + d("top_ext", 0.08)) && c[i] > lg[i] * (1 + d("top_above", 0.02));
+        const basing = aF && c[i] > bm[i] * (1 + d("base_above", 0.005)) && c[i] > lg[i] * (1 - d("base_floor", 0.1));
+        b = aL ? (aF || !ext ? "2" : "3") : basing ? "1" : aF ? "4A" : "4";
+        if (stays && b === "2" && prevOld === "3" && aL && !aF) b = "3";      // a Topping stays while below the fast MA
+        prevOld = b;
       } else {
         b = c[i] > yl[i] * (1 - yd("long_tol", 0.005)) ? (c[i] < yf[i] * (1 - yd("fast_tol", 0.015)) ? "3" : "2")
           : c[i] > ym[i] * (1 + yd("base_above", 0.02)) ? "1" : "4";

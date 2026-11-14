@@ -2178,3 +2178,39 @@ input, textarea, select, [contenteditable="true"], .selectable { -webkit-user-se
 .mi-sortd .hm-menu .mi-sh { gap: 12px; }
 .mi-sortd .hm-menu .mi-sh b { white-space: nowrap; }
 .mi-sortd .hm-menu .mi-sh button { width: 26px; min-width: 26px; height: 26px; padding: 0; margin: 0; flex: none; display: grid; place-items: center; font-size: 14px; }
+
+/* ---------------------------------------------------------------- 14-Nov-2026 (Viraj, 13 photos)
+   add-to-watchlist menu, volume label split left / right, earnings right under the chart, 1M / 3M under the chips,
+   scanner grid fits the window with two rows of charts */
+.wm-pop { position: fixed; z-index: 120; min-width: 230px; padding: 10px 8px 8px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); box-shadow: 0 16px 40px rgba(20, 35, 70, .16); animation: drop .14s ease-out; }
+.wm-pop.out { opacity: 0; transform: translateY(-4px); transition: opacity .14s, transform .14s; }
+.wm-pop small { display: block; padding: 2px 10px 8px; font-size: 10.5px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.wm-pop button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: 0; border-radius: 9px; background: none; font: inherit; font-size: 13px; color: var(--text); cursor: pointer; text-align: left; transition: background .12s; }
+.wm-pop button:hover { background: var(--panel-2); }
+.wm-pop button span { flex: 1; font-weight: 500; }
+.wm-pop button b { color: var(--accent); font-size: 12px; }
+.wm-tag { width: 15px; height: 11px; flex: none; background: color-mix(in srgb, var(--c) 18%, var(--panel)); border: 1.5px solid var(--c); border-radius: 3px 1px 1px 3px; clip-path: polygon(0 0, 72% 0, 100% 50%, 72% 100%, 0 100%); }
+.wm-pop hr { border: 0; border-top: 1px solid var(--line); margin: 6px 4px; }
+.wm-new em { font-style: normal; font-size: 16px; color: var(--muted); width: 15px; text-align: center; }
+.wm-new span { font-weight: 400 !important; color: var(--muted); }
+.wm-in { width: calc(100% - 8px); margin: 2px 4px; height: 34px; padding: 0 10px; border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--line)); border-radius: 9px; font-size: 13px; background: var(--panel); color: var(--text); outline: none; }
+/* volume label: Vol on the left, Avg / RVol on the right of the volume pane */
+.ch-vol { display: flex; justify-content: space-between; gap: 12px; background: none; padding: 0; }
+.ch-vol span { background: color-mix(in srgb, var(--panel) 82%, transparent); padding: 0 4px; border-radius: 4px; }
+.ch-vol i { display: inline-block; width: 10px; }
+.ch-vol b.rv { color: var(--accent); }
+/* earnings right under the chart */
+.ws-main.list.wide .chart-pane .ch-earn { margin-top: 0; }
+/* chips and 1M / 3M: 1M / 3M under the middle of the chips, reference sizes */
+.ch-head .ch-r { left: var(--m-left, 55%); transform: translateX(-50%); font-size: 12px; gap: 14px; }
+.ch-head .ch-r b { font-weight: 500; }
+.chip-t { font-size: 12.5px; gap: 5px; }
+.chip-t i { font-size: 11.5px; }
+.ch-chips { gap: 16px; }
+/* scanner grid: fits the window, cards scroll inside, two rows of charts */
+html:has(.ws-main.grid.wide), body:has(.ws-main.grid.wide) { overflow: hidden; }
+.ws-main.grid.wide { overflow: hidden; align-items: stretch; }
+.ws-main.grid.wide .grid { height: 100%; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; align-content: start; padding: 2px 2px 14px; }
+.ws-main.grid.wide .grid::-webkit-scrollbar { display: none; width: 0; }
+.ws-main.grid.wide .grid .g-ch { height: var(--g-ch, 280px) !important; }
+.ws-main.grid.wide .ws-strip { position: static; height: 100%; min-height: 0; }

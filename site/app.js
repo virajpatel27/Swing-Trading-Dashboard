@@ -997,6 +997,48 @@
   const wlCur = () => { const w = wlStore(); return w.lists.find((l) => l.id === w.cur) || w.lists[0]; };
   const wlSave = () => { const w = wlStore(); state.watch = new Set(wlCur().items.map((i) => i.k)); store.set("sd-watchlists", w); store.set("sd-watch", [...state.watch]); };
 
+  /* "+" next to a symbol: a small menu "Add X to" with every watchlist (tick = already in it) and "New watchlist..."
+     (reference look, 14-Nov-2026) */
+  const WL_COLS = ["#5b7fe0", "#e0577a", "#16a34a", "#f59e0b", "#8b5cf6", "#0ea5e9", "#64748b"];
+  const inAnyList = (key) => wlStore().lists.some((l) => l.items.some((i) => i.k === key));
+  function watchMenu(btn, key, onDone) {
+    document.querySelectorAll(".wm-pop").forEach((x) => x.remove());
+    const w = wlStore(), r = state.screenByKey.get(key) || state.byKey.get(key);
+    const pop = document.createElement("div");
+    pop.className = "wm-pop";
+    const paint = () => {
+      pop.innerHTML = `<small>Add ${esc(r ? r.symbol : "")} to</small>${w.lists.map((l, i) => { const on = l.items.some((it) => it.k === key);
+        return `<button type="button" data-l="${esc(l.id)}" class="${on ? "on" : ""}"><i class="wm-tag" style="--c:${WL_COLS[i % WL_COLS.length]}"></i><span>${esc(l.name)}</span><b>${on ? "✓" : ""}</b></button>`; }).join("")}
+        <hr><button type="button" class="wm-new" data-new><em>+</em><span>New watchlist…</span></button>`;
+    };
+    paint();
+    document.body.appendChild(pop);
+    const b = btn.getBoundingClientRect();
+    pop.style.left = `${Math.max(8, Math.min(b.left - 8, innerWidth - pop.offsetWidth - 8))}px`;
+    pop.style.top = `${b.bottom + pop.offsetHeight + 8 > innerHeight ? Math.max(8, b.top - pop.offsetHeight - 6) : b.bottom + 6}px`;
+    const close = () => { pop.classList.add("out"); setTimeout(() => pop.remove(), 140); document.removeEventListener("mousedown", outside, true); document.removeEventListener("keydown", esc_); };
+    const outside = (e) => { if (!pop.contains(e.target) && !btn.contains(e.target)) close(); };
+    const esc_ = (e) => { if (e.key === "Escape") close(); };
+    setTimeout(() => { document.addEventListener("mousedown", outside, true); document.addEventListener("keydown", esc_); });
+    pop.onclick = (e) => {
+      e.stopPropagation();
+      const l = e.target.closest("[data-l]");
+      if (l) {
+        const L = w.lists.find((x) => x.id === l.dataset.l);
+        if (L.items.some((i) => i.k === key)) L.items = L.items.filter((i) => i.k !== key); else L.items.push({ k: key, t: Date.now() });
+        wlSave(); paint(); if (onDone) onDone(); return;
+      }
+      if (e.target.closest("[data-new]")) {
+        pop.querySelector(".wm-new").outerHTML = '<input class="wm-in" placeholder="Name of the new list" maxlength="30" aria-label="Name of the new list">';
+        const inp = pop.querySelector(".wm-in"); inp.focus();
+        inp.onkeydown = (ev) => {
+          if (ev.key === "Enter" && inp.value.trim()) { w.lists.push({ id: "w" + Date.now().toString(36), name: inp.value.trim(), items: [{ k: key, t: Date.now() }] }); wlSave(); paint(); if (onDone) onDone(); }
+          if (ev.key === "Escape") close();
+        };
+      }
+    };
+  }
+
   async function renderWatchlist() {
     if (!state.screen) view.innerHTML = SKEL("Loading your watchlist");
     try { await loadScreen(); } catch (e) { view.innerHTML = `<p class="empty">Could not load the stock table (${esc(e.message)}).</p>`; return; }
@@ -1292,7 +1334,7 @@
         <div class="pins" id="pins">${pinsHTML(scan.id)}</div>`
       : `<h1 class="ws-title">All stocks</h1><span class="muted small">every NSE main-board stock, all fields of ${SD.fmtDate(state.screenDate)}</span>`);
     const descTxt = scan ? `${scan.description || ""} ${SDS.describe(scan.rule || { all: [] }, state.labels)}${scan.universe === "liquid" ? " · liquid stocks only" : ""}` : "";
-    const desc = scan && !(isWide && ui.view === "list") ? `<p class="ws-desc">${esc(scan.description || "")} <span class="rule-en">${esc(SDS.describe(scan.rule || { all: [] }, state.labels))}${scan.universe === "liquid" ? " · liquid stocks only" : ""}</span></p>` : "";
+    const desc = scan && !isWide ? `<p class="ws-desc">${esc(scan.description || "")} <span class="rule-en">${esc(SDS.describe(scan.rule || { all: [] }, state.labels))}${scan.universe === "liquid" ? " · liquid stocks only" : ""}</span></p>` : "";
     view.innerHTML = `<div class="ws-bar">${bar}
         <div class="ws-right">${ui.view === "grid" ? `<select id="gSort" aria-label="Grid order">${GRID_SORTS.map(([k, l]) => `<option value="${k}" ${k === ui.gridSort ? "selected" : ""}>${l}</option>`).join("")}</select>
           ${seg("gcols", [["2", "2"], ["3", "3"], ["4", "4"]], String(ui.gridCols))}` : ""}
@@ -1391,7 +1433,7 @@
         + `<th class="fill"><button type="button" class="add-col" id="addCol" title="Add or remove columns">+</button></th>`;
       const body = rows.slice(0, st.limit).map((r) => `<tr data-key="${esc(r.key)}" class="${state.current === r.key ? "cur" : ""}">`
         + `<td class="l ck"><input type="checkbox" data-sel="${esc(r.key)}" ${state.selected.has(r.key) ? "checked" : ""} aria-label="Select ${esc(r.symbol)}"></td>`
-        + `<td class="l sticky name"><div class="nm" title="${esc(r.name)}">${logo(r)}<b>${esc(r.symbol)}</b><button type="button" class="rw-w${state.watch.has(r.key) ? " on" : ""}" data-w="${esc(r.key)}" title="${state.watch.has(r.key) ? "In your watchlist" : "Add to watchlist"}">${state.watch.has(r.key) ? "★" : "+"}</button></div></td><td class="num">${SD.fmtPrice(r.close)}</td>`
+        + `<td class="l sticky name"><div class="nm" title="${esc(r.name)}">${logo(r)}<b>${esc(r.symbol)}</b><button type="button" class="rw-w${inAnyList(r.key) ? " on" : ""}" data-w="${esc(r.key)}" title="${inAnyList(r.key) ? "In a watchlist" : "Add to a watchlist"}">${inAnyList(r.key) ? "★" : "+"}</button></div></td><td class="num">${SD.fmtPrice(r.close)}</td>`
         + cols.map((c) => (c === "dcandle" ? `<td class="num cdl">${dCandle(r)}</td>` : c === "wcandle" ? `<td class="num cdl">${wCandle(r)}</td>`
           : `<td class="${SD.COLUMNS[c] && SD.COLUMNS[c].fmt === "text" ? "l" : "num"}">${cellHTML(r, c)}</td>`)).join("") + '<td class="fill"></td></tr>').join("");
       const more = rows.length > st.limit ? `<button class="btn more" data-more type="button">Show more (${rows.length - st.limit} left)</button>` : "";
@@ -1460,7 +1502,7 @@
     $("#tbl").onclick = (e) => {
       if (e.target.closest("#addCol")) return openCols();
       const w = e.target.closest("[data-w]");
-      if (w) { e.stopPropagation(); toggleWatch(w.dataset.w); const on = state.watch.has(w.dataset.w); w.classList.toggle("on", on); w.textContent = on ? "★" : "+"; w.title = on ? "In your watchlist" : "Add to watchlist"; return; }
+      if (w) { e.stopPropagation(); watchMenu(w, w.dataset.w, () => { const on = inAnyList(w.dataset.w); w.classList.toggle("on", on); w.textContent = on ? "★" : "+"; w.title = on ? "In a watchlist" : "Add to a watchlist"; }); return; }
       const th = e.target.closest("th[data-col]");
       if (th) { const c = th.dataset.col; st.dir = st.sort === c ? (st.dir === "asc" ? "desc" : "asc") : c === "symbol" ? "asc" : "desc"; st.sort = c; return draw(); }
       if (e.target.id === "selAll") { rows.slice(0, st.limit).forEach((r) => (e.target.checked ? state.selected.add(r.key) : state.selected.delete(r.key))); return draw(); }
@@ -1550,22 +1592,29 @@
       wsMain.style.setProperty("--ov", ui.listW - col + "px");
       wsMain.classList.toggle("over", ui.listW > col);
     };
+    const autoW = () => { const nb = $("#newScan") || $("#wsFind"); return nb ? Math.round(nb.getBoundingClientRect().right - wsMain.getBoundingClientRect().left) : 300; };
+    if (isWide && ui.view === "list" && ui.lwAuto !== false) { ui.listW = autoW(); }
     layout();
     drag.onpointerdown = (e) => {
       if (!isWide) return;
       e.preventDefault(); drag.setPointerCapture(e.pointerId); wsMain.classList.add("dragging");
       const left = wsMain.getBoundingClientRect().left;
-      drag.onpointermove = (ev) => { ui.listW = ev.clientX - left; layout(); };
+      drag.onpointermove = (ev) => { ui.listW = ev.clientX - left; ui.lwAuto = false; layout(); };
       drag.onpointerup = () => { drag.onpointermove = drag.onpointerup = null; wsMain.classList.remove("dragging"); saveUi(); window.dispatchEvent(new Event("resize")); };
     };
     // list + chart fill the screen down to the status bar
     const fitH = () => {
       if (!wsMain.isConnected) { window.removeEventListener("resize", fitH); return; }
       if (isWide && ui.view === "list") { wsMain.style.height = Math.max(440, innerHeight - (wsMain.getBoundingClientRect().top + scrollY) - 46) + "px"; layout(); }
+      if (isWide && ui.view === "grid") {
+        wsMain.style.height = Math.max(440, innerHeight - (wsMain.getBoundingClientRect().top + scrollY) - 46) + "px";
+        const g = $("#grid"), c = g && g.querySelector(".gcard"), ce = c && c.querySelector(".g-ch");
+        if (c && ce) { const extra = c.offsetHeight - ce.offsetHeight; g.style.setProperty("--g-ch", Math.max(170, Math.floor((g.clientHeight - 14 - 14) / 2) - extra) + "px"); }
+      }
     };
     fitH();
     window.addEventListener("resize", fitH);
-    drag.ondblclick = () => { wsMain.classList.add("glide"); ui.listW = 300; saveUi(); layout(); setTimeout(() => { wsMain.classList.remove("glide"); window.dispatchEvent(new Event("resize")); }, 320); };
+    drag.ondblclick = () => { wsMain.classList.add("glide"); ui.lwAuto = true; ui.listW = autoW(); saveUi(); layout(); setTimeout(() => { wsMain.classList.remove("glide"); window.dispatchEvent(new Event("resize")); }, 320); };
     const picked = () => (state.selected.size ? rows.filter((r) => state.selected.has(r.key)) : rows);
     async function copySel() {
       const list = picked(), txt = list.map((r) => "NSE:" + r.symbol).join(",");

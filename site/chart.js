@@ -199,7 +199,7 @@
     const rsAbove = show("rsline") && ind.rsline.pane === "above";
     const chart = L.createChart(canvas, {
       autoSize: true,
-      layout: { background: { color: css("--panel") }, textColor: css("--muted"), fontSize: 11, fontFamily: css("--font") || undefined, attributionLogo: !pv,
+      layout: { background: { color: css("--panel") }, textColor: css("--muted"), fontSize: 11, fontFamily: css("--font") || undefined, attributionLogo: false,
         panes: { separatorColor: css("--line"), separatorHoverColor: css("--accent-soft"), enableResize: true } },
       grid: { vertLines: { color: css("--line") + (C.grid === false ? "00" : "") }, horzLines: { color: css("--line") + (C.grid === false ? "00" : "") } },
       rightPriceScale: { borderColor: css("--line") }, timeScale: { borderColor: css("--line"), rightOffset: 5, visible: true },
@@ -293,7 +293,7 @@
       for (const p of I.swings(bars, C.marks.swingPct || 10)) {
         if (p.move == null) continue;
         marks.push({ time: p.time, position: p.kind === "high" ? "aboveBar" : "belowBar", color: p.kind === "high" ? st.up : st.down,
-          shape: p.kind === "high" ? "arrowUp" : "arrowDown", text: `${p.move > 0 ? "+" : ""}${p.move.toFixed(1)}%` });
+          shape: "circle", size: 0, text: `${p.move > 0 ? "+" : ""}${p.move.toFixed(1)}%` });
       }
     }
     if (!pv && C.marks.inside) {
@@ -380,7 +380,8 @@
       const onPrice = ind.volume.pane === "price";
       const pane = onPrice ? pricePane : nextPane("Volume");
       volPane = onPrice ? null : pane;
-      const vs = chart.addSeries(L.HistogramSeries, { priceFormat: { type: "custom", formatter: (x) => S.fmtVol(x), minMove: 1 },
+      const axVol = (x) => (x >= 1e7 ? `${(x / 1e7).toFixed(1)}Cr` : x >= 1e5 ? `${(x / 1e5).toFixed(1)}L` : x >= 1e3 ? `${(x / 1e3).toFixed(1)}K` : String(Math.round(x)));
+      const vs = chart.addSeries(L.HistogramSeries, { priceFormat: { type: "custom", formatter: axVol, minMove: 1 },
         priceScaleId: onPrice ? "vol" : "right", lastValueVisible: false, priceLineVisible: false }, pane);
       if (onPrice) vs.priceScale().applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
       const grey = css("--muted") + "66";
@@ -454,7 +455,7 @@
     for (const g of IND_MENU) for (const [k, label] of g[1]) if (ind[k].on && ind[k].hidden) legend.push({ k, html: label, hidden: true });
     // pane sizes: the price pane gets the most room; the chart grows by 80 px per extra pane
     const ps = chart.panes();
-    ps.forEach((p, i) => p.setStretchFactor(i === pricePane ? Math.max(3, 6 - ps.length) : 1));
+    ps.forEach((p, i) => p.setStretchFactor(i === pricePane ? (ps.length === 2 ? 3 : Math.max(3, 6 - ps.length)) : 1));
     if (pv) {
       chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, bars.length - 120), to: bars.length + 2 });
       return chart;
@@ -522,6 +523,8 @@
       if (!pe) return;
       const wr = wrap.getBoundingClientRect(), pr = pe.getBoundingClientRect(), ts = chart.timeScale(), w = ts.width();
       el.style.top = `${pr.bottom - wr.top - 24}px`;
+      const db = cur.box.querySelector("#chDraw");
+      if (db) { db.style.top = "auto"; db.style.bottom = `${wr.bottom - pr.bottom + 28}px`; }
       el.querySelectorAll(".ev-b").forEach((b) => { const x = ts.timeToCoordinate(b.dataset.t); const off = x == null || x < 6 || x > w - 6; b.hidden = off; if (!off) b.style.left = `${pr.left - wr.left + x}px`; });
     };
     cur.placeEv = place;
@@ -558,6 +561,9 @@
       hd.querySelector(".ch-st").innerHTML = `${cfg.show.desc !== false && ABOUT[r.symbol] ? `<p class="ch-about">${esc(ABOUT[r.symbol])}</p>` : ""}
       ${cfg.show.desc !== false ? `<div class="ch-desc muted">${esc(r.name || "")}${r.sector ? ` · ${esc(r.sector)} › ${esc(r.basic_industry || r.industry || "")}` : ""}${due}</div>` : due ? `<div class="ch-desc">${due}</div>` : ""}`;
     }
+    const chipsEl = cur.box.querySelector(".ch-chips"), hr0 = hd.getBoundingClientRect(), cKey = `${Math.round(hr0.width)}|${chipsEl ? chipsEl.childElementCount : 0}`;
+    if (chipsEl && cur.mKey !== cKey) { cur.mKey = cKey; const cr = chipsEl.getBoundingClientRect(); cur.mLeft = cr.width ? cr.left - hr0.left + cr.width / 2 : null; }
+    hd.style.setProperty("--m-left", cur.mLeft != null ? `${cur.mLeft}px` : "55%");
     hd.querySelector(".ch-l2").innerHTML = `<b class="ch-sym">${esc(r.symbol || r.name)}</b><span class="muted">${w ? "1W" : "1D"}</span>
       <span>O <b>${fmt(b.open)}</b></span><span>H <b>${fmt(b.high)}</b></span><span>L <b>${fmt(b.low)}</b></span><span>C <b>${fmt(b.close)}</b></span>
       <span class="${S.colorClass(chg)}">${chgAbs == null ? "" : (chgAbs > 0 ? "+" : "") + fmt(chgAbs)} (${S.fmtPct(chg)})</span>
@@ -567,7 +573,9 @@
       const top = cur.volPane != null ? drawings.paneTopOf(cur.volPane) : null;
       if (f && b.volume != null && top != null) {
         vl.hidden = false; vl.style.top = `${top + 4}px`;
-        vl.innerHTML = `Vol <b class="${f.up ? "up" : f.down ? "down" : ""}">${S.fmtVol(b.volume)}</b> · Avg 20${w ? "W" : "D"} <b>${S.fmtVol(f.avg20)}</b> · RVol <b>${f.rvol == null ? "–" : Math.round(f.rvol * 100) + "%"}</b>`;
+        let psw = 60; try { psw = cur.chart.priceScale("right").width(); } catch (e) { /* default */ }
+        vl.style.right = `${psw + 8}px`;
+        vl.innerHTML = `<span>Vol <b class="${f.up ? "up" : f.down ? "down" : ""}">${S.fmtVol(b.volume)}</b></span><span>Avg 20${w ? "W" : "D"} <b>${S.fmtVol(f.avg20)}</b><i></i>RVol <b class="rv">${f.rvol == null ? "–" : Math.round(f.rvol * 100) + "%"}</b></span>`;
       } else {
         vl.hidden = true;
         if (f && top == null && (cur.volTry = (cur.volTry || 0) + 1) < 20) setTimeout(() => { if (cur && cur.bars) header(i, vflags); }, 250);
@@ -615,7 +623,7 @@
     const chip = (k, v, col, tip) => `<span class="chip-t" title="${esc(tip)}"><i>${k}</i><b${col ? ` style="color:${col}"` : ""}>${v}</b></span>`;
     if (cfg.chips.float && r.float_mcap_cr != null) chips.push(chip("F", `₹${fmt(r.float_mcap_cr, 0)} Cr`, "", "Free-float market cap"));
     if (cfg.chips.rs && r.rs_rating != null) chips.push(chip("RS", r.rs_rating, r.rs_rating >= 80 ? "var(--accent)" : "", "RS rating 1-99"));
-    if (cfg.chips.stage && r.stage) chips.push(`<span class="chip-t" title="Stage ${esc(String(r.stage))}"><b style="color:${STAGE_COL[r.stage]}">${esc(String(r.stage).replace("A", ""))} ${STAGE_TXT[r.stage]}</b></span>`);
+    if (cfg.chips.stage && r.stage) chips.push(`<span class="chip-t" title="Stage ${esc(String(r.stage))}"><b style="color:${String(r.stage) === "2" ? "var(--accent)" : STAGE_COL[r.stage]}">${esc(String(r.stage).replace("A", ""))} ${STAGE_TXT[r.stage]}</b></span>`);
     if (cfg.chips.theme !== false && r.theme_status) {
       const tc = { Leading: "#089981", Improving: "#2962ff", Weakening: "#ff9800", Lagging: "#f23645" }[r.theme_status] || "#787b86";
       chips.push(chip("T", esc(r.theme_status), tc, `Theme ${r.theme || ""}: ${r.theme_status}`));

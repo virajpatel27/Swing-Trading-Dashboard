@@ -1336,3 +1336,23 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   bar, --mi-ch = half the grid's height minus the card header (two rows in view; resize recalculates).
 - Checked in the preview at 1860 x 880: Breadth and Major Indices page height = window, tab bar = card width, row 3
   starts below the visible grid, Sort header one line, no console errors. JS 32 / 32.
+
+### 2026-11-14: Watchlist menu, volume pane like the reference, chart polish, results width, grid 2 rows
+- Viraj (13 photos): "+" must open "Add X to" with every watchlist + "New watchlist..."; Avg / RVol on the right of
+  the volume pane; volume axis like 3.0L / 2.0L; the pencil at the bottom; swing moves without arrows; no
+  TradingView logo; volume right above the earnings; chips and 1M / 3M lined up with reference sizes; the Results
+  box as wide as the search box + New scan; scanner grid with two rows of charts and no description lines.
+- site/app.js: watchMenu() (fixed popup: lists with a coloured tag and a tick, toggle membership, inline "New
+  watchlist..." name box, Esc / outside click closes; the "+" turns into a star when the stock is in any list);
+  results width = right edge of New scan (ui.lwAuto; a drag keeps the user's width, double click goes back);
+  scan description shown only on narrow screens; grid view: page fits the window, cards scroll inside, chart height
+  --g-ch = two rows in view.
+- site/chart.js: attributionLogo false (the page footer keeps the tradingview.com attribution link); swing markers
+  = text only (zero-size circle); volume axis formatter (Cr / L / K, one decimal); price : volume pane 3 : 1;
+  volume label split (Vol left, Avg 20D / RVol right of the pane, next to the price axis); pencil anchored at the
+  bottom-left of the price pane above the badge row; 1M / 3M centred under the chips (measured once per size);
+  stage 2 chip in blue.
+- site/styles.css: watchlist popup, split volume label, earnings without top margin, chip / 1M sizes, grid fit.
+- Checked in the preview: results end at New scan, no logo, 1M / 3M centre = chips centre, watchlist menu (new
+  list, tick, star, close), grid = 2 rows, no description. The preview pane was hidden, so the chart library's own
+  sizes (pane heights, pencil spot, swing labels) could not be looked at on screen. JS 32 / 32.

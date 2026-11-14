@@ -1,5 +1,5 @@
 {
- "date": "2026-11-13",
+ "date": "2026-11-14",
  "universe": 2638,
  "nifty500": {
   "stocks": 500,
@@ -17,7 +17,7 @@
   "insurance": 11
  },
  "with_8_quarters": 1990,
- "with_5_years": 1570,
+ "with_5_years": 1571,
  "with_balance_sheet": 2353,
  "with_cash_flow": 2252,
  "with_shareholding": 2356,

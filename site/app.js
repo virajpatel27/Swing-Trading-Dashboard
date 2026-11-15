@@ -1018,14 +1018,18 @@
     if (r.breakout_days === 0 && r.breakout_level) out.push({ t: `Breakout above ₹${SD.fmtPrice(r.breakout_level)} (${r.close >= r.breakout_level ? "+" : ""}${f1(((r.close / r.breakout_level) - 1) * 100)}%)`, tone: "up" });
     if (r.pocket_pivot) out.push({ t: "Pocket pivot", tone: "up" });
     if (r.hve) out.push({ t: "Highest volume ever", tone: r.chg_1d >= 0 ? "up" : "down" });
-    else if (r.high_volume && r.rvol) out.push({ t: `${r.chg_1d >= 0 ? "Up" : "Down"} on RVol ${finNum(r.rvol, 1)}x`, tone: r.chg_1d >= 0 ? "up" : "down" });
+    else if (r.high_volume && r.rvol) out.push({ t: `${r.chg_1d >= 0 ? "Up" : "Down"} on big volume (${finNum(r.rvol, 1)}x)`, tone: r.chg_1d >= 0 ? "up" : "down" });
+    if (r.breakout_days > 0 && r.breakout_days <= 10 && r.breakout_level && r.close < r.breakout_level) out.unshift({ t: `Lost breakout level ₹${SD.fmtPrice(r.breakout_level)} (${r.breakout_days}d)`, tone: "down" });
     if (r.rs_new_high_before_price || r.rsb_today) out.push({ t: "RS new high, price not yet", tone: "up" });
     else if (r.rs_line_52w_high) out.push({ t: "RS line at a 52-week high", tone: "up" });
     if (r.earn_sessions != null && r.earn_sessions <= 2 && r.earn_chg_pct != null) out.push({ t: `Results move ${r.earn_chg_pct > 0 ? "+" : ""}${finNum(r.earn_chg_pct, 1)}%`, tone: r.earn_chg_pct >= 0 ? "up" : "down" });
     if (r.dist_pivot != null && r.dist_pivot > -3 && r.dist_pivot <= 0 && r.pivot) out.push({ t: `Near pivot ₹${SD.fmtPrice(r.pivot)} (${finNum(r.dist_pivot, 1)}%)`, tone: "info" });
+    else if (r.dist_pivot != null && r.dist_pivot > -5 && r.dist_pivot <= -3 && r.pivot) out.push({ t: `Within 5% of pivot ₹${SD.fmtPrice(r.pivot)}`, tone: "warn" });
+    if (r.high != null && r.high_20d != null && r.high >= r.high_20d && r.breakout_days !== 0) out.push({ t: `New 20-day high ₹${SD.fmtPrice(r.high)}`, tone: "info" });
     if (r.new_low_20d) out.push({ t: "New 20-day low", tone: "down" });
     if (r.chg_1d != null && r.chg_1d <= -4) out.push({ t: `Down ${finNum(Math.abs(r.chg_1d), 1)}% today`, tone: "down" });
-    if (r.inside_day) out.push({ t: "Inside day", tone: "info" });
+    if (r.inside_day) out.push({ t: r.rvol != null && r.rvol < 0.7 ? `Quiet inside day (${finNum(r.rvol, 1)}x)` : "Inside day", tone: "info" });
+    if (r.tight_pct != null && r.tight_pct <= 2.5) out.push({ t: `5 tight closes (${finNum(r.tight_pct, 1)}%)`, tone: "info" });
     if (r.dry_up) out.push({ t: "Volume dry-up", tone: "info" });
     if (r.lvl_age != null && r.dist_pivot != null && r.dist_pivot <= 0 && r.dist_pivot > -25) out.unshift({ t: `Week ${Math.max(1, Math.ceil(r.lvl_age / 5))} in base`, tone: "base" });
     return out;
@@ -2992,14 +2996,19 @@
   };
   const shortDay = (d) => { const t = new Date(d + "T00:00:00"); return t.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" }); };
   /** NSE weekly Nifty expiry: Tuesday (since 1-Sep-2025); monthly = the last Tuesday of the month (holidays move it a day earlier) */
+  // NSE trading holidays ahead (exchange calendar; add the new year's list when NSE publishes it)
+  const NSE_HOLIDAYS = new Set(["2026-11-24", "2026-12-25"]);
+  const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   function expiries(from, n = 4) {
     const out = [], d = new Date(from + "T00:00:00");
     while (out.length < n) {
       d.setDate(d.getDate() + 1);
       if (d.getDay() !== 2) continue;
       const nx = new Date(d); nx.setDate(d.getDate() + 7);
-      const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-      out.push([iso, nx.getMonth() !== d.getMonth() ? "Monthly Nifty expiry" : "Weekly Nifty expiry"]);
+      const e = new Date(d);                                   // a holiday moves the expiry to the trading day before
+      while (NSE_HOLIDAYS.has(isoOf(e)) || e.getDay() === 0 || e.getDay() === 6) e.setDate(e.getDate() - 1);
+      if (isoOf(e) <= from) continue;
+      out.push([isoOf(e), nx.getMonth() !== d.getMonth() ? "Monthly Nifty expiry" : "Weekly Nifty expiry"]);
     }
     return out;
   }
@@ -3069,53 +3078,84 @@
       for (const r of SDS.run(state.screen, sc)) if ((r.liquid_day ?? r.liquid) && (r.rs_rating ?? 0) >= 70 && !seen.has(r.key)) seen.set(r.key, { r, tag, sid });
     }
     const setups = [...seen.values()].sort((a, b) => Math.abs(a.r.dist_pivot ?? 99) - Math.abs(b.r.dist_pivot ?? 99)).slice(0, 15);
-    const setHTML = setups.length ? `<div class="table-wrap hs-t"><table><thead><tr><th class="l">Stock</th><th>RS</th><th>Close</th><th>To pivot</th><th>1M</th><th>3M</th><th>52W high</th></tr></thead><tbody>`
-      + setups.map(({ r, tag }) => `<tr data-key="${esc(r.key)}"><td class="l name"><div class="nm">${logo(r)}<div><b>${esc(r.symbol)}</b><span><i class="hs-tag">${tag}</i> ${esc(r.basic_industry || r.industry || "")}</span></div></div></td><td class="num">${r.rs_rating ?? "–"}</td>`
-        + `<td class="num">${SD.fmtPrice(r.close)}</td><td class="num">${r.dist_pivot == null ? "–" : finNum(Math.abs(r.dist_pivot), 1) + "%"}</td><td class="num">${pct(r.ret_1m)}</td><td class="num">${pct(r.ret_3m)}</td><td class="num">${pct(r.from_hi52)}</td></tr>`).join("")
-      + "</tbody></table></div>" : '<p class="muted small">No liquid RS 70+ stock near a pivot today.</p>';
-    // where the money is: themes by 1-week average return
+    // new look 15-Nov-2026 (Viraj's screenshots): coloured header bands, one decimal, RS 90+ in blue, row checkboxes
+    const p1 = (v, colour = true, dp = 1) => (v == null || !isFinite(v) ? '<span class="muted">–</span>' : `<span class="${colour ? (v >= 0 ? "up" : "down") : ""}">${v > 0 ? "+" : v < 0 ? "−" : ""}${finNum(Math.abs(v), dp)}%</span>`);
+    const INFO = (t) => `<span class="hx-i" tabindex="0" aria-label="${esc(t)}" data-tip="${esc(t)}">i</span>`;
+    const TAGC = { "Near Pivot": "np", VCP: "vcp", Flag: "flag", "Tight Setups": "tight" };
+    const setHTML = setups.length ? `<table class="hx-t"><thead><tr><th class="ck"><input type="checkbox" id="hsAll" aria-label="Select all"></th><th class="l">Stock</th><th>RS</th><th>Close</th><th>To pivot</th><th>1M %</th><th>3M %</th><th>52W high</th></tr></thead><tbody>`
+      + setups.map(({ r, tag }) => `<tr data-key="${esc(r.key)}"><td class="ck"><input type="checkbox" data-hs="${esc(r.key)}" aria-label="Select ${esc(r.symbol)}"></td>`
+        + `<td class="l"><div class="hx-nm">${logo(r)}<div><b>${esc(r.symbol)}</b><span><i class="hx-tag ${TAGC[tag] || ""}">${tag}</i>${esc(r.basic_industry || r.industry || "")}</span></div></div></td>`
+        + `<td class="num${(r.rs_rating ?? 0) >= 90 ? " hx-rs" : ""}">${r.rs_rating ?? "–"}</td><td class="num">${SD.fmtPrice(r.close)}</td><td class="num">${r.dist_pivot == null ? "–" : finNum(Math.abs(r.dist_pivot), 1) + "%"}</td>`
+        + `<td class="num">${p1(r.ret_1m)}</td><td class="num">${p1(r.ret_3m)}</td><td class="num">${p1(r.from_hi52, false)}</td></tr>`).join("")
+      + "</tbody></table>" : '<p class="hx-none hx-pad">No liquid RS 70+ stock near a pivot today.</p>';
+    // where the money is: themes by 5-session average return
     const th = state.groups && state.groups.levels && state.groups.levels.theme ? state.groups.levels.theme.filter((t) => t.avg_1w != null && !t.small) : [];
     const ths = th.slice().sort((a, b) => b.avg_1w - a.avg_1w), lead = ths.slice(0, 5), lag = ths.slice(-3).reverse();
     const mx = Math.max(1, ...ths.map((t) => Math.abs(t.avg_1w)));
-    const thRow = (t) => `<a class="hm-row" href="#/groups/theme/${encodeURIComponent(t.name)}"><span>${esc(t.name)}</span><i class="hm-bar"><i class="${t.avg_1w >= 0 ? "pos" : "neg"}" style="width:${(Math.abs(t.avg_1w) / mx) * 100}%"></i></i>${pct(t.avg_1w)}</a>`;
-    const moneyHTML = ths.length ? `<small class="muted hm-l">LEADING</small>${lead.map(thRow).join("")}<small class="muted hm-l">LAGGING</small>${lag.map(thRow).join("")}<a class="sp-link" href="#/groups/theme">Open themes →</a>` : '<p class="muted small">Theme ranks not built yet.</p>';
-    // events: results this week and next, expiries
+    const thRow = (t) => `<a class="hx-mr" href="#/groups/theme/${encodeURIComponent(t.name)}"><span>${esc(t.name)}</span><i class="hx-bar"><i class="${t.avg_1w >= 0 ? "pos" : "neg"}" style="width:${Math.max(2, (Math.abs(t.avg_1w) / mx) * 100)}%"></i></i>${p1(t.avg_1w)}</a>`;
+    const moneyHTML = ths.length ? `<small class="hx-l">LEADING</small>${lead.map(thRow).join("")}<small class="hx-l">LAGGING</small>${lag.map(thRow).join("")}<a class="hx-link" href="#/groups/theme">Open themes →</a>` : '<p class="hx-none">Theme ranks not built yet.</p>';
+    // today's events: results of the coming week, IPOs listing today / coming, the expiry calendar
     const today = state.screenDate || state.dataDate;
-    const due = new Map();
-    for (const r of state.screen || []) if (r.next_result && r.next_result > today && r.days_to_result != null && r.days_to_result <= 10) { if (!due.has(r.next_result)) due.set(r.next_result, []); due.get(r.next_result).push(r); }
-    const dueHTML = [...due.keys()].sort().slice(0, 5).map((d) => { const list = due.get(d).sort((a, b) => (b.mcap_cr ?? 0) - (a.mcap_cr ?? 0)); return `<div class="he-d"><b>${shortDay(d)}</b><div>${list.slice(0, 6).map((r) => `<a href="#/i/s/${encodeURIComponent(r.id)}">${esc(r.symbol)}</a>`).join("")}${list.length > 6 ? `<span class="muted">+${list.length - 6} more</span>` : ""}</div></div>`; }).join("");
-    // orders, deals and approvals of the last 5 days (company filings), liquid stocks, biggest first
-    const d5 = (() => { const t = new Date((state.screenDate || state.dataDate) + "T00:00:00"); t.setDate(t.getDate() - 5); return t.toISOString().slice(0, 10); })();
-    const deals = N.rows.filter((n) => (n[2] === "O" || n[2] === "D") && n[0] >= d5).map((n) => ({ n, r: state.screenByKey.get("s:" + n[1]) }))
-      .filter((x) => x.r && (x.r.liquid_day ?? x.r.liquid)).sort((a, b) => (a.n[0] < b.n[0] ? 1 : -1)).slice(0, 8);
-    const dealsHTML = deals.length ? deals.map(({ n, r }) => `<div class="hd-row"><small class="muted">${esc(shortDay(n[0].slice(0, 10)))}<br>${esc(n[0].slice(11, 16))}</small>
-      <div><a href="#/i/s/${encodeURIComponent(n[1])}"><b>${esc(n[1])}</b></a> ${newsBadge(n[2], N.cats)} <small class="muted">${esc(N.cats[n[2]] || "")}</small><div class="small">${newsText(n[3], n[4])}</div></div>${newsLink(n[5], N.pdf)}</div>`).join("")
-      : '<p class="muted small">No orders or deals filed by liquid stocks in the last 5 days.</p>';
-    const ipoHTML = (ipos.upcoming.length ? ipos.upcoming.map(([sym, name, op, cl, price, lst]) => `<div class="he-c"><b>${esc(sym)}</b><span>${esc(name || "")} · bids ${esc(SD.fmtDate(op))} – ${esc(SD.fmtDate(cl))} · ${esc(price)}${lst ? ` · lists ${esc(SD.fmtDate(lst))}` : ""}</span></div>`).join("")
-        : '<p class="muted small">No main-board IPO open or waiting to list.</p>')
-      + (ipos.recent.length ? `<small class="muted hm-l">LISTED IN THE LAST 45 DAYS</small>` + ipos.recent.slice(0, 6).map(([sym, d, pr]) => { const r = state.screenByKey.get("s:" + sym), g = r && pr ? (r.close / Number(pr) - 1) * 100 : null;
-          return `<div class="he-c"><b>${r ? `<a href="#/i/s/${encodeURIComponent(sym)}">${esc(sym)}</a>` : esc(sym)}</b><span>${esc(SD.fmtDate(d))} · issue ₹${esc(pr)}${g != null ? ` · now ₹${SD.fmtPrice(r.close)} ${pct(g)}` : ""}</span></div>`; }).join("") : "");
-    const evHTML = `<small class="muted hm-l">RESULTS</small>${dueHTML || '<p class="muted small">No results dates in the next 10 days.</p>'}
-      <small class="muted hm-l">IPOs (MAIN BOARD)</small>${ipoHTML}
-      <small class="muted hm-l">CALENDAR</small>${expiries(today, 4).map(([d, t]) => `<div class="he-c"><b>${shortDay(d)}</b><span>${t}</span></div>`).join("")}<p class="muted small">Expiry days move earlier when the exchange is closed.</p>`;
-    // watchlist plan
-    const sig = (r) => [r.pocket_pivot && "Pocket pivot", r.high_volume && r.chg_1d > 0 && "Up on big volume", r.hve && "Highest volume ever", r.rs_line_52w_high && "RS line high",
-      r.breakout_days === 0 && "Breakout today", r.dist_pivot != null && r.dist_pivot > -3 && r.dist_pivot <= 0 && "Near pivot", r.dry_up && "Volume dry-up", r.new_low_20d && "New 20-day low"].filter(Boolean);
-    const wl = (state.screen || []).filter((r) => state.watch.has(r.key));
-    const groupsW = [["Good day", wl.filter((r) => r.chg_1d >= 1)], ["Weak day", wl.filter((r) => r.chg_1d <= -1)], ["Quiet", wl.filter((r) => r.chg_1d > -1 && r.chg_1d < 1)]];
-    const wlHTML = wl.length ? groupsW.filter(([, l]) => l.length).map(([g, l]) => `<small class="muted hm-l">${g.toUpperCase()} · ${l.length}</small>${l.map((r) => `<a class="hw-row" href="#/i/s/${encodeURIComponent(r.id)}"><div><b class="wl">${logo(r)}${esc(r.symbol)}</b> <small class="muted">RS ${r.rs_rating ?? "–"}</small><span class="num">${SD.fmtPrice(r.close)} ${pct(r.chg_1d)}</span></div>`
-      + `<div class="hw-sig">${sig(r).map((x) => `<i>${x}</i>`).join("") || '<small class="muted">No new signals</small>'}</div></a>`).join("")}`).join("") : '<p class="muted small">Tap ★ on any stock to add it; its signals show here each day.</p>';
+    const nowIso = isoOf(new Date()), next = (() => { const t = new Date(today + "T00:00:00"); t.setDate(t.getDate() + 1); return isoOf(t); })();
+    const evFrom = nowIso > next ? nowIso : next, evTo = (() => { const t = new Date(evFrom + "T00:00:00"); t.setDate(t.getDate() + 7); return isoOf(t); })();
+    const upE = (state.screen || []).filter((r) => r.next_result && r.next_result >= evFrom && r.next_result <= evTo)
+      .sort((a, b) => (a.next_result !== b.next_result ? (a.next_result < b.next_result ? -1 : 1) : (b.mcap_cr ?? 0) - (a.mcap_cr ?? 0))).slice(0, 6);
+    const earnHTML = upE.length ? upE.map((r) => `<a class="hx-er" href="#/i/s/${encodeURIComponent(r.id)}"><span>${esc(bxDay(r.next_result))}</span><b>${logo(r)}${esc(r.symbol)}</b></a>`).join("") : '<p class="hx-none">No results dates in the coming week.</p>';
+    const ipoD = (x) => (x && /^\d{4}-\d\d-\d\d/.test(x) ? bxDay(x.slice(0, 10)) : esc(SD.fmtDate(x)));
+    const lstToday = ipos.upcoming.filter((x) => x[5] && String(x[5]).slice(0, 10) === evFrom), upI = ipos.upcoming.filter((x) => !lstToday.includes(x));
+    const ipoRow = ([sym, name, op, cl, price, lst]) => `<div class="hx-er"><span>${lst ? ipoD(lst) : ipoD(cl)}</span><b>${esc(sym)}</b><small>${esc(name || "")}${price ? ` · ₹${esc(String(price).replace(/^₹/, ""))}` : ""}${op && cl ? ` · bids ${ipoD(op)} – ${ipoD(cl)}` : ""}</small></div>`;
+    const evHTML = `<small class="hx-l">EARNINGS</small>${earnHTML}<hr class="hx-hr">
+      <small class="hx-l">LISTING TODAY</small>${lstToday.length ? lstToday.map(ipoRow).join("") : '<p class="hx-none">No IPO lists today.</p>'}<hr class="hx-hr">
+      <small class="hx-l">UPCOMING IPOS</small>${upI.length ? upI.map(ipoRow).join("") : '<p class="hx-none">No IPOs open or coming up.</p>'}<hr class="hx-hr">
+      <small class="hx-l">CALENDAR</small>${expiries(today, 3).map(([d, t]) => `<div class="hx-er"><span>${esc(bxDay(d))}</span><b>${t}</b></div>`).join("")}`;
+    // orders, expansion and approvals of the last 5 days (company filings), liquid stocks, newest first
+    const d5 = (() => { const t = new Date(today + "T00:00:00"); t.setDate(t.getDate() - 5); return isoOf(t); })();
+    const nType = (n) => { const x = `${n[3]} ${n[4] || ""}`;
+      return /approv|usfda|licen[cs]e|clearance|permission/i.test(x) && !/listing|equity shares|allotment|warrant/i.test(x) ? ["Approval", "ap"] : n[2] === "O" || /\border|contract|bagg/i.test(x) ? ["Order", "or"] : /acqui|merger|amalgam|stake|disposal|\bsale\b|agreement|joint venture|\bmou\b/i.test(x) ? ["Deal", "dl"]
+        : /expan|capacity|plant|facility|new unit|commission|capex|launch|greenfield|brownfield/i.test(x) ? ["Expansion", "ex"] : ["Update", "ex"]; };
+    const nClean = (n) => { let t = String(n[4] || "").trim() || String(n[3] || "");
+      t = t.replace(/^.*?has (informed|intimated) the Exchange\s*(regarding|about|that|of)?\s*/i, "").replace(/^(a |an |the )?(revised )?press release (dated [A-Za-z]+ \d{1,2}, \d{4},?\s*)?(titled\s*)?/i, "").replace(/^["“]+|["”]+$/g, "");
+      if (t.length < 40 && !/[.!?)]$/.test(t) && String(n[4] || "").length > 120) t = String(n[3] || "");   // cut too early: the filing type instead
+      else if (t.length >= 120 && !/[.!?)]$/.test(t)) t += "…";                       // the filing text is cut at ~150 characters
+      return t ? t[0].toUpperCase() + t.slice(1) : String(n[3] || ""); };
+    const deals = N.rows.filter((n) => n[0] >= d5 && (n[2] === "O" || n[2] === "D" || (n[2] === "R" && nType(n)[0] === "Approval")))
+      .map((n) => ({ n, r: state.screenByKey.get("s:" + n[1]) })).filter((x) => x.r && (x.r.liquid_day ?? x.r.liquid)).sort((a, b) => (a.n[0] < b.n[0] ? 1 : -1)).slice(0, 7);
+    const WD = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const dealsHTML = deals.length ? deals.map(({ n }) => { const [tl, tc] = nType(n);
+      return `<a class="hx-nr" href="#/i/s/${encodeURIComponent(n[1])}"><small>${WD[new Date(n[0].slice(0, 10) + "T00:00:00").getDay()]}<br>${esc(n[0].slice(11, 16))}</small><div><span class="hx-nc"><i class="hx-sym">${esc(n[1])}</i><i class="hx-ty ${tc}">${tl}</i></span><p>${esc(nClean(n))}</p></div></a>`; }).join("")
+      : '<p class="hx-none">No orders, expansion or approvals filed by liquid stocks in the last 5 days.</p>';
+    // watchlist plan: the open watchlist, grouped by what needs a look today
+    const WL = wlCur(), wls = WL.items.map((it) => state.screenByKey.get(it.k)).filter(Boolean);
+    const sgs = new Map(wls.map((r) => [r.key, wlSignals(r).filter((x) => x.tone !== "base")]));
+    const att = wls.filter((r) => sgs.get(r.key).some((x) => x.tone === "down")), bull = wls.filter((r) => !att.includes(r) && sgs.get(r.key).some((x) => x.tone === "up"));
+    const calm = wls.filter((r) => !att.includes(r) && !bull.includes(r));
+    const wRow = (r) => { const x = sgs.get(r.key);
+      return `<a class="hx-wr" href="#/i/s/${encodeURIComponent(r.id)}"><div class="hx-wt"><b>${esc(r.symbol)}</b><small class="${(r.rs_rating ?? 0) >= 90 ? "hx-rs" : ""}">RS ${r.rs_rating ?? "–"}</small><span class="num">${SD.fmtPrice(r.close)}</span><span class="num">${p1(r.chg_1d, true, 2)}</span></div>`
+        + `<div class="hx-ws">${x.length ? x.slice(0, 2).map((c) => `<i class="hx-c hc-${c.tone}">${esc(c.t)}</i>`).join("") + (x.length > 2 ? `<i class="hx-c hc-more" title="${esc(x.slice(2).map((c) => c.t).join(", "))}">+${x.length - 2}</i>` : "") : '<small class="hx-none">No new signals</small>'}</div></a>`; };
+    const wGroup = (l, cls, list) => (list.length ? `<div class="hx-wg"><i class="${cls}"></i>${l}<small>${list.length}</small></div>${list.map(wRow).join("")}` : "");
+    const wlHTML = wls.length ? wGroup("Needs attention", "down", att) + wGroup("Bullish signals", "up", bull) + wGroup("No change", "", calm)
+      : '<p class="hx-none">Add stocks with the + next to any symbol; their signals show here each day.</p>';
+    const head = (t, info, right, cls = "") => `<div class="hx-h ${cls}"><h2>${t}</h2>${INFO(info)}${right}</div>`;
     const nLiquid = U && U.series && U.series.n ? U.series.n[U.series.n.length - 1] : null;
     view.innerHTML = `<div class="home">
       <section class="hcard"><div class="hc-h"><h2>Market condition</h2><span class="muted small">${nLiquid ? nLiquid.toLocaleString("en-IN") + " liquid stocks · " : ""}as of ${B ? shortDay(B.data_date) : "–"}</span><a class="sp-link" href="#/breadth">Market breadth →</a></div>
         <div class="hc-3"><div class="hc-read"><small class="muted">MARKET READ</small>${readHTML}</div><div class="hc-part">${partHTML}</div><div class="hc-flow">${flowHTML}</div></div></section>
       <section class="hcard"><div class="hc-h"><h2>Indices</h2><a class="sp-link" href="#/breadth/indices">Major indices →</a></div><div class="hi-grid">${idxHTML}</div></section>
-      <div class="hc-2"><section class="hcard"><div class="hc-h"><h2>Today's setups</h2><span class="muted small">${setups.length} liquid stocks, RS 70+, nearest the pivot</span>
-          <button class="btn sm" id="hsCopy" type="button">Copy to TradingView</button><a class="sp-link" href="#/scanners/near-pivot">Open in Scanner →</a></div>${setHTML}</section>
-        <div class="hc-col"><section class="hcard"><div class="hc-h"><h2>Where the money is</h2><span class="muted small">themes · 1 week</span></div>${moneyHTML}</section>
-          <section class="hcard ev"><div class="hc-h"><h2>Coming up</h2><span class="muted small">results, IPOs, expiries</span></div>${evHTML}</section></div></div>
-      <section class="hcard"><div class="hc-h"><h2>Orders, deals & expansion</h2><span class="muted small">company filings with NSE · last 5 days · liquid stocks</span><a class="sp-link" href="#/news">All filings →</a></div><div class="hd">${dealsHTML}</div></section>
-      <section class="hcard"><div class="hc-h"><h2>Your watchlist plan</h2><span class="muted small">${wl.length} stock${wl.length === 1 ? "" : "s"}</span><a class="sp-link" href="#/watchlist">Open watchlist →</a></div><div class="hw">${wlHTML}</div></section>
+      <div class="hx">
+        <div class="hx-main">
+          <section class="hx-box">${head("Today's setups", "Liquid stocks with RS 70 or more that sit near a pivot (Near Pivot, VCP, Flag, Tight Setups), the closest to the pivot first. Tick rows to copy only those.",
+            `<button class="hx-btn" id="hsCopy" type="button"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M10.5 5V3.6c0-.6-.5-1.1-1.1-1.1H3.6c-.6 0-1.1.5-1.1 1.1v5.8c0 .6.5 1.1 1.1 1.1H5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>Copy to TradingView</button><a class="hx-link" href="#/scanners/near-pivot">Open in Scanner →</a>`, "band bl")}${setHTML}</section>
+          <div class="hx-sub">
+            <section class="hx-box">${head("Your watchlist plan", "The stocks of your open watchlist with today's signals: warnings first, then bullish signals, then the quiet ones.",
+              `<span class="hx-r">${esc(WL.name)} · ${wls.length} stock${wls.length === 1 ? "" : "s"}${att.length ? ` · ${att.length} need${att.length === 1 ? "s" : ""} attention` : ""}</span>`, "ul")}${wlHTML}<a class="hx-link" href="#/watchlist">Open Watchlists →</a></section>
+            <section class="hx-box">${head("Orders, expansion & approvals", "Company filings with NSE about orders, expansion, deals and approvals, liquid stocks, last 5 days.", '<span class="hx-r">Latest company news</span>', "ul")}<div class="hx-news">${dealsHTML}</div><a class="hx-link" href="#/news">Show more news →</a></section>
+          </div>
+        </div>
+        <div class="hx-side">
+          <section class="hx-box">${head("Where the money is", "Themes ranked by the average move of their stocks over the last 5 sessions: the 5 strongest and the 3 weakest.", `<span class="hx-r">Themes · last 5 sessions · to ${esc(bxDay(today))}</span>`, "ul")}${moneyHTML}</section>
+          <section class="hx-box">${head("Today's events", "Results dates of the coming week, IPOs listing today or open for bids, and the Nifty expiry days.", '<span class="hx-r">Earnings, IPOs, calendar</span>', "band pk")}<div class="hx-ev">${evHTML}</div></section>
+        </div>
+      </div>
       <p class="muted small">Our own simple rules on end-of-day data. Educational purpose only, not investment advice.</p></div>`;
     $("#stPage").innerHTML = `<span>${setups.length} setups</span><span class="st-n">Data ${SD.fmtDate(state.screenDate || state.dataDate)}</span>`;
     const hr = $("#hrMore"); if (hr) hr.onclick = () => { hs.more = !hs.more; saveHs(); renderHome(); };
@@ -3138,14 +3178,21 @@
       chartHover(document.getElementById("hhl"), null, showHL, () => showHL(hl.length - 1));
     }
     const hp = view.querySelector("[data-seg=hpart]"); if (hp) hp.onclick = (e) => { const b = e.target.closest("button"); if (!b) return; hs.part = b.dataset.v; saveHs(); renderHome(); };
-    $("#hsCopy").onclick = async () => { const t = setups.map(({ r }) => "NSE:" + r.symbol).join(","); try { await navigator.clipboard.writeText(t); $("#hsCopy").textContent = `Copied ${setups.length}`; } catch (e) { prompt("Copy these symbols:", t); } };
-    view.querySelectorAll(".hs-t tr[data-key]").forEach((tr) => { tr.onclick = () => { location.hash = "#/i/" + tr.dataset.key.replace(":", "/"); }; });
+    // copy the ticked rows (all rows when none is ticked) as a TradingView watchlist
+    const hsCopy = $("#hsCopy");
+    if (hsCopy) hsCopy.onclick = async () => {
+      const ticked = [...view.querySelectorAll("[data-hs]:checked")].map((x) => x.dataset.hs), list = setups.filter(({ r }) => !ticked.length || ticked.includes(r.key));
+      const t = list.map(({ r }) => "NSE:" + r.symbol).join(",");
+      try { await navigator.clipboard.writeText(t); hsCopy.lastChild.textContent = `Copied ${list.length}`; setTimeout(() => { hsCopy.lastChild.textContent = "Copy to TradingView"; }, 1600); } catch (e) { prompt("Copy these symbols:", t); }
+    };
+    const hsAll = $("#hsAll"); if (hsAll) hsAll.onchange = () => view.querySelectorAll("[data-hs]").forEach((x) => { x.checked = hsAll.checked; });
+    view.querySelectorAll(".hx-t tr[data-key]").forEach((tr) => { tr.onclick = (e) => { if (e.target.closest(".ck")) return; location.hash = "#/i/" + tr.dataset.key.replace(":", "/"); }; });
     // index sparklines (last 3 months) + above / below the 50 EMA and 200 SMA
     for (const el of view.querySelectorAll("[data-idx]")) {
       getJSON(`data/c/n/${el.dataset.idx}.json`).then((d) => {
         const c = SD.candlesFromChart(d, "adjusted").map((b) => b.close), l3 = c.slice(-63);
         const e50 = SD.ema(c, 50), s200 = c.length >= 200 ? c.slice(-200).reduce((a, x) => a + x, 0) / 200 : null, lc = c[c.length - 1];
-        el.querySelector(".hi-sp").innerHTML = spark(l3, l3[l3.length - 1] >= l3[0]);
+        el.querySelector(".hi-sp").innerHTML = spark(l3, true);
         const e = e50[e50.length - 1];
         el.querySelector(".hi-ma").innerHTML = `<span class="${lc >= e ? "up" : "down"}">50E</span> · <span class="${s200 != null && lc >= s200 ? "up" : "down"}">200S</span>`;
       }).catch(() => { el.querySelector(".hi-sp").innerHTML = ""; });

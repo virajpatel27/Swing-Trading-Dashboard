@@ -1495,3 +1495,36 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   buying (>= 2) / selling (<= 0.5) bands and avg up / down, breakouts card with Follow-through >= 5 % and the 5-session
   average of daily held rates; styles.css: columns 25 / 40 / 30, one header line with short coloured marks.
 - The numbers change on the website after the next deploy (breadth.json is built there).
+
+### 2026-11-15: New colour theme "Teal Aqua" (Viraj's choice)
+- Viraj wanted a new theme in shades of his logo green. Four options (Emerald terminal, Forest and gold, Graphite mint,
+  Teal aqua), each in light + dark, were shown as mock-ups; he picked **4. Teal aqua** (teal up / pink down, also easier
+  for colour-blind eyes than green / red).
+- site/styles.css: only the theme tokens at the top changed (light `:root`, dark `prefers-color-scheme` block and
+  `[data-theme="dark"]` block): soft aqua frame, white canvas, deep teal rail (dark rail so the green logo stays visible),
+  --accent / --up teal (#0f766e light, #2dd4bf dark), --down pink (#d6336c / #ff6b9a), teal + pink heat scale.
+  New token --on-down; small chips that had white text on --accent / --down now use --on-accent / --on-down (white in
+  light, dark text in dark mode, where white on bright teal was hard to read). Layout and sizes unchanged.
+- Contrast: text, muted text, up, down and warn all >= 4.5:1 on the panels in both modes. Checked all 10 pages (Home,
+  Scanners, chart, Groups, Breadth, Major Indices, Earnings, Heatmap, RRG, News) in light and dark with a contrast scan;
+  the only low-contrast items left are fixed colours outside the tokens (news category badges, RRG arrows, two MA
+  legend names in dark), unchanged from before. Theme toggle works as before. 32 JS + 220 Python tests green.
+- NEXT: some chart lines are hard-coded blue in app.js / chart.js (home participation + stage 2 line, breadth lines,
+  pivot / MACD / RS line). They are readable but not teal; switch them to the tokens if Viraj wants everything teal.
+
+### 2026-11-15: Home lower half rebuilt like the reference screenshots
+- Viraj (6 screenshots): Today's setups, Where the money is, Today's events, Your watchlist plan and the company news
+  must look like the reference, and every blue link must open its page.
+- site/app.js renderHome: left 64 % = Today's setups (blue header band, i-tip, Copy to TradingView with a copy icon -
+  copies the ticked rows, all when none - and Open in Scanner, row checkboxes, 1M % / 3M % / 52W high with one decimal,
+  RS 90+ blue, 56 px rows), under it Your watchlist plan (open list; Needs attention / Bullish signals / No change, two
+  chips + "+n") and Orders, expansion & approvals (NSE filings of liquid stocks, last 5 days, type chip Order / Deal /
+  Expansion / Approval / Update, cleaned one-line text, Show more news). Right 36 % = Where the money is (themes, last
+  5 sessions, Open themes) and Today's events (pink band: results of the coming week with logos, IPO listing today,
+  upcoming IPOs, 3 expiries). Index sparklines in one colour.
+- Expiries move earlier on NSE holidays (NSE_HOLIDAYS: 24-Nov and 25-Dec-2026): monthly expiry Mon 23-Nov like the
+  reference. Add the 2027 list when NSE publishes it.
+- wlSignals (watchlist page too): Lost breakout level (Nd), Up / Down on big volume (x), Within 5 % of pivot (amber),
+  New 20-day high, Quiet inside day, 5 tight closes.
+- Links checked in the preview: Open in Scanner, Open themes (and each theme row), Open Watchlists, Show more news,
+  Market breadth, Major indices. The theme session (Teal Aqua) edited the same files at the same time; both kept.

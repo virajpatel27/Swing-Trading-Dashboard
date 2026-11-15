@@ -74,6 +74,25 @@ test("weekly candles", () => {
   assert.deepEqual(w[0], { time: "2026-10-26", open: 10, high: 15, low: 8, close: 9, volume: 250 });
 });
 
+test("custom timeframes: n days, weeks, months, years", () => {
+  const days = [["2026-10-26", 10, 12, 9, 11, 100], ["2026-10-27", 11, 15, 10, 14, 100], ["2026-10-30", 14, 14, 8, 9, 50],
+    ["2026-11-02", 9, 10, 9, 10, 10], ["2026-11-10", 10, 11, 7, 8, 5], ["2027-01-04", 8, 20, 8, 19, 1]].map(([time, open, high, low, close, volume]) => ({ time, open, high, low, close, volume }));
+  assert.deepEqual(SD.tfParse("3D"), { n: 3, u: "D" });
+  assert.deepEqual(SD.tfParse("W"), { n: 1, u: "W" });
+  assert.deepEqual(SD.tfParse("15m"), { n: 15, u: "m" });
+  assert.equal(SD.tfLabel(1, "M"), "M");
+  assert.equal(SD.tfLabel(2, "W"), "2W");
+  const d2 = SD.toPeriod(days, "D", 2);
+  assert.equal(d2.length, 3);
+  assert.deepEqual(d2[0], { time: "2026-10-26", open: 10, high: 15, low: 9, close: 14, volume: 200 });
+  assert.deepEqual(SD.toPeriod(days, "W", 1), SD.toWeekly(days));
+  assert.equal(SD.toPeriod(days, "W", 2).length, 3);                      // weeks of 26 Oct + 2 Nov, 9 Nov, 4 Jan
+  const m = SD.toPeriod(days, "M", 1);
+  assert.deepEqual(m.map((b) => b.time), ["2026-10-26", "2026-11-02", "2027-01-04"]);
+  assert.equal(m[1].low, 7);
+  assert.equal(SD.toPeriod(days, "Y", 1).length, 2);
+});
+
 test("EMA matches the pipeline rule", () => {
   const c = [10, 11, 12, 13, 14].map((close, i) => ({ time: `2026-01-0${i + 1}`, close }));
   assert.deepEqual(SD.ema(c, 3).map((p) => p.value), [11.25, 12.125, 13.0625]);

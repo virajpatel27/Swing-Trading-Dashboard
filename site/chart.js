@@ -32,7 +32,7 @@
 
   /* ------------------------------------------------------------------ settings (with defaults) */
   const DEFAULTS = {
-    style: "mono", type: "candle", tf: "D", look: 2,
+    style: "mono", type: "candle", tf: "D", tfFav: ["D", "W"], tfCustom: [], look: 2,
     marks: { hilo52: false, swings: false, swingPct: 10, circuit: false, inside: false, actions: true, pivot: true, vcp: true, cup: true, tight: false, earnings: true, news: true },
     show: { earn: true, earnOpen: true, desc: true, due: true }, grid: false,
     chips: { float: true, rs: true, stage: true, from: true, theme: true },
@@ -186,8 +186,11 @@
     let range = null;
     if (!pv && cur.chart) { if (keepRange) range = cur.chart.timeScale().getVisibleLogicalRange(); cur.chart.remove(); cur.chart = null; }
     canvas.innerHTML = "";
-    const weekly = C.tf === "W";
-    const bars = weekly ? S.toWeekly(cur.daily) : cur.daily;
+    // timeframe (15-Nov-2026): D / W or a custom n days / weeks / months / years built from the daily bars; intraday
+    // timeframes need intraday data, which this site does not have (end-of-day data), so they fall back to daily
+    const TF = S.tfParse(C.tf), intraday = TF.u === "m" || TF.u === "h";
+    const weekly = !intraday && TF.u !== "D";                 // weekly-style settings (MA set, pivots, 52 bars) for W / M / Y bars
+    const bars = intraday ? cur.daily : S.toPeriod(cur.daily, TF.u, TF.n);
     if (!pv) cur.bars = bars;
     const times = bars.map((b) => b.time), o = bars.map((b) => b.open), h = bars.map((b) => b.high), l = bars.map((b) => b.low),
       c = bars.map((b) => b.close), v = bars.map((b) => b.volume || 0);
@@ -218,7 +221,7 @@
     let pricePane = 0, bench = null;
     if (show("rsline") || show("mansfield")) bench = await benchCandles(ind.rsline.bench);
     if (!alive()) return null;
-    const benchBars = bench ? (weekly ? S.toWeekly(bench) : bench) : null;
+    const benchBars = bench ? (intraday ? bench : S.toPeriod(bench.filter((b) => b.time >= cur.daily[0].time), TF.u, TF.n)) : null;
     const rs = benchBars ? I.rsLine(bars, benchBars) : null;
     if (rsAbove && rs) { pricePane = 1; paneNo = 1; }
     // price
@@ -239,7 +242,7 @@
         const col = color || MA_COLORS[k % MA_COLORS.length];
         const vals = type === "EMA" ? I.ema(c, n) : I.sma(c, n);
         line(pts(vals), col, pricePane, { lastValueVisible: !pv, title: "" });
-        names.push(`<b style="color:${col}">${type} ${n}${weekly ? "W" : ""}</b>`);
+        names.push(`<b style="color:${col}">${type} ${n}${C.tf === "D" || intraday ? "" : C.tf === "W" ? "W" : " · " + esc(C.tf)}</b>`);
       });
       lg("ma", `<em>MA</em> ${names.join(" ")}`);
     }
@@ -468,7 +471,7 @@
     cur.volPane = volPane;
     // visible range: last year (daily) / 3 years (weekly)
     if (range) chart.timeScale().setVisibleLogicalRange(range);
-    else { const n = weekly ? 156 : 250; chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, bars.length - n), to: bars.length + 3 }); }
+    else { const n = Math.max(30, Math.round(({ D: 250, W: 156, M: 120, Y: 40 }[TF.u] || 250) / (TF.u === "Y" ? 1 : TF.n))); chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, bars.length - n), to: bars.length + 3 }); }
     // header with crosshair values
     header(bars.length - 1, vflags);
     cur.onPaint = () => header(bars.length - 1, vflags);   // the volume label needs the painted panes (drawings.render calls it)
@@ -488,7 +491,7 @@
     chart.timeScale().subscribeVisibleLogicalRangeChange((r) => { if (endBtn && r) endBtn.hidden = r.to >= bars.length - 1; });
     endBtn.onclick = () => chart.timeScale().scrollToRealTime();
     drawings.attach(chart, price, pricePane);
-    cur.box.querySelector("#chNote").textContent = (weekly ? "Weekly bars (Monday-start weeks). " : "Daily bars. ")
+    cur.box.querySelector("#chNote").textContent = `${tfName(TF.n, TF.u)} bars${TF.u === "W" ? " (Monday-start weeks)" : ""}. `
       + "Prices adjusted for splits, bonus, rights, demergers. Drag the line between panes to resize them. Indicators use the same formulas as the table (docs/formulas.md).";
     return chart;
   }
@@ -552,7 +555,10 @@
     }
     const chg = p ? (b.close / p.close - 1) * 100 : null, chgAbs = p ? b.close - p.close : null;
     const back = (n) => { const x = cur.bars[i - n]; return x ? (b.close / x.close - 1) * 100 : null; };
-    const w = cfg.tf === "W";
+    // 1M / 3M change from the daily bars up to the last session of bar i (any timeframe)
+    const dEnd = () => { const D = cur.daily, nx = cur.bars[i + 1]; if (!nx) return D.length - 1; let lo = 0, hi = D.length - 1; while (lo < hi) { const m = (lo + hi + 1) >> 1; if (D[m].time < nx.time) lo = m; else hi = m - 1; } return lo; };
+    const backD = (n) => { const D = cur.daily, k = dEnd(), x = D[k - n]; return x && D[k] ? (D[k].close / x.close - 1) * 100 : null; };
+    const tfU = S.tfParse(cfg.tf).u, w = tfU !== "D" && tfU !== "m" && tfU !== "h";
     const f = vflags ? vflags[i] : null;
     const due = r.next_result && cfg.show.due !== false ? `<span class="ch-due">Results due ${esc(S.fmtDate(r.next_result))}</span>` : "";
     const hd = cur.box.querySelector("#chHead");
@@ -566,10 +572,10 @@
     const chipsEl = cur.box.querySelector(".ch-chips"), hr0 = hd.getBoundingClientRect(), cKey = `${Math.round(hr0.width)}|${chipsEl ? chipsEl.childElementCount : 0}`;
     if (chipsEl && cur.mKey !== cKey) { cur.mKey = cKey; const cr = chipsEl.getBoundingClientRect(); cur.mLeft = cr.width ? cr.left - hr0.left + cr.width / 2 : null; }
     hd.style.setProperty("--m-left", cur.mLeft != null ? `${cur.mLeft}px` : "55%");
-    hd.querySelector(".ch-l2").innerHTML = `<b class="ch-sym">${esc(r.symbol || r.name)}</b><span class="muted">${w ? "1W" : "1D"}</span>
+    hd.querySelector(".ch-l2").innerHTML = `<b class="ch-sym">${esc(r.symbol || r.name)}</b><span class="muted">${cfg.tf === "D" || tfIntra(cfg.tf) ? "1D" : cfg.tf === "W" ? "1W" : esc(cfg.tf)}</span>
       <span>O <b>${fmt(b.open)}</b></span><span>H <b>${fmt(b.high)}</b></span><span>L <b>${fmt(b.low)}</b></span><span>C <b>${fmt(b.close)}</b></span>
       <span class="${S.colorClass(chg)}">${chgAbs == null ? "" : (chgAbs > 0 ? "+" : "") + fmt(chgAbs)} (${S.fmtPct(chg)})</span>
-      <span class="ch-r"><span>1M <b class="${S.colorClass(back(w ? 4 : 21))}">${S.fmtPct(back(w ? 4 : 21))}</b></span><span>3M <b class="${S.colorClass(back(w ? 13 : 63))}">${S.fmtPct(back(w ? 13 : 63))}</b></span></span>`;
+      <span class="ch-r"><span>1M <b class="${S.colorClass(backD(21))}">${S.fmtPct(backD(21))}</b></span><span>3M <b class="${S.colorClass(backD(63))}">${S.fmtPct(backD(63))}</b></span></span>`;
     const vl = cur.box.querySelector("#chVol");
     if (vl) {
       const top = cur.volPane != null ? drawings.paneTopOf(cur.volPane) : null;
@@ -577,7 +583,7 @@
         vl.hidden = false; vl.style.top = `${top + 4}px`;
         let psw = 60; try { psw = cur.chart.priceScale("right").width(); } catch (e) { /* default */ }
         vl.style.right = `${psw + 8}px`;
-        vl.innerHTML = `<span>Vol <b class="${f.up ? "up" : f.down ? "down" : ""}">${S.fmtVol(b.volume)}</b></span><span>Avg 20${w ? "W" : "D"} <b>${S.fmtVol(f.avg20)}</b><i></i>RVol <b class="rv">${f.rvol == null ? "–" : Math.round(f.rvol * 100) + "%"}</b></span>`;
+        vl.innerHTML = `<span>Vol <b class="${f.up ? "up" : f.down ? "down" : ""}">${S.fmtVol(b.volume)}</b></span><span>Avg 20${!w ? "D" : cfg.tf === "W" ? "W" : " · " + esc(cfg.tf)} <b>${S.fmtVol(f.avg20)}</b><i></i>RVol <b class="rv">${f.rvol == null ? "–" : Math.round(f.rvol * 100) + "%"}</b></span>`;
       } else {
         vl.hidden = true;
         if (f && top == null && (cur.volTry = (cur.volTry || 0) + 1) < 20) setTimeout(() => { if (cur && cur.bars) header(i, vflags); }, 250);
@@ -637,7 +643,8 @@
   function renderTools() {
     const box = cur.box.querySelector("#chTools");
     const seg = (name, opts, val) => `<div class="seg sm" data-seg="${name}">${opts.map(([v, t, tip]) => `<button type="button" data-v="${v}" class="${v === val ? "on" : ""}" ${tip ? `title="${tip}"` : ""}>${t}</button>`).join("")}</div>`;
-    box.innerHTML = `${seg("tf", [["D", "D", "Daily"], ["W", "W", "Weekly"]], cfg.tf)}${seg("type", [["candle", ic("candle"), "Candles"], ["bar", ic("bars"), "Bars"]], cfg.type)}
+    const favs = tfSort([...new Set([...(cfg.tfFav || ["D", "W"]).filter((x) => !tfIntra(x)), ...(tfIntra(cfg.tf) ? [] : [cfg.tf])])]);
+    box.innerHTML = `<div class="tf-bar">${seg("tf", favs.map((x) => { const t = S.tfParse(x); return [x, x, tfName(t.n, t.u)]; }), cfg.tf)}<button type="button" class="tf-dd" data-act="tfm" title="More timeframes" aria-label="More timeframes" aria-haspopup="true"><svg viewBox="0 0 12 12" width="11" height="11" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>${seg("type", [["candle", ic("candle"), "Candles"], ["bar", ic("bars"), "Bars"]], cfg.type)}
       <button class="btn sm ${cfg.ind.ma.on ? "on" : ""}" data-act="ma" type="button" title="Moving averages on / off">MA</button>
       <button class="btn sm" data-act="ind" type="button"><i class="fx">ƒx</i> Indicators <span class="caret">▾</span></button>
       <span class="ch-chips">${chipsHTML()}</span>
@@ -655,8 +662,82 @@
       if (act) {
         if (act.dataset.act === "ma") { cfg.ind.ma.on = !cfg.ind.ma.on; cfg.ind.ma.hidden = false; save(); act.classList.toggle("on", cfg.ind.ma.on); return draw(true); }
         if (act.dataset.act === "ind") return indicatorMenu();
+        if (act.dataset.act === "tfm") return tfMenu(act);
         if (act.dataset.act === "set") return settingsDrawer();
       }
+    };
+  }
+
+  /* timeframe menu (Viraj 15-Nov-2026, reference picture): on top a number box and a unit box to make any timeframe
+     (minutes, hours, days, weeks, months, years); below, the list with a heart on each - hearted ones show as buttons in
+     the toolbar. Custom ones can be removed (x). Intraday timeframes are listed but need intraday data (not on this site). */
+  const TF_BASE = ["D", "W", "5m", "15m", "30m", "1h", "75m"];
+  const TF_UNITS = [["m", "Minutes", "minute"], ["h", "Hours", "hour"], ["D", "Days", "day"], ["W", "Weeks", "week"], ["M", "Months", "month"], ["Y", "Years", "year"]];
+  const TF_MIN = { m: 1, h: 60, D: 1440, W: 7200, M: 30000, Y: 360000 };
+  const tfIntra = (tf) => /[mh]$/.test(String(tf));
+  const tfDur = (tf) => { const t = S.tfParse(tf); return t.n * TF_MIN[t.u]; };
+  const tfSort = (a) => a.slice().sort((x, y) => tfDur(x) - tfDur(y));
+  function tfName(n, u) { const w = (TF_UNITS.find((x) => x[0] === u) || TF_UNITS[2])[2]; return n === 1 ? { day: "Daily", week: "Weekly", month: "Monthly", year: "Yearly" }[w] || `1 ${w}` : `${n} ${w}s`; }
+  const HEART = '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M12 20.3s-7.2-4.4-9.3-8.6C1.2 8.6 3 5 6.6 5c2.1 0 3.5 1.2 4.4 2.6.1.2.4.2.5 0C12.4 6.2 13.8 5 15.9 5c3.6 0 5.4 3.6 3.9 6.7-2.1 4.2-9.3 8.6-9.3 8.6z" fill="currentColor" fill-opacity="var(--hf, 0)" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+  function tfMenu(btn) {
+    const old = document.querySelector(".tf-pop"); if (old) { old.remove(); return; }
+    const pop = document.createElement("div");
+    pop.className = "tf-pop";
+    let note = "";
+    const list = () => [...TF_BASE, ...tfSort((cfg.tfCustom || []).filter((x) => !TF_BASE.includes(x)))];
+    const paint = () => {
+      const fav = new Set(cfg.tfFav || []), mine = new Set(cfg.tfCustom || []);
+      const nIn = pop.querySelector(".tf-n"), uIn = pop.querySelector(".tf-u");
+      const keepN = nIn ? nIn.value : "2", keepU = uIn ? uIn.value : "D";
+      pop.innerHTML = `<div class="tf-add"><input class="tf-n" type="number" min="1" max="999" step="1" value="${keepN}" aria-label="Number" placeholder="Number">
+          <select class="tf-u" aria-label="Unit">${TF_UNITS.map(([v, l]) => `<option value="${v}" ${v === keepU ? "selected" : ""}>${l}</option>`).join("")}</select>
+          <button type="button" class="tf-go" title="Add this timeframe to the list and open it">Add</button></div>
+        ${note ? `<p class="tf-note">${note}</p>` : ""}
+        <div class="tf-list" role="menu">${list().map((tf) => { const off = tfIntra(tf), t = S.tfParse(tf);
+          return `<div class="tf-it${tf === cfg.tf ? " on" : ""}${off ? " off" : ""}" role="menuitem" data-tf="${tf}" title="${off ? "Intraday bars need intraday data - this site has end-of-day data only" : esc(tfName(t.n, t.u))}">
+            <span>${tf}</span>${mine.has(tf) ? `<button type="button" class="tf-rm" data-rm title="Remove ${tf}" aria-label="Remove ${tf}">✕</button>` : ""}
+            <button type="button" class="tf-fav${fav.has(tf) ? " on" : ""}" data-fav ${off ? "disabled" : ""} title="${fav.has(tf) ? "Remove from the toolbar" : "Show in the toolbar"}" aria-label="Favourite ${tf}">${HEART}</button></div>`; }).join("")}</div>`;
+      const n = pop.querySelector(".tf-n");
+      n.onkeydown = (e) => { if (e.key === "Enter") add(); };
+    };
+    const pick = (tf) => { cfg.tf = tf; save(); close(); renderTools(); draw(false); };
+    const add = () => {
+      const n = Math.floor(Number(pop.querySelector(".tf-n").value)), u = pop.querySelector(".tf-u").value;
+      if (!(n >= 1 && n <= 999)) { note = "Type a number from 1 to 999."; return paint(); }
+      const tf = S.tfLabel(n, u);
+      if (!list().includes(tf)) cfg.tfCustom = [...(cfg.tfCustom || []), tf];
+      save();
+      if (tfIntra(tf)) { note = `${tf} added. Minute and hour bars need intraday data; this site has end-of-day data, so they cannot open yet.`; return paint(); }
+      pick(tf);
+    };
+    paint();
+    document.body.appendChild(pop);
+    const b = btn.getBoundingClientRect();
+    pop.style.left = `${Math.max(8, Math.min(b.left - 40, innerWidth - pop.offsetWidth - 8))}px`;
+    pop.style.top = `${b.bottom + 6}px`;
+    const close = () => { pop.remove(); document.removeEventListener("mousedown", outside, true); document.removeEventListener("keydown", onKey); };
+    const outside = (e) => { if (!pop.contains(e.target) && !btn.contains(e.target)) close(); };
+    const onKey = (e) => { if (e.key === "Escape") close(); };
+    setTimeout(() => { document.addEventListener("mousedown", outside, true); document.addEventListener("keydown", onKey); });
+    pop.onclick = (e) => {
+      e.stopPropagation();
+      if (e.target.closest(".tf-go")) return add();
+      const it = e.target.closest("[data-tf]"); if (!it) return;
+      const tf = it.dataset.tf;
+      if (e.target.closest("[data-fav]")) {
+        const f = new Set(cfg.tfFav || []);
+        if (f.has(tf)) { if (f.size > 1) f.delete(tf); } else f.add(tf);
+        cfg.tfFav = [...f]; save(); note = ""; paint(); renderTools(); return;
+      }
+      if (e.target.closest("[data-rm]")) {
+        cfg.tfCustom = (cfg.tfCustom || []).filter((x) => x !== tf); cfg.tfFav = (cfg.tfFav || []).filter((x) => x !== tf);
+        if (!cfg.tfFav.length) cfg.tfFav = ["D"];
+        save(); note = "";
+        if (cfg.tf === tf) { cfg.tf = "D"; save(); renderTools(); draw(false); } else renderTools();
+        return paint();
+      }
+      if (tfIntra(tf)) { note = "Minute and hour bars need intraday data; this site has end-of-day data, so they cannot open yet."; return paint(); }
+      pick(tf);
     };
   }
 

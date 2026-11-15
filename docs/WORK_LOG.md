@@ -1532,3 +1532,15 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   New 20-day high, Quiet inside day, 5 tight closes.
 - Links checked in the preview: Open in Scanner, Open themes (and each theme row), Open Watchlists, Show more news,
   Market breadth, Major indices. The theme session (Teal Aqua) edited the same files at the same time; both kept.
+
+### 2026-11-15: Chart timeframe menu with custom timeframes
+- Viraj (reference picture): the D / W buttons get a chevron menu; on top two boxes (a number and a unit: minutes,
+  hours, days, weeks, months, years) to make any timeframe, below the list D, W, 5m, 15m, 30m, 1h, 75m (+ own ones)
+  with a heart each; hearted timeframes show as buttons in the chart toolbar.
+- site/logic.js: SD.tfParse / tfLabel / toPeriod (n sessions, n Monday-weeks, n months, n years from the daily bars;
+  first session's date, open, highest high, lowest low, last close, summed volume); tests/js/logic.test.js.
+- site/chart.js: tfMenu (Add, heart, remove x for own ones; Enter adds), draw() builds the bars of any timeframe (RS
+  line benchmark the same way), visible range per unit, header label (3M), 1M / 3M change from the daily bars,
+  MA names "SMA 10 · 3M", note text; settings tfFav / tfCustom saved with the chart settings. CSS .tf-*.
+- Minute / hour timeframes are listed but cannot open: the site has end-of-day data only (intraday data would need a
+  new data source; the daily job never uses Angel One).

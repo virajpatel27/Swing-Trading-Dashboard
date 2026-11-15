@@ -2465,3 +2465,30 @@ a.hx-er:hover { text-decoration: none; color: var(--accent); }
   .hx-t th:nth-child(5), .hx-t td:nth-child(5), .hx-t th:nth-child(8), .hx-t td:nth-child(8) { display: none; } .hx-h.band { padding: 0 12px; flex-wrap: wrap; } }
 
 .wl-c.wt-warn { color: #a16207; background: color-mix(in srgb, #f59e0b 15%, transparent); }
+
+/* chart timeframe menu (Viraj 15-Nov-2026): favourite buttons + chevron; number + unit boxes; list with hearts */
+.tf-bar { display: inline-flex; align-items: center; gap: 2px; }
+.tf-dd { display: inline-grid; place-items: center; width: 22px; height: 26px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); cursor: pointer; }
+.tf-dd:hover { background: var(--panel-2); color: var(--text); }
+.tf-pop { position: fixed; z-index: 120; width: 236px; padding: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(15, 25, 50, .16); animation: hmTip .14s ease-out; font-size: 13px; color: var(--text); }
+.tf-add { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; gap: 6px; padding: 2px 2px 8px; border-bottom: 1px solid var(--line); }
+.tf-add input, .tf-add select { height: 30px; min-width: 0; padding: 0 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); color: var(--text); font: 13px var(--font); }
+.tf-add input:focus, .tf-add select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.tf-go { height: 30px; padding: 0 10px; border: 0; border-radius: 7px; background: var(--accent); color: var(--on-accent, #fff); font: 600 12px var(--font); cursor: pointer; }
+.tf-go:hover { filter: brightness(1.08); }
+.tf-note { margin: 8px 4px 2px; font-size: 11.5px; line-height: 1.45; color: var(--muted); }
+.tf-list { display: flex; flex-direction: column; padding-top: 4px; max-height: 360px; overflow-y: auto; scrollbar-width: none; }
+.tf-it { display: flex; align-items: center; gap: 6px; height: 38px; padding: 0 6px 0 12px; border-radius: 8px; cursor: pointer; transition: background .12s; }
+.tf-it:hover { background: var(--panel-2); }
+.tf-it > span { flex: 1; font-weight: 500; }
+.tf-it.on > span { color: var(--accent); font-weight: 600; }
+.tf-it.off > span { color: var(--muted); }
+.tf-fav, .tf-rm { display: inline-grid; place-items: center; width: 28px; height: 28px; border: 0; border-radius: 6px; background: transparent; color: color-mix(in srgb, var(--muted) 80%, transparent); cursor: pointer; }
+.tf-fav:hover:not(:disabled), .tf-rm:hover { color: var(--text); background: color-mix(in srgb, var(--muted) 12%, transparent); }
+.tf-fav.on { color: var(--accent); --hf: 0; }
+.tf-fav.on svg path { stroke-width: 1.9; }
+.tf-fav:disabled { opacity: .35; cursor: default; }
+.tf-rm { font-size: 11px; opacity: 0; }
+.tf-it:hover .tf-rm { opacity: 1; }
+

@@ -104,6 +104,43 @@
   }
 
   /** daily candles -> weekly (Monday-start weeks), for long ranges */
+  /** chart timeframe text -> {n, u}: "D", "W", "M", "3D", "2W", "6M", "1Y" (end-of-day bars) or "5m", "1h" (intraday) */
+  function tfParse(tf) {
+    const m = /^(\d*)\s*(m|h|D|W|M|Y)$/.exec(String(tf || "D").trim());
+    if (!m) return { n: 1, u: "D" };
+    return { n: Math.max(1, Math.min(999, Number(m[1] || 1))), u: m[2] };
+  }
+  /** label of a timeframe: 1 of a day / week / month stays "D" / "W" / "M" */
+  function tfLabel(n, u) { return Number(n) === 1 && "DWM".includes(u) ? u : `${Number(n)}${u}`; }
+  /** daily candles -> bars of n days (sessions, counted from the first one), n weeks (Monday weeks), n months or n years.
+      Each bar takes the first session's date, open, the highest high, lowest low, last close and the summed volume. */
+  function toPeriod(candles, u, n = 1) {
+    n = Math.max(1, Math.floor(n));
+    if (u === "D" && n === 1) return candles.slice();
+    if (u === "W" && n === 1) return toWeekly(candles);
+    const out = [];
+    let cur = null, key = null;
+    candles.forEach((c, i) => {
+      const d = new Date(c.time + "T00:00:00Z");
+      let k;
+      if (u === "D") k = Math.floor(i / n);
+      else if (u === "W") k = Math.floor(Math.floor((d.getTime() / 86400000 + 3) / 7) / n);     // weeks start Monday (1970-01-05)
+      else if (u === "M") k = Math.floor((d.getUTCFullYear() * 12 + d.getUTCMonth()) / n);
+      else k = Math.floor(d.getUTCFullYear() / n);
+      if (k !== key) {
+        if (cur) out.push(cur);
+        key = k;
+        cur = { time: c.time, open: c.open, high: c.high, low: c.low, close: c.close, volume: c.volume };
+      } else {
+        cur.high = Math.max(cur.high, c.high);
+        cur.low = Math.min(cur.low, c.low);
+        cur.close = c.close;
+        if (c.volume != null) cur.volume = (cur.volume || 0) + c.volume;
+      }
+    });
+    if (cur) out.push(cur);
+    return out;
+  }
   function toWeekly(candles) {
     const out = [];
     let cur = null, wk = null;
@@ -319,7 +356,7 @@
   }
 
   const api = { PERIODS, SCREENS, RANGES, rowsFromSnapshot, keyOf, fmtPrice, fmtPct, fmtInt, fmtVol, fmtDate, filterRows, sortRows,
-    toCSV, candlesFromChart, toWeekly, ema, sliceRange, colorClass, heatLevel, STAGE_TXT, COLUMN_GROUPS, COLUMNS, DEFAULT_COLUMNS, SORTS,
+    toCSV, candlesFromChart, toWeekly, toPeriod, tfParse, tfLabel, ema, sliceRange, colorClass, heatLevel, STAGE_TXT, COLUMN_GROUPS, COLUMNS, DEFAULT_COLUMNS, SORTS,
     screenRows, fmtCell, filterStocks, earnGrade, squarify, leaderScore };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.SD = api;

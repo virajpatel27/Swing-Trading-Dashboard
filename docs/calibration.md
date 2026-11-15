@@ -293,3 +293,20 @@ failed = below the close before the breakout (13-Nov only 1 failed). Labels (our
 4 % ratio >= 2 Strong buying, >= 1.25 More buying, > 0.8 Balanced, > 0.5 More selling, else Heavy selling; A-D line
 "Line rising / falling" vs 5 sessions before.
 
+## Groups table re-checked 15-Nov-2026 (Viraj's video "Check Sector Rotation the Easy Way", data through Thu 12-Nov)
+Reference points read from the video: 21 sector ranks with MED 1Y, 28 industry and 14 theme ranks with rank changes,
+group counts (Sectors 21 of 23, Industries 84 of 173, Themes 76 of 96), Healthcare's industries (stocks, MED 1Y, > 50 SMA).
+
+| Finding | Before | After (rebuilt 12-Nov) |
+|---|---|---|
+| MED (median member return) = LIQUID members only (sector MED 1Y error) | 9.0 points (all members) | 1.6 points |
+| Rank on returns of members liquid the day before (market = liquid stocks too), strength 63 sessions as before | sector 0.79, theme 0.79, industry 0.79 (Spearman) | sector 0.91, theme 0.93, industry 0.76 |
+| Small group = fewer than 6 liquid members (shown groups) | 23 / 87 / 83 | 22 / 73 / 77 (reference 21 / 84 / 76) |
+| Healthcare stocks counted / 20D highs-lows | 182 / 38-2 | 139 / 29-1 (reference 129 / 26-0) |
+
+Rank change: 5 sessions kept (10 / 15 / 21 tried; themes fit best at 5, e.g. Banking +36 vs ours +31, NBFC +16 / +13,
+GCC +9 / +8), correlation over the shown movers only 0.15-0.26 (the reference's top movers are not all ours).
+Industries: the reference uses its own 173-industry list (e.g. "Jewellery & Watches", "Cars & UVs", "Commercial
+Services"); ours is NSE's basic industry (195), so 6 of its names have no match and industry ranks stay ~0.76.
+avg_* (all members) and rank_1m are unchanged: the stock export's group fields were matched on all members (S9).
+

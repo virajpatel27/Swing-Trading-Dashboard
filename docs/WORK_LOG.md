@@ -1544,3 +1544,17 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   MA names "SMA 10 · 3M", note text; settings tfFav / tfCustom saved with the chart settings. CSS .tf-*.
 - Minute / hour timeframes are listed but cannot open: the site has end-of-day data only (intraday data would need a
   new data source; the daily job never uses Angel One).
+
+### 2026-11-15: Sector rotation video - Groups table on liquid stocks
+- Viraj (video "Check Sector Rotation the Easy Way"): what does it say, and the dashboard must show market rotation the
+  same way with accurate data. The video: money moves between sectors; on the Groups page (Sector / Industry / Theme)
+  sort by Rank change - the groups that climbed most (e.g. Public Sector Bank 30th -> 2nd) are where money is coming
+  in, the ones that fell most (IT, Sugar) are where it is leaving; open a group, filter liquid / Stage 2, check charts.
+- Our Groups page already sorts Rank like that (best, worst, climbers, fallers). The data was off: the reference's
+  table counts LIQUID members only. swingdash/group_rank.py group_table(liquid=...): rank on returns of members liquid
+  the day before, MED / 20D H-L / % > SMA50 / stock count (new field nl) / small on liquid members (min 6);
+  swingdash/screen.py passes the liquid_day frame; config/group_rank.yaml table_liquid, min_liquid_members;
+  site/app.js Stocks column = nl. Bug found on the way: the master "liquid" flag is text, parsed explicitly.
+- Result (12-Nov rebuilt): sector MED 1Y error 9.0 -> 1.6 points, rank correlation sector 0.79 -> 0.91, theme
+  0.79 -> 0.93 (docs/calibration.md). Test: tests/test_scan_phase9.py.
+- Open: the reference's own 173-industry list (ours: NSE basic industry, 195) keeps industry ranks at ~0.76.

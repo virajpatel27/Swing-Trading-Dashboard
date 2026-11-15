@@ -28,12 +28,17 @@ def tag_of(strength: float, momentum: float) -> str | None:
     return "Improving" if momentum >= 100 else "Lagging"
 
 
-def rrg(closes: pd.DataFrame, members: dict[str, list[str]], cfg: dict, bench: pd.Series | None = None) -> tuple[pd.DataFrame, pd.DataFrame]:
+def rrg(closes: pd.DataFrame, members: dict[str, list[str]], cfg: dict, bench: pd.Series | None = None,
+        liquid: pd.DataFrame | None = None) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Strength and momentum per day (rows) and group (columns) from the member closes (see config/group_rank.yaml).
-    bench = an index's closes to compare with instead of the equal-weight market."""
+    bench = an index's closes to compare with instead of the equal-weight market; liquid = days x stocks (True = liquid
+    that day): a stock's daily return then counts (in its group and in the market) only when it was liquid the day before."""
     mv = float(cfg.get("max_daily_move", 0.25))
     rets = closes.pct_change(fill_method=None)
     rets = rets.where(rets.abs() <= mv)
+    if liquid is not None:
+        lq = liquid.reindex(index=closes.index, columns=closes.columns).astype(float).fillna(0).astype(bool)
+        rets = rets.where(lq.shift(1, fill_value=False))
     if bench is not None:
         market = bench.reindex(closes.index).ffill().astype(float)
     else:
@@ -76,11 +81,20 @@ def rrg_cfg(cfg: dict) -> dict:
 
 
 def group_table(rows: pd.DataFrame, closes: pd.DataFrame, membership: pd.DataFrame, cfg: dict,
-                benches: dict[str, pd.Series] | None = None) -> dict[str, list[dict]]:
+                benches: dict[str, pd.Series] | None = None, liquid: pd.DataFrame | None = None) -> dict[str, list[dict]]:
     """rows = today's screen rows (index = stock id); closes = adjusted closes (days x stock ids), last sessions;
-    benches = {index id: closes} for the RRG page's other benchmarks."""
+    benches = {index id: closes} for the RRG page's other benchmarks; liquid = days x stocks liquid flags.
+
+    Like the reference's Groups table (fitted 15-Nov-2026 on its video of 12-Nov, docs/calibration.md): with
+    table_liquid the rank, rank change, MED columns, 20-day highs / lows, % above SMA50, the stock count (nl) and "small"
+    use the LIQUID members (rank: daily returns of members liquid the day before). avg_* (all members) and rank_1m stay
+    as before: the per-stock group fields were matched on all members. The RRG page tails are unchanged."""
     rows = rows[~rows.get("stale", pd.Series(False, index=rows.index)).fillna(False).astype(bool)]
     min_n = int(cfg.get("min_members", 5))
+    use_liq = bool(cfg.get("table_liquid", False)) and liquid is not None and "liquid" in rows
+    min_l = int(cfg.get("min_liquid_members", 6))
+    # the master file gives "True" / "False" as text: compare, never astype(bool) (any non-empty text is True)
+    liq_now = rows["liquid"].map(lambda v: v is True or str(v).strip().lower() in ("true", "1")) if "liquid" in rows else pd.Series(True, index=rows.index)
     back = int(cfg.get("rank_change_sessions", 5))
     tail = int(cfg.get("tail_points", 10))
     nd, nw = int(cfg.get("tail_daily", 20)), int(cfg.get("tail_weekly", 10))
@@ -94,20 +108,22 @@ def group_table(rows: pd.DataFrame, closes: pd.DataFrame, membership: pd.DataFra
         members = {g: list(d["id"]) for g, d in m.groupby("name")}
         parent = dict(zip(m["name"], m["parent"]))
         big = {g: ids for g, ids in members.items() if len(ids) >= min_n}
-        strength, momentum = rrg(closes, big, cfg)
+        lmem = {g: [i for i in ids if liq_now.get(i, False)] for g, ids in members.items()} if use_liq else members
+        ranked = {g: members[g] for g, ids in lmem.items() if len(ids) >= (min_l if use_liq else min_n)}
+        strength, momentum = rrg(closes, ranked, cfg, liquid=liquid if use_liq else None)
         rc = rrg_cfg(cfg)
         r_s, r_m = rrg(closes, big, rc)
         other = {k: rrg(closes, big, rc, b) for k, b in (benches or {}).items() if b is not None and len(b)}
         ranks = (-strength).rank(axis=1, method="min") if len(strength) else pd.DataFrame()
         groups = []
         for g, ids in members.items():
-            d = {"name": g, "parent": parent.get(g, ""), "n": len(ids), "ids": sorted(ids), "small": len(ids) < min_n}
+            li = lmem[g]
+            d = {"name": g, "parent": parent.get(g, ""), "n": len(ids), "nl": len(li), "ids": sorted(ids), "small": g not in ranked}
             for p, col in PERIODS.items():
-                v = num(col).loc[ids]
-                d[f"med_{p}"] = _r(v.median())
-                d[f"avg_{p}"] = _r(v.mean())
-            d["hi20"], d["lo20"] = int(hi20.loc[ids].sum()), int(lo20.loc[ids].sum())
-            d["above50"] = _r(above.loc[ids].mean() * 100)
+                d[f"med_{p}"] = _r(num(col).loc[li].median()) if li else None
+                d[f"avg_{p}"] = _r(num(col).loc[ids].mean())
+            d["hi20"], d["lo20"] = int(hi20.loc[li].sum()), int(lo20.loc[li].sum())
+            d["above50"] = _r(above.loc[li].mean() * 100) if li else None
             if g in strength.columns and len(strength) and np.isfinite(strength[g].iloc[-1]):
                 s, mo = float(strength[g].iloc[-1]), float(momentum[g].iloc[-1])
                 d["strength"], d["momentum"], d["tag"] = _r(s), _r(mo), tag_of(s, mo)
@@ -121,7 +137,7 @@ def group_table(rows: pd.DataFrame, closes: pd.DataFrame, membership: pd.DataFra
                     if g in bs.columns and np.isfinite(bs[g].iloc[-1]):
                         d["tails"][k] = {"s": tail_points(bs[g], nd, nw), "m": tail_points(bm[g], nd, nw)}
             groups.append(d)
-        r1m = pd.Series({d["name"]: d["avg_1m"] for d in groups if not d["small"] and d["avg_1m"] is not None})
+        r1m = pd.Series({d["name"]: d["avg_1m"] for d in groups if d["n"] >= min_n and d["avg_1m"] is not None})
         for d in groups:
             d["rank_1m"] = int(r1m.rank(ascending=False, method="min")[d["name"]]) if d["name"] in r1m.index else None
         out[level] = sorted(groups, key=lambda d: (d.get("rank") is None, d.get("rank") or 0, -d["n"]))

@@ -162,7 +162,8 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
         bdf = store.read(data / "indices" / "nse" / bid, store.INDEX_COLS)
         if len(bdf):
             benches[bid] = bdf.set_index("date")["close"].astype(float)
-    table = group_rank.group_table(rdf, closes, mem, gcfg, benches)
+    liq = pd.DataFrame({sid: h["liquid_day"].iloc[-n_hist - 5:] for sid, h in hists.items() if "liquid_day" in h}).sort_index().reindex(closes.index)
+    table = group_rank.group_table(rdf, closes, mem, gcfg, benches, liquid=liq)
     gfields = group_rank.stock_fields(rdf, table, mem)
     for row in rows:
         row.update(gfields.get(row["id"], {}))

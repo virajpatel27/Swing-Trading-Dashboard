@@ -277,7 +277,7 @@
     if (spec.length === 1 && spec[0].def && spec[0].k !== k) spec = [];            // the default order gives way to the first click
     const i = spec.findIndex((x) => x.k === k);
     if (k === "rank") {
-      if (i < 0) return [...spec, { k, m: 0 }];
+      if (i < 0) return [...spec, { k, m: spec.length ? 0 : 1 }];                  // from the default (best first) a click shows worst first
       const m = (spec[i].m ?? 0) + 1;
       return m > 3 ? spec.filter((_, j) => j !== i) : spec.map((x, j) => (j === i ? { k, m } : x));
     }
@@ -353,7 +353,7 @@
       + (indCols ? `${th(spec, tbl, "above50", "&gt; 50 SMA", "", "Share of the group's stocks above their 50-day average")}${th(spec, tbl, "n", "STOCKS")}` : th(spec, tbl, "hl", "20D H/L", "", "Stocks at a 20-day high / at a 20-day low today")) + `</tr></thead><tbody>`
       + items.map((x) => `<tr class="${x.name === selName ? "on" : ""}${x.small ? " small" : ""}" data-f="${tbl}:${esc(x.name)}" data-href="${hrefOf(x)}" title="${esc(tipOf(x))}"><td class="l">${indCols ? '<i class="gx-chev">›</i>' : ""}<span class="gx-n">${esc(GX_SEC_SHORT[x.name] || x.name)}</span>${x.tag && !x.small ? `<i class="gx-tag ${TAG_CLS[x.tag] || ""}"></i>` : ""}</td>`
         + `<td class="num">${rankCell(x)}</td><td class="num pv">${pct2(x["med_" + p])}</td>`
-        + (indCols ? `<td class="num">${x.small || x.above50 == null ? '<span class="muted">—</span>' : Math.round(x.above50) + "%"}</td><td class="num">${x.n}</td>`
+        + (indCols ? `<td class="num">${x.small || x.above50 == null ? '<span class="muted">—</span>' : Math.round(x.above50) + "%"}</td><td class="num">${x.nl ?? x.n}</td>`
           : `<td class="num"><span class="${x.hi20 ? "up" : "muted"}">${x.hi20 ?? 0}</span><span class="muted">/</span><span class="${x.lo20 ? "down" : "muted"}">${x.lo20 ?? 0}</span></td>`) + "</tr>").join("")
       + "</tbody></table>";
     const headA = `<b>${plural}</b><small>${list.length}</small>`;

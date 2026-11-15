@@ -17,6 +17,10 @@ rank_change_sessions: 5
 history_sessions: 160          # sessions of prices used (must be > ratio_window + momentum_lag)
 max_daily_move: 0.25           # a one-day move above 25 % (bad tick / missed corporate action) is left out
 min_members: 5                 # smaller industries / themes get no rank (greyed, "Show small groups")
+table_liquid: true              # 15-Nov-2026 (reference video of 12-Nov): the Groups table counts LIQUID members only - rank (returns
+                                #   of members liquid the day before), MED, 20D H/L, % > SMA50, stocks. Sector rank match 0.79 -> 0.91,
+                                #   themes 0.79 -> 0.93 (Spearman), MED 1Y error 9.2 -> 1.8 points; group counts 23 / 73 / 77 vs 21 / 84 / 76
+min_liquid_members: 6           # with table_liquid: fewer liquid members = small group (no rank)
 tail_points: 10                # strength / momentum points kept per group for a later RRG chart
 tail_daily: 20                 # RRG page (Phase N9): daily points per tail
 tail_weekly: 10                # RRG page: points 5 sessions apart ("weekly")

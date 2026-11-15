@@ -70,3 +70,22 @@ def test_group_rank_tags_and_stock_fields():
     assert f["S0"]["sector_rank"] == 1 and f["S0"]["vs_sector_1m"] == 0.0 and f["S0"]["theme"] == "T1"
     assert f["S0"]["theme_status"] == t["theme"][0]["tag"] and "theme" not in f["S20"]
     assert group_rank.tag_of(101, 99) == "Weakening" and group_rank.tag_of(99, 101) == "Improving"
+
+
+def test_group_table_counts_liquid_members_only():
+    """table_liquid (15-Nov-2026): MED / counts / small / rank use the liquid members; avg_* keeps all members."""
+    days = pd.bdate_range("2026-01-01", periods=120)
+    rng = np.random.default_rng(2)
+    C = pd.DataFrame({f"S{i}": 100 * np.cumprod(1 + rng.normal(0.001 if i < 8 else -0.001, 0.002, len(days))) for i in range(16)}, index=days)
+    mem = pd.DataFrame([("sector", "A" if i < 8 else "B", "", f"S{i}", f"S{i}") for i in range(16)], columns=["level", "name", "parent", "symbol", "id"])
+    liquid_now = [True] * 6 + [False] * 2 + [True] * 3 + [False] * 5           # A: 6 liquid of 8, B: 3 liquid of 8
+    rows = pd.DataFrame({"id": list(C.columns), "ret_1m": 1.0, "ret_1w": 1.0, "chg_1d": 0.5, "ret_3m": 1, "ret_ytd": 1, "from_sma50": 1.0,
+                         "ret_1y": [10.0] * 6 + [-50.0] * 2 + [5.0] * 8, "high": 10, "high_20d": 10, "low": 5, "low_20d": 4,
+                         "liquid": [str(x) for x in liquid_now]}).set_index("id")
+    liq = pd.DataFrame({c: [v] * len(days) for c, v in zip(C.columns, liquid_now)}, index=days)
+    cfg = {"ratio_window": 63, "momentum_lag": 10, "rank_change_sessions": 5, "min_members": 3, "table_liquid": True, "min_liquid_members": 6}
+    t = {d["name"]: d for d in group_rank.group_table(rows, C, mem, cfg, liquid=liq)["sector"]}
+    assert t["A"]["nl"] == 6 and t["A"]["n"] == 8 and t["A"]["med_1y"] == 10.0          # the two illiquid -50 % stocks left out
+    assert t["A"]["avg_1y"] == round((6 * 10 - 100) / 8, 2)                               # average: all members (stock fields)
+    assert t["A"]["hi20"] == 6 and not t["A"]["small"] and t["A"]["rank"] == 1
+    assert t["B"]["small"] and t["B"].get("rank") is None and t["B"]["nl"] == 3

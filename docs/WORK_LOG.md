@@ -1567,3 +1567,8 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   scanner toolbar centred in the band with white search / New scan / picker / buttons; breadth tabs use the same band.
   Tokens: darker text and labels, more vivid up / down, deeper card shadow; numbers in tables medium weight.
 - Checked in the preview: Scanners, Home, Groups, Breadth (light) and the scanner page in dark mode.
+- Same day, part 2 (Viraj's 11 screenshots): the band gradient is green only (teal -> emerald -> light green, no blue
+  end); on Home-section pages the gradient sits on the top Pages bar instead of the card; Scanners page fits the window
+  like the reference (8 px frame, results / chart / stock panel edge to edge with one hairline, no boxes or gaps);
+  Groups toolbar centred in the band; thin scrollbars on the Groups columns, RRG, watchlist and earnings lists (the
+  standard scrollbar-width property made Chrome draw its old scrollbar with arrows).

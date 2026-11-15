@@ -1558,3 +1558,12 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Result (12-Nov rebuilt): sector MED 1Y error 9.0 -> 1.6 points, rank correlation sector 0.79 -> 0.91, theme
   0.79 -> 0.93 (docs/calibration.md). Test: tests/test_scan_phase9.py.
 - Open: the reference's own 173-industry list (ours: NSE basic industry, 195) keeps industry ranks at ~0.76.
+
+### 2026-11-15: Gradient top band on every page + crisper text
+- Viraj (reference screenshot of the scanner toolbar): the coloured gradient band along the top, with the toolbar
+  inside it, on every page; words and numbers looked faded - make them crisp and the lighting nicer, without glare.
+- site/styles.css (end of file, "Look v2"): --band (teal -> cyan -> soft violet, from the Teal Aqua tokens, light and
+  dark) drawn behind the top 58 px of every page card (main.card::before), --frame soft gradient behind the app;
+  scanner toolbar centred in the band with white search / New scan / picker / buttons; breadth tabs use the same band.
+  Tokens: darker text and labels, more vivid up / down, deeper card shadow; numbers in tables medium weight.
+- Checked in the preview: Scanners, Home, Groups, Breadth (light) and the scanner page in dark mode.

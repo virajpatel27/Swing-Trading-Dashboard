@@ -4,7 +4,7 @@
    (11-Nov look "Airy Light" / "Midnight Pro" was blue up / pink down.) */
 :root {
   --bg: #e3f2f0; --panel: #ffffff; --panel-2: #f1f8f7; --text: #102422; --muted: #5a6e6b; --line: #dbe8e6;
-  --accent: #0f766e; --accent-soft: #dff3f0; --on-accent: #ffffff; --up: #0f766e; --down: #d6336c; --on-down: #ffffff; --warn: #b45309; --accent-2: #d6336c;
+  --accent: #0f766e; --accent-soft: #dff3f0; --on-accent: #ffffff; --up: #0f766e; --down: #d6336c; --on-down: #ffffff; --up-solid: #0f766e; --down-solid: #d6336c; --warn: #b45309; --accent-2: #d6336c;
   --heat-n4: #b8245a; --heat-n3: #d6336c; --heat-n2: #e98aab; --heat-n1: #f6cddc; --heat-0: #eceff0;
   --heat-p1: #c9ece7; --heat-p2: #82d3c8; --heat-p3: #14998b; --heat-p4: #0b6b63;
   --rail: linear-gradient(180deg, #0d2e2b 0%, #134440 100%); --rail-tip: #102422; --rail-text: rgba(255, 255, 255, .86); --rail-on: #2dd4bf; --rail-on-bg: rgba(45, 212, 191, .18);
@@ -17,7 +17,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #061110; --panel: #0b1716; --panel-2: #10201f; --text: #e0efed; --muted: #86a09c; --line: #1a2d2b;
-    --accent: #2dd4bf; --accent-soft: #0f2c29; --on-accent: #03201c; --up: #2dd4bf; --down: #ff6b9a; --on-down: #2a0614; --warn: #f0b54a; --accent-2: #ff6b9a;
+    --accent: #2dd4bf; --accent-soft: #0f2c29; --on-accent: #03201c; --up: #2dd4bf; --down: #ff6b9a; --on-down: #2a0614; --up-solid: #0f8075; --down-solid: #c8366a; --warn: #f0b54a; --accent-2: #ff6b9a;
     --heat-n4: #a3204f; --heat-n3: #c8366a; --heat-n2: #7a2d4a; --heat-n1: #3d2233; --heat-0: #1a2826;
     --heat-p1: #12332f; --heat-p2: #135a52; --heat-p3: #137a70; --heat-p4: #17998c;
     --rail: #071211; --rail-tip: #142826; --rail-text: #6f9c96; --rail-on: #2dd4bf; --rail-on-bg: rgba(45, 212, 191, .14);
@@ -26,7 +26,7 @@
 }
 :root[data-theme="dark"] {
     --bg: #061110; --panel: #0b1716; --panel-2: #10201f; --text: #e0efed; --muted: #86a09c; --line: #1a2d2b;
-    --accent: #2dd4bf; --accent-soft: #0f2c29; --on-accent: #03201c; --up: #2dd4bf; --down: #ff6b9a; --on-down: #2a0614; --warn: #f0b54a; --accent-2: #ff6b9a;
+    --accent: #2dd4bf; --accent-soft: #0f2c29; --on-accent: #03201c; --up: #2dd4bf; --down: #ff6b9a; --on-down: #2a0614; --up-solid: #0f8075; --down-solid: #c8366a; --warn: #f0b54a; --accent-2: #ff6b9a;
     --heat-n4: #a3204f; --heat-n3: #c8366a; --heat-n2: #7a2d4a; --heat-n1: #3d2233; --heat-0: #1a2826;
     --heat-p1: #12332f; --heat-p2: #135a52; --heat-p3: #137a70; --heat-p4: #17998c;
     --rail: #071211; --rail-tip: #142826; --rail-text: #6f9c96; --rail-on: #2dd4bf; --rail-on-bg: rgba(45, 212, 191, .14);
@@ -773,12 +773,12 @@ td.small { font-size: 12px; white-space: normal; min-width: 140px; }
 .hl-grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
 .hl-ax { font-size: 9.5px; fill: var(--muted); }
 .hl-bars { width: 100%; height: 34px; display: block; margin: 4px 0; }
-.hl-bars rect.pos { fill: color-mix(in srgb, #2962ff 40%, transparent); } .hl-bars rect.neg { fill: color-mix(in srgb, #db2777 40%, transparent); }
-.hl-bars rect.pos.last { fill: #2962ff; } .hl-bars rect.neg.last { fill: #db2777; }
+.hl-bars rect.pos { fill: color-mix(in srgb, var(--up) 40%, transparent); } .hl-bars rect.neg { fill: color-mix(in srgb, var(--down) 40%, transparent); }
+.hl-bars rect.pos.last { fill: var(--up); } .hl-bars rect.neg.last { fill: var(--down); }
 .hl-svg, .hl-bars { touch-action: pan-y; cursor: crosshair; }
 .hl-x line { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; }
 .hl-x circle { stroke: var(--panel); stroke-width: 1.5; }
-.hl-bars rect.pos.hov { fill: #2962ff; } .hl-bars rect.neg.hov { fill: #db2777; }
+.hl-bars rect.pos.hov { fill: var(--up); } .hl-bars rect.neg.hov { fill: var(--down); }
 .hf-row { padding: 6px 0 8px; border-bottom: 1px solid var(--line); }
 .hf-t { display: flex; align-items: baseline; gap: 8px; font-size: 12.5px; }
 .hf-t > :nth-child(2) { margin-left: auto; }
@@ -791,7 +791,7 @@ td.small { font-size: 12px; white-space: normal; min-width: 140px; }
 .hi-sp .skel { position: absolute; inset: 0; }
 .spark { width: 100%; height: 36px; display: block; }
 .spark polyline { fill: none; stroke-width: 1.6; }
-.spark.up polyline { stroke: #2962ff; } .spark.down polyline { stroke: #db2777; }
+.spark.up polyline { stroke: var(--up); } .spark.down polyline { stroke: var(--down); }
 .hi-f { display: flex; justify-content: space-between; font-size: 11px; }
 .hi-ma .up { color: var(--up); font-weight: 600; } .hi-ma .down { color: var(--down); }
 .hc-2 { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr); gap: 14px; align-items: start; }
@@ -806,7 +806,7 @@ td.small { font-size: 12px; white-space: normal; min-width: 140px; }
 .hm-row > span:last-child { text-align: right; }
 .hm-bar { height: 6px; border-radius: 3px; background: var(--panel-2); overflow: hidden; display: block; }
 .hm-bar i { display: block; height: 100%; border-radius: 3px; }
-.hm-bar i.pos { background: #2962ff; } .hm-bar i.neg { background: #db2777; }
+.hm-bar i.pos { background: var(--up); } .hm-bar i.neg { background: var(--down); }
 .hcard.ev { background: color-mix(in srgb, #db2777 4%, var(--panel)); }
 .he-d { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 8px; padding: 4px 0; font-size: 12.5px; }
 .he-d > div { display: flex; flex-wrap: wrap; gap: 4px 10px; }
@@ -1199,16 +1199,16 @@ main.card:has(> .gx) { background: transparent; border: 0; box-shadow: none; pad
    Like the reference video: soft quadrants (improving pale blue, leading blue, weakening cream, lagging pink), curved
    tails fading into the past, quadrant chips, segmented options, a list grouped by quadrant, a card beside the pointer. */
 main.card:has(> .rr) { padding: 14px 18px 10px; }
-.rr { --q-lead: #3b7dd8; --q-imp: #86b0ea; --q-weak: #e29a4e; --q-lag: #d8457c;
-  --qt-lead: #2d6cc8; --qt-imp: #4a83d4; --qt-weak: #b87220; --qt-lag: #c2346b;
-  --qf-lead: #e8f0fb; --qf-imp: #f2f6fd; --qf-weak: #fcf6ea; --qf-lag: #fcf0f4;
+.rr { --q-lead: #0f8f84; --q-imp: #6cc3b9; --q-weak: #e29a4e; --q-lag: #d8457c;
+  --qt-lead: #0f766e; --qt-imp: #1f8a80; --qt-weak: #b87220; --qt-lag: #c2346b;
+  --qf-lead: #e3f4f1; --qf-imp: #f0f8f7; --qf-weak: #fcf6ea; --qf-lag: #fcf0f4;
   display: flex; flex-direction: column; height: calc(100vh - var(--top-h) - var(--status-h) - 14px - 24px); min-height: 520px; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .rr { --q-lead: #4e95f0; --q-imp: #8fb9f2; --q-weak: #eaa45a; --q-lag: #f0628f;
-  --qt-lead: #6aa7f5; --qt-imp: #9cc2f5; --qt-weak: #f0b36d; --qt-lag: #f37aa2;
-  --qf-lead: rgba(78, 149, 240, .11); --qf-imp: rgba(143, 185, 242, .06); --qf-weak: rgba(234, 164, 90, .08); --qf-lag: rgba(240, 98, 143, .08); } }
-:root[data-theme="dark"] .rr { --q-lead: #4e95f0; --q-imp: #8fb9f2; --q-weak: #eaa45a; --q-lag: #f0628f;
-  --qt-lead: #6aa7f5; --qt-imp: #9cc2f5; --qt-weak: #f0b36d; --qt-lag: #f37aa2;
-  --qf-lead: rgba(78, 149, 240, .11); --qf-imp: rgba(143, 185, 242, .06); --qf-weak: rgba(234, 164, 90, .08); --qf-lag: rgba(240, 98, 143, .08); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .rr { --q-lead: #2dd4bf; --q-imp: #93e6db; --q-weak: #eaa45a; --q-lag: #f0628f;
+  --qt-lead: #5eead4; --qt-imp: #a7f0e6; --qt-weak: #f0b36d; --qt-lag: #f37aa2;
+  --qf-lead: rgba(45, 212, 191, .11); --qf-imp: rgba(147, 230, 219, .06); --qf-weak: rgba(234, 164, 90, .08); --qf-lag: rgba(240, 98, 143, .08); } }
+:root[data-theme="dark"] .rr { --q-lead: #2dd4bf; --q-imp: #93e6db; --q-weak: #eaa45a; --q-lag: #f0628f;
+  --qt-lead: #5eead4; --qt-imp: #a7f0e6; --qt-weak: #f0b36d; --qt-lag: #f37aa2;
+  --qf-lead: rgba(45, 212, 191, .11); --qf-imp: rgba(147, 230, 219, .06); --qf-weak: rgba(234, 164, 90, .08); --qf-lag: rgba(240, 98, 143, .08); }
 
 .rr-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--line); }
 .rr-chips { display: flex; flex-wrap: wrap; gap: 6px; }

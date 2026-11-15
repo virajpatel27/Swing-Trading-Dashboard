@@ -1509,8 +1509,12 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   Scanners, chart, Groups, Breadth, Major Indices, Earnings, Heatmap, RRG, News) in light and dark with a contrast scan;
   the only low-contrast items left are fixed colours outside the tokens (news category badges, RRG arrows, two MA
   legend names in dark), unchanged from before. Theme toggle works as before. 32 JS + 220 Python tests green.
-- NEXT: some chart lines are hard-coded blue in app.js / chart.js (home participation + stage 2 line, breadth lines,
-  pivot / MACD / RS line). They are readable but not teal; switch them to the tokens if Viraj wants everything teal.
+- Same day, Viraj ("teal ma preview batav"): the blue chart lines now follow the tokens too. app.js: Home participation +
+  stage 2 / 4 lines and hover dots, Breadth lines + area fill, Large vs Mid vs Small (Nifty 50 = --accent), stage bar
+  (new tokens --up-solid / --down-solid: teal / pink that keep white text readable in both modes). styles.css: Home
+  FII / DII + highs-lows bars, sparklines, heat bars -> --up / --down; RRG Leading / Improving colours teal (light + dark).
+  Left as they were on purpose: chart indicator colours in chart.js (pivot, MACD, RS line, Bollinger, drawings: the
+  user's own chart settings), the candle styles, news category colours, shareholding colours. Tests 32 JS + 220 Python green.
 
 ### 2026-11-15: Home lower half rebuilt like the reference screenshots
 - Viraj (6 screenshots): Today's setups, Where the money is, Today's events, Your watchlist plan and the company news

@@ -1479,3 +1479,19 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   docs/formulas.md regenerated. Precision 0.88 -> 0.95, recall 0.98 -> 0.95 (4 export days, real engine).
 - High Volume: no price / volume condition matched the reference better; unchanged. Details: docs/calibration.md.
 - Tests: Python 220 / 220, JS 32 / 32; secret check 0 problems.
+
+### 2026-11-15: Market Breadth numbers and look matched to the reference
+- Viraj (14 screenshots): stage bar hover card, column sizes 25 / 40 / 30 %, A-D line "Line rising / falling", header
+  line like the reference, narrower bar charts, lead word beside Large vs Mid vs Small, and why our breakouts, 52W
+  highs-lows and the 4 % "Strong buying / Heavy selling" words differ so much.
+- Why they differed: our 52W count took every new high / low of young listings; the reference counts the day's high at
+  the 252-session high (ties count) for stocks with ~200+ sessions. Our "breakout" was a different event (close above
+  the 50-session high, almost never failed); the reference judges 4 % breakouts (up 4 %+ on rising volume) 5 sessions
+  later against the breakout day's close. Details and numbers: docs/calibration.md.
+- swingdash/breadth.py (day_flags, series: liquid needs 30+ sessions, new series "follow"), config/breadth.yaml,
+  tests/test_scan_phase10.py (volume in the test frame).
+- site/app.js renderBreadth: stage bar with counts + hover card (share, today / 1 week / 1 month change in stocks),
+  "Read as of" date bold, lead word in the Large vs Mid vs Small title row, A-D line words, 4 % ratio scale 0-3 with
+  buying (>= 2) / selling (<= 0.5) bands and avg up / down, breakouts card with Follow-through >= 5 % and the 5-session
+  average of daily held rates; styles.css: columns 25 / 40 / 30, one header line with short coloured marks.
+- The numbers change on the website after the next deploy (breadth.json is built there).

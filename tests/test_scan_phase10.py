@@ -25,6 +25,7 @@ def stock(closes, liquid=True, stage="2"):
     f["hi52"], f["lo52"] = f["high"].rolling(252, min_periods=1).max(), f["low"].rolling(252, min_periods=1).min()
     f["high_50d_prev"] = f["high"].shift(1).rolling(50, min_periods=50).max()
     f["sessions"] = np.arange(1, len(f) + 1)
+    f["volume"] = np.where(f["chg_1d"] >= 4, 2e6, 1e6)                  # breakout days on higher volume
     h = breadth.day_flags(f)
     h["close"], h["liquid_day"], h["stage"], h["chg_1d"] = c, liquid, stage, f["chg_1d"]
     h.index = f["date"]

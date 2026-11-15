@@ -3,12 +3,15 @@ read. Parameters: config/breadth.yaml. Written to data/snapshot/breadth.json wit
 workflow builds it).
 
 Per stock and day (day_flags, from the engine frame): above20 / above50 / above200 (close above the SMA), adv / dec,
-nh52 / nl52 (high / low beyond the previous 52-week high / low), nh20 / nl20 (same for 20 days), up4 / dn4 (4 % movers),
-bo (breakout: close above the previous 50-session high), bo_lvl (that level), stage, sessions, liquid.
+nh52 / nl52 (the day's high / low is the highest / lowest of the last 252 sessions incl. today; stocks with 200+ sessions),
+nh20 / nl20 (same over 20 sessions), up4 / dn4 (4 % movers), bo (breakout = "4 % breakout": up 4 %+ on volume above the
+day before and at least 100,000 shares), bo_lvl (the breakout day's close), stage, sessions, liquid.
+Re-tuned 15-Nov-2026 against the reference (docs/calibration.md).
 
 Per universe and day (series): pct_above20/50/200, adv, dec, ad_ratio (adv / dec summed over 20 sessions), ad_line
-(running sum of adv - dec over the kept days), nh52, nl52, nh20, nl20, up4, dn4, breakouts, held / failed (breakouts of 5
-sessions before: close still above the level or not), stage1/2/3/4 (% of stocks with 64+ sessions), n.
+(running sum of adv - dec over the kept days), nh52, nl52, nh20, nl20, up4, dn4, breakouts, held / failed (5 sessions
+later the close is above the breakout day's close or not), follow (5 sessions later >= 5 % above it), stage1/2/3/4 (% of
+stocks with 64+ sessions), n. The liquid universe also needs liquid_min_sessions (30) sessions of history.
 """
 from __future__ import annotations
 
@@ -21,6 +24,9 @@ from . import store
 
 FLAGS = ["chg_1d", "above20", "above50", "above200", "nh52", "nl52", "nh20", "nl20", "bo", "bo_lvl", "sessions"]
 STAGE_OF = {"1": 1, "1A": 1, "2": 2, "2A": 2, "3": 3, "4": 4, "4A": 4}
+HL52_WINDOW, HL52_MIN_SESSIONS = 252, 200      # 52-week high / low: highest / lowest of 252 sessions incl. today, 200+ sessions
+HL20_WINDOW = 20                               # 20-day high / low: same over 20 sessions incl. today
+BO_PCT, BO_MIN_VOLUME = 4.0, 100_000           # breakout: +4 % or more, volume above the day before and >= 100,000 shares
 
 
 def day_flags(f: pd.DataFrame) -> pd.DataFrame:
@@ -31,17 +37,25 @@ def day_flags(f: pd.DataFrame) -> pd.DataFrame:
     for n in (20, 50, 200):
         col = f.get(f"from_sma{n}")
         out[f"above{n}"] = (col > 0).where(col.notna()) if col is not None else np.nan
-    hi52_prev, lo52_prev = f["hi52"].shift(1), f["lo52"].shift(1)
-    out["nh52"], out["nl52"] = (h > hi52_prev).where(hi52_prev.notna()), (l < lo52_prev).where(lo52_prev.notna())
-    hi20_prev, lo20_prev = h.shift(1).rolling(20, min_periods=20).max(), l.shift(1).rolling(20, min_periods=20).min()
-    out["nh20"], out["nl20"] = (h > hi20_prev).where(hi20_prev.notna()), (l < lo20_prev).where(lo20_prev.notna())
-    lvl = f.get("high_50d_prev")
-    if lvl is not None:
-        out["bo"] = ((c > lvl) & (c.shift(1) <= lvl.shift(1))).where(lvl.notna())
-        out["bo_lvl"] = lvl.where(out["bo"].fillna(False).astype(bool))
+    sess = pd.Series(f["sessions"].to_numpy() if "sessions" in f else np.arange(1, len(f) + 1), index=f.index)
+    # like the reference (15-Nov-2026): today's high AT the highest high of the window incl. today (ties count), the
+    # previous days needed in full; 52 weeks only for stocks with HL52_MIN_SESSIONS sessions (young listings left out)
+    w = HL52_WINDOW - 1
+    hi_p, lo_p = h.shift(1).rolling(w, min_periods=1).max(), l.shift(1).rolling(w, min_periods=1).min()
+    old = sess >= HL52_MIN_SESSIONS
+    out["nh52"] = ((h >= hi_p) & old).where(hi_p.notna())
+    out["nl52"] = ((l <= lo_p) & old).where(lo_p.notna())
+    w = HL20_WINDOW - 1
+    hi_p, lo_p = h.shift(1).rolling(w, min_periods=w).max(), l.shift(1).rolling(w, min_periods=w).min()
+    out["nh20"], out["nl20"] = (h >= hi_p).where(hi_p.notna()), (l <= lo_p).where(lo_p.notna())
+    if "volume" in f:
+        v = f["volume"].astype(float)
+        bo = (f["chg_1d"] >= BO_PCT) & (v > v.shift(1)) & (v >= BO_MIN_VOLUME)
+        out["bo"] = bo.where(f["chg_1d"].notna())
+        out["bo_lvl"] = c.where(bo)
     else:
         out["bo"], out["bo_lvl"] = np.nan, np.nan
-    out["sessions"] = f["sessions"] if "sessions" in f else np.arange(1, len(f) + 1)
+    out["sessions"] = sess
     return out
 
 
@@ -66,6 +80,7 @@ def series(hists: dict[str, pd.DataFrame], cfg: dict, liquid_only: bool) -> pd.D
     member = chg.notna()
     if liquid_only:
         member &= mat("liquid_day").reindex(idx).fillna(False).astype(bool)
+        member &= mat("sessions").reindex(idx) >= int(cfg.get("liquid_min_sessions", 30))   # a full 30-session turnover median
     cnt = lambda m: (m.fillna(False).astype(bool) & member).sum(axis=1)
     pct = lambda m: 100 * cnt(m) / (m.notna() & member).sum(axis=1).replace(0, np.nan)
     out = pd.DataFrame(index=idx)
@@ -86,6 +101,8 @@ def series(hists: dict[str, pd.DataFrame], cfg: dict, liquid_only: bool) -> pd.D
     ok = bo & later.notna()
     out["held"] = (ok & (later > lvl)).sum(axis=1).where(later.notna().any(axis=1))
     out["failed"] = (ok & ~(later > lvl)).sum(axis=1).where(later.notna().any(axis=1))
+    fp = 1 + float((cfg.get("breakout") or {}).get("follow_pct", 5)) / 100
+    out["follow"] = (ok & (later >= lvl * fp)).sum(axis=1).where(later.notna().any(axis=1))
     stg = mat("stage").reindex(idx).replace(STAGE_OF)
     old = mat("sessions").reindex(idx) >= int(cfg.get("min_sessions_stage", 64))
     known = stg.notna() & old & member
@@ -134,7 +151,7 @@ def read(s: pd.DataFrame, idx: dict[str, list], cfg: dict) -> dict:
         rate = 100 * held / (held + failed)
         word = "Working" if rate >= 50 else "Mixed" if rate >= 30 else "Failing"
         out["breakouts"] = {"word": word, "text": f"{int(held)} of {int(held + failed)} breakouts of the last 5 evaluated days held ({rate:.0f} %)",
-                            "rule": "breakout = close above the 50-session high; held = still above it 5 sessions later; >= 50 % Working, >= 30 % Mixed, else Failing"}
+                            "rule": "breakout = up 4 %+ on volume above the day before (100,000+ shares); held = 5 sessions later still above that day's close; >= 50 % Working, >= 30 % Mixed, else Failing"}
     sc = idx.get("NIFTY_SMALLCAP_250")
     if sc and len(sc) > 60:
         x = pd.Series(sc, dtype=float)

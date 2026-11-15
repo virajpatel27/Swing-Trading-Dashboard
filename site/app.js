@@ -482,12 +482,13 @@
     ad: "Stocks that rose divided by stocks that fell over the last 20 or 40 sessions (above 1 = more rose), or the running advance - decline line.",
     mv: "Stocks up 4 % or more in a day minus those down 4 % or more, or the 5 / 10-day ratio of the two.",
     lms: "Nifty 50, Midcap 150 and Smallcap 250, each from the first day of the range.",
-    bo: "Closes above the 50-session high (breakouts) judged 5 sessions later: held = still above, failed = back below.",
+    bo: "Stocks up 4 % or more on volume above the day before (breakouts), judged 5 sessions later: held = still above that day's close, failed = back below; follow-through = 5 % or more above it.",
   };
   const BX_TONE = { Strong: "up", Up: "up", Working: "up", Building: "up", Positive: "up", Weak: "down", Down: "down", Failing: "down",
     Fading: "warn", Mixed: "warn", Stretched: "warn", Caution: "warn", "Washed out": "info" };
   const bxDM = (iso, yr) => { const t = new Date(iso + "T00:00:00"); return `${t.getDate()} ${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][t.getMonth()]}${yr ? " " + t.getFullYear() : ""}`; };
   let bxResize = null;
+  const bxDay = (iso) => shortDay(iso).replace(",", "");
 
   async function renderBreadth(tab) {
     clearBreadthCharts();
@@ -528,8 +529,7 @@
     // is today's verdict on the breakouts of 5 sessions ago (B.days are trading days)
     const HOLD = Number(((B.config || {}).breakout || {}).hold_sessions) || 5;
     const shiftJ = (a) => a.map((_, i) => (i >= HOLD ? a[i - HOLD] : null));
-    const held = tail(shiftJ(full("held"))), failed = tail(shiftJ(full("failed"))), bouts = cut("breakouts");
-    const boDay = (j) => B.days[off + j - HOLD] || null;
+    const held = tail(shiftJ(full("held"))), failed = tail(shiftJ(full("failed"))), follow = tail(shiftJ(full("follow")));
     const LMS = [["NIFTY_50", "N50", "Nifty 50", "#3b7dd8"], ["NIFTY_MIDCAP_150", "MID150", "Nifty Midcap 150", "#c98a1e"], ["NIFTY_SMALLCAP_250", "SML250", "Nifty Smallcap 250", "#6b7280"]];
     const lms = LMS.map(([k, l, nm, c]) => { const all = B.indices[k] || [], x = all.slice(-n), b0 = x.find((v) => v != null);
       return { l, nm, c, vals: x.map((v) => (v == null || !b0 ? null : (v / b0 - 1) * 100)), day: x.map((v, j) => { const p = all[off + j - 1]; return v == null || p == null ? null : (v / p - 1) * 100; }) }; });
@@ -540,12 +540,14 @@
     const chartBox = (id, title, toggle) => `<div class="bx-c" data-c="${id}" style="--k:${["part", "hl", "ad", "mv", "lms", "bo"].indexOf(id)}"><div class="bx-ch"><small class="bx-t" data-tip="${esc(BX_TIP[id])}">${title}</small>${toggle || ""}</div>
       <div class="bx-v" id="bv-${id}"></div><div class="bx-svg" id="bs-${id}"></div></div>`;
     const CHEV = '<svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    // number of stocks in a stage `back` sessions before the last day (stage % x stocks counted)
+    const stN = (k, back) => { const a = full(k), m = full("stage_n"), i = a.length - 1 - back; return i >= 0 && a[i] != null && m[i] != null ? (a[i] * m[i]) / 100 : null; };
     const uniN = (k) => f0(lastOf(B.universes[k].series.n));
     view.innerHTML = `<div class="bx">${tabs}
-      <div class="bx-g"><aside class="bx-l"><div class="bx-lh"><h3>Market Breadth</h3><small>Read as of ${esc(shortDay(B.data_date))}</small></div>
+      <div class="bx-g"><aside class="bx-l"><div class="bx-lh"><h3>Market Breadth</h3><small>Read as of <b>${esc(bxDay(B.data_date))}</b></small></div>
         ${READ.filter(([k]) => read[k]).map(([k, l], i) => { const t = BX_TONE[read[k].word] || "neu"; return `<div class="bx-rd" style="--i:${i}" data-tip="${esc(read[k].rule || "")}"><div class="bx-rt"><i class="bx-dt ${t}"></i><b>${l}</b><span class="bx-wd ${t}">${esc(read[k].word)}</span></div><p>${esc(read[k].text)}</p></div>`; }).join("")}
         <div class="bx-stage"><div class="bx-sh"><small class="bx-t" data-tip="Stage of each stock with 64+ sessions: base, uptrend (stage 2), top, downtrend (stage 4); change vs the day before.">STAGE ANALYSIS</small><small>of ${f0(lastOf(full("stage_n")))} stocks (64+ days)</small></div>
-          <div class="bar">${STG.map(([k, l, c]) => `<span style="flex:${lastOf(full(k)) || 0.0001};background:${c}" title="${l} ${(lastOf(full(k)) ?? 0).toFixed(1)}%"></span>`).join("")}</div>
+          <div class="bar">${STG.map(([k, l, c], si) => { const sh = lastOf(full(k)) || 0, cn = stN(k, 0); return `<span data-st="${si}" style="flex:${sh || 0.0001};background:${c}">${sh >= 4 && cn != null ? `${f0(cn)} stocks` : ""}</span>`; }).join("")}</div><div class="bx-ct bx-stt" hidden></div>
           <div class="bx-sg">${STG.map(([k, l, c]) => { const ch = (U.stage_change || {})[k]; return `<div><small><i style="background:${c}"></i>${l}</small><b>${(lastOf(full(k)) ?? 0).toFixed(1)}%</b><small class="${ch > 0 ? "up" : ch < 0 ? "down" : "muted"}">${ch ? (ch > 0 ? "+" : "") + ch + " 1D" : "–"}</small></div>`; }).join("")}</div></div>
         <p class="bx-foot">Our own simple rules - point at a line to see it. Not investment advice.</p></aside>
       <section class="bx-r"><div class="bx-rh"><h3>Market internals</h3><span class="pk-i bx-t" data-tip="Point at any chart: every chart moves to the same day and shows that day's numbers. The grey line in each chart is the Nifty 500.">i</span>
@@ -558,7 +560,7 @@
           ${chartBox("hl", `NET ${bs.hl === "52" ? "52W" : "20D"} HIGHS − LOWS`, segB("bhl", [["20", "20D"], ["52", "52W"]], bs.hl))}
           ${chartBox("ad", "ADVANCE / DECLINE", segB("bad", [["20", "20D"], ["40", "40D"], ["line", "A-D line"]], bs.ad))}
           ${chartBox("mv", "4% MOVERS", segB("bmv", [["d", "Daily"], ["5", "5D ratio"], ["10", "10D ratio"]], bs.mv))}
-          ${chartBox("lms", "LARGE VS MID VS SMALL", "")}
+          ${chartBox("lms", "LARGE VS MID VS SMALL", '<span class="bx-lead" id="bl-lms"></span>')}
           ${chartBox("bo", "BREAKOUTS − BREAKDOWNS", "")}
         </div></section></div></div>
       <div class="bx-tipbox" id="bxTip" hidden></div>`;
@@ -623,21 +625,28 @@
         return `<b>${sg(v)}</b>${word(v == null ? "" : v > 0 ? (far ? "Far more highs than lows" : "More highs than lows") : v < 0 ? (far ? "Far more lows than highs" : "More lows than highs") : "Even", v > 0 ? "up" : v < 0 ? "down" : "")}${trend(hl, j)}${day(j, `${f0(hlH[j])} highs / ${f0(hlL[j])} lows`)}`; } });
     make("ad", { series: [{ vals: adR, color: "#3b7dd8" }], grey: n500, refs: bs.ad === "line" ? [] : [1], ...(bs.ad === "line" ? {} : { lo: 0.5, hi: 1.5, ticks: [1.5, 1, 0.5], fmtT: (v) => v.toFixed(2) }),
       bands: bs.ad === "line" ? [] : [[1.25, 1.5, "bl"], [0.5, 0.75, "pk"]],
-      head: (j) => `<b>${adR[j] == null ? "–" : bs.ad === "line" ? f0(adR[j]) : adR[j].toFixed(2)}</b>${word(bs.ad === "line" ? "advances − declines, running" : adR[j] == null ? "" : esc(lab(adR[j], B.config.ad_labels) || (adR[j] >= 1 ? "More risers" : "More fallers")), adR[j] >= 1.05 ? "up" : adR[j] <= 0.95 ? "down" : "")}${trend(adR, j)}`
-        + day(j, bs.ad === "line" ? `${f0(tail(adv)[j])} up / ${f0(tail(dec)[j])} down` : `avg ${f0(advW[j] / Number(bs.ad))} up / ${f0(decW[j] / Number(bs.ad))} down`) });
+      head: (j) => {
+        const dd = day(j, bs.ad === "line" ? `${f0(tail(adv)[j])} up / ${f0(tail(dec)[j])} down` : `avg ${f0(advW[j] / Number(bs.ad))} up / ${f0(decW[j] / Number(bs.ad))} down`);
+        if (bs.ad === "line") { const k = Math.max(0, j - 5), up = adR[j] != null && adR[k] != null && adR[j] >= adR[k];   // A-D line vs 5 sessions before
+          return `<b>${adR[j] == null ? "–" : f0(adR[j])}</b>${word(adR[j] == null ? "" : up ? "Line rising" : "Line falling", up ? "up" : "down")}${dd}`; }
+        return `<b>${adR[j] == null ? "–" : adR[j].toFixed(2)}</b>${word(adR[j] == null ? "" : esc(lab(adR[j], B.config.ad_labels) || (adR[j] >= 1 ? "More risers" : "More fallers")), adR[j] >= 1.05 ? "up" : adR[j] <= 0.95 ? "down" : "")}${trend(adR, j)}${dd}`; } });
+    // words (15-Nov, like the reference): ratio of 4 % gainers to 4 % losers >= 2 Strong buying, <= 0.5 Heavy selling
+    const mvWord = (r) => (r == null || !isFinite(r) ? ["", ""] : r >= 2 ? ["Strong buying", "up"] : r >= 1.25 ? ["More buying", "up"] : r > 0.8 ? ["Balanced", ""] : r > 0.5 ? ["More selling", "down"] : ["Heavy selling", "down"]);
+    const mvW = bs.mv === "d" ? null : Number(bs.mv), upW = mvW ? tail(roll(up4, mvW)) : null, dnW = mvW ? tail(roll(dn4, mvW)) : null;
     make("mv", bs.mv === "d" ? { series: [{ vals: mv, bars: true }], zero: true, sym: true, grey: n500,
-        head: (j) => { const u = tail(up4)[j], d = tail(dn4)[j], r = d ? u / d : u ? 9 : 1; return `<b>${sg(mv[j])}</b>${word(r >= 2 ? "Heavy buying" : r >= 1.2 ? "More up 4%+" : r > 0.83 ? "Balanced" : r > 0.5 ? "More down 4%+" : "Heavy selling", r >= 1.2 ? "up" : r <= 0.83 ? "down" : "")}${trend(mv, j)}${day(j, `${f0(u)} up / ${f0(d)} down`)}`; } }
-      : { series: [{ vals: mv, color: "#3b7dd8" }], grey: n500, refs: [1], bands: [[0, 1, "pk"]],
-        head: (j) => `<b>${mv[j] == null ? "–" : mv[j].toFixed(2)}</b>${word(mv[j] == null ? "" : mv[j] >= 1 ? "More 4% gainers" : "More 4% losers", mv[j] >= 1 ? "up" : "down")}${trend(mv, j)}${day(j, `${bs.mv}-day ratio`)}` });
+        head: (j) => { const u = tail(up4)[j], d = tail(dn4)[j], [w, t] = mvWord(d ? u / d : u ? 9 : 1); return `<b>${sg(mv[j])}</b>${word(w, t)}${trend(mv, j)}${day(j, `${f0(u)} up / ${f0(d)} down`)}`; } }
+      : { series: [{ vals: mv, color: "#3b7dd8" }], grey: n500, refs: [1], lo: 0, hi: Math.max(3, ...mv.filter((v) => v != null && isFinite(v))), ticks: [3, 1, 0], fmtT: (v) => (v ? v.toFixed(1) : "0"),
+        bands: [[2, 3, "bl"], [0, 0.5, "pk"]],
+        head: (j) => { const [w, t] = mvWord(mv[j]); return `<b>${mv[j] == null ? "–" : mv[j].toFixed(2)}</b>${word(w, t)}${trend(mv, j)}${day(j, upW[j] == null ? "" : `avg ${f0(upW[j] / mvW)} up / ${f0(dnW[j] / mvW)} down`)}`; } });
     make("lms", { series: lms.map((x) => ({ vals: x.vals, color: x.c })), zero: true, unit: "%", fmtT: (v) => (v > 0 ? "+" : "") + Math.round(v),
-      head: (j) => { const lead = lms.slice().sort((a, b) => (b.vals[j] ?? -1e9) - (a.vals[j] ?? -1e9))[0];
-        return `${word({ N50: "Large caps lead", MID150: "Mid caps lead", SML250: "Small caps lead" }[lead.l], "")}${lms.map((x) => `<span class="bx-lg"><i style="background:${x.c}"></i>${x.l} <b class="${x.vals[j] >= 0 ? "up" : "down"}">${x.vals[j] == null ? "–" : sg(x.vals[j], (v) => v.toFixed(1)) + "%"}</b></span>`).join("")}${day(j)}`; },
-      tip: (j) => `<b>${esc(shortDay(days[j]))}</b>${lms.map((x) => `<div><span><i style="background:${x.c}"></i>${x.nm}</span><em class="${x.day[j] >= 0 ? "up" : "down"}">${x.day[j] == null ? "–" : sg(x.day[j], (v) => v.toFixed(1)) + "%"}</em></div>`).join("")}` });
-    const heldPct = (j) => { let h = 0, f = 0; for (let k = Math.max(0, j - 4); k <= j; k++) { h += held[k] || 0; f += failed[k] || 0; } return h + f ? (100 * h) / (h + f) : null; };
+      lead: (j) => { const ld = lms.slice().sort((a, b) => (b.vals[j] ?? -1e9) - (a.vals[j] ?? -1e9))[0]; return `<i style="background:${ld.c}"></i>${{ N50: "Large caps lead", MID150: "Mid caps lead", SML250: "Small caps lead" }[ld.l]}`; },
+      head: (j) => { return `${lms.map((x) => `<span class="bx-lg"><i style="background:${x.c}"></i>${x.l} <b class="${x.vals[j] >= 0 ? "up" : "down"}">${x.vals[j] == null ? "–" : sg(x.vals[j], (v) => v.toFixed(1)) + "%"}</b></span>`).join("")}${day(j)}`; },
+      tip: (j) => `<b>${esc(bxDay(days[j]))}</b>${lms.map((x) => `<div><span><i style="background:${x.c}"></i>${x.nm}</span><em class="${x.day[j] >= 0 ? "up" : "down"}">${x.day[j] == null ? "–" : sg(x.day[j], (v) => v.toFixed(1)) + "%"}</em></div>`).join("")}` });
+    const heldPct = (j) => { const r = []; for (let k = Math.max(0, j - 4); k <= j; k++) if (held[k] != null && held[k] + failed[k] > 0) r.push((100 * held[k]) / (held[k] + failed[k])); return r.length ? r.reduce((a, b) => a + b, 0) / r.length : null; };
     make("bo", { series: [{ vals: held.map((h, i) => (h == null || failed[i] == null ? null : h - failed[i])), bars: true }], zero: true, sym: true,
       head: (j) => `<span class="bx-chip">${f0(held[N - 1])} held, ${f0(failed[N - 1])} failed today · ${h5 + f5 ? Math.round((100 * h5) / (h5 + f5)) : "–"}% held this week</span>${day(j)}`,
-      tip: (j) => `<b>${esc(shortDay(days[j]))}</b>${boDay(j) ? `<small class="bx-ts">breakouts of ${esc(bxDM(boDay(j)))}, judged today</small>` : ""}<div><span>Breakouts (held)</span><em class="up">${f0(held[j])}</em></div><div><span>Breakdowns (failed)</span><em class="down">${f0(failed[j])}</em></div>`
-        + `<div><span>Net</span><em class="${(held[j] || 0) - (failed[j] || 0) >= 0 ? "up" : "down"}">${held[j] == null ? "–" : sg(held[j] - failed[j])}</em></div><div><span>New breakouts that day</span><em>${f0(bouts[j])}</em></div>`
+      tip: (j) => `<b>${esc(bxDay(days[j]))}</b><div><span>Breakouts (held)</span><em class="up">${f0(held[j])}</em></div><div><span>Breakdowns (failed)</span><em class="down">${f0(failed[j])}</em></div>`
+        + `<div><span>Net</span><em class="${(held[j] || 0) - (failed[j] || 0) >= 0 ? "up" : "down"}">${held[j] == null ? "–" : sg(held[j] - failed[j])}</em></div><div><span>Follow-through ≥5%</span><em>${f0(follow[j])}</em></div>`
         + `<div><span>Held, 5-session avg</span><em>${heldPct(j) == null ? "–" : heldPct(j).toFixed(1) + "%"}</em></div>` });
 
     // ---- one shared crosshair
@@ -657,6 +666,7 @@
         c.el.querySelectorAll(".bx-b.on").forEach((b) => b.classList.remove("on"));
         if (!atEnd) c.el.querySelectorAll(`.bx-b[data-i="${j}"]`).forEach((b) => b.classList.add("on"));
         $("#bv-" + c.id).innerHTML = c.o.head(j);
+        if (c.o.lead) $("#bl-" + c.id).innerHTML = c.o.lead(j);
       }
       for (const { c, t } of tips) {
         if (atEnd) { t.hidden = true; continue; }
@@ -671,6 +681,20 @@
       el.addEventListener("pointermove", (e) => { const r = el.getBoundingClientRect(), x = e.clientX - r.left; sync(Math.max(0, Math.min(N - 1, Math.round(((x - PL) / (c.W - PL - PR)) * (N - 1))))); });
       el.addEventListener("pointerleave", () => sync(null));
     });
+    // stage bar: a small card per part (share, change in stocks today / 1 week / 1 month), like the reference
+    const stBar = view.querySelector(".bx-stage .bar"), stTip = view.querySelector(".bx-stt");
+    const chg = (k, back) => { const a = stN(k, 0), b = stN(k, back); return a == null || b == null ? null : Math.round(a - b); };
+    const chRow = (l, v) => `<div><span>${l}</span><em class="${v > 0 ? "up" : v < 0 ? "down" : ""}">${v == null ? "–" : (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v)}</em></div>`;
+    stBar.onpointermove = (e) => {
+      const sp = e.target.closest("[data-st]"); if (!sp) { stTip.hidden = true; return; }
+      const [k, l] = STG[Number(sp.dataset.st)], box = stBar.parentElement.getBoundingClientRect();
+      stTip.innerHTML = `<b>Stage ${Number(sp.dataset.st) + 1} · ${l}</b><div><span>Share</span><em>${(lastOf(full(k)) ?? 0).toFixed(1)}%</em></div>${chRow("Today", chg(k, 1))}${chRow("1 week", chg(k, 5))}${chRow("1 month", chg(k, 21))}`;
+      stTip.hidden = false;
+      const w = stTip.offsetWidth, x = Math.max(0, Math.min(box.width - w, e.clientX - box.left - w / 2));
+      stTip.style.transform = `translate(${x.toFixed(0)}px, 0)`;
+      stBar.querySelectorAll("span").forEach((x) => x.classList.toggle("dim", x !== sp));
+    };
+    stBar.onpointerleave = () => { stTip.hidden = true; stBar.querySelectorAll("span").forEach((x) => x.classList.remove("dim")); };
     // little explanation cards on titles and the reading rows
     view.onpointerover = (e) => {
       const t = e.target.closest("[data-tip]"); if (!t || !t.dataset.tip) { tip.hidden = true; return; }

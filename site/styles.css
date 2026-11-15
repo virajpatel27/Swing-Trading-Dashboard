@@ -2344,3 +2344,25 @@ html:has(.ws-main.grid.wide), body:has(.ws-main.grid.wide) { overflow: hidden; }
 .pk-f > summary span { flex: 1; }
 .pk-ck { color: var(--accent); font-size: 12px; }
 .pk-f .pk-row { padding-left: 30px; }
+
+/* breadth sizing + details (Viraj 15-Nov-2026, reference screenshots): reading column 25 %, charts 40 % / 30 %, one thin
+   header line with short coloured marks, stage bar with counts and a hover card, lead word beside Large vs Mid vs Small */
+.bx-g { grid-template-columns: minmax(0, 25fr) minmax(0, 70fr); }
+.bx-grid { grid-template-columns: minmax(0, 40fr) minmax(0, 30fr); }
+.bx-lh, .bx-rh { position: relative; align-items: center; min-height: 34px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.bx-lh { margin-right: -26px; padding-right: 26px; } .bx-rh { margin-left: -26px; padding-left: 26px; }
+.bx-lh h3, .bx-rh h3 { position: static; padding-bottom: 0; }
+.bx-lh h3::after, .bx-rh h3::after { left: 0; bottom: -1px; width: 32px; height: 2px; }
+.bx-rh h3::after { left: 26px; width: 32px; }
+.bx-lh small b { font-weight: 500; color: var(--text); }
+.bx-stage { position: relative; }
+.bx-stage .bar { height: 22px; border-radius: 5px; }
+.bx-stage .bar span { display: flex; align-items: center; justify-content: center; min-width: 0; overflow: hidden; white-space: nowrap; color: #fff; font-size: 11px; font-weight: 500;
+  cursor: default; transition: flex .6s cubic-bezier(.2, .8, .2, 1), opacity .15s; }
+.bx-stage .bar span.dim { opacity: .55; }
+.bx-stt { top: auto; bottom: calc(100% - 40px); min-width: 170px; }
+.bx-lead { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text); }
+.bx-lead i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+@media (max-width: 1199px) { .bx-g { grid-template-columns: 1fr; } .bx-lh { margin-right: 0; padding-right: 0; } .bx-rh { margin-left: 0; padding-left: 0; } .bx-rh h3::after { left: 0; } }
+@media (max-width: 720px) { .bx-grid { grid-template-columns: 1fr; } }
+

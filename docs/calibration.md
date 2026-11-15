@@ -273,3 +273,23 @@ Precision / recall over the 4 export days (before -> after):
   Stage 2 run started from Basing / Topping (s2b_from). Real engine: precision 0.88 -> 0.95, recall 0.98 -> 0.95.
 - High Volume: unchanged (0.83 / 0.99). Reference ADR = ours; move, close position and volume of matched and extra
   stocks overlap; no extra condition beat the current F1 (best 0.903 vs 0.902).
+
+## Market breadth re-checked 15-Nov-2026 (Viraj's screenshots of the reference, liquid stocks)
+Reference points: 52W highs / lows 16-Sep 12 / 89, 23-Oct 5 / 280, 30-Oct 24 / 105, 11-Nov 40 / 2; 20D highs / lows 30-Oct
+76 / 309, 13-Nov 213 / 33; 4 % movers 13-Nov 52 / 53, 5-day ratio to 06-Nov 2.73 (avg 197 up / 72 down); breakouts judged
+13-Nov 24 held / 16 failed, follow-through >= 5 % 12, "68 % held this week"; 30-Oct 6 / 8, "27 %"; liquid stocks 1,508.
+
+| Item | Change | Before | After (real build, 15-Nov) |
+|---|---|---|---|
+| 52W highs / lows | the day's high (low) AT the highest (lowest) of 252 sessions incl. today, only stocks with 200+ sessions (young listings counted every new high / low before) | 15/108, 8/321, 28/114, 54/3 | 13/87, 6/277, 29/104, 46/2 |
+| 20D highs / lows | same over 20 sessions incl. today (was: beyond the previous 20) | 68/307, 200/28 | 76/311, 214/31 |
+| Liquid universe | also 30+ sessions of history (a full 30-session turnover median) | 1,534 | 30-Oct 1,512 (ref 1,507), 13-Nov 1,514 (ref 1,508) |
+| Breakouts | "4 % breakout": up 4 %+ on volume above the day before and >= 100,000 shares; judged 5 sessions later: held = close above the breakout day's close, else failed; follow-through = >= 5 % above it (was: close above the 50-session high, held = above that level) | 13-Nov 16 / 2 | 13-Nov 24 / 19, FT 13, 68 % this week; 30-Oct 6 / 9, 22 % |
+| 4 % movers | unchanged rule (the universe change moves it) | 13-Nov 62 / 54 | 13-Nov 55 / 52, 30-Oct 40 / 340 (ref 40 / 338) |
+| 5-day ratio | unchanged (06-Nov 2.75, avg 197 / 72) | | |
+
+Tried and rejected: close-based highs / lows (half the count), 4 % breakout with RVol >= 1.5 / 2 (too few: 19-21 held),
+failed = below the close before the breakout (13-Nov only 1 failed). Labels (our words where the reference shows none):
+4 % ratio >= 2 Strong buying, >= 1.25 More buying, > 0.8 Balanced, > 0.5 More selling, else Heavy selling; A-D line
+"Line rising / falling" vs 5 sessions before.
+

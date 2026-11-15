@@ -2,9 +2,13 @@
 # verdict on the Breadth page shows the rule it used. Calibration: docs/calibration.md S10.
 days: 260                       # sessions kept per series (1Y range + a little)
 min_sessions_stage: 64          # a stock counts in the stage mix once it has this many sessions of history
-breakout:
-  rule: high50                  # close above the highest high of the 50 sessions before (engine field high_50d_prev)
-  hold_sessions: 5              # held = 5 sessions later the close is still above the breakout level
+liquid_min_sessions: 30         # liquid universe: also 30+ sessions of history (reference 1,508 stocks; ours was 1,534)
+breakout:                       # 15-Nov-2026, like the reference: breakout = "4 % breakout" (rules in swingdash/breadth.py:
+  rule: pct4_volume             #   up 4 %+ on volume above the day before and >= 100,000 shares)
+  hold_sessions: 5              # held = 5 sessions later the close is still above the breakout day's close, else failed
+  follow_pct: 5                 # follow-through = 5 sessions later at least 5 % above the breakout day's close
+# 52-week / 20-day highs and lows: the day's high (low) at the highest (lowest) of 252 / 20 sessions incl. today;
+# 52 weeks only for stocks with 200+ sessions (swingdash/breadth.py HL52_*).
 movers_pct: 4                   # "4 % movers": day change >= +4 % / <= -4 %
 ad_window: 20                   # advance / decline ratio = advancers / decliners summed over this many sessions
 indices: [NIFTY_50, NIFTY_500, NIFTY_MIDCAP_150, NIFTY_SMALLCAP_250]

@@ -1572,3 +1572,31 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   like the reference (8 px frame, results / chart / stock panel edge to edge with one hairline, no boxes or gaps);
   Groups toolbar centred in the band; thin scrollbars on the Groups columns, RRG, watchlist and earnings lists (the
   standard scrollbar-width property made Chrome draw its old scrollbar with arrows).
+
+### 2026-11-16: Data check against the reference exports - Phase 1 (sector / industry / theme)
+- Viraj gave 9 full reference exports (all-stocks, 02 / 04 / 05 / 06 / 09 / 11 / 12 / 13 / 16-Nov, xlsx; kept in the
+  git-ignored reference/exports/all-stocks/) and asked to check every column phase by phase, against NSE too.
+- Result before the change (our screen 13-Nov vs the exports): sector 99.96 %, industry 99.65 %, themes 99.96 % of the
+  2,607 common stocks. The 9 industry "differences" were 7 times the export's broken dash ("Road Assets�Toll"),
+  ESFL (new: "Plastic Products") and BRIGHTOUTD ("Unclassified" in the reference).
+- scripts/import_reference_classes.py: reads the .xlsx export directly, writes the broken dash as the real en dash,
+  leaves out "Unclassified" rows (NSE's own class is kept for those 40 new listings, e.g. TONBO -> Capital Goods /
+  Aerospace & Defense instead of "Unclassified"). config/reference_classes.csv refreshed from the 16-Nov export: 2,580
+  stocks, 22 sectors, 192 industries, 96 themes; every classified stock now 100 % equal (sector and industry).
+- NSE check: NSE's quote API classification equals the reference for 91 % (sector) / 84 % (basic industry) only - it
+  still answers the old CAPITALS names for many stocks (e.g. "SPINNING-COTTON/BLENDED") - so the reference list stays
+  first, NSE fills the gaps.
+- Universe: 13 export stocks (NOVARTIND, CLCIND, EDUCOMP, LASA ...) are not in NSE's bhavcopy of 13-Nov (not traded on
+  NSE; the export shows a stale price, e.g. WILLAMAGOR 20.83 = its 29-Oct close), so they stay out. 30 of ours are not
+  in the export: REITs (EMBASSY, BIRET, BAGMANE - Nifty 500 members, kept on purpose), listings of the last days
+  (BCSSL, ENNATURE, IGLSPIRITS) and BE-series stocks back on NSE since Apr / Aug 2026.
+- Next: Phase 2 (price, day OHLC, change, volume, gap, circuit, delivery) against the exports AND NSE's bhavcopy.
+- Phase plan (all 105 export columns, every phase on all 9 days, NSE checked where NSE publishes the value):
+  1 classification (done) | 2 price + day (price, open / high / low, prev close, change and change in rupees, volume,
+  gap up, circuit, delivery %) | 3 returns, highs / lows, listing (ret_1w ... ytd, 52W / 20D / ATH, days from high,
+  listing / IPO incl. new ret_since_ipo, from_listing_high) | 4 averages + volume (SMA / EMA, from_*, RSI, ADR, RVol,
+  average volume, rupee volume 20 / 30 / 50, pxv, beta) | 5 size + holders (market cap, free float, float shares,
+  F&O, promoter / FII / DII and their change) | 6 RS, stage, groups (RS rating + changes, RS line, stage, sector /
+  industry rank and return, vs sector, industry RS rating, pivot) | 7 fundamentals + events (PE, PB, ROE, ROCE, PEG,
+  dividend yield, debt / equity, EPS TTM, growth, OPM, result dates, recent order). About texts stay our own words.
+- Also: requirements-dev.txt + openpyxl (the import reads .xlsx); tests/test_reference_classes.py updated (+ xlsx test).

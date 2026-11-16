@@ -15,9 +15,18 @@ def test_export_reader_turns_json_themes_into_pipes(tmp_path):
                  '"AAA","A Ltd","Oil, Gas & Consumable Fuels","Refineries & Marketing",["Refining & OMC","Data Centres"],"x, y"\n'
                  '"BBB","B Ltd","Unclassified","",[],""\n', encoding="utf-8")
     df = imp.build(imp.read_export(f), "2026-11-06")
-    assert list(df["symbol"]) == ["AAA", "BBB"]
+    assert list(df["symbol"]) == ["AAA"]                                   # "Unclassified" left out: NSE's class stays (16-Nov-2026)
     assert df.iloc[0]["themes"] == "Refining & OMC|Data Centres" and df.iloc[0]["sector"] == "Oil, Gas & Consumable Fuels"
-    assert df.iloc[1]["themes"] == "" and df.iloc[1]["as_of"] == "2026-11-06"
+    assert df.iloc[0]["as_of"] == "2026-11-06"
+
+
+def test_xlsx_export_and_broken_dash(tmp_path):
+    f = tmp_path / "all-stocks_16-11-26_fixed.xlsx"
+    pd.DataFrame([{"symbol": "AAA", "sector": "Construction", "industry": "Road Assets�Toll, Annuity, Hybrid-Annuity", "themes": '["Roads"]'},
+                  {"symbol": "BBB", "sector": "Chemicals", "industry": "Specialty Chemicals", "themes": "[]"}]).to_excel(f, index=False)
+    df = imp.build(imp.read_export(f), "2026-11-16")
+    assert df.iloc[0]["industry"] == "Road Assets–Toll, Annuity, Hybrid-Annuity" and df.iloc[0]["themes"] == "Roads"
+    assert df.iloc[1]["themes"] == ""
 
 
 def test_reference_wins_in_classification(tmp_path):

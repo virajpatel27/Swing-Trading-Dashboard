@@ -3,6 +3,10 @@ exactly as the reference app has them). The export itself stays in the git-ignor
 sector / industry / themes goes into the repo. Run again with a newer export to refresh.
 
     python scripts/import_reference_classes.py "reference/exports/SN File 06-11-2026/all-stocks 06-11-2026.csv"
+    python scripts/import_reference_classes.py "reference/exports/all-stocks/all-stocks_16-11-26_fixed.xlsx"
+
+An .xlsx export is read directly (themes column = JSON list). "Unclassified" rows are left out (NSE's class is kept for
+them), and the broken dash of some exports ("Road Assets�Toll") is written as the real en dash.
 """
 from __future__ import annotations
 
@@ -20,6 +24,10 @@ OUT = ROOT / "config" / "reference_classes.csv"
 
 def read_export(path: Path) -> pd.DataFrame:
     """The export writes the themes column as a bare JSON list ([\"A\",\"B\"]) - turn it into 'A|B' before reading."""
+    if path.suffix.lower() == ".xlsx":
+        df = pd.read_excel(path, dtype=str).fillna("")
+        df["themes"] = df["themes"].map(lambda v: "|".join(json.loads(v)) if v.strip().startswith("[") else v)
+        return df
     lines = path.read_text(encoding="utf-8").splitlines()
     fixed = [lines[0]] + [re.sub(r',\[(.*?)\],', lambda m: ',"' + "|".join(json.loads("[" + m.group(1) + "]")) + '",', ln, count=1)
                           for ln in lines[1:]]
@@ -29,6 +37,9 @@ def read_export(path: Path) -> pd.DataFrame:
 def build(df: pd.DataFrame, as_of: str) -> pd.DataFrame:
     out = pd.DataFrame({"symbol": df["symbol"].str.strip(), "sector": df["sector"].str.strip(), "industry": df["industry"].str.strip(),
                         "themes": df["themes"].str.strip()})
+    for c in ("sector", "industry", "themes"):
+        out[c] = out[c].str.replace("�", "–", regex=False)
+    out = out[(out["sector"] != "Unclassified") & (out["industry"] != "Unclassified")]
     out["as_of"] = as_of
     return out[out["symbol"] != ""].drop_duplicates("symbol").sort_values("symbol").reset_index(drop=True)
 

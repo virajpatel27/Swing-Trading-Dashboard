@@ -84,7 +84,7 @@ descriptions in our own words). S0 done (`docs/reference-notes.md`, `docs/featur
 `swingdash/stock_master.py` -> `data/meta/stocks.csv` (built by the daily job), `scripts/audit_stocks.py` ->
 `reports/stock_audit.md`, `scripts/find_renames.py` -> `config/symbol_changes_extra.csv` (renames NSE's file misses, found by
 ISIN), `backfill.carry_over_renames` (older days of a renamed stock move to the new symbol), `config/fields.yaml` + test.
-Free float = 100 - promoter % (NSE shareholding API), liquid = median 30-session turnover >= 1 Cr and close >= 5.
+Free float = 100 - promoter % (NSE shareholding API), liquid (16-Nov-2026, the reference's rule) = average of volume x close over 30 sessions (all 30 needed) >= Rs 1.5 Cr and close >= 5 (config/settings.yaml liquid; was median NSE turnover >= 1 Cr).
 S2 done: delivery % from NSE MTO files (`backfill.py --job delivery`, daily step 1b once its checkpoint exists),
 corporate actions from BOTH NSE lists (index=equities and index=sme: SME-era bonuses/splits of 84 stocks were missing),
 `data/meta/share_factors.csv` (EPS factors, written by rebuild), `scripts/quality_report.py` -> `reports/data_quality.md`.

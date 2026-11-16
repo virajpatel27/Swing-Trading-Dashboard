@@ -1600,3 +1600,18 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   industry rank and return, vs sector, industry RS rating, pivot) | 7 fundamentals + events (PE, PB, ROE, ROCE, PEG,
   dividend yield, debt / equity, EPS TTM, growth, OPM, result dates, recent order). About texts stay our own words.
 - Also: requirements-dev.txt + openpyxl (the import reads .xlsx); tests/test_reference_classes.py updated (+ xlsx test).
+
+### 2026-11-16: Liquid rule = the reference's; Groups lists show liquid stocks
+- Viraj: Stockbroking & Allied showed 31 stocks, the reference 16. The reference export has 30 there too (ours + SHARDUL,
+  which it lacks): its Groups list shows only LIQUID stocks. Its rupee volume 30D = average of volume x close over 30
+  sessions (empty before 30 sessions); liquid = that >= Rs 1.5 Cr. Checked on the 16-Nov export: our new rule gives
+  every one of its 1,528 liquid stocks, + 6 (3 REITs it does not carry, ARHAM, BHAGYANGR, SWARAJ); the old rule (median
+  NSE turnover >= 1 Cr) missed 37 and added 44. Our rupee volume = its value for 97.6 % of stocks within 1 %.
+- Viraj said yes ("Ha, banne karo"): config/settings.yaml liquid (measure pxv_mean, 1.5 Cr, full 30 sessions; the old
+  rule stays available as measure: median); swingdash/stock_master.py (new column turnover_pxv30_cr, liquid flag),
+  swingdash/screen.py (liquid_day), swingdash/groups.py (liquid_matrix for group indexes); config/fields.yaml +
+  docs/formulas.md; CLAUDE.md; tests/test_scan_phase1.py (+ test of the new rule).
+- site/app.js Groups: the results list shows liquid stocks only, "All stocks" switch beside Results shows every member
+  (saved); "All <sector> stocks" count = liquid count.
+- Everything that uses "liquid" follows (scanners with universe liquid, Breadth, Groups ranks, Home setups) after the
+  next daily data run rebuilds data/meta/stocks.csv and the screen.

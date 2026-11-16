@@ -317,7 +317,7 @@
       rsort: [{ k: "rs_rating", d: "desc", def: true }], shut: {}, rq: "" }, store.get("sd-groups", {})));
     if (!Array.isArray(gs.cols)) gs.cols = GX_DEF_COLS.slice();
     gs.cols = gs.cols.filter((c) => SD.COLUMNS[c]);
-    const saveG = () => store.set("sd-groups", { small: gs.small, gsort: gs.gsort, isort: gs.isort, rsort: gs.rsort, cols: gs.cols });
+    const saveG = () => store.set("sd-groups", { small: gs.small, gsort: gs.gsort, isort: gs.isort, rsort: gs.rsort, cols: gs.cols, allSt: gs.allSt });
     const p = gs.period, enc = encodeURIComponent;
     const L = state.groups.levels, all = (L[level] || []).filter((x) => !(level === "sector" && x.n === 0)), cfgG = state.groups.config || {};
     const isWide = wide();
@@ -330,7 +330,8 @@
     const stockGroup = level === "sector" ? (subG || g) : g;
     const ids = stockGroup ? new Set(stockGroup.ids) : new Set();
     const rq = (gs.rq || "").trim().toLowerCase();
-    const stocks = gxSort(state.screen.filter((r) => ids.has(r.id) && (!rq || r.symbol.toLowerCase().includes(rq) || String(r.name || "").toLowerCase().includes(rq))),
+    // like the reference (16-Nov-2026): a group's list shows its LIQUID stocks; "All stocks" shows every member
+    const stocks = gxSort(state.screen.filter((r) => ids.has(r.id) && (gs.allSt || r.liquid === true) && (!rq || r.symbol.toLowerCase().includes(rq) || String(r.name || "").toLowerCase().includes(rq))),
       gs.rsort, (r, k) => (k === "symbol" ? r.symbol : r[k]));
     if (state.gStock && !stocks.some((r) => r.key === state.gStock)) state.gStock = null;
     const chartOn = isWide && !!state.gStock;
@@ -360,13 +361,13 @@
     const colA = col("a", headA, groupTable(list, "g", gs.gsort, level === "sector" ? "Sector" : "Group", g && g.name, (x) => `#/groups/${level}/${enc(x.name)}`, false));
     const colB = level === "sector" && g ? col("b", `<b>${esc(g.name)}</b><small>${inds.length} industr${inds.length === 1 ? "y" : "ies"}</small>`,
       groupTable(indList, "i", gs.isort, "Industry", sub, (x) => `#/groups/sector/${enc(g.name)}/${enc(x.name)}`, true)
-      + `<a class="gx-all ${!sub ? "on" : ""}" href="#/groups/sector/${enc(g.name)}">All ${esc(g.name)} stocks <small>${g.n}</small> <i>→</i></a>`) : "";
+      + `<a class="gx-all ${!sub ? "on" : ""}" href="#/groups/sector/${enc(g.name)}">All ${esc(g.name)} stocks <small>${gs.allSt ? g.n : g.nl ?? g.n}</small> <i>→</i></a>`) : "";
     const cols = gs.cols;
     const rth = (k, l, cls = "") => th(gs.rsort, "r", k, l, cls);
     const resHead = stockGroup ? (level === "sector" ? `<span class="gx-crumb">${esc(g.name)} <i>›</i></span><b>${subG ? esc(subG.name) : "All stocks"}</b>` : `<b>${esc(g.name)}</b>`) + `<small>${stocks.length} stocks</small>` : "<b>Stocks</b>";
     const cellG = (r, c) => (c === "themes" ? `<td class="l gx-th">${esc(r.themes || "—")}</td>` : c === "rs_rating" ? `<td class="num gx-rs${r.rs_rating >= 80 ? " hi" : ""}">${r.rs_rating ?? "–"}</td>`
       : `<td class="${SD.COLUMNS[c].fmt === "text" ? "l" : "num"}">${cellHTML(r, c)}</td>`);
-    const resBody = stockGroup ? `<div class="gx-rh"><b>Results</b><span class="gx-ri"><label class="gx-rq ${gs.rq ? "on" : ""}">${ICON.filter}<input type="search" id="gxRq" placeholder="Search" value="${esc(gs.rq || "")}"></label>
+    const resBody = stockGroup ? `<div class="gx-rh"><b>Results</b><label class="gx-chk gx-alls" title="Off: liquid stocks only (30-day average rupee volume of Rs 1.5 Cr or more), like the reference"><input type="checkbox" id="gxAllSt" ${gs.allSt ? "checked" : ""}> All stocks</label><span class="gx-ri"><label class="gx-rq ${gs.rq ? "on" : ""}">${ICON.filter}<input type="search" id="gxRq" placeholder="Search" value="${esc(gs.rq || "")}"></label>
         <div class="menu-wrap"><button class="icon-btn sm" id="gxSB" type="button" title="Sort">${ICON.sort}</button><div class="menu right gx-sm" id="gxSM" hidden></div></div>
         <button class="icon-btn sm" id="gxCB" type="button" title="Columns">${ICON.cols}</button></span></div>
       <table class="gxt gxr"><thead><tr><th class="l ck"><input type="checkbox" id="gxAll" aria-label="Select all"></th>${rth("symbol", "SYMBOL", "l")}${rth("close", "LTP")}${cols.map((c) => rth(c, esc(GX_SHORT[c] || SD.COLUMNS[c].label).toUpperCase(), SD.COLUMNS[c].fmt === "text" ? "l" : "")).join("")}</tr></thead><tbody>`
@@ -424,6 +425,7 @@
     const qi = $("#gq"); qi.oninput = () => { gs.q = qi.value; const pos = qi.selectionStart; renderGroups(level, name, sub); const nq = $("#gq"); nq.focus(); nq.setSelectionRange(pos, pos); };
     if ($("#gxRq")) $("#gxRq").oninput = (e) => { gs.rq = e.target.value; const pos = e.target.selectionStart; renderGroups(level, name, sub); const nq = $("#gxRq"); if (nq) { nq.focus(); nq.setSelectionRange(pos, pos); } };
     if ($("#gsmall")) $("#gsmall").onchange = (e) => { gs.small = e.target.checked; again(); };
+    if ($("#gxAllSt")) $("#gxAllSt").onchange = (e) => { gs.allSt = e.target.checked; saveG(); again(); };
     $("[data-seg=gperiod]").onclick = (e) => { const b = e.target.closest("button"); if (!b || b.dataset.v === gs.period) return; gs.period = b.dataset.v; store.set("sd-gperiod", gs.period); renderGroups(level, name, sub); };
     colsEl.onclick = (e) => {
       const sh = e.target.closest("[data-shut]");

@@ -98,7 +98,7 @@ def test_build_writes_groups_and_liquid_rule(tmp_path):
         store.write(data / "stocks" / "adjusted" / s, adj, ADJ_COLS, TODAY)
         raw = adj.assign(prev_close=close, value=5e7 if s != "C" else 1e5, series="EQ")   # C is not liquid
         store.write(data / "stocks" / "raw" / s, raw, store.STOCK_COLS, TODAY)
-    lst = groups.build(root, {"min_members": 2}, TODAY, {"sessions": 30, "min_turnover_cr": 1, "min_price": 5},
+    lst = groups.build(root, {"min_members": 2}, TODAY, {"sessions": 30, "measure": "median", "min_turnover_cr": 1, "min_price": 5},
                        log=lambda m: None)
     assert set(zip(lst["level"], lst["id"])) == {("sector", "it"), ("sector", "power"), ("industry", "software"),
                                                   ("industry", "utilities"), ("theme", "t")}

@@ -18,9 +18,13 @@ validation:
   max_bse_mismatch_share: 10         # > 10 % of liquid stocks closing > 3 % apart on NSE and BSE -> error (wrong day?)
 classification_refresh_days: 30         # ask NSE again for a stock's sector after this many days
 
-liquid:                                 # "liquid" stock (Viraj's master prompt): all three must hold
-  sessions: 30                          # median daily turnover over the last N sessions ...
-  min_turnover_cr: 1.0                  # ... at least this many Rs crore
+liquid:                                 # "liquid" stock: all must hold. 16-Nov-2026 (Viraj): the reference's rule - the
+                                        # AVERAGE of (volume x close) over the last 30 sessions >= Rs 1.5 Cr, a full 30
+                                        # sessions needed (its export: 1,508 liquid stocks on 16-Nov, ours the same);
+                                        # was: median NSE turnover >= Rs 1 Cr (master prompt)
+  sessions: 30                          # window (all N sessions needed)
+  measure: pxv_mean                     # pxv_mean = average volume x close | median = median NSE traded value (old rule)
+  min_turnover_cr: 1.5                  # at least this many Rs crore
   min_price: 5.0                        # last close at least Rs 5 (and the stock traded in the last 10 days)
 
 fundamentals_refresh_days: 120         # the backfill reads a stock again after this many days (the daily step adds new filings)

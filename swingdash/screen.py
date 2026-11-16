@@ -62,10 +62,13 @@ def one_stock(args) -> tuple[str, dict, pd.DataFrame] | None:
     weights = {int(k): float(v) for k, v in (rs.get("weights") or {63: .4, 126: .2, 189: .2, 252: .2}).items()}
     f["rs_score"] = engine.rs_score(f["close"], weights, int(rs.get("min_sessions", 63)))
     n = int(liquid_rule.get("sessions", 30))
-    turnover = f["turnover_cr"] if "turnover_cr" in f else pd.Series(np.nan, index=f.index)
     rc = f["raw_close"] if "raw_close" in f else f["close"]
-    f["liquid_day"] = (turnover.rolling(n, min_periods=min(10, n)).median() >= float(liquid_rule.get("min_turnover_cr", 1.0))) \
-        & (rc >= float(liquid_rule.get("min_price", 5.0)))
+    if liquid_rule.get("measure", "pxv_mean") == "median":           # old rule: median NSE traded value
+        turnover = f["turnover_cr"] if "turnover_cr" in f else pd.Series(np.nan, index=f.index)
+        level = turnover.rolling(n, min_periods=min(10, n)).median()
+    else:                                                             # the reference's: average volume x close, full window
+        level = (f["volume"].astype(float) * f["close"] / 1e7).rolling(n, min_periods=n).mean()
+    f["liquid_day"] = (level >= float(liquid_rule.get("min_turnover_cr", 1.5))) & (rc >= float(liquid_rule.get("min_price", 5.0)))
     hist = f[HIST_COLS + ["rs_score", "liquid_day", "stage"]].join(breadth.day_flags(f).drop(columns=["chg_1d"]))
     hist["chg_1d"] = f["chg_1d"]
     hist.index = f["date"]

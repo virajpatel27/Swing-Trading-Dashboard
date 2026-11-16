@@ -73,14 +73,16 @@ def close_matrix(data: Path, ids: list[str]) -> pd.DataFrame:
 def liquid_matrix(data: Path, ids: list[str], index: pd.Index, rule: dict) -> pd.DataFrame:
     """True where a stock was liquid on the PREVIOUS trading day (raw turnover and raw close, as traded then)."""
     val, close = {}, {}
+    pxv = rule.get("measure", "pxv_mean") != "median"
     for i in ids:
         df = store.read(data / "stocks" / "raw" / i, store.STOCK_COLS)
         if len(df):
             d = df.set_index("date")
-            val[i], close[i] = d["value"].astype(float), d["close"].astype(float)
+            close[i] = d["close"].astype(float)
+            val[i] = d["volume"].astype(float) * close[i] if pxv else d["value"].astype(float)
     n = int(rule.get("sessions", 30))
-    turnover = pd.DataFrame(val).rolling(n, min_periods=min(10, n)).median()
-    ok = (turnover >= float(rule.get("min_turnover_cr", 1.0)) * 1e7) & (pd.DataFrame(close) >= float(rule.get("min_price", 5.0)))
+    turnover = pd.DataFrame(val).rolling(n, min_periods=n).mean() if pxv else pd.DataFrame(val).rolling(n, min_periods=min(10, n)).median()
+    ok = (turnover >= float(rule.get("min_turnover_cr", 1.5)) * 1e7) & (pd.DataFrame(close) >= float(rule.get("min_price", 5.0)))
     return ok.shift(1, fill_value=False).reindex(index=index, columns=ids, fill_value=False)
 
 

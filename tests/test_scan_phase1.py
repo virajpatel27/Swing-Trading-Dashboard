@@ -18,7 +18,7 @@ TODAY = date(2026, 11, 3)
 def raw_rows(start: str, n: int, close: float, value: float) -> pd.DataFrame:
     d = pd.bdate_range(start, periods=n)
     return pd.DataFrame({"date": d, "open": close, "high": close, "low": close, "close": close, "prev_close": close,
-                         "volume": 1000, "value": value, "series": "EQ"})
+                         "volume": value / close, "value": value, "series": "EQ"})
 
 
 def make_data(tmp: Path) -> Path:
@@ -63,12 +63,22 @@ def test_master_market_cap_float_liquid_status(tmp_path):
 
 def test_liquid_rule_uses_median_and_settings(tmp_path):
     data = make_data(tmp_path)
-    m = stock_master.build(data, set(), None, {"min_turnover_cr": 0.4}, log=lambda s: None).set_index("symbol")
+    m = stock_master.build(data, set(), None, {"min_turnover_cr": 0.4, "measure": "median"}, log=lambda s: None).set_index("symbol")
     assert bool(m.loc["THIN", "liquid"])                            # 0.5 Cr >= 0.4 Cr
     r = raw_rows("2026-08-03", 30, 10.0, 1e7)
     r.loc[:3, "value"] = 1e10                                       # four huge days move the average, not the median
     st = stock_master.price_stats(r, 30)
     assert st["turnover_med30_cr"] == 1.0 and st["turnover_avg30_cr"] > 100
+
+
+def test_liquid_rule_reference_average_rupee_volume(tmp_path):
+    """16-Nov-2026: liquid = average volume x close of 30 sessions >= Rs 1.5 Cr (all 30 sessions needed)."""
+    data = make_data(tmp_path)
+    m = stock_master.build(data, set(), None, log=lambda s: None).set_index("symbol")
+    assert bool(m.loc["BIG", "liquid"]) and m.loc["BIG", "turnover_pxv30_cr"] == 5.0          # Rs 5 Cr a day
+    assert not m.loc["THIN", "liquid"]                                                        # Rs 0.5 Cr
+    young = raw_rows("2026-10-01", 20, 100.0, 5e7)                                            # 20 sessions only
+    assert stock_master.price_stats(young, 30)["turnover_pxv30_cr"] is None
 
 
 def test_share_count_changed_after_split(tmp_path):

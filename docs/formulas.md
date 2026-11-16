@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S9**. Fields: **323**.
+Current phase: **S9**. Fields: **324**.
 
 ## Sources
 
@@ -97,7 +97,8 @@ Current phase: **S9**. Fields: **323**.
 | `float_mcap_cr` | Float market cap (Rs Cr) | crore | mcap_cr x float_pct / 100 | mcap_cr, float_pct | data/snapshot/screen.json, data/meta/stocks.csv |
 | `turnover_med30_cr` | Median turnover 30D (Rs Cr) | crore | Median of daily turnover over the last 30 sessions / 1e7 | bhavcopy | data/meta/stocks.csv |
 | `turnover_avg30_cr` | Avg turnover 30D (Rs Cr) | crore | Average of daily turnover over the last 30 sessions / 1e7 | bhavcopy | data/meta/stocks.csv |
-| `liquid` | Liquid | boolean | status = active AND turnover_med30_cr >= 1 AND raw_close >= 5 (numbers in settings.yaml -> liquid) | status, turnover_med30_cr, raw_close, settings | data/snapshot/screen.json, data/meta/stocks.csv |
+| `turnover_pxv30_cr` | Rupee volume 30D (Rs Cr) | crore | Average of volume x close over the last 30 sessions / 1e7; empty before 30 sessions (the reference's rupee volume 30D) | bhavcopy | data/meta/stocks.csv |
+| `liquid` | Liquid | boolean | status = active AND turnover_pxv30_cr >= 1.5 AND raw_close >= 5 (numbers in settings.yaml -> liquid; the reference's rule since 16-Nov-2026) | status, turnover_pxv30_cr, raw_close, settings | data/snapshot/screen.json, data/meta/stocks.csv |
 | `shares_fetched` | Share count date | date | Day the share count was asked from NSE | nse_quote | data/meta/stocks.csv |
 
 ## Fields of phase S2
@@ -188,7 +189,7 @@ Current phase: **S9**. Fields: **323**.
 | `beta_1y` | Beta 1Y vs Nifty 50 | number | Covariance / variance of daily returns vs Nifty 50 over the 252 sessions up to the previous day | close, index_history | data/snapshot/screen.json |
 | `stage` | Stage | text | 1 Basing, 2A Early uptrend, 2 Uptrend, 3 Topping, 4 Downtrend, 4A Improving: above SMA200 = 2 (3 when below SMA50 after an extended run: SMA10 > SMA200 x 1.08, close > SMA200 x 1.02; a Topping stays while the close is below SMA50); below SMA200 = 1 when above SMA50, 0.5 % above SMA100 and at most 10 % below SMA200, else 4 / 4A; under 200 sessions SMA50 / SMA10 / SMA30 (config/stage.yaml) | close, indicator_settings | data/snapshot/screen.json |
 | `rs_score` | RS score | number | 0.4 x 3M + 0.2 x 6M + 0.2 x 9M + 0.2 x 12M return (63/126/189/252 sessions; younger stocks: the periods they have) | close | data/snapshot/screen.json |
-| `liquid_day` | Liquid that day | boolean | Median turnover of the last 30 sessions >= Rs 1 Cr and raw close >= Rs 5 (same day) | turnover_cr, raw_close, settings | data/snapshot/screen.json |
+| `liquid_day` | Liquid that day | boolean | Average volume x close of the last 30 sessions (all 30 needed) >= Rs 1.5 Cr and raw close >= Rs 5 (same day) | volume, close, raw_close, settings | data/snapshot/screen.json |
 | `rs_rating_1w` | RS rating 1 week | integer | Percentile rank 1-99 of ret_1w among all stocks that day | ret_1w | data/snapshot/screen.json |
 | `rs_rating_1m` | RS rating 1 month | integer | Percentile rank 1-99 of ret_1m among all stocks that day | ret_1m | data/snapshot/screen.json |
 | `rs_rating_3m` | RS rating 3 months | integer | Percentile rank 1-99 of ret_3m among all stocks that day | ret_3m | data/snapshot/screen.json |

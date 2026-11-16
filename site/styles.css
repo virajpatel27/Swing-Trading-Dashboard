@@ -2554,4 +2554,6 @@ main.card:has(> .gx) .gx-bar { margin: 0 12px 13px; min-height: 36px; }
 @supports selector(::-webkit-scrollbar) {
   .gcol-b, .rr-side, .wl-rows, .wl-sb, .er-l, .ec-l, .ecs { scrollbar-width: auto; scrollbar-color: auto; }
 }
+/* Groups results: "All stocks" switch beside the title (off = liquid stocks only, like the reference) */
+.gx-rh .gx-alls { margin-left: 12px; font-size: 12px; font-weight: 400; color: var(--muted); }
 

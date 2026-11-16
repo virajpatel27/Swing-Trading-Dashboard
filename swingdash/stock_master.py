@@ -29,11 +29,11 @@ from .sources import nse
 
 COLS = ["symbol", "id", "name", "isin", "series", "listed", "first_date", "last_date", "sessions", "status", "n500", "fno",
         "price_band", "face_value", "shares", "promoter_pct", "float_pct", "raw_close", "mcap_cr", "float_mcap_cr",
-        "turnover_med30_cr", "turnover_avg30_cr", "liquid", "sector", "industry", "basic_industry", "shares_fetched",
+        "turnover_med30_cr", "turnover_avg30_cr", "turnover_pxv30_cr", "liquid", "sector", "industry", "basic_industry", "shares_fetched",
         "ipo_date", "ipo_price"]
 STALE_DAYS = 10
 CR = 1e7
-DEFAULT_LIQUID = {"sessions": 30, "min_turnover_cr": 1.0, "min_price": 5.0}
+DEFAULT_LIQUID = {"sessions": 30, "measure": "pxv_mean", "min_turnover_cr": 1.5, "min_price": 5.0}
 
 
 def _num(v) -> float | None:
@@ -45,17 +45,20 @@ def _num(v) -> float | None:
 
 
 def price_stats(raw: pd.DataFrame, sessions: int) -> dict:
-    """First / last date, number of sessions, last raw close, and the median and average turnover (Rs Cr) of the last
-    `sessions` days (median -> liquid flag; average = the usual "avg turnover 30d" column)."""
+    """First / last date, number of sessions, last raw close, and the median and average NSE turnover (Rs Cr) of the last
+    `sessions` days, plus the average of volume x close (the reference's "rupee volume 30D"; None before `sessions` days)."""
     if raw.empty:
         return {"first_date": "", "last_date": "", "sessions": 0, "close": None, "turnover_med30_cr": None,
-                "turnover_avg30_cr": None}
-    value = pd.to_numeric(raw.tail(sessions)["value"], errors="coerce")
+                "turnover_avg30_cr": None, "turnover_pxv30_cr": None}
+    tail = raw.tail(sessions)
+    value = pd.to_numeric(tail["value"], errors="coerce")
     med, avg = value.median(), value.mean()
+    pxv = (pd.to_numeric(tail["volume"], errors="coerce") * pd.to_numeric(tail["close"], errors="coerce")).mean() if len(tail) >= sessions else float("nan")
     return {"first_date": raw["date"].iat[0].strftime("%Y-%m-%d"), "last_date": raw["date"].iat[-1].strftime("%Y-%m-%d"),
             "sessions": int(len(raw)), "close": float(raw["close"].iat[-1]),
             "turnover_med30_cr": None if pd.isna(med) else round(med / CR, 2),
-            "turnover_avg30_cr": None if pd.isna(avg) else round(avg / CR, 2)}
+            "turnover_avg30_cr": None if pd.isna(avg) else round(avg / CR, 2),
+            "turnover_pxv30_cr": None if pd.isna(pxv) else round(pxv / CR, 2)}
 
 
 def status_of(last_date: str, newest: pd.Timestamp | None) -> str:
@@ -118,7 +121,8 @@ def build(data: Path, fno: set[str] | None, bands: pd.DataFrame | None, liquid_r
                      "raw_close": close, "mcap_cr": None if mcap is None else round(mcap, 2),
                      "float_mcap_cr": None if mcap is None or fpct is None else round(mcap * fpct / 100, 2),
                      "turnover_med30_cr": st["turnover_med30_cr"], "turnover_avg30_cr": st["turnover_avg30_cr"],
-                     "liquid": is_liquid(status, close, st["turnover_med30_cr"], rule),
+                     "turnover_pxv30_cr": st["turnover_pxv30_cr"],
+                     "liquid": is_liquid(status, close, st["turnover_med30_cr"] if rule.get("measure") == "median" else st["turnover_pxv30_cr"], rule),
                      "sector": c.get("sector", ""), "industry": c.get("industry", ""),
                      "basic_industry": c.get("basic_industry", ""),
                      "shares_fetched": c.get("fetched", "") if shares else "",

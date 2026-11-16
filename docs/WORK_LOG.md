@@ -1615,3 +1615,7 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   (saved); "All <sector> stocks" count = liquid count.
 - Everything that uses "liquid" follows (scanners with universe liquid, Breadth, Groups ranks, Home setups) after the
   next daily data run rebuilds data/meta/stocks.csv and the screen.
+- Same day: Industry (193) vs the reference's (172). Its export has 192 industries too; its Groups page lists only groups
+  with at least one LIQUID stock (22 industries have none, e.g. Print Media, Electronic Media, Jute & Jute Products,
+  Trading - Coal). site/app.js Groups: groups without a liquid stock are not listed or counted -> Industry (172),
+  Sector (22: the reference's 23rd is its "Unclassified" sector of new listings, which we classify from NSE), Theme (96).

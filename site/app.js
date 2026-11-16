@@ -319,7 +319,9 @@
     gs.cols = gs.cols.filter((c) => SD.COLUMNS[c]);
     const saveG = () => store.set("sd-groups", { small: gs.small, gsort: gs.gsort, isort: gs.isort, rsort: gs.rsort, cols: gs.cols, allSt: gs.allSt });
     const p = gs.period, enc = encodeURIComponent;
-    const L = state.groups.levels, all = (L[level] || []).filter((x) => !(level === "sector" && x.n === 0)), cfgG = state.groups.config || {};
+    // like the reference (16-Nov-2026): a group with no liquid stock is not listed or counted (22 industries such as Print Media)
+    const live = (x) => (x.nl ?? x.n) > 0;
+    const L = state.groups.levels, all = (L[level] || []).filter(live), cfgG = state.groups.config || {};
     const isWide = wide();
     const rankOf = (x) => (x.small ? null : x.rank);
     const gval = (x, k) => (k === "name" ? x.name : k === "med" ? x["med_" + p] : k === "hl" ? (x.hi20 ?? 0) - (x.lo20 ?? 0) : k === "rank" ? rankOf(x) : x[k]);
@@ -383,7 +385,7 @@
     const oldRects = new Map();
     view.querySelectorAll(".gx [data-f]").forEach((el) => oldRects.set(el.dataset.f, el.getBoundingClientRect().top));
     const oldScroll = {}; view.querySelectorAll(".gx .gcol").forEach((c) => { oldScroll[c.dataset.col] = c.querySelector(".gcol-b").scrollTop; });
-    const cnt = (k) => (L[k] || []).filter((x) => !(k === "sector" && x.n === 0)).length;
+    const cnt = (k) => (L[k] || []).filter(live).length;
     view.innerHTML = `<div class="gx${periodChg ? " pchg" : ""}"><div class="gx-bar"><div class="gx-lv">${[["sector", "Sector"], ["industry", "Industry"], ["theme", "Theme"]].map(([k, l]) =>
         `<a class="${k === level ? "on" : ""}" href="#/groups/${k}">${l} <small>(${cnt(k)})</small></a>`).join("")}</div>
       <div class="rr-seg gx-pd" data-seg="gperiod">${[["1d", "1D"], ["1w", "1W"], ["1m", "1M"], ["3m", "3M"], ["1y", "1Y"], ["ytd", "YTD"]].map(([v, l]) => `<button type="button" data-v="${v}" class="${v === p ? "on" : ""}">${l}</button>`).join("")}</div>

@@ -50,7 +50,7 @@ fields:
   - {id: listed, label: Listing date, type: date, formula: "Date of listing on NSE (from NSE's list)", inputs: [equity_list], provided_in_phase: 1, source: NSE, file: [screen, stocks]}
   - {id: n500, label: Nifty 500, type: boolean, formula: "Member of the Nifty 500 today", inputs: [nifty500_list], provided_in_phase: 0, source: niftyindices.com, file: [screen, stocks, snapshot]}
   - {id: fno, label: F&O stock, type: boolean, formula: "Has futures & options on NSE today", inputs: [fno_list], provided_in_phase: 1, source: NSE, file: [screen, stocks]}
-  - {id: price_band, label: Price band %, type: text, formula: "Today's circuit limit: 2 / 5 / 10 / 20 % or No Band", inputs: [price_bands], provided_in_phase: 1, source: NSE, file: [screen, stocks]}
+  - {id: price_band, label: Price band %, type: text, formula: "Circuit limit 2 / 5 / 10 / 20 % or No Band from NSE's latest sec_list.csv: after the evening update it is the band for the NEXT session (Viraj 17-Nov-2026: NSE's newest; the reference shows the band in force on the data day)", inputs: [price_bands], provided_in_phase: 1, source: NSE, file: [screen, stocks]}
   # ------------------------------------------------------------ classification
   - {id: macro, label: Macro sector, type: text, formula: "NSE classification level 1", inputs: [nse_quote], provided_in_phase: 0, source: NSE, file: [snapshot]}
   - {id: sector, label: Sector, type: text, formula: "NSE classification level 2 (Nifty 500 list industry when NSE gives none)", inputs: [nse_quote, nifty500_list], provided_in_phase: 0, source: NSE, file: [screen, stocks, snapshot]}
@@ -110,7 +110,7 @@ fields:
   - {id: flags, label: Flags, type: list, formula: "Simple signals: 52W / 20D breakout or breakdown, above EMA50 & 200, RSI 50-70, near 52W high, volume spike, strong RS", inputs: [close, hi52, ema50, ema200, rsi14, vol_ratio, rs_rating], provided_in_phase: 0, source: derived, file: [snapshot]}
   # ------------------------------------------------------------ delivery (phase 2)
   - {id: deliv_qty, label: Delivery qty, type: integer, formula: "Deliverable quantity of the day as traded (not split-adjusted)", inputs: [mto], provided_in_phase: 2, source: NSE, file: [delivery]}
-  - {id: deliv_pct, label: Delivery %, type: percent, formula: "Deliverable quantity / traded quantity x 100 (NSE's figure)", inputs: [mto], provided_in_phase: 2, source: NSE, file: [delivery, screen]}
+  - {id: deliv_pct, label: Delivery %, type: percent, formula: "Deliverable quantity / traded quantity x 100 (NSE's figure) of the SAME session (Viraj 17-Nov-2026: NSE's newest; the reference shows the previous session's)", inputs: [mto], provided_in_phase: 2, source: NSE, file: [delivery, screen]}
   # ------------------------------------------------------------ groups (phase 3)
   - {id: group_ret_mean, label: Group return (equal weight), type: percent, formula: "Average one-day return of the group's members that were liquid the day before (moves beyond +-50 % left out)", inputs: [close, liquid, sector, basic_industry, theme_rules], provided_in_phase: 3, source: derived, file: [groups]}
   - {id: group_ret_median, label: Group median return, type: percent, formula: "Median one-day return of the same members", inputs: [close, liquid, sector, basic_industry, theme_rules], provided_in_phase: 3, source: derived, file: [groups]}

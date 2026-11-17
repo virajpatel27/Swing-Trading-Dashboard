@@ -85,7 +85,7 @@ Current phase: **S9**. Fields: **324**.
 | `series` | Series | text | NSE series: EQ normal, BE / BZ trade-for-trade, RR REIT | equity_list | data/snapshot/screen.json, data/meta/stocks.csv |
 | `listed` | Listing date | date | Date of listing on NSE (from NSE's list) | equity_list | data/snapshot/screen.json, data/meta/stocks.csv |
 | `fno` | F&O stock | boolean | Has futures & options on NSE today | fno_list | data/snapshot/screen.json, data/meta/stocks.csv |
-| `price_band` | Price band % | text | Today's circuit limit: 2 / 5 / 10 / 20 % or No Band | price_bands | data/snapshot/screen.json, data/meta/stocks.csv |
+| `price_band` | Price band % | text | Circuit limit 2 / 5 / 10 / 20 % or No Band from NSE's latest sec_list.csv: after the evening update it is the band for the NEXT session (Viraj 17-Nov-2026: NSE's newest; the reference shows the band in force on the data day) | price_bands | data/snapshot/screen.json, data/meta/stocks.csv |
 | `last_date` | Last trade | date | Last stored trading day | bhavcopy | data/meta/stocks.csv |
 | `sessions` | Sessions stored | integer | Number of stored trading days | bhavcopy | data/meta/stocks.csv |
 | `status` | Status | text | active = traded within 10 days of the newest trading day; inactive = not since; no_history = nothing stored | last_date | data/meta/stocks.csv |
@@ -106,7 +106,7 @@ Current phase: **S9**. Fields: **324**.
 | field | label | type | formula | inputs | files |
 |---|---|---|---|---|---|
 | `deliv_qty` | Delivery qty | integer | Deliverable quantity of the day as traded (not split-adjusted) | mto | data/stocks/delivery/<ID>/ |
-| `deliv_pct` | Delivery % | percent | Deliverable quantity / traded quantity x 100 (NSE's figure) | mto | data/stocks/delivery/<ID>/, data/snapshot/screen.json |
+| `deliv_pct` | Delivery % | percent | Deliverable quantity / traded quantity x 100 (NSE's figure) of the SAME session (Viraj 17-Nov-2026: NSE's newest; the reference shows the previous session's) | mto | data/stocks/delivery/<ID>/, data/snapshot/screen.json |
 
 ## Fields of phase S3
 

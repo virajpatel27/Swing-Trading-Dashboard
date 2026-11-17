@@ -310,3 +310,21 @@ Industries: the reference uses its own 173-industry list (e.g. "Jewellery & Watc
 Services"); ours is NSE's basic industry (195), so 6 of its names have no match and industry ranks stay ~0.76.
 avg_* (all members) and rank_1m are unchanged: the stock export's group fields were matched on all members (S9).
 
+## Phase 2 - price and day columns vs the 9 reference exports (17-Nov-2026)
+23,363 stock-days compared (02, 04, 05, 06, 09, 11, 12, 13, 16-Nov) with our raw NSE bhavcopy rows, adjusted series and
+delivery files. The 8 end-of-day exports (all but 02-Nov):
+
+| Column | Match | Note |
+|---|---|---|
+| price (close), open, high, low | 100 % | |
+| volume, pxv (volume x price) | 100 % | adjusted volume differs only after a later split / bonus (7 stocks) |
+| day_change_abs | 100 % | our chg_1d_rs |
+| day_change, gap_up | 99.99 % | 2 ex-dates: the reference uses the ADJUSTED previous close (as our engine) |
+| prev_close | 99.97 % | 6 ex-dates: NSE's bhavcopy PREVCLOSE is not adjusted, the reference's (and ours) is |
+| circuit | 99.27 % | 7 band changes: the reference shows the band in force on the data day (NSE sec_list of the session before), we show NSE's newest (next session); 12 = stocks not traded on NSE |
+| deliv_pct_1d | 100 % vs OUR PREVIOUS session | the reference shows the previous session's delivery %; we show the same session's |
+
+Viraj's choice (17-Nov): keep NSE's newest for delivery % and circuit. The 02-Nov export is not end of day: its price
+column does not even agree with its own day_change (RELIANCE price 1287.80, prev 1164.90, day_change -0.94). 160
+stock-days have no NSE row (not traded on NSE: WILLAMAGOR, ELCIDIN, NAGAFERT ...); the export repeats an old price.
+

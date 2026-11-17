@@ -1619,3 +1619,13 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   with at least one LIQUID stock (22 industries have none, e.g. Print Media, Electronic Media, Jute & Jute Products,
   Trading - Coal). site/app.js Groups: groups without a liquid stock are not listed or counted -> Industry (172),
   Sector (22: the reference's 23rd is its "Unclassified" sector of new listings, which we classify from NSE), Theme (96).
+
+### 2026-11-17: Data check Phase 2 - price and day columns
+- All 9 exports vs our NSE data (23,363 stock-days): price, open, high, low, volume, pxv, change in rupees 100 %,
+  change % and gap 99.99 %, previous close 99.97 % (differences only on split / bonus days, where NSE's PREVCLOSE is
+  unadjusted and the reference and our engine use the adjusted close). Details: docs/calibration.md.
+- Timing differences, Viraj chose NSE's newest (no code change): delivery % (reference = previous session's) and circuit
+  (reference = band in force that day, ours = NSE's next-session band). config/fields.yaml texts say so; formulas doc.
+- Reference problems found: the 02-Nov export's price column is not end of day (does not match its own day_change);
+  stocks not traded on NSE keep an old price there.
+- Next: Phase 3 (returns, 52W / 20D / ATH, days from high, listing / IPO).

@@ -15,19 +15,19 @@ industry,auto-dealer,Auto Dealer,Automobile and Auto Components,3,True,,
 industry,biotechnology,Biotechnology,Healthcare,4,True,,
 industry,breweries-and-distilleries,Breweries & Distilleries,Fast Moving Consumer Goods,15,False,2009-06-11,2026-11-16
 industry,business-process-outsourcing-bpo-knowledge-process-outsourcing-kpo,Business Process Outsourcing (BPO)/ Knowledge Process Outsourcing (KPO),Services,8,False,2008-02-11,2026-11-16
-industry,cables-electricals,Cables - Electricals,Capital Goods,15,False,2007-02-19,2026-11-16
+industry,cables-electricals,Cables - Electricals,Capital Goods,14,False,2007-02-19,2026-11-16
 industry,carbon-black,Carbon Black,Chemicals,1,True,,
 industry,castings-and-forgings,Castings & Forgings,Capital Goods,11,False,2017-08-08,2026-11-16
 industry,cement-and-cement-products,Cement & Cement Products,Construction Materials,34,False,2007-02-15,2026-11-16
 industry,ceramics,Ceramics,Consumer Durables,9,False,2016-01-01,2026-11-16
 industry,cigarettes-and-tobacco-products,Cigarettes & Tobacco Products,Fast Moving Consumer Goods,3,True,,
-industry,civil-construction,Civil Construction,Construction,96,False,2007-02-15,2026-11-16
+industry,civil-construction,Civil Construction,Construction,95,False,2007-02-15,2026-11-16
 industry,coal,Coal,"Oil, Gas & Consumable Fuels",4,True,2026-03-02,2026-11-16
 industry,commercial-vehicles,Commercial Vehicles,Capital Goods,4,True,2014-09-02,2026-11-16
 industry,commodity-chemicals,Commodity Chemicals,Chemicals,32,False,2007-02-15,2026-11-16
 industry,compressors-pumps-and-diesel-engines,"Compressors, Pumps & Diesel Engines",Capital Goods,15,False,2007-12-06,2026-11-16
 industry,computers-software-and-consulting,Computers - Software & Consulting,Information Technology,56,False,2007-02-15,2026-11-16
-industry,computers-hardware-and-equipments,Computers Hardware & Equipments,Information Technology,11,False,2007-12-13,2026-11-16
+industry,computers-hardware-and-equipments,Computers Hardware & Equipments,Information Technology,10,False,2007-12-13,2026-11-16
 industry,construction-vehicles,Construction Vehicles,Capital Goods,5,False,2007-11-29,2026-11-16
 industry,consulting-services,Consulting Services,Services,5,False,,
 industry,consumer-electronics,Consumer Electronics,Consumer Durables,11,False,2007-12-20,2026-11-16
@@ -50,18 +50,18 @@ industry,dyes-and-pigments,Dyes And Pigments,Chemicals,12,False,2014-09-04,2026-
 industry,e-learning,E-Learning,Consumer Services,6,False,2025-11-14,2026-11-16
 industry,e-retail-e-commerce,E-Retail/ E-Commerce,Consumer Services,11,False,2021-09-08,2026-11-16
 industry,edible-oil,Edible Oil,Fast Moving Consumer Goods,12,False,2010-07-13,2026-11-16
-industry,education,Education,Consumer Services,15,False,2011-02-01,2026-11-16
+industry,education,Education,Consumer Services,14,False,2011-02-01,2026-11-16
 industry,electrodes-and-refractories,Electrodes & Refractories,Capital Goods,8,False,2017-05-02,2026-11-16
 industry,electronic-media,Electronic Media,"Media, Entertainment & Publication",4,True,,
 industry,electronics,Electronics,Consumer Durables,1,True,,
 industry,exchange-and-data-platform,Exchange and Data Platform,Financial Services,3,True,2017-12-04,2026-11-16
 industry,explosives,Explosives,Chemicals,3,True,2023-07-14,2026-11-16
-industry,ferro-and-silica-manganese,Ferro & Silica Manganese,Metals & Mining,4,True,2021-08-05,2026-11-16
-industry,fertilizers,Fertilizers,Chemicals,22,False,2007-02-20,2026-11-16
+industry,ferro-and-silica-manganese,Ferro & Silica Manganese,Metals & Mining,3,True,2021-08-05,2026-11-16
+industry,fertilizers,Fertilizers,Chemicals,21,False,2007-02-20,2026-11-16
 industry,film-production-distribution-and-exhibition,"Film Production, Distribution & Exhibition","Media, Entertainment & Publication",9,False,2016-04-13,2026-11-16
 industry,financial-institution,Financial Institution,Financial Services,7,False,2007-08-31,2026-11-16
 industry,financial-products-distributor,Financial Products Distributor,Financial Services,2,True,,
-industry,financial-technology-fintech,Financial Technology (Fintech),Financial Services,11,False,2021-12-28,2026-11-16
+industry,financial-technology-fintech,Financial Technology (Fintech),Financial Services,10,False,2021-12-28,2026-11-16
 industry,footwear,Footwear,Consumer Durables,8,False,2014-10-07,2026-11-16
 industry,forest-products,Forest Products,Forest Materials,1,True,,
 industry,furniture-home-furnishing,"Furniture, Home Furnishing",Consumer Durables,10,False,2017-02-27,2026-11-16
@@ -78,12 +78,12 @@ industry,heavy-electrical-equipment,Heavy Electrical Equipment,Capital Goods,35,
 industry,holding-company,Holding Company,Financial Services,15,False,2007-02-28,2026-11-16
 industry,home-furnishing,Home Furnishing,Consumer Durables,1,True,,
 industry,hospital,Hospital,Healthcare,25,False,2007-12-18,2026-11-16
-industry,hotels-and-resorts,Hotels & Resorts,Consumer Services,40,False,2007-02-15,2026-11-16
+industry,hotels-and-resorts,Hotels & Resorts,Consumer Services,39,False,2007-02-15,2026-11-16
 industry,household-appliances,Household Appliances,Consumer Durables,21,False,2007-09-03,2026-11-16
 industry,household-products,Household Products,Fast Moving Consumer Goods,5,False,2010-03-09,2026-11-16
 industry,houseware,Houseware,Consumer Durables,3,True,2026-07-22,2026-11-16
 industry,housing-finance-company,Housing Finance Company,Financial Services,15,False,2010-07-07,2026-11-16
-industry,it-enabled-services,IT Enabled Services,Information Technology,63,False,2007-02-15,2026-11-16
+industry,it-enabled-services,IT Enabled Services,Information Technology,62,False,2007-02-15,2026-11-16
 industry,industrial-gases,Industrial Gases,Chemicals,5,False,2025-03-06,2026-11-16
 industry,industrial-minerals,Industrial Minerals,Metals & Mining,9,False,2008-04-21,2026-11-16
 industry,industrial-products,Industrial Products,Capital Goods,83,False,2007-02-15,2026-11-16
@@ -120,7 +120,7 @@ industry,other-financial-services,Other Financial Services,Financial Services,25
 industry,other-food-products,Other Food Products,Fast Moving Consumer Goods,6,False,2023-11-30,2026-11-16
 industry,other-industrial-products,Other Industrial Products,Capital Goods,14,False,2021-02-23,2026-11-16
 industry,other-telecom-services,Other Telecom Services,Telecommunication,5,False,2021-07-15,2026-11-16
-industry,other-textile-products,Other Textile Products,Textiles,108,False,2007-02-15,2026-11-16
+industry,other-textile-products,Other Textile Products,Textiles,106,False,2007-02-15,2026-11-16
 industry,other-utilities,Other Utilities,Utilities,1,True,,
 industry,packaged-foods,Packaged Foods,Fast Moving Consumer Goods,19,False,2010-08-04,2026-11-16
 industry,packaging,Packaging,Capital Goods,35,False,2010-01-27,2026-11-16
@@ -130,7 +130,7 @@ industry,passenger-cars-and-utility-vehicles,Passenger Cars & Utility Vehicles,A
 industry,personal-care,Personal Care,Fast Moving Consumer Goods,10,False,2008-01-02,2026-11-16
 industry,pesticides-and-agrochemicals,Pesticides & Agrochemicals,Chemicals,23,False,2010-01-11,2026-11-16
 industry,petrochemicals,Petrochemicals,Chemicals,9,False,2014-05-23,2026-11-16
-industry,pharmaceuticals,Pharmaceuticals,Healthcare,130,False,2007-02-15,2026-11-16
+industry,pharmaceuticals,Pharmaceuticals,Healthcare,129,False,2007-02-15,2026-11-16
 industry,pharmacy-retail,Pharmacy Retail,Consumer Services,2,True,,
 industry,pig-iron,Pig Iron,Metals & Mining,1,True,,
 industry,plastic-products,Plastic Products,Consumer Durables,1,True,,
@@ -193,31 +193,31 @@ industry,web-based-media-and-service,Web based media and service,"Media, Enterta
 industry,wellness,Wellness,Consumer Services,1,True,,
 industry,zinc,Zinc,Metals & Mining,1,True,,
 sector,automobile-and-auto-components,Automobile and Auto Components,,131,False,2007-02-15,2026-11-16
-sector,capital-goods,Capital Goods,,413,False,2007-02-15,2026-11-16
-sector,chemicals,Chemicals,,190,False,2007-02-15,2026-11-16
-sector,construction,Construction,,96,False,2007-02-15,2026-11-16
+sector,capital-goods,Capital Goods,,412,False,2007-02-15,2026-11-16
+sector,chemicals,Chemicals,,189,False,2007-02-15,2026-11-16
+sector,construction,Construction,,95,False,2007-02-15,2026-11-16
 sector,construction-materials,Construction Materials,,38,False,2007-02-15,2026-11-16
 sector,consumer-durables,Consumer Durables,,158,False,2007-02-15,2026-11-16
-sector,consumer-services,Consumer Services,,132,False,2007-02-15,2026-11-16
+sector,consumer-services,Consumer Services,,130,False,2007-02-15,2026-11-16
 sector,diversified,Diversified,,9,False,2007-05-29,2026-11-16
 sector,fast-moving-consumer-goods,Fast Moving Consumer Goods,,177,False,2007-02-15,2026-11-16
-sector,financial-services,Financial Services,,297,False,2007-02-15,2026-11-16
+sector,financial-services,Financial Services,,296,False,2007-02-15,2026-11-16
 sector,forest-materials,Forest Materials,,28,False,2007-11-06,2026-11-16
-sector,healthcare,Healthcare,,185,False,2007-02-15,2026-11-16
-sector,information-technology,Information Technology,,148,False,2007-02-15,2026-11-16
+sector,healthcare,Healthcare,,184,False,2007-02-15,2026-11-16
+sector,information-technology,Information Technology,,146,False,2007-02-15,2026-11-16
 sector,media-entertainment-and-publication,"Media, Entertainment & Publication",,59,False,2007-02-15,2026-11-16
-sector,metals-and-mining,Metals & Mining,,63,False,2007-02-15,2026-11-16
+sector,metals-and-mining,Metals & Mining,,62,False,2007-02-15,2026-11-16
 sector,oil-gas-and-consumable-fuels,"Oil, Gas & Consumable Fuels",,46,False,2007-02-15,2026-11-16
 sector,power,Power,,36,False,2007-02-15,2026-11-16
 sector,realty,Realty,,97,False,2007-02-15,2026-11-16
 sector,services,Services,,150,False,2007-02-15,2026-11-16
 sector,telecommunication,Telecommunication,,30,False,2007-02-15,2026-11-16
-sector,textiles,Textiles,,149,False,2007-02-15,2026-11-16
+sector,textiles,Textiles,,147,False,2007-02-15,2026-11-16
 sector,utilities,Utilities,,13,False,2021-09-28,2026-11-16
 theme,ac-and-appliances,AC & Appliances,,31,False,2007-02-15,2026-11-16
 theme,ai-and-cloud,AI & Cloud,,84,False,2007-02-15,2026-11-16
 theme,aerospace,Aerospace,,23,False,2016-11-08,2026-11-16
-theme,agrochemicals,Agrochemicals,,44,False,2007-02-15,2026-11-16
+theme,agrochemicals,Agrochemicals,,43,False,2007-02-15,2026-11-16
 theme,alcobev,Alcobev,,13,False,2009-06-11,2026-11-16
 theme,auto-components,Auto Components,,119,False,2007-02-15,2026-11-16
 theme,auto-dealers,Auto Dealers,,5,False,2024-07-30,2026-11-16
@@ -232,7 +232,7 @@ theme,commodity-chemicals,Commodity Chemicals,,43,False,2007-02-15,2026-11-16
 theme,conglomerate,Conglomerate,,8,False,2007-05-29,2026-11-16
 theme,copper-and-aluminium,Copper & Aluminium,,22,False,2007-02-15,2026-11-16
 theme,dairy-and-animal-feed,Dairy & Animal Feed,,15,False,2012-09-08,2026-11-16
-theme,data-centres,Data Centres,,63,False,2007-02-15,2026-11-16
+theme,data-centres,Data Centres,,61,False,2007-02-15,2026-11-16
 theme,defence,Defence,,32,False,2007-02-15,2026-11-16
 theme,defence-electronics,Defence Electronics,,16,False,2014-01-10,2026-11-16
 theme,diagnostics,Diagnostics,,15,False,2007-07-11,2026-11-16
@@ -241,28 +241,28 @@ theme,drones,Drones,,4,True,2021-11-16,2026-11-16
 theme,e-commerce,E-Commerce,,29,False,2007-02-15,2026-11-16
 theme,ems,EMS,,48,False,2007-02-15,2026-11-16
 theme,edible-oil,Edible Oil,,12,False,2010-07-13,2026-11-16
-theme,education,Education,,19,False,2011-02-01,2026-11-16
+theme,education,Education,,18,False,2011-02-01,2026-11-16
 theme,electric-mobility,Electric Mobility,,107,False,2007-02-15,2026-11-16
 theme,energy-storage,Energy Storage,,12,False,2007-07-26,2026-11-16
-theme,engineering-r-and-d,Engineering R&D,,54,False,2007-02-15,2026-11-16
+theme,engineering-r-and-d,Engineering R&D,,53,False,2007-02-15,2026-11-16
 theme,explosives-and-ammo,Explosives & Ammo,,4,True,2021-06-22,2026-11-16
 theme,farm-mechanisation,Farm Mechanisation,,38,False,2007-11-15,2026-11-16
 theme,fintech,Fintech,,14,False,2017-03-21,2026-11-16
 theme,food-delivery-and-qsr,Food Delivery & QSR,,11,False,2017-03-20,2026-11-16
 theme,gcc-and-offices,GCC & Offices,,68,False,2007-02-15,2026-11-16
 theme,gas-and-lng,Gas & LNG,,16,False,2007-02-15,2026-11-16
-theme,generics-and-apis,Generics & APIs,,115,False,2007-02-15,2026-11-16
+theme,generics-and-apis,Generics & APIs,,114,False,2007-02-15,2026-11-16
 theme,glass,Glass,,5,False,2020-12-15,2026-11-16
 theme,gold-and-jewellery,Gold & Jewellery,,36,False,2007-02-15,2026-11-16
 theme,holding-companies,Holding Companies,,48,False,2007-02-26,2026-11-16
 theme,hospitals,Hospitals,,32,False,2007-12-18,2026-11-16
-theme,hotels-and-tourism,Hotels & Tourism,,46,False,2007-02-15,2026-11-16
+theme,hotels-and-tourism,Hotels & Tourism,,45,False,2007-02-15,2026-11-16
 theme,housing-and-home-imp,Housing & Home Imp,,166,False,2007-02-15,2026-11-16
 theme,housing-finance,Housing Finance,,15,False,2010-07-07,2026-11-16
-theme,it-hardware,IT Hardware,,12,False,2007-12-13,2026-11-16
-theme,it-services,IT Services,,109,False,2007-02-15,2026-11-16
+theme,it-hardware,IT Hardware,,11,False,2007-12-13,2026-11-16
+theme,it-services,IT Services,,108,False,2007-02-15,2026-11-16
 theme,industrial-gases,Industrial Gases,,4,True,2025-03-06,2026-11-16
-theme,industrial-machinery,Industrial Machinery,,219,False,2007-02-15,2026-11-16
+theme,industrial-machinery,Industrial Machinery,,218,False,2007-02-15,2026-11-16
 theme,insurance,Insurance,,13,False,2017-11-15,2026-11-16
 theme,leather-and-footwear,Leather & Footwear,,13,False,2007-02-15,2026-11-16
 theme,logistics,Logistics,,44,False,2007-02-15,2026-11-16
@@ -285,11 +285,11 @@ theme,precision-engineering,Precision Engineering,,233,False,2007-02-15,2026-11-
 theme,premium-consumption,Premium Consumption,,127,False,2007-02-15,2026-11-16
 theme,quick-commerce,Quick Commerce,,14,False,2015-06-19,2026-11-16
 theme,railways,Railways,,14,False,2008-06-04,2026-11-16
-theme,rare-earths,Rare Earths,,16,False,2007-06-05,2026-11-16
+theme,rare-earths,Rare Earths,,15,False,2007-06-05,2026-11-16
 theme,recycling,Recycling,,6,False,2022-02-04,2026-11-16
 theme,refining-and-omc,Refining & OMC,,7,False,2007-02-15,2026-11-16
-theme,roads-and-water-infra,Roads & Water Infra,,103,False,2007-02-15,2026-11-16
-theme,rural-consumption,Rural Consumption,,64,False,2007-02-15,2026-11-16
+theme,roads-and-water-infra,Roads & Water Infra,,102,False,2007-02-15,2026-11-16
+theme,rural-consumption,Rural Consumption,,63,False,2007-02-15,2026-11-16
 theme,semiconductors,Semiconductors,,8,False,2007-05-28,2026-11-16
 theme,shipbuilding,Shipbuilding,,5,False,2019-05-31,2026-11-16
 theme,shipping,Shipping,,8,False,2007-07-13,2026-11-16
@@ -297,11 +297,11 @@ theme,solar-energy,Solar Energy,,33,False,2007-02-15,2026-11-16
 theme,space,Space,,7,False,2017-06-09,2026-11-16
 theme,specialty-chemicals,Specialty Chemicals,,118,False,2007-02-15,2026-11-16
 theme,stationery,Stationery,,5,False,2018-01-01,2026-11-16
-theme,steel,Steel,,91,False,2007-02-15,2026-11-16
+theme,steel,Steel,,90,False,2007-02-15,2026-11-16
 theme,sugar-and-ethanol,Sugar & Ethanol,,30,False,2007-02-15,2026-11-16
 theme,tea-and-coffee,Tea & Coffee,,12,False,2007-03-22,2026-11-16
 theme,telecom-services,Telecom Services,,9,False,2007-02-15,2026-11-16
-theme,textiles-and-apparel,Textiles & Apparel,,139,False,2007-02-15,2026-11-16
+theme,textiles-and-apparel,Textiles & Apparel,,137,False,2007-02-15,2026-11-16
 theme,thermal-power,Thermal Power,,33,False,2007-02-15,2026-11-16
 theme,trading-houses,Trading Houses,,38,False,2007-07-18,2026-11-16
 theme,tyres-and-rubber,Tyres & Rubber,,17,False,2007-11-05,2026-11-16
@@ -309,4 +309,4 @@ theme,value-retail,Value Retail,,35,False,2007-08-17,2026-11-16
 theme,waste-management,Waste Management,,5,False,2021-02-15,2026-11-16
 theme,wellness,Wellness,,11,False,2008-01-02,2026-11-16
 theme,wind-energy,Wind Energy,,7,False,2007-10-29,2026-11-16
-theme,wires-and-cables,Wires & Cables,,36,False,2007-02-19,2026-11-16
+theme,wires-and-cables,Wires & Cables,,35,False,2007-02-19,2026-11-16

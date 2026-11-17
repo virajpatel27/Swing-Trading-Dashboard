@@ -47,9 +47,27 @@ def _benchmarks(data: Path, ids: list[str]) -> dict[str, pd.Series]:
     return out
 
 
+def listing_moves(f: pd.DataFrame, listed, cfg: dict) -> dict:
+    """ret_since_ipo = close / the listing day's open - 1, from_listing_high = close / the listing day's high - 1 (%), like
+    the reference (17-Nov-2026: 95 % within 0.05 pt; the rest are rights issues it does not adjust). Only for stocks listed
+    on or after cfg listing_moves_from (the reference shows them for listings since Jan-2023) whose first NSE session is
+    within 5 days of the listing date (adjusted prices)."""
+    lst = pd.to_datetime(listed or None, errors="coerce")
+    start = pd.Timestamp(str(cfg.get("listing_moves_from", "2023-01-01")))
+    if pd.isna(lst) or lst < start or not len(f):
+        return {}
+    d = pd.to_datetime(f["date"])
+    at = f[d >= lst]
+    if not len(at) or (pd.Timestamp(at["date"].iat[0]) - lst).days > 5:
+        return {}
+    first, c = at.iloc[0], float(f["close"].iat[-1])
+    return {"ret_since_ipo": round((c / float(first["open"]) - 1) * 100, 2) if first["open"] else None,
+            "from_listing_high": round((c / float(first["high"]) - 1) * 100, 2) if first["high"] else None}
+
+
 def one_stock(args) -> tuple[str, dict, pd.DataFrame] | None:
     """(id, fields of the as_of day, per-day series for the cross-stock fields) - runs in a worker process."""
-    sid, data, bench, cfg, stage_cfg, liquid_rule, as_of, pattern_cfg, result_days = args
+    sid, data, bench, cfg, stage_cfg, liquid_rule, as_of, pattern_cfg, result_days, listed = args
     adj = store.read(data / "stocks" / "adjusted" / sid, ADJ_COLS)
     if as_of is not None:
         adj = adj[adj["date"] <= as_of]
@@ -75,6 +93,7 @@ def one_stock(args) -> tuple[str, dict, pd.DataFrame] | None:
     hist = hist.iloc[-HIST_KEEP:]                               # cross fields, groups and breadth use the last ~1.5 years
     last = f.iloc[-1].drop(labels=DROP, errors="ignore").to_dict()
     last.update(earnings.reaction(f, result_days))          # Phase S9: price reaction to the latest results
+    last.update(listing_moves(f, listed, cfg))
     return sid, last, hist
 
 
@@ -126,7 +145,13 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
                                      | {(cfg.get("events") or {}).get("rsb_benchmark", "NIFTY_MIDSMALLCAP_400")}))
     as_of = pd.Timestamp(as_of) if as_of is not None else None
     days = {sid: earnings.result_days(data, sym) for sid, sym in zip(master["id"], master["symbol"])}
-    jobs = [(sid, data, bench, cfg, stage_cfg, liquid_rule, as_of, pattern_cfg, days[sid]) for sid in master["id"]]
+    listed_of = dict(zip(master["id"], master["listed"])) if "listed" in master else {}
+    # a day on which 20+ stocks were admitted to NSE together (old BSE stocks, e.g. 20-Apr / 17-Aug-2026) is no IPO:
+    # those get no ret_since_ipo / from_listing_high (the reference leaves them empty too)
+    lv = pd.Series(listed_of).value_counts()
+    batch = set(lv[lv >= int(cfg.get("listing_batch_min", 20))].index)
+    listed_of = {k: ("" if v in batch else v) for k, v in listed_of.items()}
+    jobs = [(sid, data, bench, cfg, stage_cfg, liquid_rule, as_of, pattern_cfg, days[sid], listed_of.get(sid, "")) for sid in master["id"]]
     workers = workers or max(1, min(4, os.cpu_count() or 1))
     if workers > 1:
         with ProcessPoolExecutor(max_workers=workers) as ex:

@@ -1629,3 +1629,15 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Reference problems found: the 02-Nov export's price column is not end of day (does not match its own day_change);
   stocks not traded on NSE keep an old price there.
 - Next: Phase 3 (returns, 52W / 20D / ATH, days from high, listing / IPO).
+
+### 2026-11-17: Data check Phase 3 - returns, highs / lows, listing
+- Fixed (swingdash/engine.py): ret_1y = 252 sessions (3.5 % -> 98.4 % equal); 52W high / low = 252 sessions but never
+  older than 400 calendar days (engine.year_window / rolling_by_len, also days_since_hi52) - long-suspended stocks
+  reached back years; high_20d / low_20d need 20 sessions.
+- New fields (swingdash/screen.py listing_moves, config/fields.yaml): ret_since_ipo, from_listing_high (95.5 %), for
+  listings since 2023-01-01 (config/indicators.yaml listing_moves_from), not for bulk NSE admission days (listing_batch_min 20).
+- Viraj's choices: keep the TRUE all-time high (the reference's is the high since Jan-2023) and keep adjusting rights
+  issues (the reference does not). Details and numbers: docs/calibration.md. Test: tests/test_data_check_phase3.py.
+- Note: one daily run (04:16 IST 17-Nov) failed without an error message; the run before had saved 16-Nov's data
+  (health: 0 errors). Watch the next runs.
+- Next: Phase 4 (averages, RSI, ADR, RVol, average and rupee volume, beta).

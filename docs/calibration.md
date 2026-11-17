@@ -328,3 +328,21 @@ Viraj's choice (17-Nov): keep NSE's newest for delivery % and circuit. The 02-No
 column does not even agree with its own day_change (RELIANCE price 1287.80, prev 1164.90, day_change -0.94). 160
 stock-days have no NSE row (not traded on NSE: WILLAMAGOR, ELCIDIN, NAGAFERT ...); the export repeats an old price.
 
+## Phase 3 - returns, highs / lows, listing vs the 9 reference exports (17-Nov-2026)
+New engine computed for every stock on all 9 days (one pass, adjusted prices of 16-Nov); match within 0.05 pt (returns),
+half a paisa (prices), exact (days). Weighted over the 8 end-of-day exports:
+
+| Column | Before | After | Change |
+|---|---|---|---|
+| ret_1y | 3.5 % | 98.4 % | 252 sessions (was 251, fitted before the special sessions were in the data) |
+| ret_1w / 10d / 1m / 3m / 6m / ytd | 99.9 / 99.8 / 99.7 / 99.4 / 99.1 / 98.8 % | same | - |
+| high_20d / low_20d | 99.5 % | 99.7 % | empty before 20 sessions (min_periods 20) |
+| high_52w / low_52w | 98.0 / 98.3 % | 98.3 / 98.9 % | 252 sessions but none older than 400 calendar days (stocks back on NSE after years: GOODYEAR, KSE, LAKSHMIMIL reached years back) |
+| days_from_52w_high | 98.7 % | 99.0 % | same window |
+| ret_since_ipo / from_listing_high (new) | - | 95.5 % | close / listing day's open (high) - 1, listings since 2023-01-01; listing days shared by 20+ stocks (bulk admissions of old BSE stocks, 20-Apr / 17-Aug-2026) left out: 554 of the reference's 558 stocks found |
+| ath / from_ath | 73 % | 73 % | kept: the reference's "ATH" is the high since 1-Jan-2023 (99 % equal to that); ours is the true all-time high (Viraj 17-Nov) |
+
+The remaining 1-2 % are mostly rights issues: we adjust old prices (TERP), the reference does not (undoing rights would
+give 52W high 99.0 %); Viraj 17-Nov: keep adjusting. A few are its data errors (e.g. VIVIANA's 3:5 bonus not adjusted).
+ipo_days = our days_listed (the reference uses the listing date for every stock).
+

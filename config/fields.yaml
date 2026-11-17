@@ -86,8 +86,8 @@ fields:
   - {id: chg_1y, label: 1Y %, type: percent, formula: "close / close 252 sessions ago - 1", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
   - {id: chg_3y, label: 3Y %, type: percent, formula: "close / close 756 sessions ago - 1", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
   - {id: chg_5y, label: 5Y %, type: percent, formula: "close / close 1260 sessions ago - 1", inputs: [close], provided_in_phase: 0, source: derived, file: [snapshot]}
-  - {id: hi52, label: 52W high, type: rupees, formula: "Highest adjusted high of the last 252 sessions", inputs: [close], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
-  - {id: lo52, label: 52W low, type: rupees, formula: "Lowest adjusted low of the last 252 sessions", inputs: [close], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
+  - {id: hi52, label: 52W high, type: rupees, formula: "Highest adjusted high of the last 252 sessions, none older than 400 calendar days (long trading gaps)", inputs: [close], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
+  - {id: lo52, label: 52W low, type: rupees, formula: "Lowest adjusted low of the last 252 sessions, none older than 400 calendar days", inputs: [close], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
   - {id: from_hi52, label: From 52W high %, type: percent, formula: "close / hi52 - 1", inputs: [close, hi52], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
   - {id: from_lo52, label: From 52W low %, type: percent, formula: "close / lo52 - 1", inputs: [close, lo52], provided_in_phase: 0, source: derived, file: [screen, snapshot]}
   - {id: volume, label: Volume, type: integer, formula: "Shares traded today (adjusted for splits / bonus)", inputs: [bhavcopy, corporate_actions], provided_in_phase: 0, source: NSE, file: [screen, snapshot]}
@@ -122,13 +122,15 @@ fields:
   - {id: low, label: "Day low", type: rupees, formula: "Day's low, adjusted", inputs: [bhavcopy, corporate_actions], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: prev_close, label: "Previous close", type: rupees, formula: "Adjusted close of the previous session", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: chg_1d_rs, label: "1D change Rs", type: rupees, formula: "close - prev_close", inputs: [close, prev_close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: ret_since_ipo, label: "Since listing %", type: percent, formula: "close / the listing day's open - 1 (adjusted), stocks listed since 2023-01-01 (indicators.yaml listing_moves_from)", inputs: [open, close, listed], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: from_listing_high, label: "From listing-day high %", type: percent, formula: "close / the listing day's high - 1 (adjusted), stocks listed since 2023-01-01", inputs: [high, close, listed], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: gap_up, label: "Gap up %", type: percent, formula: "(open / prev_close - 1) x 100", inputs: [open, prev_close], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: ret_1w, label: "1W change %", type: percent, formula: "(close / close 5 sessions ago - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: ret_10d, label: "10D change %", type: percent, formula: "(close / close 10 sessions ago - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: ret_1m, label: "1M change %", type: percent, formula: "(close / close 21 sessions ago - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: ret_3m, label: "3M change %", type: percent, formula: "(close / close 63 sessions ago - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: ret_6m, label: "6M change %", type: percent, formula: "(close / close 126 sessions ago - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
-  - {id: ret_1y, label: "1Y change %", type: percent, formula: "(close / close 251 sessions ago - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: ret_1y, label: "1Y change %", type: percent, formula: "(close / close 252 sessions ago - 1) x 100 (the reference; was 251 before special sessions were in the data)", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: ret_252, label: "Gain vs 252 sessions ago %", type: percent, formula: "(close / close 252 sessions ago - 1) x 100 (Doublers, the reference's look-back)", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: ret_ytd, label: "YTD %", type: percent, formula: "(close / last close of the previous calendar year - 1) x 100", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: sma10, label: "SMA 10", type: rupees, formula: "Average of the last 10 closes", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
@@ -142,11 +144,11 @@ fields:
   - {id: from_sma50, label: "From 50 SMA %", type: percent, formula: "(close / sma50 - 1) x 100", inputs: [close, sma50], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: from_sma200, label: "From 200 SMA %", type: percent, formula: "(close / sma200 - 1) x 100", inputs: [close, sma200], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: from_ema50, label: "From 50 EMA %", type: percent, formula: "(close / ema50 - 1) x 100", inputs: [close, ema50], provided_in_phase: 4, source: derived, file: [screen]}
-  - {id: high_20d, label: "20D high", type: rupees, formula: "Highest high of the last 20 sessions (incl. today)", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
-  - {id: low_20d, label: "20D low", type: rupees, formula: "Lowest low of the last 20 sessions (incl. today)", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: high_20d, label: "20D high", type: rupees, formula: "Highest high of the last 20 sessions (incl. today); empty before 20 sessions", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: low_20d, label: "20D low", type: rupees, formula: "Lowest low of the last 20 sessions (incl. today); empty before 20 sessions", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: ath, label: "All-time high", type: rupees, formula: "Highest adjusted high since 2007 (or listing)", inputs: [close], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: from_ath, label: "From ATH %", type: percent, formula: "(close / ath - 1) x 100", inputs: [close, ath], provided_in_phase: 4, source: derived, file: [screen]}
-  - {id: days_since_hi52, label: "Days since 52W high", type: integer, formula: "Calendar days since the day of the highest high of the last 252 sessions", inputs: [hi52], provided_in_phase: 4, source: derived, file: [screen]}
+  - {id: days_since_hi52, label: "Days since 52W high", type: integer, formula: "Calendar days since the day of the 52W high (same window as hi52)", inputs: [hi52], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: avg_vol50, label: "Avg volume 50D", type: integer, formula: "Average volume of the last 50 sessions incl. today", inputs: [volume], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: rvol, label: "Relative volume", type: number, formula: "volume / avg_vol20 (avg_vol20 = previous 20 sessions)", inputs: [volume, avg_vol20], provided_in_phase: 4, source: derived, file: [screen]}
   - {id: vol_vs_avg50, label: "Volume / 50D avg", type: number, formula: "volume / avg_vol50", inputs: [volume, avg_vol50], provided_in_phase: 4, source: derived, file: [screen]}

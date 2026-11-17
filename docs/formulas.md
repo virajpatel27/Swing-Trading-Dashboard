@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S9**. Fields: **324**.
+Current phase: **S9**. Fields: **326**.
 
 ## Sources
 
@@ -54,8 +54,8 @@ Current phase: **S9**. Fields: **324**.
 | `chg_1y` | 1Y % | percent | close / close 252 sessions ago - 1 | close | data/snapshot/latest.json |
 | `chg_3y` | 3Y % | percent | close / close 756 sessions ago - 1 | close | data/snapshot/latest.json |
 | `chg_5y` | 5Y % | percent | close / close 1260 sessions ago - 1 | close | data/snapshot/latest.json |
-| `hi52` | 52W high | rupees | Highest adjusted high of the last 252 sessions | close | data/snapshot/screen.json, data/snapshot/latest.json |
-| `lo52` | 52W low | rupees | Lowest adjusted low of the last 252 sessions | close | data/snapshot/screen.json, data/snapshot/latest.json |
+| `hi52` | 52W high | rupees | Highest adjusted high of the last 252 sessions, none older than 400 calendar days (long trading gaps) | close | data/snapshot/screen.json, data/snapshot/latest.json |
+| `lo52` | 52W low | rupees | Lowest adjusted low of the last 252 sessions, none older than 400 calendar days | close | data/snapshot/screen.json, data/snapshot/latest.json |
 | `from_hi52` | From 52W high % | percent | close / hi52 - 1 | close, hi52 | data/snapshot/screen.json, data/snapshot/latest.json |
 | `from_lo52` | From 52W low % | percent | close / lo52 - 1 | close, lo52 | data/snapshot/screen.json, data/snapshot/latest.json |
 | `volume` | Volume | integer | Shares traded today (adjusted for splits / bonus) | bhavcopy, corporate_actions | data/snapshot/screen.json, data/snapshot/latest.json |
@@ -126,13 +126,15 @@ Current phase: **S9**. Fields: **324**.
 | `low` | Day low | rupees | Day's low, adjusted | bhavcopy, corporate_actions | data/snapshot/screen.json |
 | `prev_close` | Previous close | rupees | Adjusted close of the previous session | close | data/snapshot/screen.json |
 | `chg_1d_rs` | 1D change Rs | rupees | close - prev_close | close, prev_close | data/snapshot/screen.json |
+| `ret_since_ipo` | Since listing % | percent | close / the listing day's open - 1 (adjusted), stocks listed since 2023-01-01 (indicators.yaml listing_moves_from) | open, close, listed | data/snapshot/screen.json |
+| `from_listing_high` | From listing-day high % | percent | close / the listing day's high - 1 (adjusted), stocks listed since 2023-01-01 | high, close, listed | data/snapshot/screen.json |
 | `gap_up` | Gap up % | percent | (open / prev_close - 1) x 100 | open, prev_close | data/snapshot/screen.json |
 | `ret_1w` | 1W change % | percent | (close / close 5 sessions ago - 1) x 100 | close | data/snapshot/screen.json |
 | `ret_10d` | 10D change % | percent | (close / close 10 sessions ago - 1) x 100 | close | data/snapshot/screen.json |
 | `ret_1m` | 1M change % | percent | (close / close 21 sessions ago - 1) x 100 | close | data/snapshot/screen.json |
 | `ret_3m` | 3M change % | percent | (close / close 63 sessions ago - 1) x 100 | close | data/snapshot/screen.json |
 | `ret_6m` | 6M change % | percent | (close / close 126 sessions ago - 1) x 100 | close | data/snapshot/screen.json |
-| `ret_1y` | 1Y change % | percent | (close / close 251 sessions ago - 1) x 100 | close | data/snapshot/screen.json |
+| `ret_1y` | 1Y change % | percent | (close / close 252 sessions ago - 1) x 100 (the reference; was 251 before special sessions were in the data) | close | data/snapshot/screen.json |
 | `ret_252` | Gain vs 252 sessions ago % | percent | (close / close 252 sessions ago - 1) x 100 (Doublers, the reference's look-back) | close | data/snapshot/screen.json |
 | `ret_ytd` | YTD % | percent | (close / last close of the previous calendar year - 1) x 100 | close | data/snapshot/screen.json |
 | `sma10` | SMA 10 | rupees | Average of the last 10 closes | close | data/snapshot/screen.json |
@@ -146,11 +148,11 @@ Current phase: **S9**. Fields: **324**.
 | `from_sma50` | From 50 SMA % | percent | (close / sma50 - 1) x 100 | close, sma50 | data/snapshot/screen.json |
 | `from_sma200` | From 200 SMA % | percent | (close / sma200 - 1) x 100 | close, sma200 | data/snapshot/screen.json |
 | `from_ema50` | From 50 EMA % | percent | (close / ema50 - 1) x 100 | close, ema50 | data/snapshot/screen.json |
-| `high_20d` | 20D high | rupees | Highest high of the last 20 sessions (incl. today) | close | data/snapshot/screen.json |
-| `low_20d` | 20D low | rupees | Lowest low of the last 20 sessions (incl. today) | close | data/snapshot/screen.json |
+| `high_20d` | 20D high | rupees | Highest high of the last 20 sessions (incl. today); empty before 20 sessions | close | data/snapshot/screen.json |
+| `low_20d` | 20D low | rupees | Lowest low of the last 20 sessions (incl. today); empty before 20 sessions | close | data/snapshot/screen.json |
 | `ath` | All-time high | rupees | Highest adjusted high since 2007 (or listing) | close | data/snapshot/screen.json |
 | `from_ath` | From ATH % | percent | (close / ath - 1) x 100 | close, ath | data/snapshot/screen.json |
-| `days_since_hi52` | Days since 52W high | integer | Calendar days since the day of the highest high of the last 252 sessions | hi52 | data/snapshot/screen.json |
+| `days_since_hi52` | Days since 52W high | integer | Calendar days since the day of the 52W high (same window as hi52) | hi52 | data/snapshot/screen.json |
 | `avg_vol50` | Avg volume 50D | integer | Average volume of the last 50 sessions incl. today | volume | data/snapshot/screen.json |
 | `rvol` | Relative volume | number | volume / avg_vol20 (avg_vol20 = previous 20 sessions) | volume, avg_vol20 | data/snapshot/screen.json |
 | `vol_vs_avg50` | Volume / 50D avg | number | volume / avg_vol50 | volume, avg_vol50 | data/snapshot/screen.json |

@@ -128,12 +128,35 @@ def relative_extension(c: pd.Series, ma: int = 50, lookback: int = 250) -> pd.Se
     return pd.Series(out, index=c.index).where(ext.notna()).clip(-100, 100)
 
 
-def days_since_max(s: pd.Series, n: int) -> pd.Series:
-    """Sessions since the highest value of the last n sessions (0 = today; the latest one when it was reached twice)."""
+def days_since_max(s: pd.Series, n: int, lengths: np.ndarray | None = None) -> pd.Series:
+    """Sessions since the highest value of the last n sessions (0 = today; the latest one when it was reached twice).
+    lengths: a shorter window per row (year_window), at most n."""
     x = s.to_numpy(float)
     pad = np.concatenate([np.full(n - 1, -np.inf), np.nan_to_num(x, nan=-np.inf)])
-    win = np.lib.stride_tricks.sliding_window_view(pad, n)[:, ::-1]          # newest first
+    win = np.lib.stride_tricks.sliding_window_view(pad, n)[:, ::-1].copy()   # newest first
+    if lengths is not None:
+        win[np.arange(n)[None, :] >= np.asarray(lengths)[:, None]] = -np.inf
     return pd.Series(np.argmax(win, axis=1).astype(float), index=s.index).where(s.notna())
+
+
+def year_window(dates: pd.Series, sessions: int = YEAR, max_days: int = 400) -> np.ndarray:
+    """Per row: how many sessions the 52-week window holds - the last `sessions` rows, but only rows not older than
+    `max_days` calendar days (shorter after a long trading gap)."""
+    t = pd.to_datetime(dates).to_numpy("datetime64[D]").astype(np.int64)
+    first = np.searchsorted(t, t - max_days, side="right")                    # first row inside max_days
+    return np.minimum(np.arange(len(t)) - first + 1, sessions)
+
+
+def rolling_by_len(s: pd.Series, lengths: np.ndarray, how: str) -> pd.Series:
+    """Rolling max / min where each row has its own window length (year_window)."""
+    n = int(lengths.max()) if len(lengths) else 1
+    x = s.to_numpy(float)
+    fill = -np.inf if how == "max" else np.inf
+    pad = np.concatenate([np.full(n - 1, fill), np.where(np.isnan(x), fill, x)])
+    win = np.lib.stride_tricks.sliding_window_view(pad, n)[:, ::-1].copy()
+    win[np.arange(n)[None, :] >= lengths[:, None]] = fill
+    out = win.max(axis=1) if how == "max" else win.min(axis=1)
+    return pd.Series(np.where(np.isfinite(out), out, np.nan), index=s.index)
 
 
 def stage(c: pd.Series, cfg: dict) -> pd.Series:
@@ -204,7 +227,9 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
     f["chg_1d"] = (c / pc - 1) * 100
     f["chg_1d_rs"] = c - pc
     f["gap_up"] = (o / pc - 1) * 100
-    for k, n in {"1w": 5, "10d": 10, "1m": 21, "3m": 63, "6m": 126, "1y": 251}.items():   # 1y = 251 (calibrated)
+    # 1y = 252 sessions (17-Nov-2026: the reference's exports of 02-16 Nov, 95.5 % within 0.05 pt; 251 was fitted before
+    # the special sessions such as Muhurat trading were in the data)
+    for k, n in {"1w": 5, "10d": 10, "1m": 21, "3m": 63, "6m": 126, "1y": 252}.items():
         f[f"ret_{k}"] = (c / c.shift(n) - 1) * 100
     f["ret_252"] = (c / c.shift(252) - 1) * 100            # Doublers: the reference compares with the close 252 sessions back
     year_end = c.groupby(d.dt.year).transform("last").shift(1)
@@ -223,11 +248,15 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
     for col in ("sma50", "sma150", "sma200", "ema50"):
         f[f"{col}_chg_1m"] = (f[col] / f[col].shift(21) - 1) * 100
     # highs / lows
-    f["high_20d"], f["low_20d"] = h.rolling(20, min_periods=1).max(), l.rolling(20, min_periods=1).min()
-    f["hi52"], f["lo52"] = h.rolling(YEAR, min_periods=1).max(), l.rolling(YEAR, min_periods=1).min()
+    # 20 full sessions needed (the reference leaves younger listings empty)
+    f["high_20d"], f["low_20d"] = h.rolling(20, min_periods=20).max(), l.rolling(20, min_periods=20).min()
+    # 52 weeks = the last 252 sessions, but never older than 400 calendar days: a stock that did not trade on NSE for a long
+    # time (suspended, back in 2026) must not reach years back (17-Nov-2026, the reference's exports)
+    win = year_window(d)
+    f["hi52"], f["lo52"] = rolling_by_len(h, win, "max"), rolling_by_len(l, win, "min")
     f["ath"] = h.cummax()
     f["from_hi52"], f["from_lo52"], f["from_ath"] = (c / f["hi52"] - 1) * 100, (c / f["lo52"] - 1) * 100, (c / f["ath"] - 1) * 100
-    back = days_since_max(h, YEAR)                       # sessions back to the 52W high -> calendar days (calibrated)
+    back = days_since_max(h, YEAR, win)                  # sessions back to the 52W high -> calendar days (calibrated)
     pos = np.arange(len(f)) - back.fillna(0).to_numpy().astype(int)
     f["days_since_hi52"] = (d - d.iloc[pos].reset_index(drop=True)).dt.days.where(back.notna())
     f["high_50d_prev"] = h.shift(1).rolling(50, min_periods=50).max()       # breakout level: highest high of the 50 days before

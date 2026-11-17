@@ -58,3 +58,13 @@ def test_restart_after_a_long_gap_and_beta():
     st = frame(days, np.linspace(1000, 1300, 300) * 2)
     g = engine.stock_fields(st, None, None, {"NIFTY_50": idx}, {"beta_benchmark": "NIFTY_50"}, {}, None)
     assert abs(g["beta_1y"].iat[-1] - 1.0) < 1e-6         # moves exactly like the index
+
+
+def test_size_fields_free_float_fallback_and_float_shares():
+    """Phase 5 (17-Nov-2026): no NSE shareholding -> the results filing's promoter share; float shares in crore."""
+    row = {"shares": "10000000", "float_pct": "40", "mcap_cr": "100", "prom_hold": 70.0}
+    screen.size_fields(row, "")                            # NSE has no pattern: 100 - 70
+    assert row["float_pct"] == 30.0 and row["float_mcap_cr"] == 30.0 and row["float_shares_cr"] == 0.3
+    row = {"shares": "10000000", "float_pct": "40", "mcap_cr": "100", "prom_hold": 70.0}
+    screen.size_fields(row, "60")                          # NSE has one: kept
+    assert row["float_pct"] == "40" and row["float_shares_cr"] == 0.4

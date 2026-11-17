@@ -65,6 +65,19 @@ def listing_moves(f: pd.DataFrame, listed, cfg: dict) -> dict:
             "from_listing_high": round((c / float(first["high"]) - 1) * 100, 2) if first["high"] else None}
 
 
+def size_fields(row: dict, promoter_nse) -> None:
+    """Free float = 100 - promoter %. NSE's shareholding pattern first (stocks.csv); when NSE has none (BSE filers, old
+    stocks admitted to NSE in 2026) the promoter share of the newest results filing (prom_hold) before NSE's own
+    free-float estimate. float_shares_cr = shares x free float (Rs crore of shares, like the reference). 17-Nov-2026."""
+    num = lambda v: None if v in ("", None) or (isinstance(v, float) and v != v) else float(v)
+    shares, fpct, mcap, prom = num(row.get("shares")), num(row.get("float_pct")), num(row.get("mcap_cr")), num(row.get("prom_hold"))
+    if num(promoter_nse) is None and prom is not None:
+        fpct = round(100 - prom, 2)
+        row["float_pct"] = fpct
+        row["float_mcap_cr"] = None if mcap is None else round(mcap * fpct / 100, 2)
+    row["float_shares_cr"] = None if shares is None or fpct is None else round(shares * fpct / 100 / 1e7, 4)
+
+
 def one_stock(args) -> tuple[str, dict, pd.DataFrame] | None:
     """(id, fields of the as_of day, per-day series for the cross-stock fields) - runs in a worker process."""
     sid, data, bench, cfg, stage_cfg, liquid_rule, as_of, pattern_cfg, result_days, listed = args
@@ -199,6 +212,7 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
     fin = fundamentals.screen_fields(data, rows, as_of.strftime("%Y-%m-%d") if as_of is not None else None)
     for row in rows:
         row.update(fin.get(row["id"], {}))
+        size_fields(row, m.at[row["id"], "promoter_pct"] if "promoter_pct" in m.columns else "")
     cols = list(rows[0].keys())
     for r in rows[1:]:
         cols += [c for c in r if c not in cols]

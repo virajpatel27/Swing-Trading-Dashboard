@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S9**. Fields: **326**.
+Current phase: **S9**. Fields: **327**.
 
 ## Sources
 
@@ -92,8 +92,9 @@ Current phase: **S9**. Fields: **326**.
 | `face_value` | Face value | rupees | Face value per share | nse_quote | data/meta/stocks.csv |
 | `shares` | Shares issued | integer | Shares issued (NSE issuedSize); asked again after a split, bonus, rights or consolidation | nse_quote, corporate_actions | data/snapshot/screen.json, data/meta/stocks.csv |
 | `promoter_pct` | Promoter holding % | percent | Promoter & promoter group % of the newest shareholding pattern | shareholding | data/meta/stocks.csv |
-| `float_pct` | Free float % | percent | 100 - promoter_pct (NSE's own free-float % when no shareholding pattern) | promoter_pct, nse_quote | data/snapshot/screen.json, data/meta/stocks.csv |
+| `float_pct` | Free float % | percent | 100 - promoter_pct (NSE shareholding pattern; when NSE has none: the newest results filing's promoter share, then NSE's own free-float %) | promoter_pct, nse_quote | data/snapshot/screen.json, data/meta/stocks.csv |
 | `mcap_cr` | Market cap (Rs Cr) | crore | shares x raw_close / 1e7 | shares, raw_close | data/snapshot/screen.json, data/meta/stocks.csv |
+| `float_shares_cr` | Float shares (Cr) | number | shares x float_pct / 100 / 1e7 (crore shares) | shares, float_pct | data/snapshot/screen.json |
 | `float_mcap_cr` | Float market cap (Rs Cr) | crore | mcap_cr x float_pct / 100 | mcap_cr, float_pct | data/snapshot/screen.json, data/meta/stocks.csv |
 | `turnover_med30_cr` | Median turnover 30D (Rs Cr) | crore | Median of daily turnover over the last 30 sessions / 1e7 | bhavcopy | data/meta/stocks.csv |
 | `turnover_avg30_cr` | Avg turnover 30D (Rs Cr) | crore | Average of daily turnover over the last 30 sessions / 1e7 | bhavcopy | data/meta/stocks.csv |

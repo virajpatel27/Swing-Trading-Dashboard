@@ -19,7 +19,8 @@ Viraj. **Not a programmer.** Answer in Gujarati-English mix (Latin letters), sho
    to the daily job. Stocks: bhavcopy ~16:33 IST; NSE indices same day from the allIndices API (after 15:30), replaced by the
    official ind_close_all file (~23:20). Data workflows must check out `ref: main` (a queued run otherwise gets an old commit).
    BSE indices: weekly from the PC only (Viraj's choice 2026-11-01). When he says "BSE update karo": run
-   `<python> scripts/backfill.py --job bse-update`, then `build_snapshot.py` and `validate_data.py`; he pulls first, then commits.
+   `<python> scripts/backfill.py --job bse-update`, then `<python> scripts/fetch_bse_shareholding.py` (BSE shareholding of the
+   ~284 stocks NSE has none for, 17-Nov-2026), then `build_snapshot.py` and `validate_data.py`; he pulls first, then commits.
 6. **equitytimer.com is not used**: its Terms (sections 7 + 8) forbid scraping and redistribution. Sectors come from NSE's official classification.
 7. Never overwrite good data with empty/failed data. Validate before every data commit.
 8. Indicators always on ADJUSTED prices. Raw data is never changed by adjustment.

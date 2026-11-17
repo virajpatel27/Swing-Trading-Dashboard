@@ -831,6 +831,30 @@ def quarter_trends(q: dict, qe: list[str], eps, npo) -> dict:
     return out
 
 
+def shp_fields(doc: dict, as_of: str | None = None) -> dict:
+    """Holder fields from the shareholding patterns known by as_of (a quarter counts 21 days after its end)."""
+    out: dict = {}
+    sh = {e: v for e, v in sorted(doc.get("shp", {}).items())
+          if not as_of or (pd.Timestamp(e) + pd.Timedelta(days=21)).strftime("%Y-%m-%d") <= as_of}
+    se = list(sh)
+    if se:
+        cur = sh[se[-1]]
+        out["shp_qtr"] = se[-1]
+        for k in ("prom", "fii", "dii", "public", "govt"):
+            out[f"{k}_hold"] = cur.get(k)
+        p1 = next((e for e in reversed(se[:-1]) if _months(e, se[-1]) == 3), None)
+        p4 = next((e for e in se if _months(e, se[-1]) == 12), None)
+        for k in ("prom", "fii", "dii"):
+            if p1:
+                out[f"{k}_chg_1q"] = _r(cur.get(k, 0) - sh[p1].get(k, 0))
+            if p4:
+                out[f"{k}_chg_1y"] = _r(cur.get(k, 0) - sh[p4].get(k, 0))
+        out["shareholders"] = cur.get("n")
+        if p1 and cur.get("n") and sh[p1].get("n"):
+            out["shareholders_chg_1q"] = _growth(cur["n"], sh[p1]["n"])
+    return out
+
+
 def metrics(doc: dict, close: float | None, mcap_cr: float | None, as_of: str | None = None,
             factor=lambda end: 1.0, dividends: list[tuple[str, float]] | None = None,
             next_result: str | None = None) -> dict:
@@ -838,7 +862,9 @@ def metrics(doc: dict, close: float | None, mcap_cr: float | None, as_of: str | 
     splits / bonuses; dividends = [(ex day, Rs per share as paid)]; as_of = only what was announced by then."""
     out: dict = {}
     if not doc or not (doc.get("C") or doc.get("S")):
-        return out
+        # no results filed with NSE (BSE filers, old BSE stocks admitted to NSE in 2026): the shareholding pattern
+        # (BSE's, scripts/fetch_bse_shareholding.py) still gives promoter / FII / DII (17-Nov-2026)
+        return {k: v for k, v in shp_fields(doc or {}, as_of).items() if v is not None}
     ok = lambda x: x is not None and x == x and x not in (float("inf"), float("-inf"))
     close = close if ok(close) and close > 0 else None
     mcap_cr = mcap_cr if ok(mcap_cr) and mcap_cr > 0 else None
@@ -957,24 +983,7 @@ def metrics(doc: dict, close: float | None, mcap_cr: float | None, as_of: str | 
         day = pd.Timestamp(as_of) if as_of else pd.Timestamp.today().normalize()
         dps = sum(a * factor(d) for d, a in dividends if day - pd.Timedelta(days=365) < pd.Timestamp(d) <= day)
         out["div_yield"] = _r(dps / close * 100)
-    sh = {e: v for e, v in sorted(doc.get("shp", {}).items())
-          if not as_of or (pd.Timestamp(e) + pd.Timedelta(days=21)).strftime("%Y-%m-%d") <= as_of}
-    se = list(sh)
-    if se:
-        cur = sh[se[-1]]
-        out["shp_qtr"] = se[-1]
-        for k in ("prom", "fii", "dii", "public", "govt"):
-            out[f"{k}_hold"] = cur.get(k)
-        p1 = next((e for e in reversed(se[:-1]) if _months(e, se[-1]) == 3), None)
-        p4 = next((e for e in se if _months(e, se[-1]) == 12), None)
-        for k in ("prom", "fii", "dii"):
-            if p1:
-                out[f"{k}_chg_1q"] = _r(cur.get(k, 0) - sh[p1].get(k, 0))
-            if p4:
-                out[f"{k}_chg_1y"] = _r(cur.get(k, 0) - sh[p4].get(k, 0))
-        out["shareholders"] = cur.get("n")
-        if p1 and cur.get("n") and sh[p1].get("n"):
-            out["shareholders_chg_1q"] = _growth(cur["n"], sh[p1]["n"])
+    out.update(shp_fields(doc, as_of))
     if next_result:
         out["next_result"] = next_result
         if as_of:

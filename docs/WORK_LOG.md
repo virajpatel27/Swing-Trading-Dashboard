@@ -1650,3 +1650,16 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   the old highs. Beta: the move across a trading gap is left out; after a long gap only the last 400 days.
 - Tests: tests/test_data_check_phase3.py (+ gap restart and beta). Next: Phase 5 (market cap, free float, float shares,
   F&O, promoter / FII / DII).
+
+### 2026-11-17: Data check Phase 5 - market cap, free float, F&O, holders
+- F&O 100 %. Market cap: same prices, but the reference often uses an old share count; ours is NSE's issued size
+  (kept). FII / DII: ours is the newest quarter (Sep-2026), the reference still the previous one for 133 stocks.
+- swingdash/screen.py size_fields: free float falls back to the results filing's promoter share when NSE has no
+  shareholding pattern (before NSE's free-float estimate); new field float_shares_cr (config/fields.yaml).
+- Open: 284 stocks (old BSE stocks admitted to NSE in 2026, BSE filers) have no NSE shareholding - BSE's would need a
+  PC job (BSE refuses GitHub). Details: docs/calibration.md.
+- Part 2 (Viraj: fetch BSE's data for the stocks NSE has none for, keep it updated): scripts/fetch_bse_shareholding.py
+  (PC only - api.bseindia.com refuses GitHub; part of the weekly "BSE update" now, CLAUDE.md / MANUAL_CHECKLIST /
+  SOURCES.md) saved 1,281 quarters for 263 stocks into data/fundamentals/<SYMBOL>.json; swingdash/fundamentals.py
+  shp_fields: holder fields also without NSE results. Free float vs the 16-Nov export 89.4 -> 96.1 %. Tests:
+  tests/test_bse_shareholding.py. Phase 5 also checked on all 9 days (docs/calibration.md).

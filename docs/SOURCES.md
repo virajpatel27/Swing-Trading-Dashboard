@@ -102,3 +102,11 @@ Script: `scripts/probe_sources.py`.
 - NSE publishes a bhavcopy, MTO file and index file for special sessions (Diwali Muhurat, budget Saturdays, DR drills).
   config/special_sessions.csv lists the known ones (found from previous-close gaps); a run up to today also asks every day
   of its last 7 days, so a new one is caught automatically. Add a row there when NSE announces another one in the past.
+
+## BSE shareholding pattern (17-Nov-2026, PC only)
+For stocks NSE has no shareholding pattern for (old BSE stocks admitted to NSE in Apr / Aug 2026, BSE filers such as
+ABBOTINDIA): `api.bseindia.com/BseIndiaAPI/api/SHPQNewFormat/w?scripcode=<code>&qtrid=` lists the quarters with their XBRL
+file; the file is `www.bseindia.com/XBRLFILES/SHPXBRLDataXML/<XbrlFile>` (same XBRL as NSE's, read by
+fundamentals.shareholding). The list call needs api.bseindia.com, which refuses GitHub (403) -> `scripts/fetch_bse_shareholding.py`
+runs on the PC with the weekly "BSE update"; it writes data/fundamentals/<SYMBOL>.json "shp" (files marked "BSE:<name>").
+

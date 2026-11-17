@@ -366,3 +366,24 @@ return, exactly like the reference; its all-time high still counts the old sessi
 restart_gap_days). Beta leaves out the move across a 30+ day gap and, after a long gap, uses only the last 400 days.
 The remaining 1 % are split / bonus / rights days and stocks with short trading gaps.
 
+## Phase 5 - size, float, F&O, holders vs the reference exports (17-Nov-2026)
+16-Nov export vs our 16-Nov snapshot (the older snapshots carried an older stock master):
+
+| Column | Match | Cause of the rest |
+|---|---|---|
+| is_fno | 100 % | |
+| market_cap_cr | 83.7 % | prices equal; the SHARE COUNT differs for 425 stocks (median 1 %): ours is NSE's issued size, the reference often an old count (EVONILE before its 5:12 rights issue of 11-Nov, PIIND 18.7 cr vs the real 15.2 cr) |
+| free_float_pct | 89.4 -> 89.7 % | = 100 - promoter % in both; 284 stocks have no NSE shareholding pattern (old BSE stocks admitted to NSE in 2026, BSE filers such as ABBOTINDIA): now the results filing's promoter share before NSE's free-float estimate; the rest need BSE's shareholding |
+| float_shares_cr (new) | 82.8 % within 1 % | shares x free float; follows the two above |
+| promoter_pct | 96.1 % | NSE pattern vs filing timing |
+| fii_pct / dii_pct, fii_chg_q / dii_chg_q | 92.2 / 93.5 %, 89.5 / 91.3 % | 2,157 of 2,356 equal our NEWEST quarter; 133 show the reference's previous quarter (it has not taken Sep-2026 yet), 64 differ otherwise |
+
+Phase 5, part 2 (same day): BSE shareholding for the stocks NSE has none for (scripts/fetch_bse_shareholding.py, PC): 263
+stocks, 1,281 quarters (12 have no BSE code: REITs, ...). fundamentals.metrics now gives the holder fields from the
+shareholding patterns even when the stock has no results filed with NSE (shp_fields). Against the 16-Nov export: free
+float 89.4 -> 96.1 %; promoter / FII / DII now for 2,595 stocks (was 2,360) at 95.4 / 91.5 / 92.8 % - the newly covered
+stocks often show the reference's previous quarter. All 9 days: holders match better each day as the reference adds
+the Sep-2026 quarter (FII 65 % on 02-Nov -> 92 % on 16-Nov); market cap 91.7 % on 04-Nov but 83.8 % on 16-Nov because the
+reference changed 222 share counts in between - NSE (asked again 17-Nov: ABFRL 122.05 cr, AMBER 3.527 cr, AFCONS 36.78 cr,
+PIIND 15.17 cr) confirms ours.
+

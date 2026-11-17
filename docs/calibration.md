@@ -346,3 +346,23 @@ The remaining 1-2 % are mostly rights issues: we adjust old prices (TERP), the r
 give 52W high 99.0 %); Viraj 17-Nov: keep adjusting. A few are its data errors (e.g. VIVIANA's 3:5 bonus not adjusted).
 ipo_days = our days_listed (the reference uses the listing date for every stock).
 
+## Phase 4 - averages, RSI, ADR, volume, beta vs the 9 reference exports (17-Nov-2026)
+Same method as Phase 3 (new engine, all 9 days; prices / volumes within 0.1 %, percents 0.05 pt, RSI 0.06, ratios 0.01).
+Weighted over the 8 end-of-day exports, after the changes below:
+
+| Column | Match | Note |
+|---|---|---|
+| sma10 / sma20 / sma200 / ema50 | 99.7 / 99.6 / 98.9 / 99.2 % | ema50 was 98.4 % |
+| from_sma10 / 20 / 50 / 200 / from_ema50 | 99.8 / 99.7 / 99.5 / 98.9 / 99.3 % | |
+| rsi | 99.2 % | was 98.7 % |
+| adr_20, rvol, vol_chg_1d, vol_vs_avg50 | 99.8, 99.5, 100, 99.0 % | |
+| avg_vol_20 / avg_vol_50 | 99.5 / 98.8 % | the reference rounds them to whole shares (97.8 % unrounded) |
+| rupee_vol_20 / 50 | 99.6 / 99.1 % | |
+| beta | 92.8 % (96.7 % on 13-Nov) | formula confirmed (Nifty 50, daily, 252 sessions up to the previous day: best of 16 variants); the rest are mostly illiquid stocks |
+
+Changes (swingdash/engine.py): a stock back on NSE after more than 365 days without trading (the bulk re-admissions of
+20-Apr / 17-Aug-2026: LAKSHMIMIL, KOVAI, ARIHANT, GOODYEAR ...) starts afresh - averages, RSI, returns, 52W from its
+return, exactly like the reference; its all-time high still counts the old sessions (config/indicators.yaml
+restart_gap_days). Beta leaves out the move across a 30+ day gap and, after a long gap, uses only the last 400 days.
+The remaining 1 % are split / bonus / rights days and stocks with short trading gaps.
+

@@ -219,6 +219,16 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
     deliv: date, deliv_pct. bench: {index id: close Series indexed by date}. Returns one row per day."""
     cfg = cfg or {}
     a = adj.sort_values("date").reset_index(drop=True)
+    # a stock back on NSE after more than `restart_gap_days` without trading (e.g. old stocks admitted again on
+    # 20-Apr / 17-Aug-2026) starts afresh: averages, RSI, returns, 52W use only the sessions since it came back, like the
+    # reference (17-Nov-2026); the all-time high still counts the old sessions
+    gaps = pd.to_datetime(a["date"]).diff().dt.days
+    old_high = None
+    big = np.flatnonzero(gaps.to_numpy() > float(cfg.get("restart_gap_days", 365)))
+    if len(big):
+        cut = int(big[-1])
+        old_high = float(a["high"].iloc[:cut].astype(float).max())
+        a = a.iloc[cut:].reset_index(drop=True)
     d, o, h, l, c = a["date"], a["open"].astype(float), a["high"].astype(float), a["low"].astype(float), a["close"].astype(float)
     v = a["volume"].astype(float)
     f = pd.DataFrame({"date": d, "open": o, "high": h, "low": l, "close": c, "volume": v})
@@ -254,7 +264,7 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
     # time (suspended, back in 2026) must not reach years back (17-Nov-2026, the reference's exports)
     win = year_window(d)
     f["hi52"], f["lo52"] = rolling_by_len(h, win, "max"), rolling_by_len(l, win, "min")
-    f["ath"] = h.cummax()
+    f["ath"] = h.cummax() if old_high is None else np.maximum(h.cummax(), old_high)
     f["from_hi52"], f["from_lo52"], f["from_ath"] = (c / f["hi52"] - 1) * 100, (c / f["lo52"] - 1) * 100, (c / f["ath"] - 1) * 100
     back = days_since_max(h, YEAR, win)                  # sessions back to the 52W high -> calendar days (calibrated)
     pos = np.arange(len(f)) - back.fillna(0).to_numpy().astype(int)
@@ -349,8 +359,19 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
             f["mansfield_rs"] = (line / line.rolling(weeks * 5, min_periods=weeks * 5).mean() - 1) * 100
         if bid == cfg.get("beta_benchmark", "NIFTY_50"):
             rs, rb = c.pct_change(), b.pct_change()
-            # 252 sessions up to the PREVIOUS day (calibrated 07-Nov: 84 % within 0.05 of the reference, incl. today 75 %)
-            f["beta_1y"] = (rs.rolling(YEAR, min_periods=YEAR // 2).cov(rb) / rb.rolling(YEAR, min_periods=YEAR // 2).var()).shift(1)
+            # 252 sessions up to the PREVIOUS day (calibrated 07-Nov: 84 % within 0.05 of the reference, incl. today 75 %;
+            # 17-Nov: 96 % within 0.01). After a long trading gap (stock back on NSE after months / years) the move across
+            # the gap is left out and the window holds only the sessions of the last 400 days (as hi52)
+            gap = d.diff().dt.days > 30
+            rs, rb = rs.mask(gap), rb.mask(gap)
+            win = year_window(d)
+            cov252 = rs.rolling(YEAR, min_periods=YEAR // 2).cov(rb) / rb.rolling(YEAR, min_periods=YEAR // 2).var()
+            if (win < YEAR).any() and len(f) > YEAR:
+                ti = pd.DatetimeIndex(d)
+                rs_t, rb_t = pd.Series(rs.to_numpy(), index=ti), pd.Series(rb.to_numpy(), index=ti)
+                cov400 = (rs_t.rolling("400D", min_periods=YEAR // 2).cov(rb_t) / rb_t.rolling("400D", min_periods=YEAR // 2).var()).to_numpy()
+                cov252 = cov252.where(pd.Series(win >= YEAR), pd.Series(cov400))
+            f["beta_1y"] = cov252.shift(1)
     f["stage"] = stage(c, stage_cfg) if stage_cfg else None
     f = pd.concat([f, events(f, cfg.get("events") or {})], axis=1)
     extra = {"sessions": np.arange(1, len(f) + 1)}

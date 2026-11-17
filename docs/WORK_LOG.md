@@ -1641,3 +1641,12 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Note: one daily run (04:16 IST 17-Nov) failed without an error message; the run before had saved 16-Nov's data
   (health: 0 errors). Watch the next runs.
 - Next: Phase 4 (averages, RSI, ADR, RVol, average and rupee volume, beta).
+
+### 2026-11-17: Data check Phase 4 - averages, RSI, ADR, volume, beta
+- All 9 exports vs the new engine: 98.8-100 % for averages, distances, RSI, ADR, RVol, volume ratios and rupee volumes;
+  beta 92.8 % (formula confirmed; differences are mostly illiquid stocks). Details: docs/calibration.md.
+- Fixed (swingdash/engine.py): stocks back on NSE after more than a year start afresh (restart_gap_days 365 in
+  config/indicators.yaml) - their EMA / SMA / RSI / 52W now equal the reference exactly; the true all-time high keeps
+  the old highs. Beta: the move across a trading gap is left out; after a long gap only the last 400 days.
+- Tests: tests/test_data_check_phase3.py (+ gap restart and beta). Next: Phase 5 (market cap, free float, float shares,
+  F&O, promoter / FII / DII).

@@ -42,3 +42,19 @@ def test_listing_moves():
     assert m["ret_since_ipo"] == 25.0 and m["from_listing_high"] == 20.0
     assert screen.listing_moves(f, "2020-01-01", {}) == {}                             # listed before 2023: none
     assert screen.listing_moves(f, "", {}) == {}                                       # bulk admission (cleared): none
+
+
+def test_restart_after_a_long_gap_and_beta():
+    """Phase 4 (17-Nov-2026): a stock back on NSE after more than a year starts afresh (ATH keeps the old high);
+    beta leaves the move across a gap out."""
+    old = pd.bdate_range("2015-01-01", periods=100)
+    new = pd.bdate_range("2026-03-02", periods=60)
+    f = engine.stock_fields(frame(list(old) + list(new), [500.0] * 100 + list(np.linspace(100, 160, 60))), None, None, None, {}, {}, None)
+    assert len(f) == 60                                   # only the sessions since the return
+    assert np.isnan(f["sma200"].iat[-1]) and abs(f["sma20"].iat[-1] - np.mean(np.linspace(100, 160, 60)[-20:])) < 1e-9
+    assert f["ath"].iat[-1] == 505.0                      # old high x 1.01 still counts
+    days = pd.bdate_range("2025-01-01", periods=300)
+    idx = pd.Series(np.linspace(1000, 1300, 300), index=days)
+    st = frame(days, np.linspace(1000, 1300, 300) * 2)
+    g = engine.stock_fields(st, None, None, {"NIFTY_50": idx}, {"beta_benchmark": "NIFTY_50"}, {}, None)
+    assert abs(g["beta_1y"].iat[-1] - 1.0) < 1e-6         # moves exactly like the index

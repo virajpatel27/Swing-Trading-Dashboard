@@ -351,11 +351,6 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
         f[f"rs_line_{bid.lower()}"] = line
         if bid == default:
             f["rs_line"] = line
-            hi = line.rolling(YEAR, min_periods=YEAR // 2).max()
-            f["rs_line_52w_high"] = line >= hi
-            f["rs_new_high_before_price"] = f["rs_line_52w_high"] & (h < f["hi52"])
-            last_hit = pd.Series(np.where(f["rs_line_52w_high"], np.arange(len(f)), np.nan)).ffill()
-            f["rs_high_days"] = np.arange(len(f)) - last_hit          # sessions since the RS line was at its 52W high
             f["mansfield_rs"] = (line / line.rolling(weeks * 5, min_periods=weeks * 5).mean() - 1) * 100
         if bid == cfg.get("beta_benchmark", "NIFTY_50"):
             rs, rb = c.pct_change(), b.pct_change()
@@ -372,6 +367,24 @@ def stock_fields(adj: pd.DataFrame, raw: pd.DataFrame | None = None, deliv: pd.D
                 cov400 = (rs_t.rolling("400D", min_periods=YEAR // 2).cov(rb_t) / rb_t.rolling("400D", min_periods=YEAR // 2).var()).to_numpy()
                 cov252 = cov252.where(pd.Series(win >= YEAR), pd.Series(cov400))
             f["beta_1y"] = cov252.shift(1)
+    # RS line flags (17-Nov-2026, 9 reference exports): the reference's RS line is vs Midsmallcap 400 (as RS before price),
+    # today's point from the PREVIOUS session's index close, the history from same-day closes, flagged from 61 sessions.
+    # 52W high: precision / recall 0.93 / 0.97 (was 0.84 / 0.70 vs Smallcap 250); new high = first day of a run 0.93 / 0.97
+    fl = cfg.get("rs_line_flags") or {}
+    fid = fl.get("benchmark", rsb_id)
+    if bench and fid in bench:
+        bx = bench[fid].reindex(d.values, method="ffill").reset_index(drop=True)
+        base = c / bx
+        lag = int(fl.get("index_lag", 1))
+        today = c / bx.shift(lag) if lag else base
+        win, mp = int(fl.get("window", YEAR)) - 1, max(1, int(fl.get("min_sessions", 61)) - 1)
+        at_high = (today >= base.shift(1).rolling(win, min_periods=mp).max()).fillna(False)
+        was = (base.shift(1) >= base.shift(2).rolling(win, min_periods=mp).max()).fillna(False)
+        f["rs_line_52w_high"] = at_high
+        f["rs_line_new_high"] = at_high & ~was
+        f["rs_new_high_before_price"] = at_high & (h < f["hi52"])
+        last_hit = pd.Series(np.where(at_high, np.arange(len(f)), np.nan)).ffill()
+        f["rs_high_days"] = np.arange(len(f)) - last_hit          # sessions since the RS line was at its 52W high
     f["stage"] = stage(c, stage_cfg) if stage_cfg else None
     f = pd.concat([f, events(f, cfg.get("events") or {})], axis=1)
     extra = {"sessions": np.arange(1, len(f) + 1)}

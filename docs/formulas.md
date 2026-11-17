@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S9**. Fields: **327**.
+Current phase: **S9**. Fields: **331**.
 
 ## Sources
 
@@ -186,7 +186,7 @@ Current phase: **S9**. Fields: **327**.
 | `rs_line_nifty_midcap_150` | RS line vs Nifty Midcap 150 | number | close / Nifty Midcap 150 close (same day) | close, index_history | data/snapshot/screen.json |
 | `rs_line_nifty_smallcap_250` | RS line vs Nifty Smallcap 250 | number | close / Nifty Smallcap 250 close (same day) | close, index_history | data/snapshot/screen.json |
 | `rs_line` | RS line | number | close / benchmark close; benchmark = Nifty Smallcap 250 (settings: benchmark) | close, index_history, indicator_settings | data/snapshot/screen.json |
-| `rs_line_52w_high` | RS line at 52W high | boolean | rs_line >= its highest value of the last 252 sessions | rs_line | data/snapshot/screen.json |
+| `rs_line_52w_high` | RS line at 52W high | boolean | RS line vs Midsmallcap 400 (today's point from the previous session's index close) >= its highest of the previous 251 sessions; from the 61st session (config indicators.yaml rs_line_flags) | close | data/snapshot/screen.json |
 | `rs_new_high_before_price` | RS new high before price | boolean | rs_line_52w_high and today's high below hi52 (price not at a new high) | rs_line_52w_high, hi52 | data/snapshot/screen.json |
 | `mansfield_rs` | Mansfield RS | number | (rs_line / its 52-week (260-session) average - 1) x 100 | rs_line | data/snapshot/screen.json |
 | `beta_1y` | Beta 1Y vs Nifty 50 | number | Covariance / variance of daily returns vs Nifty 50 over the 252 sessions up to the previous day (the move across a trading gap of 30+ days left out; after a long gap only the last 400 days) | close, index_history | data/snapshot/screen.json |
@@ -212,6 +212,7 @@ Current phase: **S9**. Fields: **327**.
 
 | field | label | type | formula | inputs | files |
 |---|---|---|---|---|---|
+| `rs_line_new_high` | RS line new high | boolean | rs_line_52w_high today but not yesterday (first day of a new RS line high) | rs_line_52w_high | data/snapshot/screen.json |
 | `ipo_date` | IPO Listing Date | date | Listing day of the stock's IPO on NSE's main board (NSE past issues; renames followed) | ipo_list | data/meta/stocks.csv, data/snapshot/screen.json |
 | `ipo_price` | IPO Price | rupees | Issue price of the IPO (as issued, not adjusted) | ipo_list | data/meta/stocks.csv, data/snapshot/screen.json |
 | `days_since_ipo` | Days Since IPO | integer | Calendar days from the IPO listing date to the data date | ipo_date | data/snapshot/screen.json |
@@ -271,6 +272,8 @@ Current phase: **S9**. Fields: **327**.
 | `lvl_age` | Base level age (sessions) | integer | Sessions since the base level | lvl_price | data/snapshot/screen.json |
 | `lvl_depth` | Base depth % | percent | % from the base level down to the lowest low since | lvl_price, low | data/snapshot/screen.json |
 | `lvl_dist_adr` | Below base level (ADRs) | number | % below the base level / ADR % (20 days) | lvl_price, close, adr_pct | data/snapshot/screen.json |
+| `res_level` | Resistance | rupees | lvl_price when the close is at most 3 ADRs under it (config indicators.yaml res_max_adr), else empty | lvl_price, lvl_dist_adr | data/snapshot/screen.json |
+| `res_dist` | From resistance % | percent | (close / res_level - 1) x 100 (negative = below) | res_level, close | data/snapshot/screen.json |
 | `wlvl_price` | Weekly base level | rupees | As the base level, on weekly candles: swing high of +-4 weeks, 17-71 weeks old | high, low, close | data/snapshot/screen.json |
 | `wlvl_age` | Weekly base age (weeks) | integer | Weeks since the weekly base level | wlvl_price | data/snapshot/screen.json |
 | `wlvl_depth` | Weekly base depth % | percent | % from the weekly level down to the lowest weekly low since | wlvl_price, low | data/snapshot/screen.json |
@@ -393,12 +396,13 @@ Current phase: **S9**. Fields: **327**.
 | `sector_tag` | Sector tag | text | Leading / Weakening / Lagging / Improving (strength >= 100?, momentum >= 100?) | sector_rank | data/snapshot/screen.json |
 | `industry_rank` | Industry rank | integer | Same as sector_rank among industries with >= 5 stocks | close, sector, basic_industry, theme_rules | data/snapshot/screen.json |
 | `industry_tag` | Industry tag | text | Leading / Weakening / Lagging / Improving of the stock's industry | industry_rank | data/snapshot/screen.json |
-| `sector_rank_1m` | Sector rank 1M | integer | Rank of the sector's average 1-month member return among sectors | ret_1m, sector | data/snapshot/screen.json |
-| `industry_rank_1m` | Industry rank 1M | integer | Rank of the industry's average 1-month member return among industries with >= 5 stocks | ret_1m, basic_industry | data/snapshot/screen.json |
-| `sector_ret_1w` | Sector 1W % | percent | Average 1-week return of the sector's stocks | ret_1w, sector | data/snapshot/screen.json |
-| `industry_ret_1w` | Industry 1W % | percent | Average 1-week return of the industry's stocks | ret_1w, basic_industry | data/snapshot/screen.json |
-| `vs_sector_1m` | vs Sector 1M % | percent | Stock 1M return minus the sector's average 1M return (points) | ret_1m, sector | data/snapshot/screen.json |
-| `vs_industry_1m` | vs Industry 1M % | percent | Stock 1M return minus the industry's average 1M return (points) | ret_1m, basic_industry | data/snapshot/screen.json |
+| `sector_rank_1m` | Sector rank 1M | integer | Rank (1 = best) of the average 1-month return of ALL the sector's stocks among all sectors | ret_1m, sector | data/snapshot/screen.json |
+| `industry_rank_1m` | Industry rank 1M | integer | Rank (1 = best) of the average 1-month return of ALL the industry's stocks among all industries (also 1-stock ones) | ret_1m, basic_industry | data/snapshot/screen.json |
+| `sector_ret_1w` | Sector 1W % | percent | Average 1-week return of all the sector's stocks | ret_1w, sector | data/snapshot/screen.json |
+| `industry_ret_1w` | Industry 1W % | percent | Average 1-week return of all the industry's stocks | ret_1w, basic_industry | data/snapshot/screen.json |
+| `vs_sector_1m` | vs Sector 1M % | percent | Stock 1M return minus the average 1M return of all the sector's stocks (points) | ret_1m, sector | data/snapshot/screen.json |
+| `vs_industry_1m` | vs Industry 1M % | percent | Stock 1M return minus the average 1M return of all the industry's stocks (points) | ret_1m, basic_industry | data/snapshot/screen.json |
+| `industry_rs_rating` | Industry RS rating | integer | Average RS rating of the industry's members, as a percentile among all industries: round(pct x 98 + 1) | rs_rating, basic_industry | data/snapshot/screen.json |
 | `themes` | Themes | text | Our themes the stock belongs to (config/theme_rules.yaml) | theme_rules | data/snapshot/screen.json |
 | `theme` | Top theme | text | The stock's best-ranked theme | themes | data/snapshot/screen.json |
 | `theme_status` | Theme status | text | Tag (Leading / Weakening / Lagging / Improving) of the stock's best-ranked theme - the chart's Theme chip | theme | data/snapshot/screen.json |

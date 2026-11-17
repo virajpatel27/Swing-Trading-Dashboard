@@ -1663,3 +1663,15 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   SOURCES.md) saved 1,281 quarters for 263 stocks into data/fundamentals/<SYMBOL>.json; swingdash/fundamentals.py
   shp_fields: holder fields also without NSE results. Free float vs the 16-Nov export 89.4 -> 96.1 %. Tests:
   tests/test_bse_shareholding.py. Phase 5 also checked on all 9 days (docs/calibration.md).
+
+### 2026-11-17: Data check Phase 6 - RS rating, RS line, stage, groups, resistance
+- All 9 exports (details: docs/calibration.md). RS rating 79-88 % within 3 (95 % for stocks with a full year), stage
+  96.6-99 %.
+- RS line flags (swingdash/engine.py, config/indicators.yaml rs_line_flags): vs Midsmallcap 400 with the previous
+  session's index close, from the 61st session - 52W-high flag 0.84 / 0.70 -> ~0.98 / 0.96; new field rs_line_new_high.
+- Group fields per stock (swingdash/group_rank.py all_member_stats): sector / industry 1M rank, 1W return and vs-group
+  return now from ALL members and ALL groups, as the reference (the Groups page itself still uses liquid members).
+- New fields (swingdash/screen.py): industry_rs_rating (average member RS rating as a percentile), res_level / res_dist
+  (base level within 3 ADRs). Website table: RS Line New High, Industry RS Rating, Resistance, From Resistance %.
+- Data fix: CCAVENUE 10:1 consolidation of 19-Oct-2026 (missing in NSE's list) in config/corporate_action_overrides.csv.
+- Tests: tests/test_data_check_phase6.py. Next: Phase 7 (fundamentals + events).

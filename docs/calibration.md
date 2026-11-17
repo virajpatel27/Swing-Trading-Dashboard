@@ -387,3 +387,26 @@ the Sep-2026 quarter (FII 65 % on 02-Nov -> 92 % on 16-Nov); market cap 91.7 % o
 reference changed 222 share counts in between - NSE (asked again 17-Nov: ABFRL 122.05 cr, AMBER 3.527 cr, AFCONS 36.78 cr,
 PIIND 15.17 cr) confirms ours.
 
+
+## Phase 6 - RS, RS line, stage, groups, resistance vs the reference exports (17-Nov-2026)
+New engine on all stocks, the 9 days rebuilt one by one with the screen's own functions (cross_fields, group_table,
+stock_fields). Range over the 9 days (02-Nov: the export was taken during the session, so its RS line used the same day's
+index - its 0.56 precision is that):
+
+| Column | Match | Note |
+|---|---|---|
+| rs_rating | 79-88 % within 3 (95 % for stocks with a full year) | weights 0.4 / 0.2 / 0.2 / 0.2 and floor percentile confirmed again; exact only 12-16 % (their score is not published) |
+| rs_chg_1w / rs_chg_1m / rs_rating_1m_ago | 65-95 % within 3 | follow the RS rating differences of the older day |
+| rs_line_52w_high | precision 0.96-1.00, recall 0.90-1.00 (was 0.84 / 0.70) | NEW rule: RS line vs Midsmallcap 400 (not Smallcap 250), today's point from the previous session's index close, from the 61st session (config/indicators.yaml rs_line_flags) |
+| rs_line_new_high (new) | 0.94-1.00 / 0.85-1.00 | first day of an RS line 52W high (always a subset of the 52W-high flag in the reference too) |
+| stage | 96.6-99.0 % | |
+| industry_rs_rating (new) | 61-71 % within 2 | = average RS rating of the industry's members, percentile round(pct x 98 + 1): from the reference's OWN rows 100 % within 2, 77 % exact; ours differs where our RS ratings / members differ |
+| sector_rank_1m / industry_rank_1m | 82 % / 49 % within 2 ranks (16-Nov), 99 % / 75 % within 5 | were 19 % / 0 %: the reference ranks the average of ALL members among ALL groups (also 1-stock industries); the Groups page keeps its liquid rule |
+| sector_ret_1w / industry_ret_1w, vs_sector_1m / vs_industry_1m | median difference 0.11 / 0.03, 0.27 / 0.04 points | averages of all members as the reference; the rest: its 40 "Unclassified" new listings (we classify them), 19 stale stocks only it lists, 28 stocks only we list, CCAVENUE (below) |
+| res_level (new) | set: precision 0.91-0.94, recall 0.94-0.97; level within 0.5 %: 89-92 % | = our base level (lvl_price) when the close is <= 3 ADRs under it (res_max_adr) |
+| pivot_dist_pct -> res_dist (new) | 87-90 % within 0.1 pt | (close / res_level - 1) x 100 |
+
+Found on the way: CCAVENUE's 10:1 consolidation (record date 13-Oct-2026, trading 19-Oct) is missing from NSE's
+corporate-action list -> config/corporate_action_overrides.csv. Checked in memory: its 1M return -18.97 % and 52W high
+205 now equal the reference (we showed +710 %); the adjusted files change with the next daily run. Other jumps over 3x
+in the last year (BURNPUR, MBECL) are not in the reference.

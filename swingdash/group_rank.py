@@ -144,8 +144,27 @@ def group_table(rows: pd.DataFrame, closes: pd.DataFrame, membership: pd.DataFra
     return out
 
 
+def all_member_stats(rows: pd.DataFrame, membership: pd.DataFrame) -> dict[str, dict[str, dict]]:
+    """Per sector / industry: average 1W and 1M return of ALL members and the 1M rank among all groups (1 = best).
+    The reference's per-stock group columns (17-Nov-2026, 9 exports: 100 % reproduced from its own rows) use every
+    member and every group, also tiny ones - unlike the Groups page, which ranks liquid members of groups with 6+ of them."""
+    out: dict[str, dict[str, dict]] = {}
+    for lvl in ("sector", "industry"):
+        m = membership[(membership["level"] == lvl) & membership["id"].isin(rows.index)].drop_duplicates("id")
+        if m.empty:
+            continue
+        val = lambda c: pd.to_numeric(rows[c], errors="coerce").reindex(m["id"]).to_numpy() if c in rows else np.nan
+        df = pd.DataFrame({"name": m["name"].to_numpy(), "r1w": val("ret_1w"), "r1m": val("ret_1m")})
+        g = df.groupby("name")
+        avg_1m, avg_1w = g["r1m"].mean(), g["r1w"].mean()
+        rank = avg_1m.dropna().rank(ascending=False, method="min")
+        out[lvl] = {n: {"avg_1m": avg_1m.get(n), "avg_1w": avg_1w.get(n), "rank_1m": rank.get(n)} for n in avg_1m.index}
+    return out
+
+
 def stock_fields(rows: pd.DataFrame, table: dict[str, list[dict]], membership: pd.DataFrame) -> dict[str, dict]:
     by = {lvl: {d["name"]: d for d in table.get(lvl, [])} for lvl in LEVELS}
+    allm = all_member_stats(rows, membership)
     out: dict[str, dict] = {}
     m = membership[membership["id"].isin(rows.index)]
     for sid, grp in m.groupby("id"):
@@ -154,12 +173,14 @@ def stock_fields(rows: pd.DataFrame, table: dict[str, list[dict]], membership: p
         for lvl in ("sector", "industry"):
             names = list(grp.loc[grp["level"] == lvl, "name"])
             g = by[lvl].get(names[0]) if names else None
-            if not g:
-                continue
-            f[f"{lvl}_rank"], f[f"{lvl}_tag"], f[f"{lvl}_rank_1m"] = g.get("rank"), g.get("tag"), g.get("rank_1m")
-            f[f"{lvl}_ret_1w"] = g.get("avg_1w")
-            if g.get("avg_1m") is not None and np.isfinite(r1m):
-                f[f"vs_{lvl}_1m"] = _r(r1m - g["avg_1m"])
+            if g:
+                f[f"{lvl}_rank"], f[f"{lvl}_tag"] = g.get("rank"), g.get("tag")
+            a = allm.get(lvl, {}).get(names[0]) if names else None
+            if a:
+                f[f"{lvl}_rank_1m"] = None if a["rank_1m"] is None or not np.isfinite(a["rank_1m"]) else int(a["rank_1m"])
+                f[f"{lvl}_ret_1w"] = _r(a["avg_1w"])
+                if a["avg_1m"] is not None and np.isfinite(r1m):
+                    f[f"vs_{lvl}_1m"] = _r(r1m - a["avg_1m"])
         themes = [by["theme"][n] for n in grp.loc[grp["level"] == "theme", "name"] if n in by["theme"]]
         if themes:
             f["themes"] = ", ".join(sorted(t["name"] for t in themes))

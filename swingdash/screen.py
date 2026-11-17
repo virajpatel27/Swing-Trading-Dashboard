@@ -135,6 +135,32 @@ def cross_fields(hists: dict[str, pd.DataFrame], universe: str = "all") -> pd.Da
     return last[CROSS_COLS]
 
 
+def industry_rs(rows: list[dict], mem: pd.DataFrame) -> dict[str, float]:
+    """industry_rs_rating per stock (17-Nov-2026, 9 reference exports): the average RS rating of the industry's members,
+    as a percentile among all industries, round(pct x 98 + 1) (from the reference's own rows: exact 77 %, within 2 points 100 %)."""
+    rs = pd.Series({r["id"]: r.get("rs_rating") for r in rows}, dtype=float)
+    ind = mem[mem["level"] == "industry"].drop_duplicates("id").set_index("id")["name"]
+    ind = ind[ind.index.isin(rs.index)]
+    mean = rs.reindex(ind.index).groupby(ind).mean().dropna()
+    if mean.empty:
+        return {}
+    pct = np.round(mean.rank(pct=True) * 98 + 1).clip(1, 99)
+    return {sid: float(pct[g]) for sid, g in ind.items() if g in pct.index}
+
+
+def resistance(row: dict, max_adr: float = 3.0) -> dict:
+    """res_level / res_dist: the base level (lvl_price) when the close is at most max_adr ADRs under it, as the
+    reference's resistance column (17-Nov-2026: precision 0.94, recall 0.95); res_dist = % from it (negative = below)."""
+    lvl, dist, c = row.get("lvl_price"), row.get("lvl_dist_adr"), row.get("close")
+    try:
+        ok = lvl is not None and dist is not None and float(dist) <= max_adr and float(lvl) > 0 and np.isfinite(float(dist))
+    except (TypeError, ValueError):
+        ok = False
+    if not ok:
+        return {"res_level": None, "res_dist": None}
+    return {"res_level": float(lvl), "res_dist": (float(c) / float(lvl) - 1) * 100}
+
+
 def _clean(v, nd=4):
     if v is None or (isinstance(v, float) and not np.isfinite(v)) or v is pd.NA or v is pd.NaT:
         return None
@@ -155,7 +181,8 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
     cfg, stage_cfg, liquid_rule, pattern_cfg = _settings(root)
     master = pd.read_csv(data / "meta" / "stocks.csv", dtype=str).fillna("")
     bench = _benchmarks(data, sorted(set(cfg.get("rs_lines", [])) | {cfg.get("beta_benchmark", "NIFTY_50")}
-                                     | {(cfg.get("events") or {}).get("rsb_benchmark", "NIFTY_MIDSMALLCAP_400")}))
+                                     | {(cfg.get("events") or {}).get("rsb_benchmark", "NIFTY_MIDSMALLCAP_400")}
+                                     | {(cfg.get("rs_line_flags") or {}).get("benchmark", "NIFTY_MIDSMALLCAP_400")}))
     as_of = pd.Timestamp(as_of) if as_of is not None else None
     days = {sid: earnings.result_days(data, sym) for sid, sym in zip(master["id"], master["symbol"])}
     listed_of = dict(zip(master["id"], master["listed"])) if "listed" in master else {}
@@ -206,8 +233,12 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
     liq = pd.DataFrame({sid: h["liquid_day"].iloc[-n_hist - 5:] for sid, h in hists.items() if "liquid_day" in h}).sort_index().reindex(closes.index)
     table = group_rank.group_table(rdf, closes, mem, gcfg, benches, liquid=liq)
     gfields = group_rank.stock_fields(rdf, table, mem)
+    ind_rs = industry_rs(rows, mem)
+    max_adr = float(cfg.get("res_max_adr", 3.0))
     for row in rows:
         row.update(gfields.get(row["id"], {}))
+        row["industry_rs_rating"] = ind_rs.get(row["id"])
+        row.update(resistance(row, max_adr))
     # fundamentals (Phase S8): only what was announced by the data day
     fin = fundamentals.screen_fields(data, rows, as_of.strftime("%Y-%m-%d") if as_of is not None else None)
     for row in rows:

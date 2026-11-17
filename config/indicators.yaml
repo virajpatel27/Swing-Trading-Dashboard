@@ -1,8 +1,14 @@
 # Indicator engine settings (Phase S4). Change this file, not the code. Every formula: docs/formulas.md.
 benchmark: NIFTY_SMALLCAP_250     # default RS line benchmark (NSE index folder id) - the reference's default; its
-                                  # "RS line at 52W high" matches 99.3 % with it (03-Nov). Others: NIFTY_50, NIFTY_500, NIFTY_MIDCAP_150
+                                  # chart RS line / Mansfield. The 52W-high flags use rs_line_flags below (17-Nov). Others: NIFTY_50, NIFTY_500, NIFTY_MIDCAP_150
 beta_benchmark: NIFTY_50
 rs_lines: [NIFTY_50, NIFTY_500, NIFTY_MIDCAP_150, NIFTY_SMALLCAP_250]
+res_max_adr: 3.0                  # res_level (Resistance) = base level when the close is <= 3 ADRs under it (17-Nov-2026)
+rs_line_flags:                    # "RS line at 52W high" / "RS line new high" (17-Nov-2026, 9 reference exports: 0.93 / 0.97)
+  benchmark: NIFTY_MIDSMALLCAP_400  #   the reference's RS line for these flags (Smallcap 250: 0.84 / 0.70)
+  index_lag: 1                    #   today's point uses the previous session's index close (as RS before price)
+  window: 252                     #   today vs the highest of the previous 251 sessions (same-day closes)
+  min_sessions: 61                #   flagged from the 61st session on (young stocks: their whole history)
 
 mansfield_weeks: 52               # Mansfield RS = (RS line / its 52-week average - 1) x 100 (52 weeks = 260 sessions)
 relative_extension: {ma: 50, lookback: 250}

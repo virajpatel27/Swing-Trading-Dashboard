@@ -1,5 +1,5 @@
 {
- "files_last_day": "2026-11-16",
+ "files_last_day": "2026-11-17",
  "gaps": {
   "INDIA VIX": {
    "done": true,
@@ -5525,6 +5525,7 @@
   "NSE GSECBM Clean Price Index",
   "NSE Quality 30",
   "NV 20",
+  "Nifty 1000",
   "Nifty 1D Rate Index",
   "Nifty 50 Arbitrage",
   "Nifty 50 Futures Index",
@@ -5565,6 +5566,7 @@
   "Nifty Tata Group 25% Cap",
   "Nifty Telecommunications",
   "Nifty100 ESG Sector Leaders - Old",
+  "Nifty1000 Equal Weight",
   "Nifty500 Ahimsa",
   "Nifty500 Growth 50",
   "S&P CNX 500",

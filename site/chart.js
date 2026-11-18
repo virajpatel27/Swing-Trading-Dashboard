@@ -112,6 +112,14 @@
     return cache.get(k);
   }
   const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  /** lines drawn over the candles (MA, BB, Supertrend, Swing bands) are thin and see-through so the candles stay clear
+      (Viraj 18-Nov-2026, like the reference); the legend keeps the full colour */
+  const soft = (c, a = 0.55) => {
+    const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(String(c || "").trim());
+    if (!m) return c;
+    const h = m[1].length === 3 ? m[1].split("").map((x) => x + x).join("") : m[1];
+    return `rgba(${parseInt(h.slice(0, 2), 16)}, ${parseInt(h.slice(2, 4), 16)}, ${parseInt(h.slice(4, 6), 16)}, ${a})`;
+  };
   const fmt = (x, d = 2) => (x == null || Number.isNaN(x) ? "–" : Number(x).toLocaleString("en-IN", { minimumFractionDigits: d, maximumFractionDigits: d }));
 
   /* ------------------------------------------------------------------ the chart */
@@ -241,28 +249,28 @@
         const [type, n, color] = Array.isArray(m) ? [m[0], m[1], m[2]] : [m.type, m.len, m.color];
         const col = color || MA_COLORS[k % MA_COLORS.length];
         const vals = type === "EMA" ? I.ema(c, n) : I.sma(c, n);
-        line(pts(vals), col, pricePane, { lastValueVisible: !pv, title: "" });
+        line(pts(vals), soft(col), pricePane, { lineWidth: 1, lastValueVisible: !pv, title: "" });
         names.push(`<b style="color:${col}">${type} ${n}${C.tf === "D" || intraday ? "" : C.tf === "W" ? "W" : " · " + esc(C.tf)}</b>`);
       });
       lg("ma", `<em>MA</em> ${names.join(" ")}`);
     }
     if (show("bb")) {
       const b = I.bollinger(c, ind.bb.len, ind.bb.std);
-      line(pts(b.mid), ind.bb.color, pricePane, { lineStyle: 2 });
-      const up = line(pts(b.up), ind.bb.color, pricePane); line(pts(b.lo), ind.bb.color, pricePane);
-      if (ind.bb.fill) up.applyOptions({ lineWidth: 1 });
+      const bc = soft(ind.bb.color);
+      line(pts(b.mid), bc, pricePane, { lineStyle: 2, lineWidth: 1 });
+      line(pts(b.up), bc, pricePane, { lineWidth: 1 }); line(pts(b.lo), bc, pricePane, { lineWidth: 1 });
       lg("bb", `<b style="color:${ind.bb.color}">BB ${ind.bb.len}, ${ind.bb.std}</b>`);
     }
     if (show("supertrend")) {
       const s = I.supertrend(h, l, c, ind.supertrend.len, ind.supertrend.mult);
-      const ser = chart.addSeries(L.LineSeries, { lineWidth: 2, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false }, pricePane);
-      ser.setData(s.line.map((x, i) => (x == null ? { time: times[i] } : { time: times[i], value: x, color: s.dir[i] === 1 ? ind.supertrend.up : ind.supertrend.down })));
+      const ser = chart.addSeries(L.LineSeries, { lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false }, pricePane);
+      ser.setData(s.line.map((x, i) => (x == null ? { time: times[i] } : { time: times[i], value: x, color: soft(s.dir[i] === 1 ? ind.supertrend.up : ind.supertrend.down) })));
       lg("supertrend", `<b style="color:${ind.supertrend.up}">Supertrend ${ind.supertrend.len}, ${ind.supertrend.mult}</b>`);
     }
     if (show("swing")) {
       const f = I.t3(c, ind.swing.fast, ind.swing.vf), s = I.t3(c, ind.swing.slow, ind.swing.vf);
-      const col = (i) => (f[i] > s[i] ? "#089981" : "#f23645");
-      const sf = chart.addSeries(L.LineSeries, { lineWidth: 2, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false }, pricePane);
+      const col = (i) => soft(f[i] > s[i] ? "#089981" : "#f23645");
+      const sf = chart.addSeries(L.LineSeries, { lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false }, pricePane);
       sf.setData(f.map((x, i) => (x == null ? { time: times[i] } : { time: times[i], value: x, color: col(i) })));
       const ss = chart.addSeries(L.LineSeries, { lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false }, pricePane);
       ss.setData(s.map((x, i) => (x == null ? { time: times[i] } : { time: times[i], value: x, color: col(i) })));

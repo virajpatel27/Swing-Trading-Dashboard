@@ -2557,3 +2557,31 @@ main.card:has(> .gx) .gx-bar { margin: 0 12px 13px; min-height: 36px; }
 /* Groups results: "All stocks" switch beside the title (off = liquid stocks only, like the reference) */
 .gx-rh .gx-alls { margin-left: 12px; font-size: 12px; font-weight: 400; color: var(--muted); }
 
+/* Lines like the reference (Viraj 18-Nov-2026) */
+/* Breadth: both column headers the same height, so their bottom lines meet as one line; the column divider starts under it */
+.bx-lh, .bx-rh { box-sizing: border-box; height: 46px; min-height: 46px; padding-bottom: 0; align-items: center; }
+.bx-l { position: relative; border-right: 0; }
+.bx-l::after { content: ""; position: absolute; right: 0; top: 46px; bottom: 0; width: 1px; background: var(--line); }
+@media (max-width: 1199px) { .bx-l::after { display: none; } .bx-lh, .bx-rh { height: auto; min-height: 46px; } }
+/* Breadth stage bar: a thin line; pointing at it opens the bar with the stock counts (hover card as before) */
+.bx-stage .bar { height: 8px; border-radius: 4px; transition: height .2s ease; }
+.bx-stage .bar span { color: transparent; transition: flex .6s cubic-bezier(.2, .8, .2, 1), opacity .15s, color .15s; }
+.bx-stage .bar:hover { height: 22px; border-radius: 5px; }
+.bx-stage .bar:hover span { color: #fff; }
+/* Groups columns: smaller gap, thin light scrollbar (no second line beside the column edge) */
+.gx-cols.wide { gap: 8px; }
+.gcol-x { right: -16px; }
+.gcol-b::-webkit-scrollbar { width: 5px; height: 5px; }
+.gcol-b::-webkit-scrollbar-thumb { border: 0; background: color-mix(in srgb, var(--muted) 22%, transparent); }
+.gcol-b::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--muted) 45%, transparent); }
+/* folded Groups column: icon on top, full name reading down, the open arrow on the column edge under the name */
+.gcol.shut .gcol-v { display: flex; flex-direction: column; align-items: center; gap: 12px; writing-mode: horizontal-tb; transform: none; padding: 16px 0 0; margin: 0;
+  color: var(--muted); letter-spacing: 0; text-transform: none; }
+.gcol.shut .gcol-v svg { flex: none; color: var(--text); opacity: .75; }
+.gcol.shut .gcol-v span { writing-mode: vertical-rl; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }
+.gcol.shut .gcol-x { position: relative; right: auto; top: auto; align-self: flex-end; margin: 14px -13px 0 0; flex: none; }
+/* Scanner page: no line under the top band */
+main.card:has(> .ws-bar)::before { box-shadow: none; }
+main.card:has(> .ws-bar) > .ws-main.list.wide { border-top: 0; }
+/* stock lists: a very light line between two stocks */
+.res-list tbody td { border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent); }

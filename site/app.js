@@ -348,7 +348,7 @@
     const col = (key, head, body, extra = "") => {
       const shut = gs.shut[key] || (chartOn && key === "a" && gs.shut[key] !== false);
       return `<section class="gcol ${shut ? "shut" : ""} ${extra}" data-col="${key}"><div class="gcol-h">${head}</div>
-        <div class="gcol-v">${esc(key === "a" ? plural : key === "b" && g ? g.name : "")}</div><div class="gcol-b">${body}</div>
+        <div class="gcol-v"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${key === "a" ? '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>' : '<path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/>'}</svg><span>${esc(key === "a" ? plural : key === "b" && g ? `${g.name} · ${indList.length} ${indList.length === 1 ? "industry" : "industries"}` : "")}</span></div><div class="gcol-b">${body}</div>
         ${key === "a" || key === "b" ? `<button type="button" class="gcol-x" data-shut="${key}" title="${shut ? "Open" : "Fold"} this column">${shut ? "›" : "‹"}</button>` : ""}</section>`;
     };
     const th = (spec, tbl, k, l, cls = "", tip = "") => `<th class="${cls}" data-sort="${tbl}:${k}"${tip ? ` data-tip="${esc(tip)}"` : ""}>${cls.includes("l") ? `${l}${gxArrow(spec, k)}` : `${gxArrow(spec, k)}${l}`}</th>`;
@@ -1550,7 +1550,7 @@
         const pts = [];
         let sum = 0;
         for (let i = 0; i < all.length; i++) { sum += all[i].close; if (i >= n) sum -= all[i - n].close; if (i >= off && i >= n - 1) pts.push({ time: all[i].time, value: sum / n }); }
-        ch.addSeries(L.LineSeries, { color: c, lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false }).setData(pts);
+        ch.addSeries(L.LineSeries, { color: c + "8c", lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false }).setData(pts);
       });
       ch.timeScale().fitContent();
     };

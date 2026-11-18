@@ -1675,3 +1675,27 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   (base level within 3 ADRs). Website table: RS Line New High, Industry RS Rating, Resistance, From Resistance %.
 - Data fix: CCAVENUE 10:1 consolidation of 19-Oct-2026 (missing in NSE's list) in config/corporate_action_overrides.csv.
 - Tests: tests/test_data_check_phase6.py. Next: Phase 7 (fundamentals + events).
+
+### 2026-11-18: Lines and borders like the reference (Viraj, 11 screenshots)
+- Breadth: the "Market Breadth" and "Market internals" headers are now the same height, so their bottom lines meet as one
+  line; the column divider starts under that line (it used to cut through the header).
+- Breadth stage bar: a thin 8 px line; pointing at it opens it to the 22 px bar with the stock counts (hover card as before).
+- Groups: 8 px gap between the columns (was 12), thin light scrollbar (no second line beside the column edge); a folded
+  column shows an icon on top, the full name reading down ("Textiles · 4 industries") and the open arrow on the column
+  edge under the name (it used to sit on top of the name and cut it).
+- Scanner page: no line under the top band; a very light line between two stocks in the list.
+- Chart (site/chart.js): lines drawn over the candles (MA, Bollinger, Supertrend, Swing bands) are 1 px and see-through
+  (`soft()`, 55 %), legend keeps the full colour; grid mini-chart MAs see-through too (app.js). Pivot / base-low lines unchanged.
+- Files: site/styles.css (block "Lines like the reference" at the end), site/app.js (folded column label, grid MA alpha),
+  site/chart.js. Tests 33 JS + 239 Python green.
+
+### 2026-11-18: Data check Phase 7 - fundamentals, result days, recent order (last phase)
+- All 9 exports, fundamentals as of each day (details: docs/calibration.md). PE / EPS TTM / PEG 83-89 %, last result
+  day 97-98 %, next result day 98-100 %. PB / ROCE / debt-equity / dividend yield: the reference's own source differs.
+- swingdash/fundamentals.py: YoY / QoQ growth also from a loss ((new - old) / |old|, as the reference: +360 stocks with
+  EPS / PAT growth); ROE / ROCE / CAGR from the standalone years when consolidated has no year yet; dividends found by
+  folder id (M&M, GVT&D ... had none); next result cleared once the results are out.
+- New fields recent_order / recent_order_date / recent_order_cr (swingdash/announcements.recent_orders, NSE order
+  filings of 90 days; screen.py); website columns. Earnings Explosion needs a profit a year ago (scanners.json).
+- Tests: tests/test_data_check_phase7.py (+ order test in phase6 file). All 7 phases of the reference export check done.
+- Open (idea): ~230 BSE filers have no NSE results (no PE / growth / ROE) - BSE results from the PC, like the shareholding.

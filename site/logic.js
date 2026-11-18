@@ -241,7 +241,8 @@
       ["fii_hold", "FII %", "num1"], ["fii_chg_1q", "FII Change 1Q", "num2"], ["fii_chg_1y", "FII Change 1Y", "num2"], ["dii_hold", "DII %", "num1"],
       ["dii_chg_1q", "DII Change 1Q", "num2"], ["dii_chg_1y", "DII Change 1Y", "num2"], ["public_hold", "Public %", "num1"],
       ["shareholders", "No. of Shareholders", "int"], ["shareholders_chg_1q", "Shareholders Change 1Q %", "pct"], ["fin_qtr", "Latest Quarter", "date"],
-      ["last_result", "Last Results", "date"], ["next_result", "Next Results", "date"], ["days_to_result", "Days to Results", "int"]]],
+      ["last_result", "Last Results", "date"], ["next_result", "Next Results", "date"], ["days_to_result", "Days to Results", "int"],
+      ["recent_order_date", "Recent Order Date", "date"], ["recent_order_cr", "Recent Order (₹ Cr)", "num2"], ["recent_order", "Recent Order", "text"]]],
   ];
   const COLUMNS = {};
   COLUMN_GROUPS.forEach(([g, cols]) => cols.forEach(([id, label, fmt]) => { COLUMNS[id] = { id, label, fmt, group: g }; }));

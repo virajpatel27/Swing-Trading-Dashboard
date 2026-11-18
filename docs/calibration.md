@@ -410,3 +410,24 @@ Found on the way: CCAVENUE's 10:1 consolidation (record date 13-Oct-2026, tradin
 corporate-action list -> config/corporate_action_overrides.csv. Checked in memory: its 1M return -18.97 % and 52W high
 205 now equal the reference (we showed +710 %); the adjusted files change with the next daily run. Other jumps over 3x
 in the last year (BURNPUR, MBECL) are not in the reference.
+
+## Phase 7 - fundamentals, result days, recent order vs the reference exports (18-Nov-2026)
+fundamentals.screen_fields recomputed AS OF each of the 9 days (only what was announced by then). Match = within 1 % or
+0.01; range over the 9 days; "ref only" = stocks the reference has a value for and we do not.
+
+| Column | Match | Ref only | Cause of the rest |
+|---|---|---|---|
+| pe / eps_ttm | 83-89 % / 82-88 % | ~360 / ~415 | same TTM EPS; ref-only = ~230 BSE filers (no NSE results) + stocks without 4 quarters |
+| peg | 85-89 % | ~300 | follows PE and EPS growth |
+| eps / sales / np growth YoY | 82-87 / 73-79 / 66-79 % | 475 / 470 / 473 (were 837 / 472 / 841) | NEW: growth also from a loss, (new - old) / abs(old) (81 % of the reference's loss-base values) |
+| sales / np growth QoQ | 67-73 / 61-66 % | ~285 | the reference rounds to 0.1; quarter differences |
+| roe | 67-68 % (85 % within 1 pt) | ~420 | NEW: year ratios from the standalone years when consolidated has no year yet (25 stocks) |
+| opm_ttm | 32-34 % (69 % within 1 pt, median diff 0.33) | ~410 | the reference rounds to 0.1 and its operating profit differs slightly |
+| div_yield | 53-55 % (92 % within 0.1 pt) | ~220 | trailing 365 days fits best (tried 380-455 days, FY): its dividends come from another source. FIXED: '&' symbols (M&M, GVT&D, 8 more) had no dividends (file name = folder id) |
+| pb / roce / debt_to_equity | 14-17 / 8 / 13 % (pb median ratio 1.00) | ~420 | their net worth / capital employed / debt come from another source (75 % of their implied net worths are none of our 6 balance sheets); debt-free stocks show 0.02-0.16 debt: they add lease liabilities |
+| last_result_date | 96.7-98.2 % | <= 7 | |
+| next_result_date | 98.4-100 % from 05-Nov (02 / 04-Nov: our calendar keeps 7 past days only) | | FIXED: cleared once that day's results are out (the reference shows none on the results day) |
+| recent_order (new) | stocks: precision 0.59-0.62, recall 0.48-0.50; same day 0.40-0.47 | | ours = newest NSE "Bagging/Receiving of orders" / "Awarding of order(s)" filing of 90 days in NSE's words + amount when the text names one; the reference writes its own summaries, also of press releases and investor decks (only 28 % of its rows are NSE order filings) |
+
+Earnings Explosion (eps-doublers) now needs a profit a year ago (EPS and PAT > 0): with growth from a loss it found 115
+more stocks on 4 days, none of them in the reference's lists. Code 33, EPS Accelerators, Turnarounds unchanged.

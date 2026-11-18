@@ -754,6 +754,14 @@ def _growth(new, old):
     return round((new / old - 1) * 100, 2)
 
 
+def _growth_signed(new, old):
+    """Growth also from a loss: (new - old) / |old| (18-Nov-2026: the reference's YoY / QoQ growth; 81 % of its 372
+    loss-base values equal to this, which _growth leaves empty). Used for the shown YoY / QoQ fields only."""
+    if new is None or old is None or old == 0:
+        return None
+    return round((new - old) / abs(old) * 100, 2)
+
+
 def _cagr(new, old, years):
     if new is None or old is None or old <= 0 or new <= 0:
         return None
@@ -872,6 +880,14 @@ def metrics(doc: dict, close: float | None, mcap_cr: float | None, as_of: str | 
     b = doc.get(bk, {})
     q = _known(b.get("q", {}), as_of)
     y = _known(b.get("y", {}), as_of)
+    by = b                                 # basis of the year figures (ROE, ROCE, CAGR, balance sheet)
+    if not y:
+        # a company that has just started consolidated results has no consolidated YEAR yet: the year ratios come from
+        # its standalone years (18-Nov-2026: ROE for 25 such stocks, 72 % equal to the reference)
+        other = doc.get("S" if bk == "C" else "C", {})
+        if _known(other.get("y", {}), as_of):
+            by = other
+            y = _known(other.get("y", {}), as_of)
     kind = doc.get("kind") or "company"
     out["fin_basis"] = "Consolidated" if bk == "C" else "Standalone"
     out["fin_kind"] = kind
@@ -921,9 +937,9 @@ def metrics(doc: dict, close: float | None, mcap_cr: float | None, as_of: str | 
         ago = next((e for e in qe if _months(e, e0) == 12), None)
         for k, f in (("sales", lambda e, v: v.get("sales")), ("np", lambda e, v: npo(v)), ("eps", eps)):
             if ago:
-                out[f"{k}_g_yoy"] = _growth(f(e0, v0), f(ago, q[ago]))
+                out[f"{k}_g_yoy"] = _growth_signed(f(e0, v0), f(ago, q[ago]))
             if prev:
-                out[f"{k}_g_qoq"] = _growth(f(e0, v0), f(prev, q[prev]))
+                out[f"{k}_g_qoq"] = _growth_signed(f(e0, v0), f(prev, q[prev]))
         for k, f in (("eps", eps), ("sales", lambda e, v: v.get("sales"))):
             n = 0
             for i in range(len(qe) - 1, -1, -1):
@@ -946,7 +962,7 @@ def metrics(doc: dict, close: float | None, mcap_cr: float | None, as_of: str | 
                 out[f"np_cagr_{n}y"] = _cagr(npo(y[last]), npo(y[old]), n)
                 if n == 3:
                     out["eps_cagr_3y"] = _cagr(eps(last, y[last]), eps(old, y[old]), n)
-        roes = [year_roe(b, ye, i) for i in range(len(ye))]
+        roes = [year_roe(by, ye, i) for i in range(len(ye))]
         out["roe"] = _r(roes[-1])
         for n in (3, 5, 10):
             got = [r for r in roes[-n:] if r is not None]
@@ -954,7 +970,7 @@ def metrics(doc: dict, close: float | None, mcap_cr: float | None, as_of: str | 
                 out[f"roe_{n}y"] = _r(sum(got) / n)
         if kind in ("company", "nbfc"):
             def cap_employed(end):
-                nw, bs = net_worth(b, end), b.get("bs", {}).get(end)
+                nw, bs = net_worth(by, end), by.get("bs", {}).get(end)
                 return None if nw is None or not bs or bs.get("borrowings") is None else nw + bs["borrowings"]
             v = y[last]
             ebit = None if v.get("pbt") is None else v["pbt"] + (v.get("interest") or 0)
@@ -962,16 +978,17 @@ def metrics(doc: dict, close: float | None, mcap_cr: float | None, as_of: str | 
             cap = c1
             if ebit is not None and cap and cap > 0:
                 out["roce"] = _r(ebit / cap * 100)
-    bse = sorted(e for e in b.get("bs", {})
+    bb = b if b.get("bs") else by          # latest balance sheet: the main basis when it has one
+    bse = sorted(e for e in bb.get("bs", {})
                  if not as_of or (pd.Timestamp(e) + pd.Timedelta(days=60)).strftime("%Y-%m-%d") <= as_of)
     nw_now = None
     if bse:
-        bs = b["bs"][bse[-1]]
-        nw_now = net_worth(b, bse[-1])
+        bs = bb["bs"][bse[-1]]
+        nw_now = net_worth(bb, bse[-1])
         if nw_now and nw_now > 0 and bs.get("borrowings") is not None and kind in ("company", "nbfc"):
             out["debt_equity"] = _r(bs["borrowings"] / nw_now)
     if nw_now is None and ye:
-        nw_now = net_worth(b, ye[-1])
+        nw_now = net_worth(by, ye[-1])
     if nw_now and nw_now > 0 and mcap_cr:
         out["pb"] = _r(mcap_cr / nw_now)
         if close:
@@ -984,6 +1001,8 @@ def metrics(doc: dict, close: float | None, mcap_cr: float | None, as_of: str | 
         dps = sum(a * factor(d) for d, a in dividends if day - pd.Timedelta(days=365) < pd.Timestamp(d) <= day)
         out["div_yield"] = _r(dps / close * 100)
     out.update(shp_fields(doc, as_of))
+    if next_result and out.get("last_result") and out["last_result"] >= next_result:
+        next_result = None             # the results are out already (results day itself): no "next" results day
     if next_result:
         out["next_result"] = next_result
         if as_of:
@@ -991,8 +1010,10 @@ def metrics(doc: dict, close: float | None, mcap_cr: float | None, as_of: str | 
     return {k: v for k, v in out.items() if v is not None}
 
 
-def dividends_of(data: Path, symbol: str) -> list[tuple[str, float]]:
-    p = data / "corporate_actions" / f"{symbol}.csv"
+def dividends_of(data: Path, folder_id: str) -> list[tuple[str, float]]:
+    """Dividends of one stock from data/corporate_actions/<id>.csv - the folder id, not the symbol: M&M is M_M.csv
+    (18-Nov-2026: M&M, GVT&D and 8 more '&' symbols had no dividend yield)."""
+    p = data / "corporate_actions" / f"{folder_id}.csv"
     if not p.exists():
         return []
     try:
@@ -1032,7 +1053,7 @@ def screen_fields(data: Path, rows: list[dict], as_of: str | None = None) -> dic
         factor = (lambda end, t=t: 1.0) if t is None else (lambda end, t=t: share_factors.eps_factor(t, sym, end))
         try:
             out[r["id"]] = metrics(doc, r.get("close"), _num(r.get("mcap_cr")), as_of=day or None, factor=factor,
-                                   dividends=dividends_of(data, sym), next_result=cal.get(sym))
+                                   dividends=dividends_of(data, r.get("id") or sym), next_result=cal.get(sym))
         except Exception:  # noqa: BLE001 - one odd document must not stop the screen
             continue
     return out

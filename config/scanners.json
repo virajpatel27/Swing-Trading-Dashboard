@@ -914,7 +914,7 @@
    "id": "eps-doublers",
    "folder": "Earnings",
    "name": "Earnings Explosion",
-   "description": "Latest quarter vs a year ago: EPS up 100 % or more, sales up 50 % or more, net profit up 75 % or more; results in the last 30 days.",
+   "description": "Latest quarter vs a year ago: EPS up 100 % or more, sales up 50 % or more, net profit up 75 % or more, from a PROFIT a year ago (not a loss); results in the last 30 days.",
    "universe": "all",
    "rule": {
     "all": [
@@ -932,6 +932,16 @@
       "field": "np_g_yoy",
       "op": ">=",
       "value": 75
+     },
+     {
+      "field": "eps_year_ago_q",
+      "op": ">",
+      "value": 0
+     },
+     {
+      "field": "np_year_ago_q",
+      "op": ">",
+      "value": 0
      },
      {
       "field": "days_since_result",

@@ -1,5 +1,5 @@
 {
- "checked_at": "2026-11-17 11:53",
+ "checked_at": "2026-11-17 20:00",
  "instruments": 8221,
  "by_group": {
   "delivery NSE": 2641,
@@ -11,5 +11,5 @@
  "rows": 19892565,
  "newest_date": "2026-11-17",
  "errors": 0,
- "warnings": 3431
+ "warnings": 3430
 }

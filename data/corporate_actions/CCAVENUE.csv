@@ -11,4 +11,5 @@ ex_date,type,ratio,factor,amount,method,status,subject,source
 2023-09-18,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 0.05 Per Share,NSE
 2024-08-07,dividend,,1,0.05,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Annual General Meeting/Dividend - Rs 0.05 Per Share,NSE
 2024-09-11,demerger,,0.9530069,,open 29 / close before 30.43,applied,Demerger,NSE
-2025-06-26,rights,67:267,0.97918314,19,"TERP, issue price 19, close before 21.2",applied,Rights 67:267 @ Premium Rs 9/-,NSE
+2025-06-26,rights,67:267,0.97918314,19.0,"TERP, issue price 19, close before 21.2",applied,Rights 67:267 @ Premium Rs 9/-,NSE
+2026-10-19,consolidation,FV 1->10,10,,ratio from NSE text,applied,"Consolidation 10:1 (record date 13-Oct-2026, NSE filing of 01-Oct; trading suspended 13-16 Oct): NSE corporate-action list has no record; close 14.90 (09-Oct) -> 130.05 (19-Oct); the reference shows 52W high 205 / ATH 405 = old highs x 10",manual override

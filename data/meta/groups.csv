@@ -77,7 +77,7 @@ industry,healthcare-service-provider,Healthcare Service Provider,Healthcare,11,F
 industry,heavy-electrical-equipment,Heavy Electrical Equipment,Capital Goods,35,False,2007-02-15,2026-11-17
 industry,holding-company,Holding Company,Financial Services,15,False,2007-02-28,2026-11-17
 industry,home-furnishing,Home Furnishing,Consumer Durables,1,True,,
-industry,hospital,Hospital,Healthcare,25,False,2007-12-18,2026-11-17
+industry,hospital,Hospital,Healthcare,24,False,2007-12-18,2026-11-17
 industry,hotels-and-resorts,Hotels & Resorts,Consumer Services,39,False,2007-02-15,2026-11-17
 industry,household-appliances,Household Appliances,Consumer Durables,21,False,2007-09-03,2026-11-17
 industry,household-products,Household Products,Fast Moving Consumer Goods,5,False,2010-03-09,2026-11-17
@@ -153,7 +153,7 @@ industry,ratings,Ratings,Financial Services,2,True,,
 industry,real-estate-investment-trusts-reits,Real Estate Investment Trusts (REITs),Realty,3,True,2026-06-29,2026-11-17
 industry,real-estate-related-services,Real Estate related services,Realty,4,True,,
 industry,refineries-and-marketing,Refineries & Marketing,"Oil, Gas & Consumable Fuels",7,False,2007-02-15,2026-11-17
-industry,residential-commercial-projects,"Residential, Commercial Projects",Realty,90,False,2007-02-15,2026-11-17
+industry,residential-commercial-projects,"Residential, Commercial Projects",Realty,89,False,2007-02-15,2026-11-17
 industry,restaurants,Restaurants,Consumer Services,9,False,2017-03-20,2026-11-17
 industry,road-assets-toll-annuity-hybrid-annuity,"Road Assets–Toll, Annuity, Hybrid-Annuity",Services,7,False,2007-07-19,2026-11-17
 industry,road-transport,Road Transport,Services,1,True,,
@@ -203,13 +203,13 @@ sector,diversified,Diversified,,9,False,2007-05-29,2026-11-17
 sector,fast-moving-consumer-goods,Fast Moving Consumer Goods,,177,False,2007-02-15,2026-11-17
 sector,financial-services,Financial Services,,296,False,2007-02-15,2026-11-17
 sector,forest-materials,Forest Materials,,28,False,2007-11-06,2026-11-17
-sector,healthcare,Healthcare,,184,False,2007-02-15,2026-11-17
+sector,healthcare,Healthcare,,183,False,2007-02-15,2026-11-17
 sector,information-technology,Information Technology,,146,False,2007-02-15,2026-11-17
 sector,media-entertainment-and-publication,"Media, Entertainment & Publication",,59,False,2007-02-15,2026-11-17
 sector,metals-and-mining,Metals & Mining,,62,False,2007-02-15,2026-11-17
 sector,oil-gas-and-consumable-fuels,"Oil, Gas & Consumable Fuels",,46,False,2007-02-15,2026-11-17
 sector,power,Power,,36,False,2007-02-15,2026-11-17
-sector,realty,Realty,,97,False,2007-02-15,2026-11-17
+sector,realty,Realty,,96,False,2007-02-15,2026-11-17
 sector,services,Services,,150,False,2007-02-15,2026-11-17
 sector,telecommunication,Telecommunication,,30,False,2007-02-15,2026-11-17
 sector,textiles,Textiles,,147,False,2007-02-15,2026-11-17

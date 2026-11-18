@@ -36,6 +36,7 @@ sources:
   results_filings: NSE XBRL results filings (corporates-financial-results Quarterly + Annual lists, integrated filings from 2025) -> data/fundamentals/<SYMBOL>.json
   shareholding_xbrl: NSE shareholding pattern XBRL (corporate-share-holdings-master) -> data/fundamentals/<SYMBOL>.json
   results_calendar: NSE api/event-calendar (board meetings for results) -> data/meta/results_calendar.csv
+  announcements: NSE corporate announcements (api/corporate-announcements) -> data/announcements/YYYY-MM/DD.csv
 
 fields:
   # ------------------------------------------------------------ identity (phase 0 / 1)
@@ -289,6 +290,9 @@ fields:
   - {id: days_since_result, label: "Days since results", type: integer, formula: "Calendar days from last_result to the data day", inputs: [last_result], provided_in_phase: 8, source: NSE, file: [screen]}
   - {id: next_result, label: "Next results day", type: date, formula: "Next board meeting for results (NSE event calendar)", inputs: [results_calendar], provided_in_phase: 8, source: NSE, file: [screen]}
   - {id: days_to_result, label: "Days to results", type: integer, formula: "Calendar days from the data day to next_result", inputs: [next_result], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: recent_order, label: "Recent order", type: text, formula: "Newest NSE filing 'Bagging/Receiving of orders/contracts' or 'Awarding of order(s)/contract(s)' of the last 90 days, in the filing's own words", inputs: [announcements], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: recent_order_date, label: "Recent order date", type: date, formula: "Day of that filing", inputs: [recent_order], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: recent_order_cr, label: "Recent order (Rs Cr)", type: rupees, formula: "Amount named in the filing's text (Rs / INR crore, lakh, million, billion -> crore); empty when the text names none", inputs: [recent_order], provided_in_phase: 8, source: NSE, file: [screen]}
   - {id: sales_ttm, label: "Sales TTM (Cr)", type: crore, formula: "Sum of the last 4 quarters' revenue from operations (banks: interest earned; insurers: net premium)", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
   - {id: np_ttm, label: "Net profit TTM (Cr)", type: crore, formula: "Sum of the last 4 quarters' profit attributable to the owners", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
   - {id: eps_ttm, label: "EPS TTM", type: rupees, formula: "Sum of the last 4 quarters' basic EPS, each adjusted for splits / bonuses after its results day", inputs: [results_filings, corporate_actions], provided_in_phase: 8, source: NSE, file: [screen]}
@@ -307,12 +311,12 @@ fields:
   - {id: roe_10y, label: "ROE 10Y avg %", type: percent, formula: "Average of the last 10 yearly ROEs", inputs: [roe], provided_in_phase: 8, source: NSE, file: [screen]}
   - {id: roce, label: "ROCE %", type: percent, formula: "Latest year's EBIT (PBT + interest) / (net worth + borrowings) at that year end x 100 (companies and NBFCs)", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
   - {id: fin_year, label: "Latest financial year", type: date, formula: "End of the latest full financial year announced", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
-  - {id: sales_g_yoy, label: "Sales growth YoY %", type: percent, formula: "Latest quarter's sales vs the same quarter a year before", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
-  - {id: sales_g_qoq, label: "Sales growth QoQ %", type: percent, formula: "Latest quarter's sales vs the quarter before", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
-  - {id: np_g_yoy, label: "Profit growth YoY %", type: percent, formula: "Latest quarter's profit to owners vs the same quarter a year before (empty when that was <= 0)", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
-  - {id: np_g_qoq, label: "Profit growth QoQ %", type: percent, formula: "Latest quarter's profit to owners vs the quarter before", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
-  - {id: eps_g_yoy, label: "EPS growth YoY %", type: percent, formula: "Latest quarter's adjusted EPS vs the same quarter a year before", inputs: [eps_last_q], provided_in_phase: 8, source: NSE, file: [screen]}
-  - {id: eps_g_qoq, label: "EPS growth QoQ %", type: percent, formula: "Latest quarter's adjusted EPS vs the quarter before", inputs: [eps_last_q], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: sales_g_yoy, label: "Sales growth YoY %", type: percent, formula: "Latest quarter's sales vs the same quarter a year before: (new - old) / |old| x 100", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: sales_g_qoq, label: "Sales growth QoQ %", type: percent, formula: "Latest quarter's sales vs the quarter before: (new - old) / |old| x 100", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: np_g_yoy, label: "Profit growth YoY %", type: percent, formula: "Latest quarter's PAT (incl. minority) vs the same quarter a year before: (new - old) / |old| x 100, also from a loss", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: np_g_qoq, label: "Profit growth QoQ %", type: percent, formula: "Latest quarter's PAT (incl. minority) vs the quarter before: (new - old) / |old| x 100, also from a loss", inputs: [results_filings], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: eps_g_yoy, label: "EPS growth YoY %", type: percent, formula: "Latest quarter's adjusted EPS vs the same quarter a year before: (new - old) / |old| x 100, also from a loss", inputs: [eps_last_q], provided_in_phase: 8, source: NSE, file: [screen]}
+  - {id: eps_g_qoq, label: "EPS growth QoQ %", type: percent, formula: "Latest quarter's adjusted EPS vs the quarter before: (new - old) / |old| x 100, also from a loss", inputs: [eps_last_q], provided_in_phase: 8, source: NSE, file: [screen]}
   - {id: sales_g_ttm, label: "Sales growth TTM %", type: percent, formula: "Sales TTM vs the 4 quarters before", inputs: [sales_ttm], provided_in_phase: 8, source: NSE, file: [screen]}
   - {id: np_g_ttm, label: "Profit growth TTM %", type: percent, formula: "Profit TTM vs the 4 quarters before", inputs: [np_ttm], provided_in_phase: 8, source: NSE, file: [screen]}
   - {id: eps_up_qtrs, label: "EPS up quarters", type: integer, formula: "Latest quarters in a row whose EPS beat the same quarter a year before", inputs: [eps_g_yoy], provided_in_phase: 8, source: NSE, file: [screen]}

@@ -2,7 +2,7 @@
 
 Made from `config/fields.yaml` by `scripts/make_formulas_doc.py` (do not edit by hand). All prices are ADJUSTED for splits, bonus, rights and demergers unless a field says "as traded". Settings: `config/indicators.yaml`, `config/stage.yaml`, `config/settings.yaml`. Calibration against the reference app: `docs/calibration.md`.
 
-Current phase: **S9**. Fields: **331**.
+Current phase: **S9**. Fields: **334**.
 
 ## Sources
 
@@ -25,6 +25,7 @@ Current phase: **S9**. Fields: **331**.
 - **results_filings**: NSE XBRL results filings (corporates-financial-results Quarterly + Annual lists, integrated filings from 2025) -> data/fundamentals/<SYMBOL>.json
 - **shareholding_xbrl**: NSE shareholding pattern XBRL (corporate-share-holdings-master) -> data/fundamentals/<SYMBOL>.json
 - **results_calendar**: NSE api/event-calendar (board meetings for results) -> data/meta/results_calendar.csv
+- **announcements**: NSE corporate announcements (api/corporate-announcements) -> data/announcements/YYYY-MM/DD.csv
 
 ## Fields of existing dashboard (before the scanner plan)
 
@@ -309,6 +310,9 @@ Current phase: **S9**. Fields: **331**.
 | `days_since_result` | Days since results | integer | Calendar days from last_result to the data day | last_result | data/snapshot/screen.json |
 | `next_result` | Next results day | date | Next board meeting for results (NSE event calendar) | results_calendar | data/snapshot/screen.json |
 | `days_to_result` | Days to results | integer | Calendar days from the data day to next_result | next_result | data/snapshot/screen.json |
+| `recent_order` | Recent order | text | Newest NSE filing 'Bagging/Receiving of orders/contracts' or 'Awarding of order(s)/contract(s)' of the last 90 days, in the filing's own words | announcements | data/snapshot/screen.json |
+| `recent_order_date` | Recent order date | date | Day of that filing | recent_order | data/snapshot/screen.json |
+| `recent_order_cr` | Recent order (Rs Cr) | rupees | Amount named in the filing's text (Rs / INR crore, lakh, million, billion -> crore); empty when the text names none | recent_order | data/snapshot/screen.json |
 | `sales_ttm` | Sales TTM (Cr) | crore | Sum of the last 4 quarters' revenue from operations (banks: interest earned; insurers: net premium) | results_filings | data/snapshot/screen.json |
 | `np_ttm` | Net profit TTM (Cr) | crore | Sum of the last 4 quarters' profit attributable to the owners | results_filings | data/snapshot/screen.json |
 | `eps_ttm` | EPS TTM | rupees | Sum of the last 4 quarters' basic EPS, each adjusted for splits / bonuses after its results day | results_filings, corporate_actions | data/snapshot/screen.json |
@@ -327,12 +331,12 @@ Current phase: **S9**. Fields: **331**.
 | `roe_10y` | ROE 10Y avg % | percent | Average of the last 10 yearly ROEs | roe | data/snapshot/screen.json |
 | `roce` | ROCE % | percent | Latest year's EBIT (PBT + interest) / (net worth + borrowings) at that year end x 100 (companies and NBFCs) | results_filings | data/snapshot/screen.json |
 | `fin_year` | Latest financial year | date | End of the latest full financial year announced | results_filings | data/snapshot/screen.json |
-| `sales_g_yoy` | Sales growth YoY % | percent | Latest quarter's sales vs the same quarter a year before | results_filings | data/snapshot/screen.json |
-| `sales_g_qoq` | Sales growth QoQ % | percent | Latest quarter's sales vs the quarter before | results_filings | data/snapshot/screen.json |
-| `np_g_yoy` | Profit growth YoY % | percent | Latest quarter's profit to owners vs the same quarter a year before (empty when that was <= 0) | results_filings | data/snapshot/screen.json |
-| `np_g_qoq` | Profit growth QoQ % | percent | Latest quarter's profit to owners vs the quarter before | results_filings | data/snapshot/screen.json |
-| `eps_g_yoy` | EPS growth YoY % | percent | Latest quarter's adjusted EPS vs the same quarter a year before | eps_last_q | data/snapshot/screen.json |
-| `eps_g_qoq` | EPS growth QoQ % | percent | Latest quarter's adjusted EPS vs the quarter before | eps_last_q | data/snapshot/screen.json |
+| `sales_g_yoy` | Sales growth YoY % | percent | Latest quarter's sales vs the same quarter a year before: (new - old) / /old/ x 100 | results_filings | data/snapshot/screen.json |
+| `sales_g_qoq` | Sales growth QoQ % | percent | Latest quarter's sales vs the quarter before: (new - old) / /old/ x 100 | results_filings | data/snapshot/screen.json |
+| `np_g_yoy` | Profit growth YoY % | percent | Latest quarter's PAT (incl. minority) vs the same quarter a year before: (new - old) / /old/ x 100, also from a loss | results_filings | data/snapshot/screen.json |
+| `np_g_qoq` | Profit growth QoQ % | percent | Latest quarter's PAT (incl. minority) vs the quarter before: (new - old) / /old/ x 100, also from a loss | results_filings | data/snapshot/screen.json |
+| `eps_g_yoy` | EPS growth YoY % | percent | Latest quarter's adjusted EPS vs the same quarter a year before: (new - old) / /old/ x 100, also from a loss | eps_last_q | data/snapshot/screen.json |
+| `eps_g_qoq` | EPS growth QoQ % | percent | Latest quarter's adjusted EPS vs the quarter before: (new - old) / /old/ x 100, also from a loss | eps_last_q | data/snapshot/screen.json |
 | `sales_g_ttm` | Sales growth TTM % | percent | Sales TTM vs the 4 quarters before | sales_ttm | data/snapshot/screen.json |
 | `np_g_ttm` | Profit growth TTM % | percent | Profit TTM vs the 4 quarters before | np_ttm | data/snapshot/screen.json |
 | `eps_up_qtrs` | EPS up quarters | integer | Latest quarters in a row whose EPS beat the same quarter a year before | eps_g_yoy | data/snapshot/screen.json |

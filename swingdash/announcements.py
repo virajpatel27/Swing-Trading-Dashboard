@@ -182,6 +182,44 @@ def catalysts(df: pd.DataFrame, today: str, days: int = 120, max_len: int = 240)
     return out
 
 
+ORDER_DESC = {"Bagging/Receiving of orders/contracts", "Awarding of order(s)/contract(s)"}
+_AMOUNT = re.compile(r"(?:Rs\.?|INR|₹)\s*([\d,]+(?:\.\d+)?)\s*(crores?|cr\b|lakhs?|lacs?|million|mn\b|billion|bn\b)", re.I)
+_UNIT_CR = {"c": 1.0, "l": 0.01, "m": 0.1, "b": 100.0}
+
+
+def order_amount_cr(text: str) -> float | None:
+    """'Rs. 21.21 Crore' -> 21.21, 'INR 58 lakh' -> 0.58, 'Rs 1.2 billion' -> 120 (Rs crore); None without an amount."""
+    m = _AMOUNT.search(text or "")
+    if not m:
+        return None
+    try:
+        v = float(m.group(1).replace(",", ""))
+    except ValueError:
+        return None
+    return round(v * _UNIT_CR[m.group(2)[0].lower()], 2)
+
+
+def recent_orders(df: pd.DataFrame, today: str, days: int = 90, max_len: int = 240) -> dict[str, dict]:
+    """recent_order / recent_order_date / recent_order_cr per symbol (18-Nov-2026, reference column): the newest NSE filing
+    "Bagging/Receiving of orders/contracts" or "Awarding of order(s)/contract(s)" of the last `days` days, in the
+    filing's own words (the reference writes its own summary, also of press releases; see docs/calibration.md)."""
+    if df.empty:
+        return {}
+    since = (pd.Timestamp(today) - pd.Timedelta(days=days)).strftime("%Y-%m-%d")
+    d = df[(df["dt"] >= since) & (df["dt"].str[:10] <= today) & df["desc"].isin(ORDER_DESC)].sort_values("dt")
+    out: dict[str, dict] = {}
+    for r in d.itertuples():
+        about = str(r.about or "").strip() if isinstance(r.about, str) else ""
+        text = _BOILER.sub("", about).strip(" .,:;-'\"") or str(r.desc)
+        if sum(ch.isupper() for ch in text) > 0.6 * max(1, sum(ch.isalpha() for ch in text)):
+            text = text.lower()
+        text = text[0].upper() + text[1:]
+        if len(text) > max_len:
+            text = text[:max_len].rsplit(" ", 1)[0] + "…"
+        out[r.symbol] = {"recent_order": text, "recent_order_date": str(r.dt)[:10], "recent_order_cr": order_amount_cr(about)}
+    return out
+
+
 def site_files(data: Path, out: Path, symbols: set[str], today: str, recent_days: int = 10, stock_days: int = 400) -> dict:
     """data/news.json (all filings of the last `recent_days` days) and data/a/<SYMBOL>.json (one stock's last `stock_days`)."""
     since = (pd.Timestamp(today) - pd.Timedelta(days=stock_days)).strftime("%Y-%m-%d")

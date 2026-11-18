@@ -58,3 +58,18 @@ def test_group_fields_use_all_members_and_all_groups():
     assert out["a"]["industry_rank_1m"] == 1 and out["c"]["industry_rank_1m"] == 1      # I1 avg 5, I2 avg 5: tie
     assert out["b"]["industry_ret_1w"] == 1.0 and out["a"]["vs_industry_1m"] == 5.0       # illiquid b counts too
     assert out["a"]["sector_rank_1m"] == 1 and out["a"]["sector_ret_1w"] == 1.0
+
+
+def test_recent_orders_from_nse_order_filings():
+    from swingdash import announcements as A
+    assert A.order_amount_cr("Bagging of orders of Rs. 21.21 Crore by its WOS") == 21.21
+    assert A.order_amount_cr("order worth INR 58 lakh") == 0.58 and A.order_amount_cr("₹1,250 cr order") == 1250.0
+    assert A.order_amount_cr("Rs 1.2 billion contract") == 120.0 and A.order_amount_cr("Receipt of orders") is None
+    df = pd.DataFrame({"dt": ["2026-07-01 10:00", "2026-10-01 10:00", "2026-11-10 10:00", "2026-11-12 10:00", "2026-11-20 10:00"],
+                       "symbol": ["A", "A", "A", "B", "A"],
+                       "desc": ["Bagging/Receiving of orders/contracts", "Bagging/Receiving of orders/contracts",
+                                "Awarding of order(s)/contract(s)", "Press Release", "Bagging/Receiving of orders/contracts"],
+                       "about": ["old", "X Limited has informed the Exchange regarding order of Rs 10 crore", "new order of Rs. 5 Cr", "", "future"]})
+    out = A.recent_orders(df, "2026-11-16")
+    assert list(out) == ["A"]                                        # B: a press release; A's filing of 20-Nov is after the day
+    assert out["A"] == {"recent_order": "New order of Rs. 5 Cr", "recent_order_date": "2026-11-10", "recent_order_cr": 5.0}

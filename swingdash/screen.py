@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from . import breadth, bse_history, earnings, engine, fundamentals, group_rank, groups, store
+from . import announcements, breadth, bse_history, earnings, engine, fundamentals, group_rank, groups, store
 from .adjust import ADJ_COLS
 from .config import ROOT
 
@@ -244,6 +244,12 @@ def build(root: Path = ROOT, as_of=None, workers: int | None = None, log=print) 
     for row in rows:
         row.update(fin.get(row["id"], {}))
         size_fields(row, m.at[row["id"], "promoter_pct"] if "promoter_pct" in m.columns else "")
+    # recent order (18-Nov-2026): the newest NSE order filing of the last 90 days
+    day = (as_of or newest).strftime("%Y-%m-%d")
+    orders = announcements.recent_orders(announcements.load(data, (pd.Timestamp(day) - pd.Timedelta(days=95)).strftime("%Y-%m-%d")), day,
+                                         int(cfg.get("recent_order_days", 90)))
+    for row in rows:
+        row.update(orders.get(row.get("symbol"), {"recent_order": None, "recent_order_date": None, "recent_order_cr": None}))
     cols = list(rows[0].keys())
     for r in rows[1:]:
         cols += [c for c in r if c not in cols]

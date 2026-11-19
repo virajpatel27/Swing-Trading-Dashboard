@@ -2,3 +2,4 @@ instrument,level,check,date,detail
 NSE DVL,warn,corporate action not seen in prices,2021-08-05,bonus 1:2: no matching price change near the ex-date
 NSE GULFPETRO,warn,corporate action not seen in prices,2013-07-09,bonus 23:19: no matching price change near the ex-date
 NSE ORIENTPPR,warn,corporate action without factor,2007-06-08,rights: rights without issue price
+NSE PRAXIS,warn,corporate action without factor,2026-11-18,rights: rights without issue price

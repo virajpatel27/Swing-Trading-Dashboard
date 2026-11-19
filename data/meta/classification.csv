@@ -392,7 +392,7 @@ BLUESTARCO,Consumer Discretionary,Consumer Durables,Consumer Durables,Household 
 BLUESTONE,Consumer Discretionary,Consumer Durables,Consumer Durables,Gems Jewellery And Watches,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,152873603,48.93,1,16.21,2026-09-30,NSE,2026-11-04
 BLUSPRING,Services,Services,Commercial Services & Supplies,Diversified Commercial Services,,149502111,41.42,10,58.41,2026-09-30,NSE,2026-11-04
 BMWVENTLTD,Commodities,Metals & Mining,Metals & Minerals Trading,Trading - Metals,,86715000,27.39,10,73.62,2026-09-30,NSE,2026-11-04
-BNAGROCHEM,Services,Services,Commercial Services & Supplies,Trading & Distributors,,977729410,4.45,1,,,NSE,2026-11-18
+BNAGROCHEM,Services,Services,Commercial Services & Supplies,Trading & Distributors,,977729410,4.45,1,,,NSE,2026-11-19
 BNALTD,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Agricultural Food & other Products,Tea & Coffee,,3100000,38.5,10,,,NSE,2026-11-04
 BODALCHEM,Commodities,Chemicals,Chemicals & Petrochemicals,Dyes And Pigments,,125944065,42.92,2,57,2026-09-30,NSE,2026-11-04
 BOHRAIND,Commodities,Chemicals,Fertilizers & Agrochemicals,Fertilizers,,21172152,66.81,10,33.39,2026-09-30,NSE,2026-11-04
@@ -410,6 +410,7 @@ BPCL,Energy,Oil Gas & Consumable Fuels,Petroleum Products,Refineries & Marketing
 BPL,Consumer Discretionary,Consumer Durables,Consumer Durables,Consumer Electronics,,48975751,36.86,10,63.13,2026-09-30,NSE,2026-11-04
 BPLPHARMA,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,,6891963,32.26,10,,,NSE,2026-11-04
 BRAHMINFRA,Industrials,Construction,Construction,Civil Construction,,29018400,25.86,10,,,NSE,2026-11-04
+BRAHMVIRAT,Consumer Discretionary,Textiles,Textiles & Apparels,Garments & Apparels,,14523339,23.18,10,,,NSE,2026-11-19
 BRIGADE,Consumer Discretionary,Realty,Realty,Residential Commercial Projects,NIFTY 500;NIFTY CORE HOUSING;NIFTY INDIA INFRASTRUCTURE & LOGISTICS;NIFTY INDIA NEW AGE CONSUMPTION;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY REALTY;NIFTY REITS & REALTY;NIFTY SMALLCAP 100;NIFTY SMALLCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25;NIFTY500 MULTICAP INFRASTRUCTURE 50:30:20,326259283,56.47,10,41.09,2026-09-30,NSE,2026-11-04
 BRIGHOTEL,Consumer Discretionary,Consumer Services,Leisure Services,Hotels & Resorts,,379842565,26.05,10,74.09,2026-09-30,NSE,2026-11-04
 BRIGHTBR,Industrials,Capital Goods,Industrial Products,Plastic Products - Industrial,,5680235,43.43,10,,,NSE,2026-11-04
@@ -731,7 +732,7 @@ EUROPRATIK,Consumer Discretionary,Consumer Durables,Consumer Durables,Plywood Bo
 EUROTEXIND,Consumer Discretionary,Realty,Realty,Residential Commercial Projects,,8749865,26.62,10,70.99,2026-09-30,NSE,2026-11-04
 EVEREADY,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Household Products,Household Products,,72687260,54.0,5,43.6,2026-09-30,NSE,2026-11-04
 EVERESTIND,Commodities,Construction Materials,Other Construction Materials,Other Construction Materials,,15855754,49.18,10,50.22,2026-09-30,NSE,2026-11-04
-EVONILE,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,,34978629,28.56,5,,,NSE,2026-11-18
+EVONILE,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,,34978629,28.62,5,,,NSE,2026-11-19
 EXCELINDUS,Commodities,Chemicals,Chemicals & Petrochemicals,Specialty Chemicals,,12570692,41.19,5,51.86,2026-09-30,NSE,2026-11-04
 EXCELSOFT,Information Technology,Information Technology,IT - Services,IT Enabled Services,NIFTY IPO,115084164,40.61,10,59.12,2026-09-30,NSE,2026-11-04
 EXICOM,Industrials,Capital Goods,Electrical Equipment,Heavy Electrical Equipment,,139166582,31.31,10,65.2,2026-09-30,NSE,2026-11-04
@@ -1163,7 +1164,7 @@ JKIL,Industrials,Construction,Construction,Civil Construction,,75665506,53.05,5,
 JKIPL,Industrials,Capital Goods,Agricultural Commercial & Construction Vehicles,Dealers���Commercial Vehicles Tractors Construction Vehicles,,38386000,25.01,10,74.99,2026-09-30,NSE,2026-11-04
 JKLAKSHMI,Commodities,Construction Materials,Cement & Cement Products,Cement & Cement Products,,124144426,53.9,5,45.12,2026-09-30,NSE,2026-11-04
 JKPAPER,Commodities,Forest Materials,Paper Forest & Jute Products,Paper & Paper Products,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,181318771,42.18,10,52.94,2026-09-30,NSE,2026-11-04
-JKSHAH,,,,,,,,,,,Nifty 500 list,2026-11-18
+JKSHAH,Consumer Discretionary,Consumer Services,Other Consumer Services,Education,,96506610,,10,,,NSE,2026-11-18
 JKTYRE,Consumer Discretionary,Automobile and Auto Components,Auto Components,Tyres & Rubber Products,NIFTY 500;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY SMALLCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25,288289511,43.26,2,51.72,2026-09-30,NSE,2026-11-04
 JLHL,Healthcare,Healthcare,Healthcare Services,Hospital,,327830110,57.92,2,40.91,2026-09-30,NSE,2026-11-04
 JMA,Consumer Discretionary,Automobile and Auto Components,Auto Components,Trading - Auto Components,,22841054,43.03,2,51,2026-09-30,NSE,2026-11-04
@@ -1723,7 +1724,7 @@ PARKHOSPS,Healthcare,Healthcare,Healthcare Services,Hospital,NIFTY HOSPITALS;NIF
 PARKHOTELS,Consumer Discretionary,Consumer Services,Leisure Services,Hotels & Resorts,,213374246,31.86,1,68.22,2026-09-30,NSE,2026-11-04
 PARNAXLAB,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,,11485616,29.3,10,,,NSE,2026-11-04
 PARSVNATH,Consumer Discretionary,Realty,Realty,Residential Commercial Projects,,435181170,50.06,5,46.68,2026-09-30,NSE,2026-11-04
-PASHUPATI,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,394600000,34.01,1,65.99,2026-09-30,NSE,2026-11-18
+PASHUPATI,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,394600000,34.01,1,65.99,2026-09-30,NSE,2026-11-19
 PASUPTAC,Commodities,Chemicals,Chemicals & Petrochemicals,Petrochemicals,,89133121,34.08,10,65.87,2026-09-30,NSE,2026-11-04
 PATANJALI,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Agricultural Food & other Products,Edible Oil,NIFTY 200;NIFTY 500;NIFTY FMCG;NIFTY LARGEMIDCAP 250;NIFTY MIDCAP 100;NIFTY MIDCAP 150;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY RURAL;NIFTY TOTAL MARKET;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25;NIFTY500 SHARIAH,1088108595,31.69,2,68.25,2026-09-30,NSE,2026-11-04
 PATELENG,Industrials,Construction,Construction,Civil Construction,,992141937,64.71,1,31.48,2026-09-30,NSE,2026-11-04
@@ -1805,7 +1806,7 @@ PRAKASHSTL,Industrials,Capital Goods,Industrial Products,Iron & Steel Products,,
 PRANAV,Consumer Discretionary,Realty,Realty,Residential Commercial Projects,NIFTY IPO,112622782,19.02,10,49.03,2026-09-30,NSE,2026-11-04
 PRASOLCHEM,Commodities,Chemicals,Chemicals & Petrochemicals,Specialty Chemicals,NIFTY IPO,59183431,8.81,2,75.25,2026-09-30,NSE,2026-11-04
 PRAVEG,Consumer Discretionary,Consumer Services,Leisure Services,Hotels & Resorts,,26140695,53.76,10,,,NSE,2026-11-04
-PRAXIS,Consumer Discretionary,Consumer Services,Retailing,Speciality Retail,,289041215,91.48,5,7.23,2026-09-30,NSE,2026-11-18
+PRAXIS,Consumer Discretionary,Consumer Services,Retailing,Speciality Retail,,289041215,91.11,5,7.23,2026-09-30,NSE,2026-11-19
 PRECAM,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,,94985835,34.62,10,65.37,2026-09-30,NSE,2026-11-04
 PRECOT,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,12000000,36.0,10,61.51,2026-09-30,NSE,2026-11-04
 PRECWIRE,Industrials,Capital Goods,Industrial Products,Aluminium Copper & Zinc Products,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,182807975,41.18,1,56.62,2026-09-30,NSE,2026-11-04
@@ -2531,7 +2532,6 @@ VINYLINDIA,Commodities,Chemicals,Chemicals & Petrochemicals,Trading - Chemicals,
 VIPCLOTHNG,Consumer Discretionary,Textiles,Textiles & Apparels,Garments & Apparels,,90129519,49.39,2,46.55,2026-09-30,NSE,2026-11-06
 VIPIND,Consumer Discretionary,Consumer Durables,Consumer Durables,Plastic Products - Consumer,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,142055391,56.25,2,42.35,2026-09-30,NSE,2026-11-06
 VIPULLTD,Consumer Discretionary,Realty,Realty,Residential Commercial Projects,,140959480,81.75,1,18.25,2026-09-30,NSE,2026-11-06
-VIRAT,Consumer Discretionary,Textiles,Textiles & Apparels,Garments & Apparels,,14523339,23.18,10,,,NSE,2026-11-06
 VIRINCHI,Information Technology,Information Technology,IT - Software,Software Products,,112707372,56.31,10,39.46,2026-09-30,NSE,2026-11-06
 VIRTUALG,Consumer Discretionary,Consumer Services,Other Consumer Services,Education,,566163698,91.41,1,,,NSE,2026-11-06
 VISACHROME,Commodities,Metals & Mining,Ferrous Metals,Ferro & Silica Manganese,,145789500,33.6,10,62.4,2026-09-30,NSE,2026-11-06

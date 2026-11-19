@@ -1,27 +1,27 @@
 {
- "date": "2026-11-18",
- "universe": 2636,
+ "date": "2026-11-19",
+ "universe": 2635,
  "nifty500": {
   "stocks": 500,
   "with_doc": 500
  },
  "all": {
-  "stocks": 2636,
-  "with_doc": 2636
+  "stocks": 2635,
+  "with_doc": 2635
  },
  "kinds": {
-  "company": 2174,
+  "company": 2176,
   "nbfc": 158,
-  "?": 252,
+  "?": 249,
   "bank": 41,
   "insurance": 11
  },
  "with_8_quarters": 1990,
  "with_5_years": 1570,
- "with_balance_sheet": 2369,
+ "with_balance_sheet": 2370,
  "with_cash_flow": 2252,
- "with_shareholding": 2607,
- "latest_quarter_older_than_150_days": 283,
+ "with_shareholding": 2605,
+ "latest_quarter_older_than_150_days": 279,
  "no_results": [
   "3BBLACKBIO",
   "ABBOTINDIA",
@@ -64,7 +64,6 @@
   "BIRLAPREC",
   "BLACKROSE",
   "BLIL",
-  "BLSPOLY",
   "BLUECLOUDS",
   "BNAGROCHEM",
   "BNALTD",
@@ -72,6 +71,7 @@
   "BRAHMINFRA",
   "BRIGHTBR",
   "BTTL",
-  "CFEL"
+  "CFEL",
+  "CGVAK"
  ]
 }

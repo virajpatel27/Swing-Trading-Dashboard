@@ -412,6 +412,7 @@ stock,NSE,BPCL,BPCL,Oil Gas & Consumable Fuels,stocks/raw/BPCL,2007-01-02,2026-1
 stock,NSE,BPL,BPL,,stocks/raw/BPL,2007-01-02,2026-11-18,4926,NSE bhavcopy
 stock,NSE,BPLPHARMA,BPLPHARMA,,stocks/raw/BPLPHARMA,2026-08-17,2026-11-18,65,NSE bhavcopy
 stock,NSE,BRAHMINFRA,BRAHMINFRA,,stocks/raw/BRAHMINFRA,2026-08-17,2026-11-18,65,NSE bhavcopy
+stock,NSE,BRAHMVIRAT,BRAHMVIRAT,,stocks/raw/BRAHMVIRAT,2026-08-17,2026-11-18,65,NSE bhavcopy
 stock,NSE,BRIGADE,BRIGADE,Realty,stocks/raw/BRIGADE,2007-12-31,2026-11-18,4678,NSE bhavcopy
 stock,NSE,BRIGHOTEL,BRIGHOTEL,,stocks/raw/BRIGHOTEL,2025-07-31,2026-11-18,322,NSE bhavcopy
 stock,NSE,BRIGHTBR,BRIGHTBR,,stocks/raw/BRIGHTBR,2026-08-17,2026-11-18,65,NSE bhavcopy
@@ -3064,6 +3065,7 @@ stock-adjusted,NSE,BPCL,BPCL,Oil Gas & Consumable Fuels,stocks/adjusted/BPCL,200
 stock-adjusted,NSE,BPL,BPL,,stocks/adjusted/BPL,2007-01-02,2026-11-18,4926,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,BPLPHARMA,BPLPHARMA,,stocks/adjusted/BPLPHARMA,2026-08-17,2026-11-18,65,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,BRAHMINFRA,BRAHMINFRA,,stocks/adjusted/BRAHMINFRA,2026-08-17,2026-11-18,65,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,BRAHMVIRAT,BRAHMVIRAT,,stocks/adjusted/BRAHMVIRAT,2026-08-17,2026-11-18,65,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,BRIGADE,BRIGADE,Realty,stocks/adjusted/BRIGADE,2007-12-31,2026-11-18,4678,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,BRIGHOTEL,BRIGHOTEL,,stocks/adjusted/BRIGHOTEL,2025-07-31,2026-11-18,322,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,BRIGHTBR,BRIGHTBR,,stocks/adjusted/BRIGHTBR,2026-08-17,2026-11-18,65,NSE bhavcopy + NSE corporate actions

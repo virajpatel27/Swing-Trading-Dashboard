@@ -65,7 +65,7 @@ industry,financial-technology-fintech,Financial Technology (Fintech),Financial S
 industry,footwear,Footwear,Consumer Durables,8,False,2014-10-07,2026-11-18
 industry,forest-products,Forest Products,Forest Materials,1,True,,
 industry,furniture-home-furnishing,"Furniture, Home Furnishing",Consumer Durables,10,False,2017-02-27,2026-11-18
-industry,garments-and-apparels,Garments & Apparels,Textiles,35,False,2007-07-24,2026-11-18
+industry,garments-and-apparels,Garments & Apparels,Textiles,34,False,2007-07-24,2026-11-18
 industry,gas-transmission-marketing,Gas Transmission/Marketing,"Oil, Gas & Consumable Fuels",1,True,,
 industry,gems-jewellery-and-watches,"Gems, Jewellery And Watches",Consumer Durables,45,False,2007-02-15,2026-11-18
 industry,general-insurance,General Insurance,Financial Services,6,False,2017-12-26,2026-11-18
@@ -212,7 +212,7 @@ sector,power,Power,,36,False,2007-02-15,2026-11-18
 sector,realty,Realty,,96,False,2007-02-15,2026-11-18
 sector,services,Services,,150,False,2007-02-15,2026-11-18
 sector,telecommunication,Telecommunication,,30,False,2007-02-15,2026-11-18
-sector,textiles,Textiles,,147,False,2007-02-15,2026-11-18
+sector,textiles,Textiles,,146,False,2007-02-15,2026-11-18
 sector,utilities,Utilities,,13,False,2021-09-28,2026-11-18
 theme,ac-and-appliances,AC & Appliances,,31,False,2007-02-15,2026-11-18
 theme,ai-and-cloud,AI & Cloud,,84,False,2007-02-15,2026-11-18

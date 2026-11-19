@@ -70,7 +70,8 @@ Angel One is used only by the Source probe (a check). The daily update does not 
 ## Weekly
 - BSE indices: tell Claude **"BSE update karo"** (runs on the PC, BSE refuses GitHub); Pull origin first, then commit what it changed.
   It also fetches the BSE shareholding pattern of the stocks NSE has none for (scripts/fetch_bse_shareholding.py; only new
-  quarters are downloaded). Shareholding changes once a quarter, so weekly is enough.
+  quarters are downloaded) and their quarterly results (scripts/fetch_bse_results.py, 18-Nov-2026: PE, EPS, growth (consolidated when filed) for
+  ~243 BSE filers; only new quarters). Shareholding and results change once a quarter, so weekly is enough.
 
 ## When something needs you
 - Email / Issue "Daily update failed": open the link in the issue; usually the next run fixes it by itself. Close the issue when green again.

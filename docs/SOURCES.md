@@ -110,3 +110,14 @@ file; the file is `www.bseindia.com/XBRLFILES/SHPXBRLDataXML/<XbrlFile>` (same X
 fundamentals.shareholding). The list call needs api.bseindia.com, which refuses GitHub (403) -> `scripts/fetch_bse_shareholding.py`
 runs on the PC with the weekly "BSE update"; it writes data/fundamentals/<SYMBOL>.json "shp" (files marked "BSE:<name>").
 
+## BSE results (18-Nov-2026, PC only)
+For the ~243 stocks without NSE results (BSE filers): `CorprateResultbeta/w?scripcode=<code>` lists each financial year's
+Q1-Q4 / YR with a period id ("Sep-26;SQ2026-2027;131.00;..."), `Corp_detailedResult_Transpose_ng/w?Scrip_cd=<code>&Qtr=<id>`
+gives the standalone line items (Rs MILLION), `Corp_BSEDnBResults_SEBI_Consolidated_Res_ng/w?type1=c&strtype=<id>&strscripcd=<code>
+&strscripname=&strresultType=&action=show` the consolidated ones ([{Description, Amount}], empty list = none),
+`BoardMeeting/w?scripcode=<code>&type=` the results days. No balance sheet (no ROE / PB / debt).
+`scripts/fetch_bse_results.py` saves standalone -> "S" and consolidated -> "C" with `results_source: BSE` (files marked
+"BSE:R:<id>" / "BSE:RC:<id>", "none" = BSE has no such result); consolidated is preferred as for NSE stocks (the
+reference uses it: 3BBLACKBIO EPS TTM 65.66 = consolidated). A stock that gets NSE results is left alone. Checked: ABBOTINDIA through Jun-26 equals the
+reference exactly (PE 34.19, EPS TTM 759.85, PEG 2.0, OPM 28.1).
+

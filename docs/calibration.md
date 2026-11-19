@@ -431,3 +431,18 @@ fundamentals.screen_fields recomputed AS OF each of the 9 days (only what was an
 
 Earnings Explosion (eps-doublers) now needs a profit a year ago (EPS and PAT > 0): with growth from a loss it found 115
 more stocks on 4 days, none of them in the reference's lists. Code 33, EPS Accelerators, Turnarounds unchanged.
+
+## BSE results for stocks without NSE results (19-Nov-2026)
+scripts/fetch_bse_results.py (PC only, weekly "BSE update"): ~240 BSE filers, standalone "S" + consolidated "C"
+(preferred, as the reference), amounts rounded to 0.1 crore (= BSE's whole Rs million; the reference's growth uses them).
+The reference still showed the TTM to Jun-26 for these stocks on 16-Nov, so compared with results known by 10-Oct:
+
+| Column | Match (within 1 % or 0.01) | Within ~1 point |
+|---|---|---|
+| pe / eps_ttm / peg | 80 / 78 / 83 % | 87 / 91 / 97 % |
+| eps / sales / np growth YoY | 83 / 84 / 84 % | 87 / 95 / 92 % |
+| sales / np growth QoQ | 83 / 84 % | 97 / 91 % |
+| opm_ttm | 16 % | 47 % (no formula fits: its own operating profit) |
+
+Steps that moved it: consolidated instead of standalone (EPS TTM 33 -> 84 %), "Net Sales" line + numbers with commas
+(sales growth 27 -> 68 %), 0.1 crore rounding (PAT growth YoY 40 -> 84 %). No balance sheet from BSE: no ROE / PB / D-E.

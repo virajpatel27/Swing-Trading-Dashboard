@@ -20,7 +20,8 @@ Viraj. **Not a programmer.** Answer in Gujarati-English mix (Latin letters), sho
    official ind_close_all file (~23:20). Data workflows must check out `ref: main` (a queued run otherwise gets an old commit).
    BSE indices: weekly from the PC only (Viraj's choice 2026-11-01). When he says "BSE update karo": run
    `<python> scripts/backfill.py --job bse-update`, then `<python> scripts/fetch_bse_shareholding.py` (BSE shareholding of the
-   ~284 stocks NSE has none for, 17-Nov-2026), then `build_snapshot.py` and `validate_data.py`; he pulls first, then commits.
+   ~284 stocks NSE has none for, 17-Nov-2026), then `<python> scripts/fetch_bse_results.py` (BSE quarterly / yearly results
+   of the ~243 stocks without NSE results, 18-Nov-2026), then `build_snapshot.py` and `validate_data.py`; he pulls first, then commits.
 6. **equitytimer.com is not used**: its Terms (sections 7 + 8) forbid scraping and redistribution. Sectors come from NSE's official classification.
 7. Never overwrite good data with empty/failed data. Validate before every data commit.
 8. Indicators always on ADJUSTED prices. Raw data is never changed by adjustment.
@@ -169,3 +170,4 @@ Task 3 (10-Nov): Tight Setups = rti mode (RTI <= 18 for 3-4 sessions, 5.5 % rang
 Stage (14-Nov): Basing = above SMA50 + 0.5 % above SMA100 + max 10 % below SMA200; Topping = SMA10 > SMA200 x 1.08, close > SMA200 x 1.02, and stays while below SMA50 (config/stage.yaml top_stays). 96.9 % (200+ sessions 97.6 %). site/ind.js = same rule; run `python tests/js/make_expected.py` after changing it.
 Data check phase 6 (17-Nov): RS line flags vs Midsmallcap 400 (previous index close, from session 61); per-stock group 1M rank / 1W / vs = ALL members, ALL groups (Groups page stays liquid); new industry_rs_rating, res_level / res_dist.
 Data check phase 7 (18-Nov): YoY/QoQ growth also from a loss ((new-old)/|old|; Earnings Explosion needs a profit a year ago), year ratios from standalone when consolidated has no year, dividends by folder id, recent_order* from NSE order filings (announcements.recent_orders). All 7 phases done.
+BSE results (19-Nov): scripts/fetch_bse_results.py, ~240 BSE filers, consolidated preferred, amounts rounded to 0.1 crore (reference), PC only (weekly BSE update).

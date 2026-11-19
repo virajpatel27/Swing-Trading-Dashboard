@@ -1699,3 +1699,31 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   filings of 90 days; screen.py); website columns. Earnings Explosion needs a profit a year ago (scanners.json).
 - Tests: tests/test_data_check_phase7.py (+ order test in phase6 file). All 7 phases of the reference export check done.
 - Open (idea): ~230 BSE filers have no NSE results (no PE / growth / ROE) - BSE results from the PC, like the shareholding.
+
+### 2026-11-18 / 19: BSE results for stocks without NSE results
+- Viraj: "Ha, BSE results lavo". New scripts/fetch_bse_results.py (PC only, part of the weekly "BSE update"; CLAUDE.md,
+  MANUAL_CHECKLIST, SOURCES updated) + tests/test_bse_results.py (4 pass). Full pytest 242 + JS 33 green before the
+  consolidated change; check_secrets 0; validate_data OK (its data_issues / instruments changes reverted).
+- Run 1 (standalone "S"): 249 stocks asked, 214 updated, 2775 periods, 0 failed.
+- Check vs reference 16-Nov: low match. Two causes found: (1) the reference still shows the TTM to Jun-26 for these stocks
+  (no Sep-26 quarter yet; GOODYEAR / KENNAMET / EMPIND exact on Jun-26); (2) it uses CONSOLIDATED results when filed
+  (3BBLACKBIO EPS TTM 65.66 = BSE consolidated). -> script now also fetches consolidated ("C", files "BSE:RC:<id>").
+- Run 2 (consolidated) started in the background 18-Nov evening; it resumes (skips saved periods) if stopped.
+- NEXT: run `scripts/fetch_bse_results.py` again until "0 failed", compare again (scratchpad p8_cmp.py / p8_lag.py idea:
+  results known by 10-Oct vs the 16-Nov export), full tests, calibration.md note, memory, then commit steps (Pull first).
+- 19-Nov: consolidated run fixed 3 bugs found by the check: numbers with commas ("1,312.26") were not read; the
+  consolidated "Net Sales" line was missed (Total Income used -> wrong OPM / sales growth); some consolidated answers have
+  no EPS lines (now EPS from the standalone share count); an empty answer = no consolidated (was a failure). 7 tests.
+  Check with the first consolidated data (results known by 10-Oct vs 16-Nov export): EPS TTM 84 %, PE 72 %, PEG 86 %,
+  EPS growth 91 % (were 33 / 35 / 49 / 32 % standalone only).
+- Consolidated data was cleared and the run restarted, paused by Viraj (19-Nov morning), finished 19-Nov evening:
+  0 failed, 240 stocks with BSE results (~178 with consolidated). A company whose newest consolidated answer is empty is
+  not asked for its older periods (saves ~12 calls per stock).
+- Found: the reference computes BSE stocks' growth from amounts in whole Rs million (= 0.1 crore): AZADIND PAT 0.78 /
+  0.07 cr -> 0.8 / 0.1 = 700 %. BSE amounts are now stored rounded to 0.1 crore (CR_DIGITS). NSE stocks keep 2 decimals
+  (rounding them: PAT YoY 75 -> 63 %, worse).
+- Result (BSE stocks, results known by 10-Oct vs the 16-Nov export, because the reference still shows Jun-26 for them):
+  PE 80 %, EPS TTM 78 % (91 % within 1), PEG 83 %, EPS / sales / PAT growth YoY 83 / 84 / 84 %, QoQ 83 / 84 %.
+  OPM 16 % (no formula fits; NSE stocks 32 %: the reference's own operating profit). On 16-Nov our values are newer
+  (Sep-26 quarter), the reference catches up later.
+- DONE. NEXT: Viraj pulls, then commits (script, tests, docs, ~240 data/fundamentals files).

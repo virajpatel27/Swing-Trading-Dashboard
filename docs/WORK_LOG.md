@@ -1788,3 +1788,14 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Pushed 20-Nov (28e0229 + merge 3c569a1): Tests #113, Deploy #86 green, live VCP drawing checked (DYNAMATECH). Found
   live: the deep first trough of the VCP wave fell below the price pane -> the wave is now placed in pixels under the
   base's lowest low, at most 64 px deep, labels inside the pane. Daily updates #91-93 passed (shrink-guard fix works).
+
+### 2026-11-20: Scan page shows only the scan's drawing, base arc like the reference, smoother chart
+- Viraj (3 pictures): on Daily Base the chart showed the general Pivot + dotted "Base low" + a VCP wave (Chart settings
+  "Pivot / breakout line" on). Now a chart opened from a scanner shows ONLY that scan's drawing (chart.js: the general
+  pivot / base low / VCP / cup block is skipped when opts.scan is set); the Stocks page keeps the setting.
+- Daily / Weekly Base arc: from a little after the base high (8 % of the base) to today, just under the base's lowest low
+  (12 px under, up to 42 px deep, inside the pane) like the reference pictures; was a flat arc at the pane bottom.
+- Smoother: no full redraw of the shaded layer on every mouse move (only on scroll / zoom / axis drag / wheel); header
+  and pane values once per frame, bar index from a map, no layout reads while hovering; drawings / event badges redraw
+  once per frame while scrolling; kinetic (momentum) scrolling with the mouse; the next 2 stocks' charts are fetched
+  ahead (SDChart.prefetch); a new stock fades in (0.22 s, off with "reduce motion").

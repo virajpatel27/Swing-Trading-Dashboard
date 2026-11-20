@@ -2657,3 +2657,8 @@ main.card:has(> .ws-bar) > .ws-main.list.wide { border-top: 0; }
 .pl-bd { font-style: normal; font-size: 10.5px; font-weight: 600; padding: 1px 6px; border-radius: 5px; color: #fff; }
 .pl-bd.up { background: #e05252; }
 .pl-bd.dn { background: #2e9d5b; }
+
+/* chart: a new stock fades in softly (20-Nov-2026) */
+.ch-canvas.ch-in { animation: chIn .22s ease-out; }
+@keyframes chIn { from { opacity: .35; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ch-canvas.ch-in { animation: none; } }

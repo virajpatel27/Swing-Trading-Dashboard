@@ -206,7 +206,10 @@
     const later = () => { if (!raf) raf = requestAnimationFrame(render); };
     chart.timeScale().subscribeVisibleLogicalRangeChange(later);
     chart.timeScale().subscribeSizeChange(later);
-    chart.subscribeCrosshairMove(later);            // also catches price-axis drags
+    // a price-axis drag or wheel zoom changes the price scale without a range event: redraw on those (not on every mouse move)
+    host.addEventListener("pointermove", (e) => { if (e.buttons) later(); }, { passive: true });
+    host.addEventListener("wheel", later, { passive: true });
+    host.addEventListener("pointerup", () => setTimeout(later, 20));
     later(); setTimeout(render, 90); setTimeout(render, 450);
     return render;
   }
@@ -232,6 +235,8 @@
     const T = (i) => D[Math.max(0, Math.min(n - 1, i))].time;
     const out = { lines: [] };
     const seg = (i1, i2, p, tick) => { if (i1 >= 0 && i1 <= i2 && p > 0) out.lines.push({ t1: T(i1), t2: T(i2), p, tick }); };
+    // the base's arc: from a little after the base high to today, just under the base's lowest low (reference pictures)
+    const baseArc = (j) => { let lo = Infinity; for (let k = j + 1; k < n; k++) lo = Math.min(lo, Lw[k]); return { t1: T(j + Math.round((n - 1 - j) * 0.08)), t2: T(n - 1), lo }; };
     if (scan === "stage2-breakout") {
       const age = num("s2b_age"); if (age == null) return null;
       const b = n - 1 - age; if (b < 2) return null;
@@ -251,7 +256,7 @@
       const age = num("lvl_age"), lv = num("lvl_price"); if (age == null || !lv) return null;
       const j = n - 1 - age;
       seg(j, n - 1, lv, true);
-      if (scan === "daily-base") out.arc = { t1: T(j), t2: T(n - 1) };
+      if (scan === "daily-base") out.arc = baseArc(j);
       return out;
     }
     if (scan === "weekly-base") {
@@ -261,7 +266,7 @@
       let j = -1; for (let k = 0; k < n; k++) if (D[k].time >= w0 && D[k].time < w1 && (j < 0 || H[k] > H[j])) j = k;
       if (j < 0) return null;
       seg(j, n - 1, lv, true);
-      out.arc = { t1: T(j), t2: T(n - 1) };
+      out.arc = baseArc(j);
       return out;
     }
     if (scan === "ipo-base") {
@@ -437,8 +442,10 @@
       rightPriceScale: { borderColor: css("--line"), visible: !pv }, timeScale: { borderColor: css("--line"), rightOffset: pv ? 1 : 5, visible: !pv },
       crosshair: { mode: 0, vertLine: { style: 3, labelBackgroundColor: css("--text"), visible: !pv }, horzLine: { style: 3, labelBackgroundColor: css("--text"), visible: !pv } },
       handleScroll: !pv, handleScale: !pv,
+      kineticScroll: { mouse: !pv, touch: !pv },          // the chart glides on after a drag (smooth, Viraj 20-Nov-2026)
     });
     if (!pv) cur.chart = chart;
+    if (!pv && !keepRange) { canvas.classList.remove("ch-in"); void canvas.offsetWidth; canvas.classList.add("ch-in"); }   // soft fade-in of a new stock
     const alive = () => (pv ? pv.alive() : cur && cur.chart === chart);
     const line = (data, color, pane, extra = {}) => {
       const s = chart.addSeries(L.LineSeries, { color, lineWidth: 1.5, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false, ...extra }, pane);
@@ -545,7 +552,8 @@
     }
     // pivot / base (same rule as the pipeline, swingdash/patterns.py); cup arc + VCP wave are drawn in the SVG layer
     if (!pv) cur.pattern = null;
-    if (!pv && (C.marks.pivot || C.marks.vcp || C.marks.cup !== false) && bars.length > 30) {
+    // (on a scanner page only that scan's own drawing is shown, Viraj 20-Nov-2026: no general pivot / base low / wave)
+    if (!pv && !cur.opts.scan && (C.marks.pivot || C.marks.vcp || C.marks.cup !== false) && bars.length > 30) {
       const pvt = I.pivots(h, c, weekly ? { minAge: 3, local: 4, maxAge: 78, start: bars.length - 1 } : { start: bars.length - 1 });
       const t = bars.length - 1, i = pvt.idx[t];
       if (i >= 0) {
@@ -769,11 +777,20 @@
     // header with crosshair values
     header(bars.length - 1, vflags);
     cur.onPaint = () => { header(bars.length - 1, vflags); if (cur.fillRender) cur.fillRender(); if (cur.paneLabels) cur.paneLabels.place(); };   // the volume label needs the painted panes (drawings.render calls it)
-    chart.subscribeCrosshairMove((p) => {
+    const tIdx = new Map(times.map((x, k) => [x, k]));
+    let hovI = null, hovRaf = 0;
+    const hov = () => {
+      hovRaf = 0;
+      if (!cur || cur.chart !== chart) return;
+      const i = hovI == null ? bars.length - 1 : hovI;
+      header(i, vflags, hovI != null);
+      if (cur.paneLabels) cur.paneLabels.at(i);
+    };
+    chart.subscribeCrosshairMove((p) => {          // header + pane values follow the mouse, at most once per frame
       cur.hoverNews = !!(p && p.time);
-      if (!p || !p.time) { if (cur.paneLabels) cur.paneLabels.at(bars.length - 1); return header(bars.length - 1, vflags); }
-      const i = times.indexOf(p.time);
-      if (i >= 0) { header(i, vflags); if (cur.paneLabels) cur.paneLabels.at(i); }
+      const i = p && p.time ? tIdx.get(p.time) : null;
+      hovI = i == null ? null : i;
+      if (!hovRaf) hovRaf = requestAnimationFrame(hov);
     });
     // dragging a pane divider (price / volume / indicators): badges, volume label and drawings follow at once
     let dragRaf = 0;
@@ -829,15 +846,17 @@
       el.querySelectorAll(".ev-b").forEach((b) => { const x = ts.timeToCoordinate(b.dataset.t); const off = x == null || x < 6 || x > w - 6; b.hidden = off; if (!off) b.style.left = `${pr.left - wr.left + x}px`; });
     };
     cur.placeEv = place;
-    chart.timeScale().subscribeVisibleLogicalRangeChange(place);
-    chart.timeScale().subscribeSizeChange(place);
+    let pr = 0;
+    const placeSoon = () => { if (!pr) pr = requestAnimationFrame(() => { pr = 0; place(); }); };
+    chart.timeScale().subscribeVisibleLogicalRangeChange(placeSoon);
+    chart.timeScale().subscribeSizeChange(placeSoon);
     requestAnimationFrame(() => requestAnimationFrame(place));
     setTimeout(place, 120); setTimeout(place, 600);          // also when the page is in the background (no animation frames)
     if (cur.evRO) cur.evRO.disconnect();
     cur.evRO = new ResizeObserver(place); cur.evRO.observe(wrap);
   }
 
-  function header(i, vflags) {
+  function header(i, vflags, hovering) {
     if (!cur || !cur.bars) return;
     const b = cur.bars[i], p = cur.bars[i - 1], r = cur.row;
     const nb = cur.box.querySelector("#chNews"), nl = cur.newsAt && cur.newsAt.get(b.time);
@@ -865,20 +884,25 @@
       hd.querySelector(".ch-st").innerHTML = `${cfg.show.desc !== false && ABOUT[r.symbol] ? `<p class="ch-about">${esc(ABOUT[r.symbol])}</p>` : ""}
       ${cfg.show.desc !== false ? `<div class="ch-desc muted">${esc(r.name || "")}${r.sector ? ` · ${esc(r.sector)} › ${esc(r.basic_industry || r.industry || "")}` : ""}${due}</div>` : due ? `<div class="ch-desc">${due}</div>` : ""}`;
     }
-    const chipsEl = cur.box.querySelector(".ch-chips"), hr0 = hd.getBoundingClientRect(), cKey = `${Math.round(hr0.width)}|${chipsEl ? chipsEl.childElementCount : 0}`;
-    if (chipsEl && cur.mKey !== cKey) { cur.mKey = cKey; const cr = chipsEl.getBoundingClientRect(); cur.mLeft = cr.width ? cr.left - hr0.left + cr.width / 2 : null; }
-    hd.style.setProperty("--m-left", cur.mLeft != null ? `${cur.mLeft}px` : "55%");
+    if (!hovering) {             // layout reads only when not following the mouse (they slow every mouse move)
+      const chipsEl = cur.box.querySelector(".ch-chips"), hr0 = hd.getBoundingClientRect(), cKey = `${Math.round(hr0.width)}|${chipsEl ? chipsEl.childElementCount : 0}`;
+      if (chipsEl && cur.mKey !== cKey) { cur.mKey = cKey; const cr = chipsEl.getBoundingClientRect(); cur.mLeft = cr.width ? cr.left - hr0.left + cr.width / 2 : null; }
+      hd.style.setProperty("--m-left", cur.mLeft != null ? `${cur.mLeft}px` : "55%");
+    }
     hd.querySelector(".ch-l2").innerHTML = `<b class="ch-sym">${esc(r.symbol || r.name)}</b><span class="muted">${cfg.tf === "D" || tfIntra(cfg.tf) ? "1D" : cfg.tf === "W" ? "1W" : esc(cfg.tf)}</span>
       <span>O <b>${fmt(b.open)}</b></span><span>H <b>${fmt(b.high)}</b></span><span>L <b>${fmt(b.low)}</b></span><span>C <b>${fmt(b.close)}</b></span>
       <span class="${S.colorClass(chg)}">${chgAbs == null ? "" : (chgAbs > 0 ? "+" : "") + fmt(chgAbs)} (${S.fmtPct(chg)})</span>
       <span class="ch-r"><span>1M <b class="${S.colorClass(backD(21))}">${S.fmtPct(backD(21))}</b></span><span>3M <b class="${S.colorClass(backD(63))}">${S.fmtPct(backD(63))}</b></span></span>`;
     const vl = cur.box.querySelector("#chVol");
     if (vl) {
-      const top = cur.volPane != null ? drawings.paneTopOf(cur.volPane) : null;
+      const top = cur.volPane != null ? (hovering && cur.volTop != null ? cur.volTop : (cur.volTop = drawings.paneTopOf(cur.volPane))) : null;
       if (f && b.volume != null && top != null) {
-        vl.hidden = false; vl.style.top = `${top + 4}px`;
-        let psw = 60; try { psw = cur.chart.priceScale("right").width(); } catch (e) { /* default */ }
-        vl.style.right = `${psw + 8}px`;
+        vl.hidden = false;
+        if (!hovering) {
+          vl.style.top = `${top + 4}px`;
+          let psw = 60; try { psw = cur.chart.priceScale("right").width(); } catch (e) { /* default */ }
+          vl.style.right = `${psw + 8}px`;
+        }
         vl.innerHTML = `<span>Vol <b class="${f.up ? "up" : f.down ? "down" : ""}">${S.fmtVol(b.volume)}</b></span><span>Avg 20${!w ? "D" : cfg.tf === "W" ? "W" : " · " + esc(cfg.tf)} <b>${S.fmtVol(f.avg20)}</b><i></i>RVol <b class="rv">${f.rvol == null ? "–" : Math.round(f.rvol * 100) + "%"}</b></span>`;
       } else {
         vl.hidden = true;
@@ -1395,7 +1419,8 @@
     attach(chart, series) {
       this.chart = chart; this.series = series; this.items = store.get(this.key(), []); this.pending = null;
       const svg = cur.box.querySelector("#chSvg");
-      chart.timeScale().subscribeVisibleLogicalRangeChange(() => this.render());
+      let rr = 0;
+      chart.timeScale().subscribeVisibleLogicalRangeChange(() => { if (!rr) rr = requestAnimationFrame(() => { rr = 0; this.render(); }); });
       chart.subscribeClick((p) => this.click(p));
       chart.subscribeCrosshairMove((p) => { if (this.pending && p && p.point) { this.pending.hover = this.toData(p); this.render(); } });
       svg.onclick = (e) => {
@@ -1469,11 +1494,11 @@
         parts.push(`<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${blue}" stroke-width="1.6" stroke-linecap="round"/>`);
         if (ln.tick) parts.push(`<line x1="${x2}" y1="${y}" x2="${x2}" y2="${y + 7}" stroke="${blue}" stroke-width="1.6" stroke-linecap="round"/>`);
       }
-      if (sd.arc && pb) {          // shallow arc near the bottom of the price pane, under the whole base
-        const x1 = X(sd.arc.t1), x2 = X(sd.arc.t2);
-        if (x1 != null && x2 != null && x2 - x1 > 8) {
-          const yb = pb.top + pb.h - 34, d = Math.min(16, Math.max(8, (x2 - x1) * 0.04));
-          parts.push(`<path d="M${x1},${yb - d} Q${(x1 + x2) / 2},${yb + d} ${x2},${yb - d}" stroke="${blue}" stroke-width="1.8" fill="none" stroke-linecap="round"/>`);
+      if (sd.arc && pb) {          // a smooth arc just under the base's lowest low (like the reference's base drawing)
+        const x1 = X(sd.arc.t1), x2 = X(sd.arc.t2), yl = Y(sd.arc.lo);
+        if (x1 != null && x2 != null && yl != null && x2 - x1 > 8) {
+          const floor = pb.top + pb.h - 6, y0 = Math.min(yl + 12, floor - 14), d = Math.max(10, Math.min(42, (x2 - x1) * 0.09, floor - y0));
+          parts.push(`<path d="M${x1},${y0} Q${(x1 + x2) / 2},${y0 + 2 * d} ${x2},${y0}" stroke="${blue}" stroke-width="2" fill="none" stroke-linecap="round"/>`);
         }
       }
       if (sd.wave) {               // VCP: a wave under the price - deep first pullback, then smaller ones, -% under each trough
@@ -1581,5 +1606,7 @@
     },
   };
 
-  window.SDChart = { open, close, settings: () => cfg, settingsDrawer, STYLES, _chart: () => cur && cur.chart, _cur: () => cur, _drawings: drawings, loadLib, modal };
+  /** fetch a stock's chart file ahead (the next rows of a list), so opening it is instant */
+  const prefetch = (id, kind = "s") => { if (id) getChartFile(kind, id).catch(() => null); };
+  window.SDChart = { open, close, prefetch, settings: () => cfg, settingsDrawer, STYLES, _chart: () => cur && cur.chart, _cur: () => cur, _drawings: drawings, loadLib, modal };
 })();

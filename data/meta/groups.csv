@@ -27,7 +27,7 @@ industry,commercial-vehicles,Commercial Vehicles,Capital Goods,4,True,2014-09-02
 industry,commodity-chemicals,Commodity Chemicals,Chemicals,32,False,2007-02-15,2026-11-19
 industry,compressors-pumps-and-diesel-engines,"Compressors, Pumps & Diesel Engines",Capital Goods,15,False,2007-12-06,2026-11-19
 industry,computers-software-and-consulting,Computers - Software & Consulting,Information Technology,56,False,2007-02-15,2026-11-19
-industry,computers-hardware-and-equipments,Computers Hardware & Equipments,Information Technology,10,False,2007-12-13,2026-11-19
+industry,computers-hardware-and-equipments,Computers Hardware & Equipments,Information Technology,9,False,2007-12-13,2026-11-19
 industry,construction-vehicles,Construction Vehicles,Capital Goods,5,False,2007-11-29,2026-11-19
 industry,consulting-services,Consulting Services,Services,5,False,,
 industry,consumer-electronics,Consumer Electronics,Consumer Durables,11,False,2007-12-20,2026-11-19
@@ -130,7 +130,7 @@ industry,passenger-cars-and-utility-vehicles,Passenger Cars & Utility Vehicles,A
 industry,personal-care,Personal Care,Fast Moving Consumer Goods,10,False,2008-01-02,2026-11-19
 industry,pesticides-and-agrochemicals,Pesticides & Agrochemicals,Chemicals,23,False,2010-01-11,2026-11-19
 industry,petrochemicals,Petrochemicals,Chemicals,9,False,2014-05-23,2026-11-19
-industry,pharmaceuticals,Pharmaceuticals,Healthcare,129,False,2007-02-15,2026-11-19
+industry,pharmaceuticals,Pharmaceuticals,Healthcare,128,False,2007-02-15,2026-11-19
 industry,pharmacy-retail,Pharmacy Retail,Consumer Services,2,True,,
 industry,pig-iron,Pig Iron,Metals & Mining,1,True,,
 industry,plastic-products,Plastic Products,Consumer Durables,1,True,,
@@ -203,8 +203,8 @@ sector,diversified,Diversified,,9,False,2007-05-29,2026-11-19
 sector,fast-moving-consumer-goods,Fast Moving Consumer Goods,,177,False,2007-02-15,2026-11-19
 sector,financial-services,Financial Services,,296,False,2007-02-15,2026-11-19
 sector,forest-materials,Forest Materials,,28,False,2007-11-06,2026-11-19
-sector,healthcare,Healthcare,,183,False,2007-02-15,2026-11-19
-sector,information-technology,Information Technology,,146,False,2007-02-15,2026-11-19
+sector,healthcare,Healthcare,,182,False,2007-02-15,2026-11-19
+sector,information-technology,Information Technology,,145,False,2007-02-15,2026-11-19
 sector,media-entertainment-and-publication,"Media, Entertainment & Publication",,59,False,2007-02-15,2026-11-19
 sector,metals-and-mining,Metals & Mining,,62,False,2007-02-15,2026-11-19
 sector,oil-gas-and-consumable-fuels,"Oil, Gas & Consumable Fuels",,46,False,2007-02-15,2026-11-19
@@ -232,7 +232,7 @@ theme,commodity-chemicals,Commodity Chemicals,,43,False,2007-02-15,2026-11-19
 theme,conglomerate,Conglomerate,,8,False,2007-05-29,2026-11-19
 theme,copper-and-aluminium,Copper & Aluminium,,22,False,2007-02-15,2026-11-19
 theme,dairy-and-animal-feed,Dairy & Animal Feed,,15,False,2012-09-08,2026-11-19
-theme,data-centres,Data Centres,,61,False,2007-02-15,2026-11-19
+theme,data-centres,Data Centres,,60,False,2007-02-15,2026-11-19
 theme,defence,Defence,,32,False,2007-02-15,2026-11-19
 theme,defence-electronics,Defence Electronics,,16,False,2014-01-10,2026-11-19
 theme,diagnostics,Diagnostics,,15,False,2007-07-11,2026-11-19
@@ -259,7 +259,7 @@ theme,hospitals,Hospitals,,32,False,2007-12-18,2026-11-19
 theme,hotels-and-tourism,Hotels & Tourism,,45,False,2007-02-15,2026-11-19
 theme,housing-and-home-imp,Housing & Home Imp,,166,False,2007-02-15,2026-11-19
 theme,housing-finance,Housing Finance,,15,False,2010-07-07,2026-11-19
-theme,it-hardware,IT Hardware,,11,False,2007-12-13,2026-11-19
+theme,it-hardware,IT Hardware,,10,False,2007-12-13,2026-11-19
 theme,it-services,IT Services,,108,False,2007-02-15,2026-11-19
 theme,industrial-gases,Industrial Gases,,4,True,2025-03-06,2026-11-19
 theme,industrial-machinery,Industrial Machinery,,218,False,2007-02-15,2026-11-19

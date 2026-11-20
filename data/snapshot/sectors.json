@@ -1,19 +1,19 @@
 {
- "generated_at": "2026-11-19 11:27",
+ "generated_at": "2026-11-20 10:34",
  "disclaimer": "Educational purpose only, not investment advice.",
  "levels": "NSE classification: sector -> industry -> stocks",
  "sectors": [
   {
    "sector": "Healthcare",
-   "stocks": 183,
-   "chg_1d": 0.07,
+   "stocks": 182,
+   "chg_1d": 0.09,
    "chg_1w": -1.94,
-   "chg_1m": 5.47,
-   "chg_3m": -0.28,
+   "chg_1m": 5.44,
+   "chg_3m": -0.85,
    "chg_6m": 7.97,
    "chg_1y": 6.12,
-   "pct_above_ema50": 48.6,
-   "pct_above_ema200": 50.3,
+   "pct_above_ema50": 48.4,
+   "pct_above_ema200": 50.5,
    "avg_rs_rating": 65.3,
    "industries": [
     {
@@ -94,15 +94,15 @@
     },
     {
      "industry": "Pharmaceuticals & Biotechnology",
-     "stocks": 131,
-     "chg_1d": 0.07,
-     "chg_1w": -2.29,
-     "chg_1m": 4.36,
-     "chg_3m": 1.58,
+     "stocks": 130,
+     "chg_1d": 0.09,
+     "chg_1w": -2.34,
+     "chg_1m": 4.33,
+     "chg_3m": 1.36,
      "chg_6m": 11.06,
      "chg_1y": 8.21,
-     "pct_above_ema50": 48.9,
-     "pct_above_ema200": 50.4,
+     "pct_above_ema50": 48.5,
+     "pct_above_ema200": 50.8,
      "avg_rs_rating": 67.5,
      "constituents": [
       "BLISSGVS",
@@ -133,11 +133,11 @@
       "SMSPHARMA",
       "AARTIPHARM",
       "ALIVUS",
-      "MARKSANS",
+      "LYKALABS",
       "AUROPHARMA",
       "AKUMS",
       "APLLTD",
-      "LYKALABS",
+      "MARKSANS",
       "PPLPHARMA",
       "GUFICBIO",
       "NGLFINE",
@@ -232,7 +232,6 @@
       "PARNAXLAB",
       "SAIPARENT",
       "SGRL",
-      "SHUKRAPHAR",
       "SUNLOC",
       "SYMBIOTEC",
       "VIVOBIOT"
@@ -414,7 +413,7 @@
    "chg_1y": 0.53,
    "pct_above_ema50": 50.4,
    "pct_above_ema200": 47.3,
-   "avg_rs_rating": 59.3,
+   "avg_rs_rating": 59.2,
    "industries": [
     {
      "industry": "Automobiles",
@@ -630,7 +629,7 @@
    "chg_1y": -9.21,
    "pct_above_ema50": 49.0,
    "pct_above_ema200": 32.4,
-   "avg_rs_rating": 51.5,
+   "avg_rs_rating": 51.4,
    "industries": [
     {
      "industry": "Banks",
@@ -643,7 +642,7 @@
      "chg_1y": 11.95,
      "pct_above_ema50": 82.9,
      "pct_above_ema200": 75.6,
-     "avg_rs_rating": 66.5,
+     "avg_rs_rating": 66.4,
      "constituents": [
       "ESAFSFB",
       "KTKBANK",
@@ -950,8 +949,8 @@
       "PARASPETRO",
       "SUNDARMFIN",
       "IFCI",
-      "MAHSCOOTER",
       "STARTECK",
+      "MAHSCOOTER",
       "BAJAJHFL",
       "DCMFINSERV",
       "NAHARCAP",
@@ -1111,7 +1110,7 @@
      "chg_1y": -19.54,
      "pct_above_ema50": 53.8,
      "pct_above_ema200": 46.2,
-     "avg_rs_rating": 48.7,
+     "avg_rs_rating": 48.6,
      "constituents": [
       "HILINFRA",
       "ADANIPORTS",
@@ -1177,7 +1176,7 @@
      "chg_1y": -15.25,
      "pct_above_ema50": 37.5,
      "pct_above_ema200": 31.2,
-     "avg_rs_rating": 47.7,
+     "avg_rs_rating": 47.6,
      "constituents": [
       "SHREEJISPG",
       "NECCLTD",
@@ -1204,9 +1203,9 @@
       "RIIL",
       "SICALLOG",
       "CONCOR",
-      "TCIEXP",
-      "GLOTTIS",
       "SCI",
+      "GLOTTIS",
+      "TCIEXP",
       "ECOSMOBLTY",
       "GICL",
       "BLACKBUCK",
@@ -1242,7 +1241,7 @@
      "chg_1y": -28.14,
      "pct_above_ema50": 0.0,
      "pct_above_ema200": 0.0,
-     "avg_rs_rating": 33.0,
+     "avg_rs_rating": 32.0,
      "constituents": [
       "ACEINTEG"
      ],
@@ -1467,7 +1466,7 @@
    "chg_1y": -1.02,
    "pct_above_ema50": 34.8,
    "pct_above_ema200": 47.8,
-   "avg_rs_rating": 61.2,
+   "avg_rs_rating": 61.1,
    "industries": [
     {
      "industry": "Petroleum Products",
@@ -1532,7 +1531,7 @@
      "chg_1y": -8.85,
      "pct_above_ema50": 40.0,
      "pct_above_ema200": 40.0,
-     "avg_rs_rating": 58.8,
+     "avg_rs_rating": 58.7,
      "constituents": [
       "CONFIPET",
       "AEGISLOG",
@@ -1577,7 +1576,7 @@
      "chg_1y": 0.79,
      "pct_above_ema50": 23.5,
      "pct_above_ema200": 35.3,
-     "avg_rs_rating": 58.4,
+     "avg_rs_rating": 58.3,
      "constituents": [
       "HINDOILEXP",
       "DOLPHIN",
@@ -1590,8 +1589,8 @@
       "OIL",
       "GANESHBE",
       "AAKASH",
-      "ONGC",
       "JINDRILL",
+      "ONGC",
       "ALPHAGEO",
       "ABAN",
       "GNRL",
@@ -1615,7 +1614,7 @@
    "chg_1y": -23.89,
    "pct_above_ema50": 42.1,
    "pct_above_ema200": 31.6,
-   "avg_rs_rating": 41.7,
+   "avg_rs_rating": 41.6,
    "industries": [
     {
      "industry": "Textiles & Apparels",
@@ -1688,9 +1687,9 @@
       "AMBUJACEM",
       "BIRLACORPN",
       "STARCEMENT",
-      "INDIACEM",
-      "BVCL",
       "DALBHARAT",
+      "BVCL",
+      "INDIACEM",
       "JKLAKSHMI",
       "KAKATCEM",
       "APCL",
@@ -2412,8 +2411,8 @@
       "BIKAJI",
       "APEX",
       "AVANTIFEED",
-      "COASTCORP",
       "AJOONI",
+      "COASTCORP",
       "FOODSIN",
       "ANNAPURNA",
       "WATERBASE",
@@ -2715,7 +2714,7 @@
    "chg_1y": -17.06,
    "pct_above_ema50": 35.4,
    "pct_above_ema200": 27.8,
-   "avg_rs_rating": 46.7,
+   "avg_rs_rating": 46.6,
    "industries": [
     {
      "industry": "Consumer Durables",
@@ -2831,8 +2830,8 @@
       "GREENPANEL",
       "AHLADA",
       "REDTAPE",
-      "MIDWESTLTD",
       "PEARLPOLY",
+      "MIDWESTLTD",
       "BATAINDIA",
       "POKARNA",
       "ZENITHEXPO",
@@ -3016,8 +3015,8 @@
       "ADVANIHOTR",
       "BRIGHOTEL",
       "IMAGICAA",
-      "VENTIVE",
       "PARKHOTELS",
+      "VENTIVE",
       "JUBLFOOD",
       "IRCTC",
       "BLS",
@@ -3439,10 +3438,10 @@
       "JINDALSAW",
       "SHREERAMA",
       "JTLIND",
-      "ROTO",
       "AERONEU",
       "PLAZACABLE",
       "TINNARUBR",
+      "ROTO",
       "KIRLOSENG",
       "HARSHA",
       "UNIVCABLES",
@@ -3470,13 +3469,13 @@
       "GRINDWELL",
       "JAYNECOIND",
       "POLYPLEX",
+      "TIIL",
       "APCOTEXIND",
-      "BALUFORGE",
       "ELGIEQUIP",
       "GEEKAYWIRE",
-      "TIIL",
-      "WORTHPERI",
       "SGIL",
+      "WORTHPERI",
+      "BALUFORGE",
       "HARIOMPIPE",
       "GUJRAFFIA",
       "RATNAMANI",
@@ -3514,16 +3513,16 @@
       "GALLANTT",
       "ESTER",
       "IFGLEXPOR",
-      "HITECH",
       "MANAKSIA",
+      "HITECH",
       "VSTL",
       "MICEL",
       "SURYAROSNI",
       "DENORA",
       "POLYCAB",
-      "SUPREMEIND",
       "ESABINDIA",
       "ELECTCAST",
+      "SUPREMEIND",
       "MCL",
       "GPIL",
       "KSB",
@@ -3657,7 +3656,7 @@
      "chg_1y": -15.04,
      "pct_above_ema50": 30.5,
      "pct_above_ema200": 31.7,
-     "avg_rs_rating": 54.5,
+     "avg_rs_rating": 54.4,
      "constituents": [
       "SWANDEF",
       "BATLIBOI",
@@ -3793,7 +3792,7 @@
      "chg_1y": -7.08,
      "pct_above_ema50": 17.9,
      "pct_above_ema200": 23.9,
-     "avg_rs_rating": 52.2,
+     "avg_rs_rating": 52.1,
      "constituents": [
       "DIACABS",
       "NEUEON",
@@ -4102,7 +4101,7 @@
      "momentum_rank": 7
     }
    ],
-   "momentum": 0.295,
+   "momentum": 0.273,
    "momentum_rank": 17
   },
   {
@@ -4247,9 +4246,9 @@
       "ZODIAC",
       "VIKRAN",
       "CAPACITE",
-      "KRIDHANINF",
-      "SUPREMEINF",
       "OMINFRAL",
+      "SUPREMEINF",
+      "KRIDHANINF",
       "SPMLINFRA",
       "AHLUCONT",
       "RPPINFRA",
@@ -4425,8 +4424,8 @@
       "SHEMAROO",
       "GTPL",
       "NETWORK18",
-      "BAGFILMS",
       "ZEEMEDIA",
+      "BAGFILMS",
       "BTML",
       "ZEEL",
       "ENIL",
@@ -4750,7 +4749,7 @@
      "chg_1y": -27.9,
      "pct_above_ema50": 19.0,
      "pct_above_ema200": 14.3,
-     "avg_rs_rating": 31.9,
+     "avg_rs_rating": 31.8,
      "constituents": [
       "MBAPL",
       "KRISHANA",
@@ -4772,9 +4771,9 @@
       "DHANUKA",
       "CHAMBLFERT",
       "IGCL",
+      "SPIC",
       "RCF",
       "GSFC",
-      "SPIC",
       "RALLIS",
       "IPL",
       "BESTAGRO",
@@ -4786,8 +4785,8 @@
       "PUNJABCHEM",
       "KHAICHEM",
       "BOHRAIND",
-      "NACLIND",
       "BHAGCHEM",
+      "NACLIND",
       "SUMICHEM",
       "AGROPHOS",
       "BHARATRAS",
@@ -4858,35 +4857,17 @@
   },
   {
    "sector": "Information Technology",
-   "stocks": 146,
-   "chg_1d": -0.06,
-   "chg_1w": -3.78,
-   "chg_1m": -2.02,
-   "chg_3m": -8.91,
-   "chg_6m": -7.73,
-   "chg_1y": -27.14,
-   "pct_above_ema50": 26.7,
-   "pct_above_ema200": 23.3,
-   "avg_rs_rating": 42.3,
+   "stocks": 145,
+   "chg_1d": -0.04,
+   "chg_1w": -3.73,
+   "chg_1m": -1.99,
+   "chg_3m": -8.71,
+   "chg_6m": -7.66,
+   "chg_1y": -26.09,
+   "pct_above_ema50": 26.9,
+   "pct_above_ema200": 23.4,
+   "avg_rs_rating": 42.6,
    "industries": [
-    {
-     "industry": "Aerospace & Defense",
-     "stocks": 1,
-     "chg_1d": 0.94,
-     "chg_1w": 0.81,
-     "chg_1m": -1.87,
-     "chg_3m": 21.41,
-     "chg_6m": -6.38,
-     "chg_1y": 30.36,
-     "pct_above_ema50": 100.0,
-     "pct_above_ema200": 100.0,
-     "avg_rs_rating": 83.0,
-     "constituents": [
-      "AXISCADES"
-     ],
-     "momentum": 0.778,
-     "momentum_rank": 1
-    },
     {
      "industry": "Financial Technology (Fintech)",
      "stocks": 1,
@@ -4903,6 +4884,24 @@
       "NPST"
      ],
      "momentum": 0.778,
+     "momentum_rank": 1
+    },
+    {
+     "industry": "Aerospace & Defense",
+     "stocks": 1,
+     "chg_1d": 0.94,
+     "chg_1w": 0.81,
+     "chg_1m": -1.87,
+     "chg_3m": 21.41,
+     "chg_6m": -6.38,
+     "chg_1y": 30.36,
+     "pct_above_ema50": 100.0,
+     "pct_above_ema200": 100.0,
+     "avg_rs_rating": 83.0,
+     "constituents": [
+      "AXISCADES"
+     ],
+     "momentum": 0.722,
      "momentum_rank": 2
     },
     {
@@ -4981,7 +4980,7 @@
       "XTRANET"
      ],
      "momentum": 0.722,
-     "momentum_rank": 3
+     "momentum_rank": 2
     },
     {
      "industry": "Consumer Durables",
@@ -5000,6 +4999,34 @@
      ],
      "momentum": 0.611,
      "momentum_rank": 4
+    },
+    {
+     "industry": "IT - Hardware",
+     "stocks": 11,
+     "chg_1d": 0.59,
+     "chg_1w": -3.14,
+     "chg_1m": -1.68,
+     "chg_3m": -13.92,
+     "chg_6m": -2.94,
+     "chg_1y": -11.14,
+     "pct_above_ema50": 27.3,
+     "pct_above_ema200": 27.3,
+     "avg_rs_rating": 55.2,
+     "constituents": [
+      "PANACHE",
+      "RPTECH",
+      "EBGNG",
+      "SMARTLINK",
+      "CONTROLPR",
+      "NELCO",
+      "DLINKINDIA",
+      "IVALUE",
+      "TVSELECT",
+      "MOSCHIP",
+      "HCL-INSYS"
+     ],
+     "momentum": 0.5,
+     "momentum_rank": 5
     },
     {
      "industry": "Construction",
@@ -5048,7 +5075,7 @@
      "chg_1y": -29.21,
      "pct_above_ema50": 31.3,
      "pct_above_ema200": 20.9,
-     "avg_rs_rating": 42.0,
+     "avg_rs_rating": 41.9,
      "constituents": [
       "QUINTEGRA",
       "NINSYS",
@@ -5119,36 +5146,7 @@
       "TECHNVISN"
      ],
      "momentum": 0.444,
-     "momentum_rank": 7
-    },
-    {
-     "industry": "IT - Hardware",
-     "stocks": 12,
-     "chg_1d": 0.28,
-     "chg_1w": -3.71,
-     "chg_1m": -2.18,
-     "chg_3m": -13.57,
-     "chg_6m": -3.79,
-     "chg_1y": -12.85,
-     "pct_above_ema50": 25.0,
-     "pct_above_ema200": 25.0,
-     "avg_rs_rating": 51.2,
-     "constituents": [
-      "PANACHE",
-      "RPTECH",
-      "EBGNG",
-      "SMARTLINK",
-      "CONTROLPR",
-      "NELCO",
-      "DLINKINDIA",
-      "IVALUE",
-      "TVSELECT",
-      "MOSCHIP",
-      "HCL-INSYS",
-      "COMPINFO"
-     ],
-     "momentum": 0.444,
-     "momentum_rank": 7
+     "momentum_rank": 8
     },
     {
      "industry": "Commercial Services & Supplies",
@@ -5169,8 +5167,8 @@
      "momentum_rank": 9
     }
    ],
-   "momentum": 0.159,
-   "momentum_rank": 21
+   "momentum": 0.182,
+   "momentum_rank": 20
   },
   {
    "sector": "Utilities",

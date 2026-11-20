@@ -324,7 +324,7 @@ BCG,Brightcom Group Limited,INE425B01027,EQ,2015-05-08,,False,BCG
 BCLIND,Bcl Industries Limited,INE412G01024,EQ,2021-03-04,,False,BCLIND
 BCONCEPTS,Brand Concepts Limited,INE977Y01011,EQ,2022-01-11,,False,BCONCEPTS
 BCPL,BCPL Railway Infrastructure Limited,INE00SW01015,EQ,2026-03-27,,False,BCPL
-BCSSL,Bombay Coated and Special Steels Limited,INE0XFY01011,BE,2026-11-05,,False,BCSSL
+BCSSL,Bombay Coated and Special Steels Limited,INE0XFY01011,EQ,2026-11-05,,False,BCSSL
 BDL,Bharat Dynamics Limited,INE171Z01026,EQ,2018-03-23,Capital Goods,True,BDL
 BEARDSELL,Beardsell Limited,INE520H01022,EQ,2015-01-13,,False,BEARDSELL
 BECTORFOOD,Mrs. Bectors Food Specialities Limited,INE495P01020,EQ,2020-12-24,,False,BECTORFOOD
@@ -507,7 +507,6 @@ COHANCE,Cohance Lifesciences Limited,INE03QK01018,EQ,2020-03-09,Healthcare,True,
 COLPAL,Colgate Palmolive (India) Limited,INE259A01022,EQ,2007-12-17,Fast Moving Consumer Goods,True,COLPAL
 COMFINTE,Comfort Intech Limited,INE819A01049,BE,2026-04-20,,False,COMFINTE
 COMPEAU,Competent Automobiles Company Limited,INE823B01015,EQ,2026-08-17,,False,COMPEAU
-COMPINFO,Compuage Infocom Limited,INE070C01037,BZ,2016-07-07,,False,COMPINFO
 COMPUSOFT,Compucom Software Limited,INE453B01029,EQ,2012-03-02,,False,COMPUSOFT
 COMSYN,Commercial Syn Bags Limited,INE073V01015,EQ,2024-01-23,,False,COMSYN
 CONCOR,Container Corporation of India Limited,INE111A01025,EQ,1997-05-07,Services,True,CONCOR
@@ -2113,7 +2112,7 @@ SHRIPISTON,SPR Auto Technologies Limited,INE526E01018,EQ,2016-06-02,Automobile a
 SHRIRAMFIN,Shriram Finance Limited,INE721A01047,EQ,1996-12-11,Financial Services,True,SHRIRAMFIN
 SHRIRAMPPS,Shriram Properties Limited,INE217L01019,EQ,2021-12-20,,False,SHRIRAMPPS
 SHRJAGP,Shri Jagdamba Polymers Limited,INE564J01026,EQ,2026-08-17,,False,SHRJAGP
-SHUKRAPHAR,Shukra Pharmaceuticals Limited,INE551C01044,EQ,2026-08-14,,False,SHUKRAPHAR
+SHUKRAMED,Shukra Medtech Limited,INE551C01044,EQ,2026-08-14,,False,SHUKRAMED
 SHYAMCENT,Shyam Century Ferrous Limited,INE979R01011,EQ,2015-07-28,,False,SHYAMCENT
 SHYAMMETL,Shyam Metalics and Energy Limited,INE810G01011,EQ,2021-06-24,Capital Goods,True,SHYAMMETL
 SHYAMTEL,Shyam Telecom Limited,INE635A01023,EQ,2006-11-06,,False,SHYAMTEL
@@ -2131,7 +2130,7 @@ SIKA,Sika Interplant Systems Limited,INE438E01032,EQ,2026-04-20,,False,SIKA
 SIKKO,Sikko Industries Limited,INE112X01025,BE,2021-10-22,,False,SIKKO
 SIL,Standard Industries Limited,INE173A01025,EQ,2004-01-27,,False,SIL
 SILGO,Silgo Retail Limited,INE01II01013,EQ,2021-03-03,,False,SILGO
-SILINV,SIL Investments Limited,INE923A01015,BE,1996-05-22,,False,SILINV
+SILINV,SIL Investments Limited,INE923A01015,EQ,1996-05-22,,False,SILINV
 SILVERTUC,Silver Touch Technologies Limited,INE625X01026,EQ,2022-05-12,,False,SILVERTUC
 SIMBHALS,Simbhaoli Sugars Limited,INE748T01016,BZ,2016-03-14,,False,SIMBHALS
 SIMPLEXINF,Simplex Infrastructures Limited,INE059B01024,EQ,2004-03-09,,False,SIMPLEXINF

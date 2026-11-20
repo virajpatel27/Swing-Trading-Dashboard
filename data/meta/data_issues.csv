@@ -91,7 +91,7 @@ NSE ASIANHOTNR,warn,missing dates,2012-04-28,"26 trading days without a row (fir
 NSE ASIANTILES,warn,missing dates,2009-01-20,"63 trading days without a row (first 2009-01-20, last 2014-03-22)"
 NSE ASMS,warn,missing dates,2023-07-10,"9 trading days without a row (first 2023-07-10, last 2023-07-21)"
 NSE ASPINWALL,warn,missing dates,2016-10-30,"3 trading days without a row (first 2016-10-30, last 2025-10-31)"
-NSE ASSAMENT,warn,missing dates,2026-08-19,"19 trading days without a row (first 2026-08-19, last 2026-11-11)"
+NSE ASSAMENT,warn,missing dates,2026-08-19,"20 trading days without a row (first 2026-08-19, last 2026-11-19)"
 NSE ASTAR,warn,missing dates,2026-05-19,"13 trading days without a row (first 2026-05-19, last 2026-09-01)"
 NSE ASTEC,warn,missing dates,2013-07-10,"35 trading days without a row (first 2013-07-10, last 2014-03-22)"
 NSE ASTRAL,warn,missing dates,2009-03-17,"3 trading days without a row (first 2009-03-17, last 2012-01-07)"
@@ -489,7 +489,7 @@ NSE KRITIKA,warn,missing dates,2018-10-25,"666 trading days without a row (first
 NSE KSE,warn,missing dates,2010-01-13,"3041 trading days without a row (first 2010-01-13, last 2026-08-14)"
 NSE KSHITIJPOL,warn,missing dates,2018-11-07,"559 trading days without a row (first 2018-11-07, last 2023-07-21)"
 NSE KSOLVES,warn,missing dates,2020-07-23,"69 trading days without a row (first 2020-07-23, last 2021-04-26)"
-NSE LADDERUP,warn,missing dates,2026-10-08,"2 trading days without a row (first 2026-10-08, last 2026-10-28)"
+NSE LADDERUP,warn,missing dates,2026-10-08,"3 trading days without a row (first 2026-10-08, last 2026-11-19)"
 NSE LAGNAM,warn,missing dates,2018-11-13,"296 trading days without a row (first 2018-11-13, last 2021-09-17)"
 NSE LAHOTIOV,warn,missing dates,2026-07-14,"2 trading days without a row (first 2026-07-14, last 2026-07-27)"
 NSE LAKPRE,warn,missing dates,2008-05-29,"650 trading days without a row (first 2008-05-29, last 2026-11-03)"
@@ -713,7 +713,7 @@ NSE REMSONSIND,warn,missing dates,2007-01-25,"1315 trading days without a row (f
 NSE REPL,warn,missing dates,2018-08-29,"202 trading days without a row (first 2018-08-29, last 2020-10-26)"
 NSE REPRO,warn,missing dates,2009-03-03,"2 trading days without a row (first 2009-03-03, last 2009-05-18)"
 NSE RESPONIND,warn,missing dates,2011-05-27,"20 trading days without a row (first 2011-05-27, last 2016-08-09)"
-NSE RETAIL,warn,missing dates,2024-12-02,"1 trading days without a row (first 2024-12-02, last 2024-12-02)"
+NSE RETAIL,warn,missing dates,2024-12-02,"2 trading days without a row (first 2024-12-02, last 2026-11-19)"
 NSE RGL,warn,missing dates,2009-05-18,"2 trading days without a row (first 2009-05-18, last 2011-08-12)"
 NSE RHFL,warn,missing dates,2024-10-01,"47 trading days without a row (first 2024-10-01, last 2026-04-30)"
 NSE RHIM,warn,missing dates,2012-09-08,"3 trading days without a row (first 2012-09-08, last 2013-07-05)"
@@ -803,7 +803,7 @@ NSE SILINV,warn,missing dates,2008-04-03,"399 trading days without a row (first 
 NSE SILVERTUC,warn,missing dates,2018-02-16,"398 trading days without a row (first 2018-02-16, last 2022-04-13)"
 NSE SIMBHALS,warn,missing dates,2026-04-27,"19 trading days without a row (first 2026-04-27, last 2026-05-29)"
 NSE SIMPLEXINF,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
-NSE SIMPLXREA,warn,missing dates,2026-09-01,"14 trading days without a row (first 2026-09-01, last 2026-11-12)"
+NSE SIMPLXREA,warn,missing dates,2026-09-01,"15 trading days without a row (first 2026-09-01, last 2026-11-19)"
 NSE SINTERCOM,warn,missing dates,2018-07-02,"134 trading days without a row (first 2018-07-02, last 2024-05-18)"
 NSE SIRCA,warn,missing dates,2018-07-09,"18 trading days without a row (first 2018-07-09, last 2019-07-17)"
 NSE SITINET,warn,missing dates,2023-07-03,"69 trading days without a row (first 2023-07-03, last 2024-05-31)"
@@ -2854,7 +2854,9 @@ NSE SKMEGGPROD (adjusted),warn,unexplained jump,2010-09-02,close moved 20.0% (to
 NSE SKMEGGPROD (adjusted),warn,unexplained jump,2010-11-09,close moved 20.1% (to 8.525)
 NSE SMARTLINK (adjusted),warn,unexplained jump,2009-03-19,close moved 20.1% (to 28.31939163498099)
 NSE SMARTLINK (adjusted),warn,unexplained jump,2011-05-31,close moved 34.4% (to 66.25)
-NSE SMLMAH (adjusted),warn,unexplained jump,2009-06-04,close moved 20.0% (to 219.96047604157928)
+NSE SMLMAH (adjusted),warn,unexplained jump,2009-06-04,close moved 20.0% (to 201.2645415398378)
+NSE SMLMAH (adjusted),warn,unexplained jump,2023-01-02,close moved 20.0% (to 743.074106429947)
+NSE SMLMAH (adjusted),warn,unexplained jump,2026-07-29,close moved 20.0% (to 4177.9047)
 NSE SMLT (adjusted),warn,unexplained jump,2025-03-28,close moved 20.0% (to 118.92)
 NSE SNOWMAN (adjusted),warn,unexplained jump,2020-03-12,close moved 20.0% (to 29.2)
 NSE SOLARINDS (adjusted),warn,unexplained jump,2007-05-15,close moved 20.0% (to 25.85)
@@ -3430,4 +3432,4 @@ NSE DVL,warn,corporate action not seen in prices,2021-08-05,bonus 1:2: no matchi
 NSE GULFPETRO,warn,corporate action not seen in prices,2013-07-09,bonus 23:19: no matching price change near the ex-date
 NSE ORIENTPPR,warn,corporate action without factor,2007-06-08,rights: rights without issue price
 NSE PRAXIS,warn,corporate action without factor,2026-11-18,rights: rights without issue price
-NSE JINDALSTEL,warn,close differs from BSE,2026-11-19,"NSE 1114.5, BSE 1078.9 (-3.19 %)"
+NSE TVSSRICHAK,warn,close differs from BSE,2026-11-20,"NSE 4638.7, BSE 4901.75 (+5.67 %)"

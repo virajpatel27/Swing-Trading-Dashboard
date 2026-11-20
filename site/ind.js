@@ -111,8 +111,8 @@
     const c1 = -(v ** 3), c2 = 3 * v ** 2 + 3 * v ** 3, c3 = -6 * v ** 2 - 3 * v - 3 * v ** 3, c4 = 1 + 3 * v + v ** 3 + 3 * v ** 2;
     return c.map((_, i) => (i < 6 * n ? null : c1 * e6[i] + c2 * e5[i] + c3 * e4[i] + c4 * e3[i]));
   }
-  function relativeExtension(c, ma = 50, lookback = 250) {
-    const m = sma(c, ma);
+  function relativeExtension(c, ma = 50, lookback = 250, type = "SMA") {
+    const m = type === "EMA" ? ema(c, ma) : sma(c, ma);
     const ext = c.map((x, i) => (m[i] == null ? null : (x / m[i] - 1) * 100));
     const out = new Array(c.length).fill(null);
     for (let i = 0; i < c.length; i++) {

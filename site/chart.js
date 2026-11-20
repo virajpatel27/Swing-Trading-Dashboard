@@ -26,7 +26,16 @@
   };
   // like the reference's legend: EMA 10 orange, EMA 21 light blue, SMA 50 navy, SMA 150 violet, SMA 200 dark (13-Nov-2026)
   const MA_COLORS = ["#f0a35e", "#5b9bd5", "#2b3f6c", "#a06fd0", "#3a3f4b", "#795548"];
-  const BENCH = { NIFTY_50: "Nifty 50", NIFTY_500: "Nifty 500", NIFTY_MIDCAP_150: "Nifty Midcap 150", NIFTY_SMALLCAP_250: "Nifty Smallcap 250" };
+  const BENCH = { NIFTY_50: "Nifty 50", NIFTY_500: "Nifty 500", NIFTY_MIDCAP_150: "Nifty Midcap 150", NIFTY_SMALLCAP_250: "Nifty Smallcap 250",
+    NIFTY_MIDSMALLCAP_400: "Nifty Midsmallcap 400", SECTOR: "Sector index" };
+  /* "Sector index" = the NSE index closest to the stock's NSE sector (our own pairing, 20-Nov-2026); Nifty 500 when none fits */
+  const SECTOR_INDEX = { "Capital Goods": "NIFTY_INDIA_MANUFACTURING", "Financial Services": "NIFTY_FINANCIAL_SERVICES", Chemicals: "NIFTY_CHEMICALS",
+    Healthcare: "NIFTY_HEALTHCARE_INDEX", "Fast Moving Consumer Goods": "NIFTY_FMCG", "Consumer Durables": "NIFTY_CONSUMER_DURABLES",
+    Services: "NIFTY_SERVICES_SECTOR", "Information Technology": "NIFTY_IT", "Consumer Services": "NIFTY_INDIA_CONSUMPTION",
+    "Automobile and Auto Components": "NIFTY_AUTO", Realty: "NIFTY_REALTY", Construction: "NIFTY_INFRASTRUCTURE", "Metals & Mining": "NIFTY_METAL",
+    "Media, Entertainment & Publication": "NIFTY_MEDIA", "Oil, Gas & Consumable Fuels": "NIFTY_OIL___GAS", "Construction Materials": "NIFTY_CEMENT",
+    Power: "NIFTY_ENERGY", Utilities: "NIFTY_ENERGY", Telecommunication: "NIFTY_MIDSMALL_IT___TELECOM", "Forest Materials": "NIFTY_COMMODITIES" };
+  const benchId = (b, row) => (b === "SECTOR" ? SECTOR_INDEX[(row && row.sector) || ""] || "NIFTY_500" : b || "NIFTY_500");
   const STAGE_TXT = { 1: "Basing", "2A": "Early uptrend", 2: "Uptrend", 3: "Topping", 4: "Downtrend", "4A": "Improving" };
   const STAGE_COL = { 1: "#9e9e9e", "2A": "#66bb6a", 2: "#089981", 3: "#ff9800", 4: "#f23645", "4A": "#ef9a9a" };
 
@@ -36,23 +45,25 @@
     marks: { hilo52: false, swings: false, swingPct: 10, circuit: false, inside: false, actions: true, pivot: true, vcp: true, cup: true, tight: false, earnings: true, news: true },
     show: { earn: true, earnOpen: true, desc: true, due: true }, grid: false,
     chips: { float: true, rs: true, stage: true, from: true, theme: true },
+    // indicator settings and colours as in the reference's indicator pages (Viraj's videos of 12-Nov-2026, built 20-Nov-2026)
     ind: {
       ma: { on: true, preset: "minervini", d: null, w: null },
-      supertrend: { on: false, len: 10, mult: 3, up: "#089981", down: "#f23645" },
-      bb: { on: false, len: 20, std: 2, color: "#2962ff", fill: true },
+      supertrend: { on: false, len: 10, mult: 3, up: "#5cb85c", down: "#e05252" },
+      bb: { on: false, len: 20, std: 2, mid: "#f0a35e", color: "#4a90d9", fill: true },
       swing: { on: false, fast: 8, slow: 14, vf: 0.65 },
-      watermark: { on: false, symbol: true, name: true, sector: true, pos: "middle", size: "M" },
-      volume: { on: true, pane: "below", avg: false, x: 1.5, colorHigh: true, pp: true, dry: true, labels: true },
-      rsline: { on: false, bench: "NIFTY_SMALLCAP_250", pane: "above", color: "#2962ff", dot: true },
-      mansfield: { on: false, len: 52 },
-      stage: { on: false },
-      rsi: { on: false, len: 14, ob: 70, os: 30, color: "#9c27b0" },
-      macd: { on: false, fast: 12, slow: 26, sig: 9 },
-      mfi: { on: false, len: 14, ob: 80, os: 20, color: "#00bcd4" },
-      relext: { on: false, ma: 50, lookback: 250, color: "#ff5722" },
-      atr: { on: false, len: 14, color: "#607d8b" },
-      adr: { on: false, len: 20, color: "#795548" },
-      ti: { on: false, fast: 7, slow: 65, color: "#3f51b5" },
+      watermark: { on: false, symbol: true, name: true, mcap: false, sector: true, pos: "middle", size: "M", color: "#a8adb5" },
+      volume: { on: true, pane: "below", bar: "#b9bdc4", avg: false, avgColor: "#5f6368", colorHigh: true, up: "#5cb85c", down: "#e5534b",
+        x: "1", pp: true, ppColor: "#4a9fe0", dryColor: "#f0a030", labels: true },
+      rsline: { on: false, bench: "NIFTY_500", pane: "above", color: "#2b2f36", dot: true, dotColor: "#2f7fe0" },
+      mansfield: { on: false, bench: "NIFTY_500", len: 52, color: "#2b2f36", bg: true },
+      stage: { on: false, strength: "medium" },
+      rsi: { on: false, pane: "below", len: 14, color: "#9b51e0", ob: 70, os: 30, shade: true },
+      macd: { on: false, pane: "below", fast: 12, slow: 26, sig: 9, color: "#2b2f36", sigColor: "#a0a5ad" },
+      mfi: { on: false, pane: "below", len: 14, color: "#d6458b", ob: 80, os: 20, shade: true },
+      relext: { on: false, pane: "below", type: "SMA", ma: 50, lookback: 250, ob: 70, os: 70, color: "#1a64b8", shade: true },
+      atr: { on: false, pane: "below", len: 14, color: "#f0a35e" },
+      adr: { on: false, pane: "below", len: 20, color: "#4a90d9" },
+      ti: { on: false, pane: "below", fast: 7, slow: 65, up: 105, dn: 95, shade: false, color: "#1a64b8" },
     },
   };
   const merge = (a, b) => { const o = Array.isArray(a) ? [...a] : { ...a }; for (const k in b || {}) o[k] = b[k] && typeof b[k] === "object" && !Array.isArray(b[k]) && a[k] ? merge(a[k], b[k]) : b[k]; return o; };
@@ -60,43 +71,41 @@
   // one-time switch to the reference look (13-Nov-2026, Viraj): mono candles, no grid, Minervini averages;
   // anything can be changed back in Chart settings afterwards
   if ((cfg.look || 0) < 2) { cfg.look = 2; cfg.style = "mono"; cfg.grid = false; if (cfg.ind && cfg.ind.ma && !cfg.ind.ma.d) cfg.ind.ma.preset = "minervini"; store.set(KEY, cfg); }
+  // one-time switch to the reference's indicator settings and colours (20-Nov-2026): which indicators are on and the own
+  // moving averages are kept, everything else takes the new standard values
+  if (cfg.look < 3) {
+    cfg.look = 3;
+    for (const k in DEFAULTS.ind) {
+      const o = cfg.ind[k] || {};
+      cfg.ind[k] = { ...JSON.parse(JSON.stringify(DEFAULTS.ind[k])), on: !!o.on, hidden: !!o.hidden, ...(k === "ma" ? { preset: o.preset, d: o.d, w: o.w } : {}) };
+    }
+    store.set(KEY, cfg);
+  }
   const save = () => store.set(KEY, cfg);
 
+  /* indicator list: the reference's groups, order and names (20-Nov-2026); descriptions in our own words */
   const IND_MENU = [
-    ["On the price", [["ma", "Moving averages", "Average-close lines; presets Minervini, Weinstein, Qullamaggie, O'Neil or your own"],
-      ["supertrend", "Supertrend", "ATR trailing stop: green under price in an uptrend, red above in a downtrend"],
-      ["bb", "Bollinger Bands", "20-day average with 2 standard-deviation bands"],
-      ["swing", "Swing Bands", "Two Tillson T3 averages: green while the fast one is above"],
-      ["watermark", "Watermark", "Faint symbol, name and sector text on the chart"]]],
-    ["Volume and strength", [["volume", "Volume", "Daily volume; high-volume days, pocket pivots (blue), dry-ups (orange), HVE / HVY / HVQ"],
-      ["rsline", "RS line", "Close / benchmark close; a dot when it makes a new 52-week high"],
-      ["mansfield", "Mansfield RS", "RS line vs its own long average, coloured by the average's direction"],
-      ["stage", "Stage analysis", "Each bar coloured by its stage: Basing, Uptrend, Topping, Downtrend"]]],
-    ["Trend", [["ti", "Trend Intensity", "7-day vs 65-day average x 100 (>105 strong up, <95 strong down)"],
-      ["relext", "Relative Extension", "Stretch from the 50-day average, scaled to the last 250 days (-100 .. +100)"]]],
-    ["Oscillators", [["rsi", "RSI", "Wilder RSI with 70 / 30 lines"], ["macd", "MACD", "12 / 26 / 9; histogram solid while growing, faint while shrinking"],
-      ["mfi", "Money Flow Index", "Volume-weighted RSI with 80 / 20 lines"], ["atr", "ATR", "Average true range in rupees"],
-      ["adr", "ADR %", "Average daily range as % of price"]]],
+    ["On the price", [["ma", "Moving averages", "Lines that average the closing price over a number of bars. A stock holding above rising averages is in good health."],
+      ["supertrend", "Supertrend", "A stop line kept a few ATRs away from the price: green below it in an uptrend, red above it in a downtrend. A close through the line flips it."],
+      ["bb", "Bollinger Bands", "A 20-day average with bands two standard deviations above and below. Bands squeezing together mean the stock has gone quiet, often before a big move."],
+      ["swing", "Swing Bands", "The space between two smooth T3 averages (8 and 14 bars), green while the fast one is on top and red while it is below."],
+      ["watermark", "Watermark", "The stock's symbol, company and sector written faintly across the chart."]]],
+    ["Volume and strength", [["volume", "Volume", "Shares traded each day. Big bars on breakout days show real demand."],
+      ["rsline", "RS line", "The stock's price divided by an index. A rising line means the stock is beating the market."],
+      ["mansfield", "Mansfield RS", "The RS line against its own 52-bar average, in %. Above 0 the stock is beating the index by more than usual. Background: green above a rising average, blue below a rising one, grey above a falling one, red below a falling one."]]],
+    ["Trend", [["stage", "Stage Analysis", "A strip under the chart coloured bar by bar by the trend stage: green in an uptrend (lighter at the start), amber while basing or topping, red in a downtrend."]]],
+    ["Oscillators", [["rsi", "RSI", "How strong recent moves are, on a 0 to 100 scale. Over 70 is stretched, under 30 is weak."],
+      ["macd", "MACD", "The 12-bar average minus the 26-bar average, with a 9-bar signal line. The bars show the gap: blue above zero, pink below, solid while it grows and faint while it shrinks."],
+      ["mfi", "Money Flow Index", "Like RSI, but weighted by volume: money flowing in on up days against out on down days, 0 to 100. Over 80 is stretched, under 20 is weak."],
+      ["relext", "Relative Extension", "How far the price is from its 50-day average, against its biggest stretches of the last 250 days: +100 as far above as it has been, -100 as far below, 0 on the average."],
+      ["atr", "ATR", "Average true range: how many rupees the stock usually moves in a day. Handy for setting a stop-loss distance."],
+      ["adr", "ADR %", "Average daily range: how much the stock usually moves in a day, as a % of its price."],
+      ["ti", "Trend Intensity", "The 7-day average divided by the 65-day average, times 100. Over 100 the trend is up; over 105 it is strong, under 95 strongly down."]]],
   ];
-  const IND_FIELDS = {  // settings form per indicator: [key, label, type, options]
-    supertrend: [["len", "ATR length", "num"], ["mult", "Multiple", "num"], ["up", "Up colour", "color"], ["down", "Down colour", "color"]],
-    bb: [["len", "Length", "num"], ["std", "Standard deviations", "num"], ["color", "Colour", "color"], ["fill", "Shade between bands", "bool"]],
-    swing: [["fast", "Fast length", "num"], ["slow", "Slow length", "num"], ["vf", "Volume factor (0.5-0.9)", "num"]],
-    watermark: [["symbol", "Symbol + timeframe", "bool"], ["name", "Company name", "bool"], ["sector", "Sector + industry", "bool"],
-      ["pos", "Position", "sel", ["top", "middle", "bottom"]], ["size", "Size", "sel", ["S", "M", "L"]]],
-    volume: [["pane", "Show", "sel", ["below", "price"]], ["avg", "Average volume line (20)", "bool"], ["colorHigh", "Colour high-volume days", "bool"],
-      ["x", "High volume = average x", "sel", ["1", "1.5", "2", "2.5"]], ["pp", "Pocket pivots (blue)", "bool"], ["dry", "Dry-ups (orange)", "bool"],
-      ["labels", "Labels HVE / HVY / HVQ / Y / Q", "bool"]],
-    rsline: [["bench", "Compare with", "sel", Object.keys(BENCH)], ["pane", "Pane", "sel", ["above", "below"]], ["color", "Colour", "color"],
-      ["dot", "Dot at a new RS high before the price", "bool"]],
-    mansfield: [["len", "Average length (bars)", "num"]],
-    rsi: [["len", "Length", "num"], ["ob", "Upper line", "num"], ["os", "Lower line", "num"], ["color", "Colour", "color"]],
-    macd: [["fast", "Fast", "num"], ["slow", "Slow", "num"], ["sig", "Signal", "num"]],
-    mfi: [["len", "Length", "num"], ["ob", "Upper line", "num"], ["os", "Lower line", "num"], ["color", "Colour", "color"]],
-    relext: [["ma", "Average length", "num"], ["lookback", "Lookback", "num"], ["color", "Colour", "color"]],
-    atr: [["len", "Length", "num"], ["color", "Colour", "color"]], adr: [["len", "Length", "num"], ["color", "Colour", "color"]],
-    ti: [["fast", "Fast", "num"], ["slow", "Slow", "num"], ["color", "Colour", "color"]],
-  };
+  const PANE_INDS = ["rsline", "rsi", "macd", "mfi", "relext", "atr", "adr", "ti"];   // can sit above or below the price
+  const STAGE_KEY = [["1", "Stage 1", "Basing", "#f2c94c"], ["2A", "Stage 2A", "Early uptrend", "#a5dc6a"], ["2", "Stage 2", "Uptrend", "#6cc24a"],
+    ["3", "Stage 3", "Topping", "#f0b34a"], ["4", "Stage 4", "Downtrend", "#e0475f"], ["4A", "Stage 4A", "Improving", "#ec7088"]];
+  const STAGE_ALPHA = { light: 0.28, medium: 0.5, strong: 0.85 };
 
   /* ------------------------------------------------------------------ data */
   let libP = null;
@@ -121,6 +130,117 @@
     return `rgba(${parseInt(h.slice(0, 2), 16)}, ${parseInt(h.slice(2, 4), 16)}, ${parseInt(h.slice(4, 6), 16)}, ${a})`;
   };
   const fmt = (x, d = 2) => (x == null || Number.isNaN(x) ? "–" : Number(x).toLocaleString("en-IN", { minimumFractionDigits: d, maximumFractionDigits: d }));
+  /* moving-average presets; "My preset" is what "Save current look as my default" stored in this browser */
+  const maPreset = (k) => (k === "mine" && store.get("sd-ma-mine", null)) || MA_PRESETS[k] || MA_PRESETS.minervini;
+  const maRow = (m, k) => {
+    const [type, len, color, on] = Array.isArray(m) ? m : [m.type, m.len, m.color, m.on];
+    return { type: type === "EMA" ? "EMA" : "SMA", len: Number(len), color: color || MA_COLORS[k % MA_COLORS.length], on: on !== false };
+  };
+
+  /* shaded areas (Bollinger fill, swing ribbon, oscillator zones) drawn in an SVG over the chart; redrawn on scroll, zoom,
+     resize and pane drag. spec: {pane, series, kind: band (a[], b[], color(i)) | hband (a, b, color) | above / below (a, color)} */
+  function fillLayer(chart, host, specs) {
+    if (!specs.length) return null;
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "ch-fill");
+    host.appendChild(svg);
+    const uid = Math.random().toString(36).slice(2, 8);      // clip ids must be unique on the page (chart + preview)
+    let raf = 0;
+    const render = () => {
+      raf = 0;
+      if (!svg.isConnected) return;
+      const hr = host.getBoundingClientRect(), ts = chart.timeScale(), r = ts.getVisibleLogicalRange(), ps = chart.panes();
+      // width of the plot area: paneSize (the time scale reports 0 when it is hidden, as in the preview)
+      const w = (chart.paneSize && chart.paneSize(0).width) || ts.width();
+      if (!r || !w) return;
+      let defs = "", body = "";
+      specs.forEach((f, n) => {
+        const pe = ps[f.pane] && ps[f.pane].getHTMLElement();
+        if (!pe) return;
+        const pr = pe.getBoundingClientRect(), ox = pr.left - hr.left, oy = pr.top - hr.top, ph = pr.height;
+        const Y = (val) => { const y = f.series.priceToCoordinate(val); return y == null ? null : oy + y; };
+        defs += `<clipPath id="cf${uid}${n}"><rect x="${ox}" y="${oy}" width="${w}" height="${ph}"/></clipPath>`;
+        if (f.kind === "cols") {
+          const i0 = Math.max(0, Math.floor(r.from) - 1), i1 = Math.min(f.cols.length - 1, Math.ceil(r.to) + 1);
+          const x0 = ts.logicalToCoordinate(i0), x1 = ts.logicalToCoordinate(i0 + 1);
+          const half = x0 != null && x1 != null ? Math.abs(x1 - x0) / 2 : 2;
+          let k = i0;
+          while (k <= i1) {
+            const cc = f.cols[k];
+            let j = k; while (j + 1 <= i1 && f.cols[j + 1] === cc) j++;
+            const a = ts.logicalToCoordinate(k), b = ts.logicalToCoordinate(j);
+            if (cc && a != null && b != null) body += `<rect clip-path="url(#cf${uid}${n})" x="${(ox + a - half).toFixed(1)}" y="${oy}" width="${(b - a + 2 * half).toFixed(1)}" height="${ph}" fill="${cc}"/>`;
+            k = j + 1;
+          }
+          return;
+        }
+        if (f.kind !== "band") {
+          const ya = Y(f.a), yb = f.kind === "hband" ? Y(f.b) : f.kind === "above" ? oy : oy + ph;
+          if (ya == null || yb == null) return;
+          body += `<rect clip-path="url(#cf${uid}${n})" x="${ox}" y="${Math.min(ya, yb).toFixed(1)}" width="${w}" height="${Math.abs(yb - ya).toFixed(1)}" fill="${f.color}"/>`;
+          return;
+        }
+        // a band between two series, split where a value is missing or the colour changes
+        const i0 = Math.max(0, Math.floor(r.from) - 1), i1 = Math.min(f.a.length - 1, Math.ceil(r.to) + 1);
+        let seg = [], col = null;
+        const flush = () => {
+          if (seg.length > 1) body += `<polygon clip-path="url(#cf${uid}${n})" fill="${col}" points="${seg.map((q) => `${q[0].toFixed(1)},${q[1].toFixed(1)}`).join(" ")} ${seg.slice().reverse().map((q) => `${q[0].toFixed(1)},${q[2].toFixed(1)}`).join(" ")}"/>`;
+          seg = [];
+        };
+        for (let i = i0; i <= i1; i++) {
+          const a = f.a[i], b = f.b[i];
+          const x = a == null || b == null || Number.isNaN(a) || Number.isNaN(b) ? null : ts.logicalToCoordinate(i);
+          const ya = x == null ? null : Y(a), yb = x == null ? null : Y(b);
+          if (x == null || ya == null || yb == null) { flush(); continue; }
+          const cc = f.color(i);
+          if (seg.length && cc !== col) { const last = seg[seg.length - 1]; flush(); seg.push(last); }
+          col = cc; seg.push([ox + x, ya, yb]);
+        }
+        flush();
+      });
+      svg.innerHTML = `<defs>${defs}</defs>${body}`;
+    };
+    const later = () => { if (!raf) raf = requestAnimationFrame(render); };
+    chart.timeScale().subscribeVisibleLogicalRangeChange(later);
+    chart.timeScale().subscribeSizeChange(later);
+    chart.subscribeCrosshairMove(later);            // also catches price-axis drags
+    later(); setTimeout(render, 90); setTimeout(render, 450);
+    return render;
+  }
+
+  /* pane titles like the reference ("RSI 14 46.9", eye / settings / remove on hover); the value follows the crosshair */
+  function paneLabels(chart, host, specs, pricePane) {
+    const box = document.createElement("div");
+    box.className = "ch-pl";
+    host.appendChild(box);
+    box.innerHTML = specs.map((s, n) => `<span class="lg pl" data-k="${s.k}" data-n="${n}"><span class="pl-n">${s.name}</span><b class="pl-v" style="color:${s.color}"></b><span class="pl-x"></span>`
+      + `<span class="lg-b"><button type="button" data-lg="eye" title="Hide">${ic("eye")}</button><button type="button" data-lg="gear" title="Settings">${ic("gear")}</button><button type="button" data-lg="x" title="Remove">${ic("x")}</button></span></span>`).join("");
+    box.onclick = legendClick;
+    const at = (i) => specs.forEach((s, n) => {
+      const el = box.children[n]; if (!el) return;
+      const x = s.vals[i];
+      el.querySelector(".pl-v").innerHTML = s.html ? s.html(x) : x == null || Number.isNaN(x) ? "" : s.f(x);
+      el.querySelector(".pl-x").innerHTML = (s.more ? s.more(i) : "") + (s.badge ? s.badge(x) : "");
+    });
+    const place = () => {
+      if (!box.isConnected) return;
+      const hr = host.getBoundingClientRect(), ps = chart.panes();
+      specs.forEach((s, n) => {
+        const pe = ps[s.pane] && ps[s.pane].getHTMLElement(), el = box.children[n];
+        if (!pe || !el) return;
+        const pr = pe.getBoundingClientRect();
+        el.style.left = `${pr.left - hr.left + 4}px`; el.style.top = `${pr.top - hr.top + 2}px`;
+      });
+      // the price legend sits at the top of the price pane (also when panes are above it)
+      const lgBox = cur && cur.box.querySelector("#chLegend"), pp = ps[pricePane] && ps[pricePane].getHTMLElement();
+      if (lgBox && pp) lgBox.style.top = `${pp.getBoundingClientRect().top - cur.box.querySelector(".ch-wrap").getBoundingClientRect().top + 4}px`;
+    };
+    const n = specs.length ? specs[0].vals.length - 1 : 0;
+    at(n); place();
+    requestAnimationFrame(() => requestAnimationFrame(place)); setTimeout(place, 120); setTimeout(place, 600);
+    chart.timeScale().subscribeSizeChange(place);
+    return { at, place };
+  }
 
   /* ------------------------------------------------------------------ the chart */
   let cur = null;   // {box, row, data, bench, chart, ...}
@@ -206,75 +326,86 @@
     const st = st0.dup && darkUi ? { ...st0, up: st0.dup, down: st0.ddn } : st0;      // mono: lighter shades on a dark page
     const ind = C.ind;
     const show = (k) => ind[k] && ind[k].on && !ind[k].hidden;
+    const only = !!(pv && pv.only);          // preview of a pane indicator: only that pane, no candles
     const panes = [];       // names in order below the price
-    const rsAbove = show("rsline") && ind.rsline.pane === "above";
     const chart = L.createChart(canvas, {
       autoSize: true,
       layout: { background: { color: css("--panel") }, textColor: css("--muted"), fontSize: 11, fontFamily: css("--font") || undefined, attributionLogo: false,
         panes: { separatorColor: css("--line"), separatorHoverColor: css("--accent-soft"), enableResize: true } },
-      grid: { vertLines: { color: css("--line") + (C.grid === false ? "00" : "") }, horzLines: { color: css("--line") + (C.grid === false ? "00" : "") } },
-      rightPriceScale: { borderColor: css("--line") }, timeScale: { borderColor: css("--line"), rightOffset: 5, visible: true },
-      crosshair: { mode: 0, vertLine: { style: 3, labelBackgroundColor: css("--text") }, horzLine: { style: 3, labelBackgroundColor: css("--text") } },
+      grid: { vertLines: { color: css("--line") + (C.grid === false || pv ? "00" : "") }, horzLines: { color: css("--line") + (C.grid === false || pv ? "00" : "") } },
+      rightPriceScale: { borderColor: css("--line"), visible: !pv }, timeScale: { borderColor: css("--line"), rightOffset: pv ? 1 : 5, visible: !pv },
+      crosshair: { mode: 0, vertLine: { style: 3, labelBackgroundColor: css("--text"), visible: !pv }, horzLine: { style: 3, labelBackgroundColor: css("--text"), visible: !pv } },
       handleScroll: !pv, handleScale: !pv,
     });
     if (!pv) cur.chart = chart;
     const alive = () => (pv ? pv.alive() : cur && cur.chart === chart);
-    let paneNo = 0;
-    const nextPane = (name) => { panes.push(name); return ++paneNo; };
     const line = (data, color, pane, extra = {}) => {
       const s = chart.addSeries(L.LineSeries, { color, lineWidth: 1.5, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false, ...extra }, pane);
       s.setData(data); return s;
     };
     const pts = (arr, from = 0) => arr.map((x, i) => (i >= from && x != null && !Number.isNaN(x) ? { time: times[i], value: x } : { time: times[i] }));
-    let pricePane = 0, bench = null;
-    if (show("rsline") || show("mansfield")) bench = await benchCandles(ind.rsline.bench);
+    const fills = [];        // shaded areas drawn in an SVG layer over the chart (bands, zones): see fillLayer
+    const labels = [];       // pane titles with the value under the crosshair (pane indicators)
+    let bench = null;
+    const rsBench = benchId(ind.rsline.bench, cur.row), mBench = benchId(ind.mansfield.bench || ind.rsline.bench, cur.row);
+    if (show("rsline")) bench = await benchCandles(rsBench);
+    const mbench = show("mansfield") ? (mBench === rsBench && bench ? bench : await benchCandles(mBench)) : null;
     if (!alive()) return null;
-    const benchBars = bench ? (intraday ? bench : S.toPeriod(bench.filter((b) => b.time >= cur.daily[0].time), TF.u, TF.n)) : null;
-    const rs = benchBars ? I.rsLine(bars, benchBars) : null;
-    if (rsAbove && rs) { pricePane = 1; paneNo = 1; }
+    const toBars = (b) => (b ? (intraday ? b : S.toPeriod(b.filter((x) => x.time >= cur.daily[0].time), TF.u, TF.n)) : null);
+    const rs = bench ? I.rsLine(bars, toBars(bench)) : null;
+    const rsM = mbench ? I.rsLine(bars, toBars(mbench)) : null;
+    // panes: indicators set to "Pane above" sit over the price (in list order), the rest below it
+    const above = only ? [] : PANE_INDS.filter((k) => show(k) && ind[k].pane === "above" && (k !== "rsline" || rs));
+    const pricePane = above.length;
+    let paneNo = pricePane;
+    const nextPane = (name) => { panes.push(name); return ++paneNo; };
+    const paneOf = (k, name) => (only ? 0 : above.includes(k) ? above.indexOf(k) : nextPane(name));
     // price
     const inrFmt = { type: "custom", formatter: (x) => fmt(x, 2), minMove: 0.01 };
-    const priceOpts = { upColor: st.up, downColor: st.down, wickUpColor: st.up, wickDownColor: st.down, borderVisible: false, thinBars: false, priceFormat: inrFmt };
-    const price = C.type === "bar" ? chart.addSeries(L.BarSeries, { upColor: st.up, downColor: st.down, priceFormat: inrFmt }, pricePane)
+    const priceOpts = { upColor: st.up, downColor: st.down, wickUpColor: st.up, wickDownColor: st.down, borderVisible: false, thinBars: false, priceFormat: inrFmt, visible: !only, priceLineVisible: !pv, lastValueVisible: !pv, ...(only ? { priceScaleId: "px" } : {}) };
+    const price = C.type === "bar" ? chart.addSeries(L.BarSeries, { upColor: st.up, downColor: st.down, priceFormat: inrFmt, visible: !only, priceLineVisible: !pv, lastValueVisible: !pv, ...(only ? { priceScaleId: "px" } : {}) }, pricePane)
       : chart.addSeries(L.CandlestickSeries, priceOpts, pricePane);
     price.setData(bars.map((b) => ({ time: b.time, open: b.open, high: b.high, low: b.low, close: b.close })));
     if (!pv) cur.price = price;
     const legend = [];     // {k, html} - k null = plain text (no controls)
     const lg = (k, html) => legend.push({ k, html });
-    // moving averages
-    if (show("ma")) {
-      const lines = (weekly ? ind.ma.w : ind.ma.d) || MA_PRESETS[ind.ma.preset || "mine"][weekly ? "w" : "d"];
+    const prm = (s, col) => `<b style="color:${col}">${s}</b>`;            // legend: grey name, coloured settings
+    // moving averages (each line can be switched off with its tick box)
+    if (show("ma") && !only) {
+      const lines = (weekly ? ind.ma.w : ind.ma.d) || maPreset(ind.ma.preset)[weekly ? "w" : "d"];
       const names = [];
       lines.forEach((m, k) => {
-        const [type, n, color] = Array.isArray(m) ? [m[0], m[1], m[2]] : [m.type, m.len, m.color];
-        const col = color || MA_COLORS[k % MA_COLORS.length];
-        const vals = type === "EMA" ? I.ema(c, n) : I.sma(c, n);
-        line(pts(vals), soft(col), pricePane, { lineWidth: 1, lastValueVisible: !pv, title: "" });
-        names.push(`<b style="color:${col}">${type} ${n}${C.tf === "D" || intraday ? "" : C.tf === "W" ? "W" : " · " + esc(C.tf)}</b>`);
+        const x = maRow(m, k);
+        if (!x.on || !(x.len >= 2)) return;
+        const vals = x.type === "EMA" ? I.ema(c, x.len) : I.sma(c, x.len);
+        line(pts(vals), soft(x.color), pricePane, { lineWidth: 1, lastValueVisible: !pv, title: "" });
+        names.push(`<b style="color:${x.color}">${x.type} ${x.len}${C.tf === "D" || intraday ? "" : C.tf === "W" ? "W" : " · " + esc(C.tf)}</b>`);
       });
-      lg("ma", `<em>MA</em> ${names.join(" ")}`);
+      if (names.length) lg("ma", `<em>MA</em> ${names.join(" ")}`);
     }
-    if (show("bb")) {
+    if (show("bb") && !only) {
       const b = I.bollinger(c, ind.bb.len, ind.bb.std);
-      const bc = soft(ind.bb.color);
-      line(pts(b.mid), bc, pricePane, { lineStyle: 2, lineWidth: 1 });
-      line(pts(b.up), bc, pricePane, { lineWidth: 1 }); line(pts(b.lo), bc, pricePane, { lineWidth: 1 });
-      lg("bb", `<b style="color:${ind.bb.color}">BB ${ind.bb.len}, ${ind.bb.std}</b>`);
+      const bc = soft(ind.bb.color, 0.8);
+      const up = line(pts(b.up), bc, pricePane, { lineWidth: 1 }); line(pts(b.lo), bc, pricePane, { lineWidth: 1 });
+      line(pts(b.mid), soft(ind.bb.mid, 0.85), pricePane, { lineWidth: 1 });
+      if (ind.bb.fill) fills.push({ pane: pricePane, series: up, kind: "band", a: b.up, b: b.lo, color: () => soft(ind.bb.color, 0.09) });
+      lg("bb", `<em>BB</em> ${prm(`${ind.bb.len} ${ind.bb.std}`, ind.bb.color)}`);
     }
-    if (show("supertrend")) {
+    if (show("supertrend") && !only) {
+      // green under the price, red over it, and no joining stroke where the trend flips (like the reference); one line whose
+      // segment into a flip bar is see-through (the chart library would bridge gaps between two separate lines)
       const s = I.supertrend(h, l, c, ind.supertrend.len, ind.supertrend.mult);
-      const ser = chart.addSeries(L.LineSeries, { lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false }, pricePane);
-      ser.setData(s.line.map((x, i) => (x == null ? { time: times[i] } : { time: times[i], value: x, color: soft(s.dir[i] === 1 ? ind.supertrend.up : ind.supertrend.down) })));
-      lg("supertrend", `<b style="color:${ind.supertrend.up}">Supertrend ${ind.supertrend.len}, ${ind.supertrend.mult}</b>`);
+      const upC = soft(ind.supertrend.up, 0.9), dnC = soft(ind.supertrend.down, 0.9);
+      line(s.line.map((x, i) => (x == null ? { time: times[i] } : { time: times[i], value: x,
+        color: i > 0 && s.dir[i - 1] === s.dir[i] ? (s.dir[i] === 1 ? upC : dnC) : "rgba(0,0,0,0)" })), upC, pricePane, { lineWidth: 1.5 });
+      lg("supertrend", `<em>Supertrend</em> ${prm(`${ind.supertrend.len} ${ind.supertrend.mult}`, ind.supertrend.up)}`);
     }
-    if (show("swing")) {
+    if (show("swing") && !only) {
+      // the shaded gap between the two T3 averages: green while the fast one is on top, red while it is below
       const f = I.t3(c, ind.swing.fast, ind.swing.vf), s = I.t3(c, ind.swing.slow, ind.swing.vf);
-      const col = (i) => soft(f[i] > s[i] ? "#089981" : "#f23645");
-      const sf = chart.addSeries(L.LineSeries, { lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false }, pricePane);
-      sf.setData(f.map((x, i) => (x == null ? { time: times[i] } : { time: times[i], value: x, color: col(i) })));
-      const ss = chart.addSeries(L.LineSeries, { lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false }, pricePane);
-      ss.setData(s.map((x, i) => (x == null ? { time: times[i] } : { time: times[i], value: x, color: col(i) })));
-      lg("swing", `<b style="color:#089981">Swing bands ${ind.swing.fast}/${ind.swing.slow}</b>`);
+      const anchor = line(pts(f), "rgba(0,0,0,0)", pricePane, { lineWidth: 1, autoscaleInfoProvider: undefined });
+      fills.push({ pane: pricePane, series: anchor, kind: "band", a: f, b: s, color: (i) => (f[i] >= s[i] ? "rgba(76, 175, 80, 0.24)" : "rgba(239, 83, 80, 0.22)") });
+      lg("swing", `<em>Swing Bands</em> ${prm(`${ind.swing.fast} ${ind.swing.slow}`, "#4caf50")}`);
     }
     // markers on the price
     const marks = [];
@@ -310,14 +441,6 @@
     }
     if (!pv && C.marks.inside) {
       bars.forEach((b, i) => { if (i && b.high <= bars[i - 1].high && b.low >= bars[i - 1].low) marks.push({ time: b.time, position: "aboveBar", color: "#9e9e9e", shape: "circle", size: 0.4 }); });
-    }
-    if (rs && show("rsline") && ind.rsline.dot) {
-      const len = weekly ? 52 : 252;
-      for (let i = len; i < rs.length; i++) {
-        let mx = -Infinity, ph = -Infinity;
-        for (let k = i - len + 1; k <= i; k++) { if (rs[k] != null) mx = Math.max(mx, rs[k]); ph = Math.max(ph, h[k]); }
-        if (rs[i] != null && rs[i] >= mx && h[i] < ph) marks.push({ time: times[i], position: "belowBar", color: ind.rsline.color, shape: "circle", size: 0.5 });
-      }
     }
     // pivot / base (same rule as the pipeline, swingdash/patterns.py); cup arc + VCP wave are drawn in the SVG layer
     if (!pv) cur.pattern = null;
@@ -369,46 +492,55 @@
       price.createPriceLine({ price: last * (1 + band), color: "#ff9800", lineWidth: 1, lineStyle: 1, title: `+${cur.row.price_band}%` });
       price.createPriceLine({ price: last * (1 - band), color: "#ff9800", lineWidth: 1, lineStyle: 1, title: `-${cur.row.price_band}%` });
     }
-    if (show("watermark")) {
-      const ln = [];
-      const size = { S: 18, M: 30, L: 44 }[ind.watermark.size] || 30, col = css("--muted") + "33";
-      if (ind.watermark.symbol) ln.push({ text: `${cur.row.symbol}, ${C.tf}`, color: col, fontSize: size });
-      if (ind.watermark.name) ln.push({ text: cur.row.name || "", color: col, fontSize: Math.round(size * 0.5) });
-      if (ind.watermark.sector && cur.row.sector) ln.push({ text: `${cur.row.sector} · ${cur.row.basic_industry || cur.row.industry || ""}`, color: col, fontSize: Math.round(size * 0.4) });
-      L.createTextWatermark(chart.panes()[pricePane], { horzAlign: "center", vertAlign: { top: "top", middle: "center", bottom: "bottom" }[ind.watermark.pos] || "center", lines: ln });
-      lg("watermark", "Watermark");
+    if (show("watermark") && !only) {
+      const w = ind.watermark, ln = [];
+      const sz = { S: [20, 13, 12], M: [30, 18, 16], L: [42, 25, 22] }[w.size] || [30, 18, 16];
+      const col = soft(w.color || "#a8adb5", 0.55);
+      const tfTxt = C.tf === "D" ? "1D" : C.tf === "W" ? "1W" : C.tf;
+      if (w.symbol) ln.push({ text: `${cur.row.symbol || cur.row.name || ""}, ${tfTxt}`, color: col, fontSize: sz[0] });
+      if (w.name && cur.row.name) ln.push({ text: `${cur.row.name}${w.mcap && cur.row.mcap_cr ? ` · ₹${fmt(cur.row.mcap_cr, 0)} Cr` : ""}`, color: col, fontSize: sz[1] });
+      if (w.sector && cur.row.sector) ln.push({ text: [cur.row.sector, cur.row.basic_industry || cur.row.industry].filter(Boolean).join(", "), color: col, fontSize: sz[2] });
+      if (ln.length) L.createTextWatermark(chart.panes()[pricePane], { horzAlign: "center", vertAlign: { top: "top", middle: "center", bottom: "bottom" }[w.pos] || "center", lines: ln });
+      lg("watermark", "<em>Watermark</em>");
     }
-    // RS line pane (above or below)
+    const lastOf = (a) => { for (let i = a.length - 1; i >= 0; i--) if (a[i] != null && !Number.isNaN(a[i])) return a[i]; return null; };
+    // RS line (pane above or below); a dot when the RS line makes a new high while the price has not
     if (show("rsline") && rs) {
-      const pane = rsAbove ? 0 : nextPane("RS");
-      line(pts(rs), ind.rsline.color, pane, { lastValueVisible: true, priceFormat: { type: "price", precision: 4, minMove: 0.0001 } });
-      if (rsAbove) panes.unshift("RS");
-      lg("rsline", `<b style="color:${ind.rsline.color}">RS line</b> <span class="muted">vs ${esc(BENCH[ind.rsline.bench] || ind.rsline.bench)}</span>`);
+      const pane = paneOf("rsline", "RS");
+      const s = line(pts(rs), ind.rsline.color, pane, { lastValueVisible: !pv, priceFormat: { type: "custom", formatter: (x) => fmt(x * 100, 2), minMove: 0.0001 } });
+      if (ind.rsline.dot) {
+        const len = weekly ? 52 : 252, dots = [];
+        for (let i = Math.min(len, rs.length); i < rs.length; i++) {
+          let mx = -Infinity, ph = -Infinity;
+          for (let k = Math.max(0, i - len + 1); k < i; k++) { if (rs[k] != null) mx = Math.max(mx, rs[k]); ph = Math.max(ph, h[k]); }
+          if (rs[i] != null && rs[i] > mx && h[i] <= ph) dots.push({ time: times[i], position: "inBar", color: ind.rsline.dotColor || "#2f7fe0", shape: "circle", size: 0.6 });
+        }
+        if (dots.length) L.createSeriesMarkers(s, dots);
+      }
+      labels.push({ pane, k: "rsline", name: `RS <span class="muted">vs ${esc(rsBench === "NIFTY_500" && ind.rsline.bench !== "NIFTY_500" ? "Nifty 500" : BENCH[ind.rsline.bench] || ind.rsline.bench)}</span>`, color: ind.rsline.color, vals: rs, f: (x) => fmt(x * 100, 2) });
     }
     // volume
     let vflags = null, volPane = null;
-    if (show("volume")) {
-      vflags = I.volumeFlags(bars, { high_volume_x: Number(ind.volume.x) || 1.5 });
-      const onPrice = ind.volume.pane === "price";
-      const pane = onPrice ? pricePane : nextPane("Volume");
-      volPane = onPrice ? null : pane;
+    if (show("volume") && (!pv || only || ind.volume.pane === "price")) {
+      const V = ind.volume;
+      vflags = I.volumeFlags(bars, { high_volume_x: Number(V.x) || 1 });
+      const onPrice = V.pane === "price" && !only;
+      const pane = only ? 0 : onPrice ? pricePane : nextPane("Volume");
+      volPane = onPrice || pv ? null : pane;
       const axVol = (x) => (x >= 1e7 ? `${(x / 1e7).toFixed(1)}Cr` : x >= 1e5 ? `${(x / 1e5).toFixed(1)}L` : x >= 1e3 ? `${(x / 1e3).toFixed(1)}K` : String(Math.round(x)));
       const vs = chart.addSeries(L.HistogramSeries, { priceFormat: { type: "custom", formatter: axVol, minMove: 1 },
         priceScaleId: onPrice ? "vol" : "right", lastValueVisible: false, priceLineVisible: false }, pane);
-      if (onPrice) vs.priceScale().applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
-      else vs.priceScale().applyOptions({ scaleMargins: { top: 0.12, bottom: 0 } });
-      const grey = css("--muted") + "66";
+      vs.priceScale().applyOptions({ scaleMargins: onPrice ? { top: 0.8, bottom: 0 } : { top: 0.12, bottom: 0 } });
       vs.setData(bars.map((b, i) => {
         const f = vflags[i];
-        let col = grey;
-        if (ind.volume.colorHigh && f.high) col = f.up ? st.up : f.down ? st.down : grey;
-        else if (ind.volume.colorHigh) col = (f.up ? st.up : st.down) + "55";
-        if (ind.volume.pp && f.pocket) col = "#2962ff";
-        if (ind.volume.dry && f.dry) col = "#ff9800";
+        let col = V.bar || "#b9bdc4";
+        if (V.colorHigh && f.high) col = f.up ? V.up : f.down ? V.down : col;
+        if (V.pp && f.pocket) col = V.ppColor;
+        if (V.pp && f.dry) col = V.dryColor;
         return { time: b.time, value: b.volume || 0, color: col };
       }));
-      if (ind.volume.avg) line(pts(vflags.map((f) => f.avg20)), "#ff9800", pane, { lineWidth: 1, priceScaleId: onPrice ? "vol" : "right" });
-      if (ind.volume.labels) {
+      if (V.avg) line(pts(vflags.map((f) => f.avg20)), V.avgColor || "#5f6368", pane, { lineWidth: 1, priceScaleId: onPrice ? "vol" : "right" });
+      if (V.labels && !pv) {
         const vm = [];
         vflags.forEach((f, i) => {
           const t = f.hve ? "HVE" : f.hvy ? "HVY" : f.hvq ? "HVQ" : f.lvy ? "Y" : f.lvq ? "Q" : "";
@@ -416,78 +548,125 @@
         });
         if (vm.length) L.createSeriesMarkers(vs, vm);
       }
-      lg("volume", "Volume");
+      if (onPrice) lg("volume", "<em>Volume</em>");
     }
+    // Stage Analysis: a strip coloured bar by bar (colour strength light / medium / strong)
     if (show("stage")) {
-      const stg = I.stage(c);
-      const pane = nextPane("Stage");
-      const s = chart.addSeries(L.HistogramSeries, { priceLineVisible: false, lastValueVisible: false, priceFormat: { type: "price", precision: 0, minMove: 1 } }, pane);
-      s.setData(stg.map((x, i) => (x == null ? { time: times[i] } : { time: times[i], value: 1, color: STAGE_COL[x] })));
-      lg("stage", "Stage analysis");
+      const stg = I.stage(c), a = STAGE_ALPHA[ind.stage.strength] || STAGE_ALPHA.medium;
+      const col = Object.fromEntries(STAGE_KEY.map(([k, , , cc]) => [k, soft(cc, a)]));
+      const pane = only ? 0 : nextPane("Stage");
+      // the price scale stays visible (a pane whose only scale is hidden makes the chart library fail) but shows no numbers
+      const s = chart.addSeries(L.HistogramSeries, { priceLineVisible: false, lastValueVisible: false, priceFormat: { type: "custom", formatter: () => "", minMove: 1 } }, pane);
+      s.priceScale().applyOptions({ scaleMargins: { top: 0, bottom: 0 }, ticksVisible: false });
+      s.setData(stg.map((x, i) => (x == null ? { time: times[i] } : { time: times[i], value: 1, color: "rgba(0,0,0,0)" })));
+      fills.push({ pane, series: s, kind: "cols", cols: stg.map((x) => (x == null ? null : col[String(x)])) });
+      const name = (x) => { const r = STAGE_KEY.find((y) => y[0] === String(x)); return r ? `<b style="color:${r[3]}">${r[1]}</b> <span class="muted">${r[2]}</span>` : "–"; };
+      labels.push({ pane, k: "stage", name: "Stage Analysis", color: css("--muted"), vals: stg, html: name });
     }
-    if (show("mansfield") && rs) {
-      const m = I.mansfield(rs, ind.mansfield.len);
-      const avg = I.sma(rs.map((x) => (x == null ? NaN : x)), ind.mansfield.len);
-      const pane = nextPane("Mansfield");
-      const s = chart.addSeries(L.HistogramSeries, { priceLineVisible: false, lastValueVisible: true }, pane);
-      s.setData(m.map((x, i) => {
-        if (x == null) return { time: times[i] };
-        const rising = i > 0 && avg[i] != null && avg[i - 1] != null && avg[i] > avg[i - 1];
-        const col = x >= 0 ? (rising ? "#089981" : "#9e9e9e") : (rising ? "#2962ff" : "#f23645");
-        return { time: times[i], value: x, color: col };
-      }));
-      lg("mansfield", `Mansfield RS ${ind.mansfield.len}`);
+    // Mansfield RS: the line, a zero line, and a background coloured by the average's direction
+    if (show("mansfield") && rsM) {
+      const M = ind.mansfield, m = I.mansfield(rsM, M.len);
+      const avg = I.sma(rsM.map((x) => (x == null ? NaN : x)), M.len);
+      const pane = only ? 0 : nextPane("Mansfield");
+      const bgCols = M.bg === false ? null : m.map((x, i) => {
+        const a0 = avg[i], a1 = avg[i - 1];
+        if (x == null || a0 == null || a1 == null || Number.isNaN(a0) || Number.isNaN(a1)) return null;
+        const rising = a0 > a1;
+        return x >= 0 ? (rising ? "rgba(92, 184, 92, 0.2)" : "rgba(150, 156, 166, 0.16)") : (rising ? "rgba(74, 144, 217, 0.18)" : "rgba(224, 82, 82, 0.18)");
+      });
+      const s = line(pts(m), M.color, pane, { lastValueVisible: !pv, lineWidth: 1.25 });
+      s.createPriceLine({ price: 0, color: "#4a90d9", lineWidth: 1, lineStyle: 0, axisLabelVisible: false });
+      if (bgCols) fills.push({ pane, series: s, kind: "cols", cols: bgCols });
+      labels.push({ pane, k: "mansfield", name: `Mansfield RS ${M.len}`, color: M.color, vals: m, f: (x) => fmt(x, 2) });
     }
-    const osc = (k, name, vals, color, levels = []) => {
-      const pane = nextPane(name);
-      const s = line(pts(vals), color, pane, { lastValueVisible: true });
-      levels.forEach((lv) => s.createPriceLine({ price: lv, color: css("--muted"), lineWidth: 1, lineStyle: 2, axisLabelVisible: false }));
-      lg(k, `<b style="color:${color}">${name}</b>`);
-      return pane;
+    // oscillators: line + dashed level lines, optional shaded zone (pane above or below)
+    const osc = (k, name, vals, color, o = {}) => {
+      const pane = paneOf(k, name);
+      const s = line(pts(vals), color, pane, { lastValueVisible: !pv, lineWidth: 1.25, ...(o.extra || {}) });
+      (o.levels || []).forEach(([lv, lc]) => s.createPriceLine({ price: lv, color: lc || css("--muted"), lineWidth: 1, lineStyle: 2, axisLabelVisible: false }));
+      (o.fills || []).forEach((f) => fills.push({ pane, series: s, ...f }));
+      labels.push({ pane, k, name, color: o.vcol || color, vals, f: o.f || ((x) => fmt(x, 1)), badge: o.badge, more: o.more });
+      return { pane, s };
     };
-    if (show("rsi")) osc("rsi", `RSI ${ind.rsi.len}`, I.rsi(c, ind.rsi.len), ind.rsi.color || "#9c27b0", [ind.rsi.ob, ind.rsi.os]);
+    const fixed = (lo, hi) => ({ autoscaleInfoProvider: () => ({ priceRange: { minValue: lo, maxValue: hi } }) });
+    if (show("rsi")) {
+      const R = ind.rsi;
+      osc("rsi", `RSI ${R.len}`, I.rsi(c, R.len), R.color, { levels: [[R.ob], [R.os]],
+        fills: R.shade ? [{ kind: "hband", a: R.ob, b: R.os, color: soft(R.color, 0.08) }] : [], extra: fixed(Math.min(20, R.os - 10), Math.max(80, R.ob + 10)) });
+    }
     if (show("macd")) {
-      const m = I.macd(c, ind.macd.fast, ind.macd.slow, ind.macd.sig);
-      const pane = nextPane("MACD");
+      const M = ind.macd, m = I.macd(c, M.fast, M.slow, M.sig);
+      const pane = paneOf("macd", "MACD");
       const hs = chart.addSeries(L.HistogramSeries, { priceLineVisible: false, lastValueVisible: false }, pane);
       hs.setData(m.hist.map((x, i) => {
         if (x == null) return { time: times[i] };
         const grow = i > 0 && m.hist[i - 1] != null && Math.abs(x) >= Math.abs(m.hist[i - 1]);
-        const base = x >= 0 ? "#2962ff" : "#e91e63";
-        return { time: times[i], value: x, color: grow ? base : base + "66" };
+        return { time: times[i], value: x, color: x >= 0 ? (grow ? "#2f80ed" : "#a9cdf5") : (grow ? "#d6337a" : "#f3a9c9") };
       }));
-      line(pts(m.line), "#2962ff", pane); line(pts(m.signal), "#ff9800", pane);
-      lg("macd", `<b style="color:#2962ff">MACD ${ind.macd.fast}, ${ind.macd.slow}, ${ind.macd.sig}</b>`);
+      line(pts(m.signal), M.sigColor, pane, { lineWidth: 1.25 });
+      line(pts(m.line), M.color, pane, { lineWidth: 1.5, lastValueVisible: !pv });
+      labels.push({ pane, k: "macd", name: `MACD ${M.fast} ${M.slow} ${M.sig}`, color: M.color, vals: m.line, f: (x) => fmt(x, 2) });
     }
-    if (show("mfi")) osc("mfi", `MFI ${ind.mfi.len}`, I.mfi(h, l, c, v, ind.mfi.len), ind.mfi.color || "#00bcd4", [ind.mfi.ob, ind.mfi.os]);
-    if (show("relext")) osc("relext", "Rel. extension", I.relativeExtension(c, ind.relext.ma, ind.relext.lookback), ind.relext.color || "#ff5722", [70, 0, -70]);
-    if (show("atr")) osc("atr", `ATR ${ind.atr.len}`, I.atr(h, l, c, ind.atr.len), ind.atr.color || "#607d8b");
-    if (show("adr")) osc("adr", `ADR % ${ind.adr.len}`, I.adr(h, l, ind.adr.len), ind.adr.color || "#795548");
-    if (show("ti")) osc("ti", "Trend intensity", I.trendIntensity(c, ind.ti.fast, ind.ti.slow), ind.ti.color || "#3f51b5", [105, 100, 95]);
+    if (show("mfi")) {
+      const M = ind.mfi;
+      osc("mfi", `MFI ${M.len}`, I.mfi(h, l, c, v, M.len), M.color, { levels: [[M.ob], [M.os]],
+        fills: M.shade ? [{ kind: "hband", a: M.ob, b: M.os, color: soft(M.color, 0.08) }] : [], extra: fixed(Math.min(0, M.os - 10), Math.max(100, M.ob + 10)) });
+    }
+    if (show("relext")) {
+      const R = ind.relext, vals = I.relativeExtension(c, R.ma, R.lookback, R.type);
+      const avgR = R.type === "EMA" ? I.ema(c, R.ma) : I.sma(c, R.ma);
+      osc("relext", `Rel Ext ${R.ma} ${R.type || "SMA"}`, vals, R.color, {
+        levels: [[R.ob, "#e57373"], [0], [-R.os, "#5cb85c"]], f: (x) => fmt(x, 2),
+        more: (i) => (avgR[i] ? `<span class="muted">${S.fmtPct((c[i] / avgR[i] - 1) * 100)} from MA</span>` : ""),
+        fills: R.shade ? [{ kind: "above", a: R.ob, color: "rgba(229, 115, 115, 0.12)" }, { kind: "below", a: -R.os, color: "rgba(92, 184, 92, 0.13)" }] : [],
+        badge: (x) => (x == null ? "" : x >= R.ob ? '<i class="pl-bd up">Overbought</i>' : x <= -R.os ? '<i class="pl-bd dn">Oversold</i>' : ""),
+        extra: fixed(-105, 105) });
+    }
+    if (show("atr")) osc("atr", `ATR ${ind.atr.len}`, I.atr(h, l, c, ind.atr.len), ind.atr.color, { f: (x) => fmt(x, 2) });
+    if (show("adr")) osc("adr", `ADR ${ind.adr.len}`, I.adr(h, l, ind.adr.len), ind.adr.color, { f: (x) => `${fmt(x, 2)}%` });
+    if (show("ti")) {
+      const T = ind.ti, vals = I.trendIntensity(c, T.fast, T.slow);
+      const tiCol = (x) => (x == null ? css("--muted") : x >= T.up ? "#2e9d5b" : x >= 100 ? "#5cb85c" : x >= T.dn ? "#e0973a" : "#e05252");
+      const lv = [[T.up, "#5cb85c"], [100], [T.dn, "#e57373"]];
+      if (T.shade) {
+        // shaded distance from 100: green above, red below (baseline series)
+        const pane = paneOf("ti", "TI");
+        const s = chart.addSeries(L.BaselineSeries, { baseValue: { type: "price", price: 100 }, lineWidth: 1.25, priceLineVisible: false, lastValueVisible: !pv, crosshairMarkerVisible: false,
+          topLineColor: "#4caf50", topFillColor1: "rgba(76, 175, 80, 0.28)", topFillColor2: "rgba(76, 175, 80, 0.05)",
+          bottomLineColor: "#e05252", bottomFillColor1: "rgba(224, 82, 82, 0.05)", bottomFillColor2: "rgba(224, 82, 82, 0.28)" }, pane);
+        s.setData(pts(vals));
+        lv.forEach(([x, lc]) => s.createPriceLine({ price: x, color: lc || css("--muted"), lineWidth: 1, lineStyle: 2, axisLabelVisible: false }));
+        labels.push({ pane, k: "ti", name: `TI ${T.fast}/${T.slow}`, color: tiCol(lastOf(vals)), vals, f: (x) => `<span style="color:${tiCol(x)}">${fmt(x, 2)}</span>` });
+      } else osc("ti", `TI ${T.fast}/${T.slow}`, vals, T.color, { levels: lv, f: (x) => `<span style="color:${tiCol(x)}">${fmt(x, 2)}</span>` });
+    }
     // indicators that are on but hidden (eye) stay in the legend, faded
     for (const g of IND_MENU) for (const [k, label] of g[1]) if (ind[k].on && ind[k].hidden) legend.push({ k, html: label, hidden: true });
     // pane sizes: the price pane gets the most room; the chart grows by 80 px per extra pane
     const ps = chart.panes();
-    ps.forEach((p, i) => p.setStretchFactor(i === pricePane ? (ps.length === 2 ? 3 : Math.max(3, 6 - ps.length)) : 1));
-    if (pv) {
-      chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, bars.length - 120), to: bars.length + 2 });
+    ps.forEach((p, i) => p.setStretchFactor(i === pricePane && !only ? (ps.length === 2 ? 3 : Math.max(3, 6 - ps.length)) : 1));
+    if (pv) {     // preview: the last 3 months of days or 60 weeks, like the reference
+      const n = weekly ? 60 : 63;
+      chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, bars.length - n), to: bars.length - 0.5 });
+      fillLayer(chart, canvas, fills);
       return chart;
     }
     canvas.style.minHeight = ps.length > 2 ? `${320 + 80 * (ps.length - 1)}px` : "";
     cur.legend = legend;
     renderLegend();
+    cur.fillRender = fillLayer(chart, canvas, fills);
+    cur.paneLabels = paneLabels(chart, canvas, labels, pricePane);
     cur.volPane = volPane;
     // visible range: last year (daily) / 3 years (weekly)
     if (range) chart.timeScale().setVisibleLogicalRange(range);
     else { const n = Math.max(30, Math.round(({ D: 250, W: 156, M: 120, Y: 40 }[TF.u] || 250) / (TF.u === "Y" ? 1 : TF.n))); chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, bars.length - n), to: bars.length + 3 }); }
     // header with crosshair values
     header(bars.length - 1, vflags);
-    cur.onPaint = () => header(bars.length - 1, vflags);   // the volume label needs the painted panes (drawings.render calls it)
+    cur.onPaint = () => { header(bars.length - 1, vflags); if (cur.fillRender) cur.fillRender(); if (cur.paneLabels) cur.paneLabels.place(); };   // the volume label needs the painted panes (drawings.render calls it)
     chart.subscribeCrosshairMove((p) => {
       cur.hoverNews = !!(p && p.time);
-      if (!p || !p.time) return header(bars.length - 1, vflags);
+      if (!p || !p.time) { if (cur.paneLabels) cur.paneLabels.at(bars.length - 1); return header(bars.length - 1, vflags); }
       const i = times.indexOf(p.time);
-      if (i >= 0) header(i, vflags);
+      if (i >= 0) { header(i, vflags); if (cur.paneLabels) cur.paneLabels.at(i); }
     });
     // dragging a pane divider (price / volume / indicators): badges, volume label and drawings follow at once
     let dragRaf = 0;
@@ -511,14 +690,16 @@
       ? `<span class="lg ${x.hidden ? "off" : ""}" data-k="${x.k}">${x.html}<span class="lg-b"><button type="button" data-lg="eye" title="${x.hidden ? "Show" : "Hide"}">${ic(x.hidden ? "eyeOff" : "eye")}</button>`
         + `<button type="button" data-lg="gear" title="Settings">${ic("gear")}</button><button type="button" data-lg="x" title="Remove">${ic("x")}</button></span></span>`
       : `<span class="lg plain">${x.html}</span>`).join("");
-    box.onclick = (e) => {
-      const b = e.target.closest("[data-lg]"); if (!b) return;
-      const k = b.closest("[data-k]").dataset.k, act = b.dataset.lg;
-      if (act === "eye") cfg.ind[k].hidden = !cfg.ind[k].hidden;
-      else if (act === "x") { cfg.ind[k].on = false; cfg.ind[k].hidden = false; }
-      else return indicatorMenu(k);
-      save(); draw(true); renderTools();
-    };
+    box.onclick = legendClick;
+  }
+  /* eye / settings / remove buttons of the legend and the pane titles */
+  function legendClick(e) {
+    const b = e.target.closest("[data-lg]"); if (!b) return;
+    const k = b.closest("[data-k]").dataset.k, act = b.dataset.lg;
+    if (act === "eye") cfg.ind[k].hidden = !cfg.ind[k].hidden;
+    else if (act === "x") { cfg.ind[k].on = false; cfg.ind[k].hidden = false; }
+    else return indicatorMenu(k);
+    save(); draw(true); renderTools();
   }
 
   const EV_COL = { E: "#5b6fd6", C: "#e0527a", M: "#7b8494", O: "#16a34a", D: "#2962ff", K: "#0ea5e9", F: "#a855f7", R: "#db2777", A: "#14b8a6" };
@@ -654,7 +835,7 @@
     const favs = tfSort([...new Set([...(cfg.tfFav || ["D", "W"]).filter((x) => !tfIntra(x)), ...(tfIntra(cfg.tf) ? [] : [cfg.tf])])]);
     box.innerHTML = `<div class="tf-bar">${seg("tf", favs.map((x) => { const t = S.tfParse(x); return [x, x, tfName(t.n, t.u)]; }), cfg.tf)}<button type="button" class="tf-dd" data-act="tfm" title="More timeframes" aria-label="More timeframes" aria-haspopup="true"><svg viewBox="0 0 12 12" width="11" height="11" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>${seg("type", [["candle", ic("candle"), "Candles"], ["bar", ic("bars"), "Bars"]], cfg.type)}
       <button class="btn sm ${cfg.ind.ma.on ? "on" : ""}" data-act="ma" type="button" title="Moving averages on / off">MA</button>
-      <button class="btn sm" data-act="ind" type="button"><i class="fx">ƒx</i> Indicators <span class="caret">▾</span></button>
+      <button class="btn sm ind-btn" data-act="ind" type="button" aria-haspopup="dialog"><i class="fx">ƒx</i> Indicators <svg class="caret" viewBox="0 0 12 12" width="11" height="11" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <span class="ch-chips">${chipsHTML()}</span>
       <button class="btn sm icon" data-act="set" type="button" title="Chart settings">${ic("gear")}</button>${cur.opts && cur.opts.extraTool ? cur.opts.extraTool : ""}`;
     box.onclick = (e) => {
@@ -813,90 +994,226 @@
   }
   const setSw = (sw, c) => { sw.querySelector("input[type=hidden]").value = c; sw.querySelector(".sw-cur").style.background = c; sw.querySelectorAll("[data-c]").forEach((b) => b.classList.toggle("on", b.dataset.c === c)); };
 
-  /* indicator popup: list on the left; name, description, live preview and settings on the right */
+  /* indicator menu (20-Nov-2026, built like the reference's pages in Viraj's videos): drops down under the "Indicators"
+     button. Left: search and the list in groups (tick = on the chart). Right: name, description, a live preview of only this
+     indicator (last 3 months, or 60 weeks on a weekly chart), its settings, and reset / remove / Cancel / Apply (Update when
+     it is already on the chart). Descriptions and tips are in our own words. */
+  const INFO = {
+    stlen: "Number of bars in the average true range.", stmult: "How many ATRs the line stays away from the price. Bigger = fewer flips.",
+    len: "Number of bars used.", bbstd: "Width of the bands in standard deviations.", swlen: "Bars of the fast and the slow T3 average.",
+    vf: "Smoothing of the T3 averages: lower follows the price more closely, higher is smoother.",
+    avg: "A line through the 20-day average volume.", high: "Bars with volume above the level below, green on up days and red on down days.",
+    pp: "Pocket pivot: an up day with more volume than any down day of the last 10. Dry-up: a very quiet day.",
+    dot: "A dot when the RS line makes a new 52-week high while the price has not yet.", bench: "The index the stock is compared with.",
+    mlen: "Bars in the RS line's own average (52 = one year of weeks).", bg: "Colour the background by where the RS line is against its average.",
+    macd: "Bars of the fast average, the slow average and the signal line.", reavg: "The average the stretch is measured from.",
+    look: "How many past days set the +100 / -100 scale.", tilen: "Bars of the fast and the slow average.",
+  };
+  const RESET_ICO = '<svg viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4 4.5v4h4"/></svg>';
+  const SEARCH_ICO = '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>';
+  const PRICE_INDS = ["ma", "supertrend", "bb", "swing", "watermark"];
   function indicatorMenu(startK) {
+    const old = document.querySelector(".ipd");
+    if (old) { old.shut(); if (!startK) return; }
+    if (!cur) return;
+    const btn = cur.box.querySelector('[data-act="ind"]');
     let sel = startK || (IND_MENU.flatMap((g) => g[1]).find(([k]) => cfg.ind[k].on) || ["ma"])[0];
-    const list = `<div class="ip-l"><input type="search" class="ind-q" placeholder="Search indicators" aria-label="Search indicators">` + IND_MENU.map(([g, items]) =>
-      `<div class="ind-g"><h4>${g}</h4>${items.map(([k, label, desc]) => `<button type="button" class="ip-row" data-k="${k}" data-t="${esc((label + " " + desc).toLowerCase())}">
-        <span>${label}</span><i class="ip-on">${cfg.ind[k].on ? "✓" : ""}</i></button>`).join("")}</div>`).join("") + "</div>";
-    const m = modal("Indicators", `<div class="ip">${list}<div class="ip-r" id="ipR"></div></div>`, null, true, "ind-pop");
+    const pop = document.createElement("div");
+    pop.className = "ipd";
+    pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", "Indicators");
+    pop.innerHTML = `<div class="ipd-l"><label class="ipd-q">${SEARCH_ICO}<input type="search" placeholder="Search" aria-label="Search indicators"></label>
+      <div class="ipd-list">${IND_MENU.map(([g, items]) => `<div class="ipd-g"><h6>${g}</h6>${items.map(([k, label, desc]) =>
+        `<button type="button" class="ipd-it" data-k="${k}" data-t="${esc((label + " " + desc).toLowerCase())}"><span>${label}</span><i class="ipd-tk"></i></button>`).join("")}</div>`).join("")}</div></div>
+      <div class="ipd-r"><div class="ipd-b" id="ipB"></div><div class="ipd-f" id="ipF"></div></div>`;
+    document.body.appendChild(pop);
+    const place = () => {
+      const b = btn ? btn.getBoundingClientRect() : { left: 40, bottom: 90 };
+      const W = Math.min(600, innerWidth - 16), top = Math.round(b.bottom + 6);
+      pop.style.width = `${W}px`;
+      pop.style.left = `${Math.round(Math.max(8, Math.min(b.left - 2, innerWidth - W - 8)))}px`;
+      pop.style.top = `${top}px`;
+      pop.style.height = `${Math.max(320, Math.min(650, innerHeight - top - 10))}px`;
+    };
+    place();
+    requestAnimationFrame(() => pop.classList.add("open"));
+    if (btn) btn.classList.add("open");
     let prev = null;
     const kill = () => { if (prev) { try { prev.remove(); } catch (e) { /* gone */ } prev = null; } };
-    const form = (k) => {
-      const v = cfg.ind[k];
-      if (k === "ma") {
-        const lines = (tf) => ((v[tf] || MA_PRESETS[v.preset || "mine"][tf]).map((x, j) => (Array.isArray(x) ? { type: x[0], len: x[1], color: x[2] || MA_COLORS[j % MA_COLORS.length] } : x)));
-        const row = (x, j, tf) => `<div class="ma-row"><select name="type"><option ${x.type === "SMA" ? "selected" : ""}>SMA</option><option ${x.type === "EMA" ? "selected" : ""}>EMA</option></select>
-          <input type="number" name="len" min="2" value="${x.len}">${swatch(`c_${tf}_${j}`, x.color)}<button class="btn sm" data-del type="button" aria-label="Remove">✕</button></div>`;
-        return `<label class="f-row">Preset <select name="preset">${Object.entries(MA_PRESETS).map(([pk, p]) => `<option value="${pk}" ${!v.d && v.preset === pk ? "selected" : ""}>${p.label}</option>`).join("")}<option value="" ${v.d ? "selected" : ""}>Custom</option></select></label>
-          <div class="ma-grid">${["d", "w"].map((tf) => `<div class="ma-list" data-tf="${tf}"><h4>${tf === "d" ? "Daily chart" : "Weekly chart"}</h4>${lines(tf).map((x, j) => row(x, j, tf)).join("")}
-          <button class="btn sm" data-add="${tf}" type="button">+ Add average</button></div>`).join("")}</div>`;
-      }
-      return (IND_FIELDS[k] || []).map(([key, label, type, options]) => {
-        const val = v[key];
-        if (type === "bool") return `<label class="f-row"><input type="checkbox" name="${key}" ${val ? "checked" : ""}> ${label}</label>`;
-        if (type === "color") return `<div class="f-row">${label} ${swatch(key, val)}</div>`;
-        if (type === "sel") return `<label class="f-row">${label} <select name="${key}">${options.map((o) => `<option value="${o}" ${String(o) === String(val) ? "selected" : ""}>${BENCH[o] || o}</option>`).join("")}</select></label>`;
-        return `<label class="f-row">${label} <input type="number" step="any" name="${key}" value="${esc(val)}"></label>`;
-      }).join("") || '<p class="muted small">No settings.</p>';
+    const onDown = (e) => { if (!pop.contains(e.target) && !(btn && btn.contains(e.target))) shut(); };
+    const onKey = (e) => { if (e.key === "Escape") shut(); };
+    const shut = () => {
+      if (pop.classList.contains("closing")) return;
+      pop.classList.remove("open"); pop.classList.add("closing"); kill();
+      if (btn) btn.classList.remove("open");
+      document.removeEventListener("mousedown", onDown, true); document.removeEventListener("keydown", onKey); removeEventListener("resize", place);
+      setTimeout(() => pop.remove(), 160);
+    };
+    pop.shut = shut;
+    setTimeout(() => { document.addEventListener("mousedown", onDown, true); document.addEventListener("keydown", onKey); addEventListener("resize", place); });
+    const ticks = () => pop.querySelectorAll(".ipd-it").forEach((r) => { r.classList.toggle("sel", r.dataset.k === sel); r.querySelector(".ipd-tk").textContent = cfg.ind[r.dataset.k].on ? "✓" : ""; });
+
+    // ---- form pieces
+    const info = (t) => (INFO[t] ? `<i class="ipd-i" title="${esc(INFO[t])}">i</i>` : "");
+    const R = (label, ctl, tip, cls = "") => `<div class="ipf ${cls}"><span class="ipf-l">${label}${tip ? info(tip) : ""}</span><span class="ipf-c">${ctl}</span></div>`;
+    const num = (name, val, w = "") => `<input class="ipn ${w}" type="number" step="any" name="${name}" value="${esc(val)}">`;
+    const seg = (name, opts, val) => `<span class="ipseg" data-seg="${name}"><input type="hidden" name="${name}" value="${esc(val)}">${opts.map(([v, t]) =>
+      `<button type="button" data-v="${v}" class="${String(v) === String(val) ? "on" : ""}">${t}</button>`).join("")}</span>`;
+    const sel_ = (name, opts, val, numeric) => `<span class="ipsel"><select name="${name}" ${numeric ? "data-num" : ""}>${opts.map(([v, t]) =>
+      `<option value="${v}" ${String(v) === String(val) ? "selected" : ""}>${t}</option>`).join("")}</select></span>`;
+    const chk = (name, label, val, tip, right = "", cls = "") => `<div class="ipf ${cls}"><label class="ipf-l ipc"><input type="checkbox" name="${name}" ${val ? "checked" : ""}><span>${label}</span>${tip ? info(tip) : ""}</label><span class="ipf-c">${right}</span></div>`;
+    const paneSeg = (v) => R("Show on", seg("pane", [["above", "Pane above"], ["below", "Pane below"]], v.pane || "below"));
+    const benchOpts = Object.entries(BENCH);
+    const maRows = (v, tf) => ((v[tf] && v[tf].length ? v[tf] : maPreset(v.preset)[tf]) || []).map((m, j) => maRow(m, j));
+    const maLine = (x, j) => `<div class="ma-r"><input type="checkbox" class="ma-on" ${x.on ? "checked" : ""} aria-label="Show this average"><span class="ma-n">MA ${j + 1}</span>
+      ${sel_("", [["SMA", "SMA"], ["EMA", "EMA"]], x.type).replace('name=""', 'class="ma-t"')}<input class="ipn ma-len" type="number" min="2" step="1" value="${x.len}" aria-label="Length">
+      ${swatch(`ma_${Math.random().toString(36).slice(2, 8)}`, x.color)}<button type="button" class="ma-x" data-del aria-label="Remove this average">✕</button></div>`;
+    const presetOpts = () => [["", "Custom"], ...Object.entries(MA_PRESETS).map(([pk, p]) => [pk, pk === "mine" ? "My preset" : p.label])];
+    const forms = {
+      ma: (v) => `${R("Preset", sel_("preset", presetOpts(), v.custom ? "" : v.preset || "minervini"))}
+        ${["d", "w"].map((tf) => `<h6 class="ipd-h">${tf === "d" ? "Daily chart" : "Weekly chart"}</h6><div class="ma-list" data-tf="${tf}">${maRows(v, tf).map(maLine).join("")}</div>
+        <button type="button" class="ipd-add" data-add="${tf}">＋ Add average</button>`).join("")}
+        <button type="button" class="ipd-save" data-ip="savedef"><svg viewBox="0 0 24 24"><path d="M7 4h10v16l-5-3.5L7 20z"/></svg> Save current look as my default</button><span class="ipd-saved" hidden>Saved as your default</span>`,
+      supertrend: (v) => R("ATR length", num("len", v.len), "stlen") + R("ATR multiple", sel_("mult", [1, 1.5, 2, 2.5, 3, 3.5, 4, 5].map((x) => [x, `${x}×`]), v.mult, true), "stmult")
+        + R("Uptrend colour", swatch("up", v.up)) + R("Downtrend colour", swatch("down", v.down)),
+      bb: (v) => R("Length", num("len", v.len), "len") + R("Standard deviations", sel_("std", [1, 1.5, 2, 2.5, 3].map((x) => [x, x]), v.std, true), "bbstd")
+        + R("Middle line colour", swatch("mid", v.mid)) + R("Band colour", swatch("color", v.color)) + chk("fill", "Shade between the bands", v.fill),
+      swing: (v) => R("Fast and slow lengths", num("fast", v.fast, "sm") + num("slow", v.slow, "sm"), "swlen")
+        + R("Volume factor", sel_("vf", [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9].map((x) => [x, x]), v.vf, true), "vf"),
+      watermark: (v) => chk("symbol", "Symbol and timeframe", v.symbol) + chk("name", "Company name", v.name) + chk("mcap", "Market cap after the name", v.mcap)
+        + chk("sector", "Sector and industry", v.sector) + R("Where", seg("pos", [["top", "Top"], ["middle", "Middle"], ["bottom", "Bottom"]], v.pos))
+        + R("Text size", seg("size", [["S", "Small"], ["M", "Medium"], ["L", "Large"]], v.size)) + R("Text colour", swatch("color", v.color)),
+      volume: (v) => R("Show on", seg("pane", [["price", "Price chart"], ["below", "Pane below"]], v.pane)) + R("Bar colour", swatch("bar", v.bar))
+        + chk("avg", "Average volume line", v.avg, "avg", swatch("avgColor", v.avgColor))
+        + chk("colorHigh", "Colour high-volume days", v.colorHigh, "high", swatch("up", v.up) + swatch("down", v.down))
+        + R("High volume means", sel_("x", [["1", "Above the average"], ["1.5", "1.5× the average"], ["2", "2× the average"], ["2.5", "2.5× the average"]], String(v.x)), "", "sub")
+        + chk("pp", "Pocket pivots and dry-ups", v.pp, "pp", swatch("ppColor", v.ppColor) + swatch("dryColor", v.dryColor)),
+      rsline: (v) => paneSeg(v) + R("Compare with", sel_("bench", benchOpts, v.bench), "bench") + R("Line colour", swatch("color", v.color))
+        + chk("dot", "Dot on a new RS high", v.dot, "dot", swatch("dotColor", v.dotColor)),
+      mansfield: (v) => R("Compare with", sel_("bench", benchOpts, v.bench), "bench") + R("Length", num("len", v.len), "mlen") + R("Line colour", swatch("color", v.color))
+        + chk("bg", "Background colours", v.bg, "bg"),
+      stage: (v) => R("Colour strength", seg("strength", [["light", "Light"], ["medium", "Medium"], ["strong", "Strong"]], v.strength))
+        + `<h6 class="ipd-h">Colour key</h6><div class="ipd-key">${STAGE_KEY.map(([, n, t, cc]) => `<span><i style="background:${cc}"></i><b>${n}</b><em>${t}</em></span>`).join("")}</div>`,
+      rsi: (v) => paneSeg(v) + R("Length", num("len", v.len), "len") + R("Line colour", swatch("color", v.color))
+        + R("Upper and lower lines", num("ob", v.ob, "sm") + num("os", v.os, "sm")) + chk("shade", "Shade the zone between", v.shade),
+      macd: (v) => paneSeg(v) + R("Fast, slow and signal", num("fast", v.fast, "sm") + num("slow", v.slow, "sm") + num("sig", v.sig, "sm"), "macd")
+        + R("MACD line colour", swatch("color", v.color)) + R("Signal line colour", swatch("sigColor", v.sigColor)),
+      mfi: (v) => forms.rsi(v),
+      relext: (v) => paneSeg(v) + R("Average", sel_("type", [["SMA", "SMA"], ["EMA", "EMA"]], v.type) + num("ma", v.ma, "sm"), "reavg") + R("Lookback", num("lookback", v.lookback), "look")
+        + R("Overbought and oversold", num("ob", v.ob, "sm") + num("os", v.os, "sm")) + R("Line colour", swatch("color", v.color)) + chk("shade", "Shade the zones", v.shade),
+      atr: (v) => paneSeg(v) + R("Length", num("len", v.len), "len") + R("Line colour", swatch("color", v.color)),
+      adr: (v) => forms.atr(v),
+      ti: (v) => paneSeg(v) + R("Fast and slow averages", num("fast", v.fast, "sm") + num("slow", v.slow, "sm"), "tilen")
+        + R("Strong up and down levels", num("up", v.up, "sm") + num("dn", v.dn, "sm")) + chk("shade", "Shade the distance from 100", v.shade),
     };
     const read = (k) => {
-      const f = m.querySelector("#ipForm"), out = { ...cfg.ind[k] };
+      const f = pop.querySelector("#ipForm"), out = { ...cfg.ind[k] };
+      if (!f) return out;
       if (k === "ma") {
-        const rd = (tf) => [...f.querySelectorAll(`.ma-list[data-tf=${tf}] .ma-row`)].map((r) => ({ type: r.querySelector("[name=type]").value, len: Number(r.querySelector("[name=len]").value), color: r.querySelector("input[type=hidden]").value })).filter((x) => x.len >= 2);
+        const rd = (tf) => [...f.querySelectorAll(`.ma-list[data-tf=${tf}] .ma-r`)].map((r) => ({ type: r.querySelector(".ma-t").value, len: Number(r.querySelector(".ma-len").value),
+          color: r.querySelector(".sw input[type=hidden]").value, on: r.querySelector(".ma-on").checked })).filter((x) => x.len >= 2);
         out.d = rd("d"); out.w = rd("w");
+        const pr = f.querySelector("[name=preset]").value;
+        out.custom = !pr; if (pr) out.preset = pr;
         return out;
       }
-      for (const [key, , type] of IND_FIELDS[k] || []) {
-        const el = f.elements[key];
-        if (el) out[key] = type === "bool" ? el.checked : type === "num" ? Number(el.value) : el.value;
+      for (const el of f.querySelectorAll("[name]")) {
+        const key = el.name;
+        if (el.type === "checkbox") out[key] = el.checked;
+        else if (el.type === "number" || el.hasAttribute("data-num")) out[key] = Number(el.value);
+        else out[key] = el.value;
       }
       return out;
     };
+    const wmText = (v) => {
+      const r = cur.row, tf = cfg.tf === "D" ? "1D" : cfg.tf === "W" ? "1W" : cfg.tf, sz = { S: 0.75, M: 1, L: 1.3 }[v.size] || 1;
+      const ln = [v.symbol ? [`${r.symbol || r.name}, ${tf}`, 22] : null, v.name && r.name ? [`${r.name}${v.mcap && r.mcap_cr ? ` · ₹${fmt(r.mcap_cr, 0)} Cr` : ""}`, 13] : null,
+        v.sector && r.sector ? [[r.sector, r.basic_industry || r.industry].filter(Boolean).join(", "), 12] : null].filter(Boolean);
+      return `<div class="ipd-wm" style="color:${esc(soft(v.color, 0.75))};justify-content:${{ top: "flex-start", middle: "center", bottom: "flex-end" }[v.pos] || "center"}">${ln.map(([t, s]) => `<span style="font-size:${Math.round(s * sz)}px">${esc(t)}</span>`).join("")}</div>`;
+    };
     const preview = () => {
       kill();
-      const el = m.querySelector("#ipPrev");
+      const el = pop.querySelector("#ipPrev");
       if (!el || !cur || !cur.daily) return;
+      const v = read(sel);
+      if (sel === "watermark") { el.innerHTML = wmText(v); return; }
       const tmp = JSON.parse(JSON.stringify(cfg));
       for (const k in tmp.ind) tmp.ind[k].on = false;
-      tmp.ind[sel] = { ...read(sel), on: true, hidden: false };
-      if (["rsline", "mansfield"].includes(sel)) tmp.ind.rsline.bench = tmp.ind.rsline.bench || cfg.ind.rsline.bench;
+      tmp.ind[sel] = { ...v, on: true, hidden: false };
+      const onlyPane = !PRICE_INDS.includes(sel) && !(sel === "volume" && v.pane === "price");
       const token = {};
-      m._tok = token;
-      draw(false, { el, cfg: tmp, alive: () => m.isConnected && m._tok === token }).then((ch) => { if (ch && m.isConnected && m._tok === token) prev = ch; else if (ch) ch.remove(); });
+      pop._tok = token;
+      draw(false, { el, cfg: tmp, only: onlyPane, alive: () => pop.isConnected && pop._tok === token }).then((ch) => { if (ch && pop.isConnected && pop._tok === token) prev = ch; else if (ch) ch.remove(); });
     };
     const showK = (k) => {
+      kill();
       sel = k;
-      m.querySelectorAll(".ip-row").forEach((r) => r.classList.toggle("on", r.dataset.k === k));
-      const on = cfg.ind[k].on;
-      m.querySelector("#ipR").innerHTML = `<h3>${esc(indLabel(k))}</h3><p class="muted small">${esc(indDesc(k))}</p>
-        <div class="ip-prev"><small>Preview · ${esc(cur ? cur.row.symbol || cur.row.name : "")}</small><div id="ipPrev"></div></div>
-        <form id="ipForm" class="f">${form(k)}</form>
-        <div class="ip-f"><button class="btn" type="button" data-ip="reset" title="Back to the standard settings">Reset</button>
-        ${on ? `<button class="btn" type="button" data-ip="remove">Remove</button>` : ""}<span></span>
-        <button class="btn" type="button" data-x>Cancel</button><button class="btn primary" type="button" data-ip="apply">${on ? "Update" : "Add to chart"}</button></div>`;
+      ticks();
+      const on = cfg.ind[k].on, wk = S.tfParse(cfg.tf).u !== "D";
+      pop.querySelector("#ipB").innerHTML = `<h3>${esc(indLabel(k))}</h3><p class="ipd-d">${esc(indDesc(k))}</p>
+        <div class="ipd-pv"><div class="ipd-pvh"><span>Preview · <b>${esc(cur.row.symbol || cur.row.name || "")}</b></span><span>${wk ? "Last 60 weeks" : "Last 3 months"}</span></div><div class="ipd-pvc" id="ipPrev"></div></div>
+        <form id="ipForm" class="ipd-form" onsubmit="return false">${(forms[k] || (() => ""))(cfg.ind[k])}</form>`;
+      pop.querySelector("#ipF").innerHTML = `<button type="button" class="ipd-ib" data-ip="reset" title="Back to the standard settings" aria-label="Reset">${RESET_ICO}</button>
+        ${on ? `<button type="button" class="ipd-ib" data-ip="remove" title="Remove from the chart" aria-label="Remove">${ICO.trash}</button>` : ""}<span></span>
+        <button type="button" class="btn" data-ip="cancel">Cancel</button><button type="button" class="btn primary" data-ip="apply">${on ? "Update" : "Apply"}</button>`;
+      pop.querySelector("#ipB").scrollTop = 0;
       preview();
     };
-    wireSwatches(m, () => preview());
-    m.querySelector(".ind-q").oninput = (e) => {
-      const q = e.target.value.toLowerCase();
-      m.querySelectorAll(".ip-row").forEach((r) => { r.hidden = !r.dataset.t.includes(q); });
+    const renumber = () => pop.querySelectorAll(".ma-list").forEach((l) => l.querySelectorAll(".ma-n").forEach((n, j) => { n.textContent = `MA ${j + 1}`; }));
+    const custom = () => { const p = pop.querySelector("#ipForm [name=preset]"); if (p) p.value = ""; };
+    wireSwatches(pop, () => { if (sel === "ma") custom(); preview(); });
+    pop.querySelector(".ipd-q input").oninput = (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      pop.querySelectorAll(".ipd-it").forEach((r) => { r.hidden = !!q && !r.dataset.t.includes(q); });
+      pop.querySelectorAll(".ipd-g").forEach((g) => { g.hidden = ![...g.querySelectorAll(".ipd-it")].some((r) => !r.hidden); });
     };
-    m.addEventListener("change", (e) => { if (e.target.closest("#ipForm")) { if (e.target.name === "preset" && e.target.value) { const p = MA_PRESETS[e.target.value]; cfg.ind.ma = { ...cfg.ind.ma, preset: e.target.value, d: null, w: null }; m.querySelector("#ipForm").innerHTML = form("ma"); void p; } preview(); } });
-    m.addEventListener("input", (e) => { if (e.target.closest("#ipForm") && e.target.type === "number") preview(); });
-    m.addEventListener("click", (e) => {
-      const r = e.target.closest(".ip-row"); if (r) return showK(r.dataset.k);
-      const add = e.target.closest("[data-add]");
-      if (add) { const tf = add.dataset.add, j = add.parentElement.querySelectorAll(".ma-row").length; add.insertAdjacentHTML("beforebegin", `<div class="ma-row"><select name="type"><option>SMA</option><option>EMA</option></select><input type="number" name="len" min="2" value="50">${swatch(`c_${tf}_${j}`, MA_COLORS[j % MA_COLORS.length])}<button class="btn sm" data-del type="button" aria-label="Remove">✕</button></div>`); return preview(); }
-      const del = e.target.closest("[data-del]"); if (del) { del.closest(".ma-row").remove(); return preview(); }
-      const a = e.target.closest("[data-ip]"); if (!a) return;
-      if (a.dataset.ip === "reset") { cfg.ind[sel] = { ...JSON.parse(JSON.stringify(DEFAULTS.ind[sel])), on: cfg.ind[sel].on }; save(); return showK(sel); }
-      if (a.dataset.ip === "remove") cfg.ind[sel] = { ...cfg.ind[sel], on: false, hidden: false };
-      if (a.dataset.ip === "apply") { const nv = read(sel); if (sel === "ma") { const pr = m.querySelector("[name=preset]"); if (pr && pr.value) { nv.preset = pr.value; } } cfg.ind[sel] = { ...nv, on: true, hidden: false }; }
-      save(); kill(); m.shut(); draw(true); renderTools();
+    pop.addEventListener("change", (e) => {
+      if (!e.target.closest("#ipForm")) return;
+      if (e.target.name === "preset") {
+        if (e.target.value) {
+          const p = maPreset(e.target.value);
+          for (const tf of ["d", "w"]) pop.querySelector(`.ma-list[data-tf=${tf}]`).innerHTML = (p[tf] || []).map((m, j) => maLine(maRow(m, j), j)).join("");
+        }
+      } else if (sel === "ma") custom();
+      preview();
     });
-    const obs = new MutationObserver(() => { if (!m.isConnected) { kill(); obs.disconnect(); } });
-    obs.observe(document.body, { childList: true });
+    pop.addEventListener("input", (e) => { if (e.target.closest("#ipForm") && e.target.type === "number") { if (sel === "ma") custom(); preview(); } });
+    pop.addEventListener("click", (e) => {
+      const it = e.target.closest(".ipd-it"); if (it) return showK(it.dataset.k);
+      const sb = e.target.closest(".ipseg button");
+      if (sb) {
+        const g = sb.closest(".ipseg");
+        g.querySelector("input").value = sb.dataset.v;
+        g.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === sb));
+        return preview();
+      }
+      const add = e.target.closest("[data-add]");
+      if (add) {
+        const list = pop.querySelector(`.ma-list[data-tf=${add.dataset.add}]`), j = list.children.length;
+        list.insertAdjacentHTML("beforeend", maLine({ type: "SMA", len: 50, color: MA_COLORS[j % MA_COLORS.length], on: true }, j));
+        custom(); return preview();
+      }
+      const del = e.target.closest("[data-del]");
+      if (del) { del.closest(".ma-r").remove(); renumber(); custom(); return preview(); }
+      const a = e.target.closest("[data-ip]"); if (!a) return;
+      const act = a.dataset.ip;
+      if (act === "cancel") return shut();
+      if (act === "savedef") {
+        const v = read("ma");
+        store.set("sd-ma-mine", { label: "My preset", d: v.d, w: v.w });
+        const p = pop.querySelector("#ipForm [name=preset]"); if (p) p.value = "mine";
+        const n = pop.querySelector(".ipd-saved"); if (n) { n.hidden = false; setTimeout(() => { n.hidden = true; }, 2200); }
+        return;
+      }
+      if (act === "reset") {
+        const keep = cfg.ind[sel].on;
+        const fresh = { ...JSON.parse(JSON.stringify(DEFAULTS.ind[sel])), on: keep };
+        pop.querySelector("#ipForm").innerHTML = forms[sel](fresh);
+        return preview();
+      }
+      if (act === "remove") cfg.ind[sel] = { ...cfg.ind[sel], on: false, hidden: false };
+      if (act === "apply") cfg.ind[sel] = { ...read(sel), on: true, hidden: false };
+      save(); shut(); draw(true); renderTools();
+    });
     showK(sel);
   }
 

@@ -79,6 +79,22 @@ test("swing points alternate high / low with % moves", () => {
   assert.ok(Math.abs(s[1].move - (90 / 120 - 1) * 100) < 1e-9);
 });
 
+test("Mansfield RS = RS line against its own average, in % (20-Nov-2026)", () => {
+  const rs = [1, 2, 3, 4, 5, 6];
+  const m = I.mansfield(rs, 3);
+  assert.deepStrictEqual(m.slice(0, 2), [null, null]);
+  assert.ok(Math.abs(m[2] - (3 / 2 - 1) * 100) < 1e-9);
+  assert.ok(Math.abs(m[5] - (6 / 5 - 1) * 100) < 1e-9);
+});
+
+test("Relative Extension can measure from an EMA (indicator menu 'Average' choice)", () => {
+  const cs = candles("TITAN"), c = cs.map((x) => x.close);
+  const sma = I.relativeExtension(c, 50, 250), ema = I.relativeExtension(c, 50, 250, "EMA");
+  assert.deepStrictEqual(I.relativeExtension(c, 50, 250, "SMA"), sma);
+  const t = c.length - 1;
+  assert.ok(ema[t] != null && Math.abs(ema[t]) <= 100 && ema[t] !== sma[t]);
+});
+
 test("RS line uses the last benchmark close on or before each day", () => {
   const cs = [{ time: "2026-01-01", close: 10 }, { time: "2026-01-03", close: 12 }];
   const b = [{ time: "2026-01-01", close: 100 }, { time: "2026-01-02", close: 200 }];

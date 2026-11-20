@@ -1726,4 +1726,30 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   PE 80 %, EPS TTM 78 % (91 % within 1), PEG 83 %, EPS / sales / PAT growth YoY 83 / 84 / 84 %, QoQ 83 / 84 %.
   OPM 16 % (no formula fits; NSE stocks 32 %: the reference's own operating profit). On 16-Nov our values are newer
   (Sep-26 quarter), the reference catches up later.
-- DONE. NEXT: Viraj pulls, then commits (script, tests, docs, ~240 data/fundamentals files).
+- DONE. Pushed 19-Nov (e0decbe + merge 951d009; an undone merge was cleaned first), Tests #110 + Deploy website #84 green.
+  Live: EPS TTM for 2,396 of 2,635 stocks (ABBOTINDIA PE 33.03, MCX 51.66, KENNAMET 30.29). Next: nothing open.
+
+### 2026-11-20: Indicator menu and indicator plots like the reference (Viraj's 3 videos of 12-Nov-2026)
+- Viraj: every indicator page, its options, the plot on the chart, sizes, fonts, colours, animation as in his videos
+  ("indictor on the price", "RSI", "Volume and trend" on his F: drive). Frames (scene changes, 385 kept) in
+  reference/video_frames/ (git-ignored, never commit).
+- site/chart.js: the indicator menu is now a drop-down under the "Indicators" button (fade + slide, caret flips): search,
+  the reference's groups and order (On the price: MA, Supertrend, Bollinger, Swing Bands, Watermark | Volume and strength:
+  Volume, RS line, Mansfield RS | Trend: Stage Analysis | Oscillators: RSI, MACD, MFI, Relative Extension, ATR, ADR %,
+  Trend Intensity), tick for indicators on the chart; right side: name, description (our own words), preview of only this
+  indicator (last 3 months / 60 weeks), the same settings as the reference (Show on pane above / below, colours, levels,
+  shade options, MA rows with tick boxes + Add average + "Save current look as my default", Watermark where / size / colour,
+  Volume bar / average / high-volume / pocket-pivot colours, RS line + Mansfield "Compare with" incl. Sector index, Stage
+  colour strength + colour key), reset / remove icons, Cancel, Apply (Update when on).
+- Plots: Supertrend green under / red over with no joining stroke at a flip; Bollinger blue bands + orange middle + light
+  fill; Swing Bands = green / red shaded ribbon only; RSI / MFI shaded zone between the lines; MACD blue / pink histogram
+  (faint while shrinking), dark MACD + grey signal; Relative Extension red / green zones + "% from MA" + Overbought /
+  Oversold badge; TI optional green / red shade from 100; Mansfield background colours; Stage strip as solid blocks; any
+  oscillator / RS line can sit above the price. Pane titles with eye / settings / remove, like the reference.
+  Shaded areas are drawn in an SVG layer over the chart (fillLayer), redrawn on scroll / zoom / resize / pane drag.
+- One-time settings switch (look 3): new standard settings and colours; which indicators are on and own MAs are kept.
+- Numbers: RSI / ADR equal the reference exports (99.2 / 99.8 %, Phase 4); MACD, ATR, MFI, Bollinger, T3 = TA-Lib;
+  all chart indicators = the Python pipeline (tests/js/ind.test.js); new tests for Mansfield RS and Rel. Ext. on an EMA.
+  The videos' pane titles show the live 12-Nov value (market open), so they cannot be compared bar by bar.
+- Found: the chart library joins line gaps (Supertrend drew a long diagonal) and fails on a pane whose only price scale
+  is hidden (Stage pane) - both handled.

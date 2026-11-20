@@ -1785,3 +1785,6 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   line start = their level_date 256 / 326; Shakeout "U" day = their fall_date 30 / 32 (biggest intraday drop of the 2
   sessions before the recovery; the lowest low gave 28 / 32). VCP: DYNAMATECH pivot 14498 and 1st / 3rd pullback
   21.6 / 4.9 % = the video (21.6 / 4.8); the middle pullback differs (5.9 vs 9.0: their swing rule, see calibration).
+- Pushed 20-Nov (28e0229 + merge 3c569a1): Tests #113, Deploy #86 green, live VCP drawing checked (DYNAMATECH). Found
+  live: the deep first trough of the VCP wave fell below the price pane -> the wave is now placed in pixels under the
+  base's lowest low, at most 64 px deep, labels inside the pane. Daily updates #91-93 passed (shrink-guard fix works).

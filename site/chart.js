@@ -1477,12 +1477,15 @@
         }
       }
       if (sd.wave) {               // VCP: a wave under the price - deep first pullback, then smaller ones, -% under each trough
-        const W = sd.wave, range = Math.max(W.top - W.lo, W.top * 0.01), base = W.lo - range * 0.12;
+        // placed in pixels under the base's lowest low so it always fits inside the price pane (labels included)
+        const W = sd.wave, yLo = Y(W.lo), bottom = pb ? pb.top + pb.h - 26 : null;
         const maxD = Math.max(...W.legs.map((g) => g.depth));
+        const yb = yLo == null ? null : Math.min(yLo + 14, bottom != null ? bottom - 20 : yLo + 14);
+        const room = yb == null ? 0 : Math.max(16, Math.min(64, (bottom != null ? bottom : yb + 64) - yb));
         const pts = [];
-        W.legs.forEach((g) => { pts.push([g.hiT, base, null]); pts.push([g.loT, base - (g.depth / maxD) * range * 0.32, g.depth]); });
-        pts.push([W.endT, base + range * 0.04, null]);
-        const xy = pts.map(([t, pp, d]) => { const x = X(t), y = Y(pp); return x == null || y == null ? null : [x, y, d]; }).filter(Boolean);
+        W.legs.forEach((g) => { pts.push([g.hiT, 0, null]); pts.push([g.loT, (g.depth / maxD) * room, g.depth]); });
+        pts.push([W.endT, -room * 0.12, null]);
+        const xy = yb == null ? [] : pts.map(([t, dy, d]) => { const x = X(t); return x == null ? null : [x, yb + dy, d]; }).filter(Boolean);
         if (xy.length >= 3) {
           let d = `M${xy[0][0]},${xy[0][1]}`;
           for (let i = 0; i < xy.length - 1; i++) {      // Catmull-Rom -> cubic Bezier

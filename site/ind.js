@@ -274,8 +274,40 @@
     return out;
   }
 
+  /** confirmed swing lows after `start` (a low): a low counts once price rose thr above it (= engine._zigzag_lows) */
+  function zigzagLows(h, l, start, thr) {
+    const lows = [];
+    let seek = "H", ei = start, ev = h[start];
+    for (let i = start + 1; i < h.length; i++) {
+      if (seek === "H") {
+        if (h[i] > ev) { ei = i; ev = h[i]; } else if (l[i] <= ev * (1 - thr)) { seek = "L"; ei = i; ev = l[i]; }
+      } else if (l[i] < ev) { ei = i; ev = l[i]; } else if (h[i] >= ev * (1 + thr)) { lows.push(ei); seek = "H"; ei = i; ev = h[i]; }
+    }
+    return lows;
+  }
+  /** the three VCP pullbacks of a VCP that appeared on bar e with its pivot (base high) on bar p - the legs of
+      engine._vcp_at: pivot -> L1 (lowest low after it), H1 -> a (last confirmed zigzag low, 3 % turns), H2 -> L3.
+      Returns [{hi, lo, depth}] x 3 (bar indexes) or null. Drawn by the VCP scan on the chart (20-Nov-2026). */
+  function vcpLegs(h, l, p, e, swing = 0.03) {
+    if (p < 0 || e <= p + 2 || e >= h.length) return null;
+    const H = h.slice(0, e + 1), Lo = l.slice(0, e + 1);
+    const argmin = (a, b) => { let k = a; for (let i = a; i <= b; i++) if (Lo[i] < Lo[k]) k = i; return k; };
+    const argmax = (a, b) => { let k = a; for (let i = a; i <= b; i++) if (H[i] > H[k]) k = i; return k; };
+    const i1 = argmin(p + 1, e);
+    const lows = zigzagLows(H, Lo, i1, swing);
+    if (!lows.length || lows[lows.length - 1] >= e) return null;
+    const a = lows[lows.length - 1], h1 = argmax(i1, a);
+    if (a + 1 > e) return null;
+    const j2 = argmax(a + 1, e);
+    if (j2 >= e) return null;
+    const k3 = argmin(j2 + 1, e);
+    return [{ hi: p, lo: i1, depth: (1 - Lo[i1] / H[p]) * 100 }, { hi: h1, lo: a, depth: (1 - Lo[a] / H[h1]) * 100 },
+      { hi: j2, lo: k3, depth: (1 - Lo[k3] / H[j2]) * 100 }];
+  }
+
   const api = { N, sma, smaMin, ema, ewm, wilder, wma, vwma, trueRange, atr, rsi, macd, mfi, bollinger, supertrend, t3,
-    relativeExtension, trendIntensity, adr, align, rsLine, mansfield, stage, volumeFlags, swings, pivots, baseSwings, contractions };
+    relativeExtension, trendIntensity, adr, align, rsLine, mansfield, stage, volumeFlags, swings, pivots, baseSwings, contractions,
+    zigzagLows, vcpLegs };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.SDI = api;
 })(typeof self !== "undefined" ? self : this);

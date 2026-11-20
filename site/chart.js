@@ -42,7 +42,7 @@
   /* ------------------------------------------------------------------ settings (with defaults) */
   const DEFAULTS = {
     style: "mono", type: "candle", tf: "D", tfFav: ["D", "W"], tfCustom: [], look: 2,
-    marks: { hilo52: false, swings: false, swingPct: 10, circuit: false, inside: false, actions: true, pivot: true, vcp: true, cup: true, tight: false, earnings: true, news: true },
+    marks: { hilo52: false, swings: false, swingPct: 10, circuit: false, inside: false, actions: true, pivot: false, vcp: false, cup: false, tight: false, earnings: true, news: true },
     show: { earn: true, earnOpen: true, desc: true, due: true }, grid: false,
     chips: { float: true, rs: true, stage: true, from: true, theme: true },
     // indicator settings and colours as in the reference's indicator pages (Viraj's videos of 12-Nov-2026, built 20-Nov-2026)
@@ -81,6 +81,9 @@
     }
     store.set(KEY, cfg);
   }
+  // one-time (20-Nov-2026, Viraj's scan videos): the general pivot / VCP / cup marks are off like the reference's
+  // "Pivot / breakout line" setting; a scanner draws its own pattern. They can be switched on again in Chart settings.
+  if (cfg.look < 4) { cfg.look = 4; cfg.marks.pivot = false; cfg.marks.vcp = false; cfg.marks.cup = false; store.set(KEY, cfg); }
   const save = () => store.set(KEY, cfg);
 
   /* indicator list: the reference's groups, order and names (20-Nov-2026); descriptions in our own words */
@@ -206,6 +209,104 @@
     chart.subscribeCrosshairMove(later);            // also catches price-axis drags
     later(); setTimeout(render, 90); setTimeout(render, 450);
     return render;
+  }
+
+  /* ------------------------------------------------------------------ scanner drawings
+     What the reference draws when a stock is opened from a scanner (Viraj's videos of 12-Nov-2026), from the same screen
+     fields that put the stock in the scan, so the drawing always matches the scan:
+       stage2-breakout  "Pivot" line across the chart at the breakout level (highest high of the 50 sessions before it)
+       recent-breakout  line from the old resistance (swing high) to the breakout day
+       daily-base / weekly-base  base level from its swing high to today (tick at the end) + a shallow arc under the base
+       near-pivot       base level line with the end tick, no arc
+       vcp              pivot line from the base high + a wave under the price with the three pullbacks (-%)
+       tight-range      top and bottom of the tight sessions
+       ipo-base         IPO base level from its day to today
+       big-reversal     arrow under the reversal day        shakeout  a "U" under the shakeout day
+     Every other scanner draws nothing (also the reference). Indexes are on the daily bars; on weekly / other charts the
+     drawing is placed on the bar that holds that day. */
+  const SCAN_BLUE = "#2f5bd3";
+  function scanDrawing(scan, r, D, bars) {
+    if (!scan || !r || !D || D.length < 3) return null;
+    const n = D.length, num = (k) => (r[k] == null || r[k] === "" || Number.isNaN(Number(r[k])) ? null : Number(r[k]));
+    const H = D.map((b) => b.high), Lw = D.map((b) => b.low);
+    const T = (i) => D[Math.max(0, Math.min(n - 1, i))].time;
+    const out = { lines: [] };
+    const seg = (i1, i2, p, tick) => { if (i1 >= 0 && i1 <= i2 && p > 0) out.lines.push({ t1: T(i1), t2: T(i2), p, tick }); };
+    if (scan === "stage2-breakout") {
+      const age = num("s2b_age"); if (age == null) return null;
+      const b = n - 1 - age; if (b < 2) return null;
+      let lv = -Infinity; for (let k = Math.max(0, b - 50); k < b; k++) lv = Math.max(lv, H[k]);
+      out.pivot = lv;
+      return out;
+    }
+    if (scan === "recent-breakout") {
+      const age = num("rb_age"), lv = num("rb_level"); if (age == null || !lv) return null;
+      const b = n - 1 - age;
+      let j = -1; for (let k = b - 1; k >= Math.max(0, b - 400); k--) if (Math.abs(H[k] - lv) <= lv * 1e-6) { j = k; break; }
+      if (j < 0) return null;
+      seg(j, Math.min(n - 1, b + 1), lv, false);
+      return out;
+    }
+    if (scan === "daily-base" || scan === "near-pivot") {
+      const age = num("lvl_age"), lv = num("lvl_price"); if (age == null || !lv) return null;
+      const j = n - 1 - age;
+      seg(j, n - 1, lv, true);
+      if (scan === "daily-base") out.arc = { t1: T(j), t2: T(n - 1) };
+      return out;
+    }
+    if (scan === "weekly-base") {
+      const age = num("wlvl_age"), lv = num("wlvl_price"); if (age == null || !lv) return null;
+      const W = S.toPeriod(D, "W", 1), w = W.length - 1 - age; if (w < 0) return null;
+      const w0 = W[w].time, w1 = W[w + 1] ? W[w + 1].time : "9999";
+      let j = -1; for (let k = 0; k < n; k++) if (D[k].time >= w0 && D[k].time < w1 && (j < 0 || H[k] > H[j])) j = k;
+      if (j < 0) return null;
+      seg(j, n - 1, lv, true);
+      out.arc = { t1: T(j), t2: T(n - 1) };
+      return out;
+    }
+    if (scan === "ipo-base") {
+      const bb = num("ipo_base_bars"), lv = num("ipo_lvl"); if (bb == null || !lv) return null;
+      seg(n - 1 - bb, n - 1, lv, true);
+      return out;
+    }
+    if (scan === "vcp") {
+      const age = num("vcp_age"), bb = num("vcp_base_bars"), pv = num("vcp_pivot"); if (age == null || bb == null || !pv) return null;
+      const e = n - 1 - age, p = e - bb + 1;
+      seg(p, n - 1, pv, false);
+      const legs = I.vcpLegs(H, Lw, p, e);
+      if (legs) {
+        const dep = [num("vcp_depth1"), num("vcp_depth2"), num("vcp_depth3")];
+        let lo = Infinity; for (let k = p; k < n; k++) lo = Math.min(lo, Lw[k]);
+        out.wave = { top: pv, lo, endT: T(n - 1), legs: legs.map((g, k) => ({ hiT: T(g.hi), loT: T(g.lo), depth: dep[k] != null ? dep[k] : g.depth })) };
+      }
+      return out;
+    }
+    if (scan === "tight-range") {
+      // the quiet run (rti mode, 3+ sessions) when it qualified, else the tight box (box mode) - the scan's two modes
+      const rb = num("rti_bars"), nb = rb >= 3 ? rb : num("box_bars"); if (!nb || nb < 2) return null;
+      const a = Math.max(0, n - nb);
+      let hi = -Infinity, lo = Infinity; for (let k = a; k < n; k++) { hi = Math.max(hi, H[k]); lo = Math.min(lo, Lw[k]); }
+      seg(a, n - 1, hi, false); seg(a, n - 1, lo, false);
+      return out;
+    }
+    if (scan === "big-reversal") {
+      const age = num("br_age"); if (age == null) return null;
+      const b = n - 1 - age; if (b < 0) return null;
+      out.arrow = { t: T(b), p: Lw[b] };
+      return out;
+    }
+    if (scan === "shakeout") {
+      const age = num("so_age"); if (age == null) return null;
+      // the shakeout day = the biggest intraday drop from the close before, in the 2 sessions up to the recovery
+      // (equals the reference's fall_date on 30 of 32 stocks, 02-06 Nov 2026; the lowest low: 28 of 32)
+      const C = D.map((b) => b.close), rec = n - 1 - age;
+      let k = rec, best = -Infinity;
+      for (let q = Math.max(1, rec - 2); q <= rec; q++) { const dr = (C[q - 1] - Lw[q]) / C[q - 1]; if (dr > best) { best = dr; k = q; } }
+      out.cup = { t: T(k), p: Lw[k], t1: T(k - 1), t2: T(k + 1) };
+      return out;
+    }
+    void bars;
+    return null;
   }
 
   /* pane titles like the reference ("RSI 14 46.9", eye / settings / remove on hover); the value follows the crosshair */
@@ -461,6 +562,12 @@
         }) : [];
         cur.pattern = { startT: times[i], endT: times[t], loT: times[loAt], lo, top: pvt.piv[t], len: t - i, cup: C.marks.cup !== false && t - i >= 15, waves };
       }
+    }
+    // the open scanner's own drawing (Viraj's scan videos of 12-Nov-2026): every scan draws only its own pattern
+    if (!pv) {
+      cur.scanDraw = scanDrawing(cur.opts.scan, cur.row, cur.daily, bars);
+      const sd = cur.scanDraw;
+      if (sd && sd.pivot != null) price.createPriceLine({ price: sd.pivot, color: SCAN_BLUE, lineWidth: 2, lineStyle: 0, axisLabelVisible: true, title: "Pivot" });
     }
     if (!pv && C.marks.tight && bars.length > 5) {           // runs of 5+ closes within 2 % of each other: green band
       const top = [], bot = [];
@@ -1299,7 +1406,8 @@
       if (cur.ro) cur.ro.disconnect();
       cur.ro = new ResizeObserver(() => this.render());
       cur.ro.observe(cur.box.querySelector(".ch-wrap"));
-      if (cur.pattern) series.priceScale().applyOptions({ scaleMargins: { top: 0.08, bottom: 0.2 } });
+      const sdr = cur.scanDraw;
+      if (cur.pattern || (sdr && (sdr.wave || sdr.arc || sdr.arrow || sdr.cup))) series.priceScale().applyOptions({ scaleMargins: { top: 0.08, bottom: 0.2 } });
       setTimeout(() => this.render(), 50);
     },
     toData(p) { return p && p.point && p.time ? { time: p.time, price: this.series.coordinateToPrice(p.point.y) } : null; },
@@ -1339,6 +1447,66 @@
       const r = el.getBoundingClientRect();
       let sw = 60; try { sw = this.chart.priceScale("right").width(); } catch (e) { /* default */ }
       return { top: this.paneTop(), h: r.height, w: Math.max(0, r.width - sw) };
+    },
+    /** a daily date -> the time of the bar that holds it (weekly / monthly / custom charts) */
+    barT(t) {
+      const B = cur && cur.bars; if (!B || !B.length) return t;
+      let lo = 0, hi = B.length - 1; if (t < B[0].time) return B[0].time;
+      while (lo < hi) { const m = (lo + hi + 1) >> 1; if (B[m].time <= t) lo = m; else hi = m - 1; }
+      return B[lo].time;
+    },
+    /** the open scanner's drawing (scanDrawing) in the SVG layer */
+    scanParts(parts, pb) {
+      const sd = cur.scanDraw;
+      if (!sd || !this.series) return;
+      const X = (t) => this.chart.timeScale().timeToCoordinate(this.barT(t)), Y = (p) => { const y = this.series.priceToCoordinate(p); return y == null ? null : y + this.paneTop(); };
+      const blue = SCAN_BLUE;
+      for (const ln of sd.lines || []) {
+        let x1 = X(ln.t1), x2 = X(ln.t2); const y = Y(ln.p);
+        if (y == null) continue;
+        if (x1 == null) x1 = 0;
+        if (x2 == null) continue;
+        parts.push(`<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${blue}" stroke-width="1.6" stroke-linecap="round"/>`);
+        if (ln.tick) parts.push(`<line x1="${x2}" y1="${y}" x2="${x2}" y2="${y + 7}" stroke="${blue}" stroke-width="1.6" stroke-linecap="round"/>`);
+      }
+      if (sd.arc && pb) {          // shallow arc near the bottom of the price pane, under the whole base
+        const x1 = X(sd.arc.t1), x2 = X(sd.arc.t2);
+        if (x1 != null && x2 != null && x2 - x1 > 8) {
+          const yb = pb.top + pb.h - 34, d = Math.min(16, Math.max(8, (x2 - x1) * 0.04));
+          parts.push(`<path d="M${x1},${yb - d} Q${(x1 + x2) / 2},${yb + d} ${x2},${yb - d}" stroke="${blue}" stroke-width="1.8" fill="none" stroke-linecap="round"/>`);
+        }
+      }
+      if (sd.wave) {               // VCP: a wave under the price - deep first pullback, then smaller ones, -% under each trough
+        const W = sd.wave, range = Math.max(W.top - W.lo, W.top * 0.01), base = W.lo - range * 0.12;
+        const maxD = Math.max(...W.legs.map((g) => g.depth));
+        const pts = [];
+        W.legs.forEach((g) => { pts.push([g.hiT, base, null]); pts.push([g.loT, base - (g.depth / maxD) * range * 0.32, g.depth]); });
+        pts.push([W.endT, base + range * 0.04, null]);
+        const xy = pts.map(([t, pp, d]) => { const x = X(t), y = Y(pp); return x == null || y == null ? null : [x, y, d]; }).filter(Boolean);
+        if (xy.length >= 3) {
+          let d = `M${xy[0][0]},${xy[0][1]}`;
+          for (let i = 0; i < xy.length - 1; i++) {      // Catmull-Rom -> cubic Bezier
+            const p0 = xy[i - 1] || xy[i], p1 = xy[i], p2 = xy[i + 1], p3 = xy[i + 2] || p2;
+            d += ` C${p1[0] + (p2[0] - p0[0]) / 6},${p1[1] + (p2[1] - p0[1]) / 6} ${p2[0] - (p3[0] - p1[0]) / 6},${p2[1] - (p3[1] - p1[1]) / 6} ${p2[0]},${p2[1]}`;
+          }
+          parts.push(`<path d="${d}" stroke="${blue}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`);
+          xy.filter((q) => q[2] != null).forEach(([x, y, dep]) => {
+            const tx = `-${dep.toFixed(1)}%`, w = tx.length * 6.2 + 12;
+            parts.push(`<g><rect x="${x - w / 2}" y="${y + 5}" width="${w}" height="16" rx="3" fill="${blue}"/><text x="${x}" y="${y + 16.5}" text-anchor="middle" fill="#fff" font-size="10.5" font-weight="600">${tx}</text></g>`);
+          });
+        }
+      }
+      if (sd.arrow) {              // big reversal: an arrow pointing up at the reversal day
+        const x = X(sd.arrow.t), y = Y(sd.arrow.p);
+        if (x != null && y != null) parts.push(`<g stroke="${blue}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M${x},${y + 26} V${y + 7}"/><path d="M${x - 5},${y + 12} L${x},${y + 6} L${x + 5},${y + 12}"/></g>`);
+      }
+      if (sd.cup) {                // shakeout: a "U" under the shakeout day
+        const x = X(sd.cup.t), y = Y(sd.cup.p), xa = X(sd.cup.t1), xb = X(sd.cup.t2);
+        if (x != null && y != null) {
+          const hw = Math.max(9, Math.min(22, xa != null && xb != null ? (xb - xa) * 0.75 : 12));
+          parts.push(`<path d="M${x - hw},${y + 6} Q${x},${y + 6 + hw * 2.6} ${x + hw},${y + 6}" stroke="${blue}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`);
+        }
+      }
     },
     pattern(parts) {
       const P = cur.pattern;
@@ -1381,7 +1549,7 @@
       if (vl && cur.volPane != null) { const t = this.paneTopOf(cur.volPane); if (t != null) vl.style.top = `${t + 4}px`; }
       const pb = this.paneBox();
       const clip = pb ? `<defs><clipPath id="chClip"><rect x="0" y="${pb.top}" width="${pb.w}" height="${pb.h}"/></clipPath></defs>` : "";
-      if (pat) { const pp = []; this.pattern(pp); pat.innerHTML = clip + `<g clip-path="url(#chClip)">${pp.join("")}</g>`; }
+      if (pat) { const pp = []; this.pattern(pp); this.scanParts(pp, pb); pat.innerHTML = clip + `<g clip-path="url(#chClip)">${pp.join("")}</g>`; }
       const parts = [];
       const all = [...this.items.map((x, i) => ({ ...x, i })), ...(this.pending && this.pending.hover ? [{ ...this.pending, b: this.pending.hover, i: -1 }] : [])];
       for (const it of all) {

@@ -78,6 +78,23 @@ def scan_fixture():
     print("scan fixture", len(rows), {k: len(v["ids"]) for k, v in exp.items()})
 
 
+def vcp_fixture():
+    """Every day of the golden stocks on which engine._vcp_at finds a VCP: its pivot day and the three pullback depths.
+    The chart's VCP wave (site/ind.js vcpLegs, scanner drawing 20-Nov-2026) must find the same legs."""
+    cfg = yaml.safe_load(open(ROOT / "config" / "indicators.yaml"))
+    out = []
+    for p in sorted((ROOT / "tests" / "fixtures").glob("golden_*.csv")):
+        df = pd.read_csv(p, parse_dates=["date"])
+        h, l, c = (df[k].to_numpy(float) for k in ("high", "low", "close"))
+        for e in range(40, len(df)):
+            v = engine._vcp_at(h, l, c, e, cfg)
+            if v is not None:
+                out.append({"sym": p.stem.split("_", 1)[1], "e": e, "p": e - int(v[2]) + 1, "depths": [float(x) for x in v[0]]})
+    (ROOT / "tests" / "js" / "fixtures" / "vcp_legs.json").write_text(json.dumps(out), encoding="utf-8")
+    print("vcp fixture", len(out))
+
+
 if __name__ == "__main__":
     main()
     scan_fixture()
+    vcp_fixture()

@@ -1564,7 +1564,7 @@
       const tr = view.querySelector(`tr[data-key="${CSS.escape(key)}"]`);
       if (tr) { tr.classList.add("cur"); if (scroll) tr.scrollIntoView({ block: "nearest" }); }
       // the stock-panel toggle sits next to the chart's gear (like the reference)
-      SDChart.open($("#pane"), r, { kind: "s", extraTool: `<button class="btn sm icon ch-spt${ui.panel ? " on" : ""}" data-xtool type="button" title="Stock panel: overview, financials, peers, shareholding"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>`,
+      SDChart.open($("#pane"), r, { kind: "s", scan: scan ? scan.id : null, extraTool: `<button class="btn sm icon ch-spt${ui.panel ? " on" : ""}" data-xtool type="button" title="Stock panel: overview, financials, peers, shareholding"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>`,
         onExtraTool: () => { ui.panel = !ui.panel; saveUi(); renderStocks(); } });
       if (ui.panel && ui.view === "list") stockPanel($("#side"), r, { onPeer: (pid) => { const k = "s:" + pid; if (rows.some((x) => x.key === k)) openRow(k, true); else location.hash = "#/i/s/" + encodeURIComponent(pid); } });
     };

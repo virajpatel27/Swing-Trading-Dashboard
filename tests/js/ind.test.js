@@ -100,3 +100,14 @@ test("RS line uses the last benchmark close on or before each day", () => {
   const b = [{ time: "2026-01-01", close: 100 }, { time: "2026-01-02", close: 200 }];
   assert.deepStrictEqual(I.rsLine(cs, b), [0.1, 0.06]);
 });
+
+test("VCP legs on the chart = the pipeline's VCP pullbacks (engine._vcp_at), every VCP day of the golden stocks", () => {
+  const cases = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures", "vcp_legs.json"), "utf8"));
+  assert.ok(cases.length > 20);
+  for (const k of cases) {
+    const cs = candles(k.sym), h = cs.map((x) => x.high), l = cs.map((x) => x.low);
+    const legs = I.vcpLegs(h, l, k.p, k.e);
+    assert.ok(legs, `${k.sym} day ${k.e}: no legs`);
+    legs.forEach((g, j) => assert.ok(Math.abs(g.depth - k.depths[j]) < 1e-9, `${k.sym} day ${k.e} leg ${j}: ${g.depth} vs ${k.depths[j]}`));
+  }
+});

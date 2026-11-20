@@ -1762,3 +1762,26 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   the old rows in), so it shrinks by itself after a results season. Removed from swingdash/shrink_guard.FILES (comment
   there) + test (tests/test_safety.py). Viraj: "Ha, sudharo". Without it the 16:40 run would have failed too.
 - Same run (warning only, open): new stocks MELSTAR, ORTEL, SPELS need Actions -> Backfill history (job stocks).
+
+### 2026-11-20: Scanner drawings like the reference (Viraj's 6 scan videos of 12-Nov-2026)
+- Videos: Classic Scan, SN Scan, SN Scan 2, New Scan, New Scan 2, Intraday (frames in reference/video_frames/, git-ignored).
+  Found per scanner what the reference draws when a stock is opened from it:
+  Stage 2 Breakout = "Pivot" line across the chart at the breakout level; Recent Breakout = line from the old resistance
+  to the breakout day; Daily / Weekly Base = base level from its swing high to today with a small tick at the end + a
+  shallow arc under the base; Near Pivot = the same line + tick, no arc; VCP = pivot line + a wave under the price with
+  the three pullbacks as -% labels; Tight Range = top and bottom lines of the tight sessions; IPO Base = IPO level line;
+  Big Reversal = arrow under the day; Shakeout = a "U" under the shakeout day. Everything else (Trend Template, 4 %
+  Breakout, pullbacks, High Volume, Gainers, Outperformers, Doublers, New Listing, RS before Price, Intraday, Earnings)
+  draws nothing. Swing % moves / Tight areas in the videos are Chart settings options, not scan drawings.
+- site/chart.js scanDrawing() builds the drawing from the same screen fields that put the stock in the scan (s2b_age,
+  rb_age/rb_level, lvl_*, wlvl_*, vcp_*, rti_bars/box_bars, ipo_*, br_age, so_age); drawn in the SVG layer (scanParts),
+  works on weekly / custom timeframes. app.js passes the open scanner (SDChart.open opts.scan). site/ind.js vcpLegs =
+  engine._vcp_at's three legs (test: same depths on all 105 VCP days of the golden stocks, tests/js/fixtures/vcp_legs.json
+  from make_expected.py vcp_fixture). The general pivot / VCP / cup marks are now off by default (settings look 4), like
+  the reference's "Pivot / breakout line" option; they can be switched on in Chart settings.
+- Checked vs the reference exports of 04 / 05 / 06-Nov (stocks in both lists): drawn level = theirs within 0.5 %:
+  Daily Base 85-88 %, Near Pivot 85-100 %, Weekly Base 89-91 %, Recent Breakout 70-100 %, IPO Base 50-71 %; breakout day
+  of Stage 2 Breakout 100 %, Recent Breakout 23 / 23, Big Reversal 80-100 %; Tight Range start / high / low 8 / 8; base
+  line start = their level_date 256 / 326; Shakeout "U" day = their fall_date 30 / 32 (biggest intraday drop of the 2
+  sessions before the recovery; the lowest low gave 28 / 32). VCP: DYNAMATECH pivot 14498 and 1st / 3rd pullback
+  21.6 / 4.9 % = the video (21.6 / 4.8); the middle pullback differs (5.9 vs 9.0: their swing rule, see calibration).

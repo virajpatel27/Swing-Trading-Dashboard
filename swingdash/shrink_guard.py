@@ -12,9 +12,12 @@ from pathlib import Path
 
 from .validate import issue
 
+# not guarded: data/meta/results_calendar.csv - a rolling list of coming results days (past days dropped after 7 days, old
+# rows always merged in, fundamentals.write_calendar), so it shrinks by itself after each results season (20-Nov-2026:
+# 633 -> 449 lines stopped Daily update #90)
 FILES = ["data/meta/stocks.csv", "data/meta/universe_stocks.csv", "data/meta/classification.csv", "data/meta/trading_days.csv",
          "data/meta/ipos.csv", "data/meta/themes.csv", "data/meta/groups.csv", "data/meta/share_factors.csv",
-         "data/meta/index_members.csv", "data/meta/indices_nse.csv", "data/meta/indices_bse.csv", "data/meta/results_calendar.csv",
+         "data/meta/index_members.csv", "data/meta/indices_nse.csv", "data/meta/indices_bse.csv",
          "data/market/fii_dii.csv"]
 FOLDERS = ["data/fundamentals", "data/corporate_actions", "data/stocks/raw", "data/stocks/adjusted", "data/announcements"]
 

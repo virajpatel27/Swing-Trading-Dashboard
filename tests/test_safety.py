@@ -23,6 +23,17 @@ def test_shrink_guard(tmp_path, monkeypatch):
     assert shrink_guard.check(tmp_path) == []                         # 51 of 55 lines: fine
 
 
+def test_results_calendar_may_shrink(tmp_path, monkeypatch):
+    """20-Nov-2026: the results calendar drops past days, so it shrinks after a results season (633 -> 449 lines
+    stopped Daily update #90); it is not guarded."""
+    (tmp_path / "data" / "meta").mkdir(parents=True)
+    (tmp_path / "data" / "meta" / "results_calendar.csv").write_text("h\n" + "x\n" * 449, encoding="utf-8")
+    monkeypatch.setattr(shrink_guard, "head_lines", lambda root, rel: 633)
+    monkeypatch.setattr(shrink_guard, "head_files", lambda root, rel: None)
+    assert "data/meta/results_calendar.csv" not in shrink_guard.FILES
+    assert not [i for i in shrink_guard.check(tmp_path) if i["instrument"] == "data/meta/results_calendar.csv"]
+
+
 def _data(tmp_path, closes):
     data = tmp_path / "data"
     (data / "meta").mkdir(parents=True)

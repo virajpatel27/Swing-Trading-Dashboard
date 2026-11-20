@@ -1753,3 +1753,12 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   The videos' pane titles show the live 12-Nov value (market open), so they cannot be compared bar by bar.
 - Found: the chart library joins line gaps (Supertrend drew a long diagonal) and fails on a pane whose only price scale
   is hidden (Stage pane) - both handled.
+- Pushed 20-Nov (825cd6f + merge b347424): Tests #111 and Deploy website #85 green; live site shows the new menu
+  (a browser that had the old version needs two reloads: the service worker swaps the files on the second one).
+
+### 2026-11-20: Daily update #90 stopped by the shrink guard (false alarm)
+- The 08:00 run failed: "file shrank: data/meta/results_calendar.csv 633 lines in the last commit, now 449". That file
+  is a rolling list of coming results days (fundamentals.write_calendar drops days more than 7 days old and always merges
+  the old rows in), so it shrinks by itself after a results season. Removed from swingdash/shrink_guard.FILES (comment
+  there) + test (tests/test_safety.py). Viraj: "Ha, sudharo". Without it the 16:40 run would have failed too.
+- Same run (warning only, open): new stocks MELSTAR, ORTEL, SPELS need Actions -> Backfill history (job stocks).

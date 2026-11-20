@@ -16,4 +16,4 @@ ex_date,type,ratio,factor,amount,method,status,subject,source
 2024-09-06,dividend,,1.0,16,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 16 Per Share,NSE
 2025-07-09,dividend,,1.0,18,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 18 Per Share,NSE
 2026-07-03,dividend,,1.0,23.5,dividends not adjusted (ADJUST_DIVIDENDS=false),no change,Dividend - Rs 23.50 Per Share,NSE
-2026-11-20,rights,2:7,,3506,,future,Rights 2:7 @ Premium Rs 3496/-,NSE
+2026-11-20,rights,2:7,0.9150032095,3506,"TERP, issue price 3506, close before 5677.6",applied,Rights 2:7 @ Premium Rs 3496/-,NSE

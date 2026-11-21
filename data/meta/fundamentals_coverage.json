@@ -1,27 +1,27 @@
 {
  "date": "2026-11-20",
- "universe": 2635,
+ "universe": 2634,
  "nifty500": {
   "stocks": 500,
   "with_doc": 500
  },
  "all": {
-  "stocks": 2635,
-  "with_doc": 2635
+  "stocks": 2634,
+  "with_doc": 2634
  },
  "kinds": {
-  "company": 2414,
+  "company": 2413,
   "nbfc": 158,
   "bank": 41,
   "?": 11,
   "insurance": 11
  },
- "with_8_quarters": 2193,
- "with_5_years": 1570,
- "with_balance_sheet": 2370,
- "with_cash_flow": 2252,
- "with_shareholding": 2604,
- "latest_quarter_older_than_150_days": 69,
+ "with_8_quarters": 2191,
+ "with_5_years": 1569,
+ "with_balance_sheet": 2369,
+ "with_cash_flow": 2250,
+ "with_shareholding": 2603,
+ "latest_quarter_older_than_150_days": 68,
  "no_results": [
   "ADVIKCA",
   "AKCAPIT",

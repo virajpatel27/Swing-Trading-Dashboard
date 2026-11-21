@@ -1799,3 +1799,13 @@ Newest at the bottom. Each entry: what was done, why, what is next.
   and pane values once per frame, bar index from a map, no layout reads while hovering; drawings / event badges redraw
   once per frame while scrolling; kinetic (momentum) scrolling with the mouse; the next 2 stocks' charts are fetched
   ahead (SDChart.prefetch); a new stock fades in (0.22 s, off with "reduce motion").
+
+### 2026-11-21: Bar chart like the reference, picker arrows, NSE Stocks, TradingView-style symbol search
+- Bar chart: thick bars that grow with the zoom (LWC thinBars false, open / close ticks), grey up / dark down (mono).
+- Scanner picker: one arrow per folder (the old CSS ::before arrow is gone) and the folder icon opens with the folder.
+- "All Stocks" scan renamed "NSE Stocks" (config/scanners.json; JS scan fixture regenerated).
+- Search never leaves the scanner page: the top "Find a stock" box and the new symbol search open the stock in the
+  NSE Stocks scanner with its chart beside the list (app.js openInNse; phones get the stock page).
+- Symbol search like TradingView's: "/" anywhere, or just start typing a letter / digit on the scanner, stock, watchlist,
+  groups and leaders pages (e.g. after clicking the chart): big panel, All / Stocks / Indices chips, logo, symbol and
+  name with the typed part highlighted, STOCK / INDEX tag, price and change, exchange; arrows + Enter, Esc closes.

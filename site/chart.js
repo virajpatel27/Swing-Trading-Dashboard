@@ -471,7 +471,7 @@
     // price
     const inrFmt = { type: "custom", formatter: (x) => fmt(x, 2), minMove: 0.01 };
     const priceOpts = { upColor: st.up, downColor: st.down, wickUpColor: st.up, wickDownColor: st.down, borderVisible: false, thinBars: false, priceFormat: inrFmt, visible: !only, priceLineVisible: !pv, lastValueVisible: !pv, ...(only ? { priceScaleId: "px" } : {}) };
-    const price = C.type === "bar" ? chart.addSeries(L.BarSeries, { upColor: st.up, downColor: st.down, priceFormat: inrFmt, visible: !only, priceLineVisible: !pv, lastValueVisible: !pv, ...(only ? { priceScaleId: "px" } : {}) }, pricePane)
+    const price = C.type === "bar" ? chart.addSeries(L.BarSeries, { upColor: st.up, downColor: st.down, thinBars: false, openVisible: true, priceFormat: inrFmt, visible: !only, priceLineVisible: !pv, lastValueVisible: !pv, ...(only ? { priceScaleId: "px" } : {}) }, pricePane)
       : chart.addSeries(L.CandlestickSeries, priceOpts, pricePane);
     price.setData(bars.map((b) => ({ time: b.time, open: b.open, high: b.high, low: b.low, close: b.close })));
     if (!pv) cur.price = price;

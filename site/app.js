@@ -1356,7 +1356,7 @@
     const folders = [];
     for (const s of allScans()) { let f = folders.find((x) => x[0] === (s.folder || "Other")); if (!f) folders.push(f = [s.folder || "Other", []]); f[1].push(s); }
     return `<div class="pk-q">${ICON.filter}<input type="search" id="pkQ" placeholder="Search scanners" aria-label="Search scanners"></div>`
-      + folders.map(([f, list]) => `<details class="pk-f" ${list.some((s) => s.id === current) ? "open" : ""}><summary><i class="pk-car" aria-hidden="true">›</i><svg class="pk-fi" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>${esc(f)}</span>${list.some((s) => s.id === current) ? '<b class="pk-ck" aria-label="The open scanner is in here">✓</b>' : ""}</summary>`
+      + folders.map(([f, list]) => `<details class="pk-f" ${list.some((s) => s.id === current) ? "open" : ""}><summary><i class="pk-car" aria-hidden="true">›</i><svg class="pk-fi pk-shut" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><svg class="pk-fi pk-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18V7a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v1"/><path d="M3 18l2.6-6.4A2 2 0 0 1 7.5 10.4H21a1 1 0 0 1 .9 1.4L19.4 17.8A2 2 0 0 1 17.5 19H4a1 1 0 0 1-1-1z"/></svg><span>${esc(f)}</span>${list.some((s) => s.id === current) ? '<b class="pk-ck" aria-label="The open scanner is in here">✓</b>' : ""}</summary>`
         + list.map((s) => `<div class="pk-row ${s.id === current ? "on" : ""}" data-t="${esc((s.name + " " + (s.description || "")).toLowerCase())}">`
           + `<button type="button" class="pk-pin ${pins.includes(s.id) ? "on" : ""}" data-pin="${esc(s.id)}" title="${pins.includes(s.id) ? "Unpin" : "Pin to the top bar"}" aria-label="Pin ${esc(s.name)}">${ICON.pin}</button>`
           + `<a href="#/scanners/${encodeURIComponent(s.id)}">${esc(s.name)}</a>`
@@ -1441,12 +1441,7 @@
           : '<p class="muted small ws-fn">No NSE stock matches.</p>';
         m.hidden = false;
       };
-      const pick = (key) => {
-        m.hidden = true; q.value = ""; q.blur();
-        if (!isWide) { location.hash = "#/i/s/" + encodeURIComponent(key.slice(2)); return; }
-        state.current = key; st.universe = "all"; st.sector = ""; st.text = ""; st.limit = PAGE;
-        if (mode === "stocks") renderStocks(); else location.hash = "#/stocks";
-      };
+      const pick = (key) => { m.hidden = true; q.value = ""; q.blur(); openInNse(key); };
       q.oninput = show;
       q.onfocus = () => { if (q.value.trim()) show(); };
       q.onkeydown = (e) => {
@@ -3920,6 +3915,15 @@
   window.addEventListener("hashchange", drawPages);
   drawPages();
 
+  /** open a stock in the "NSE Stocks" scanner on the scanner page, chart beside the list (Viraj 21-Nov-2026: a search
+      must not jump to another page); phones get the stock page */
+  function openInNse(key) {
+    if (!wide()) { location.hash = "#/i/" + key.replace(":", "/"); return; }
+    state.current = key;
+    const st = state.stocks; st.sector = ""; st.text = ""; st.limit = PAGE;
+    if (location.hash === "#/scanners/all-stocks") renderStocks(); else location.hash = "#/scanners/all-stocks";
+  }
+
   // find a stock / index: press "/" anywhere (the top bar's search box was removed, Viraj 07-Nov)
   function gFind(q) {
     q = q.trim().toLowerCase();
@@ -3933,32 +3937,80 @@
     }
     return hits.sort((a, b) => a[0] - b[0] || a[1] - b[1]).slice(0, 8).map((h) => h[2]);
   }
-  function openFind() {
-    if (document.querySelector(".modal-bg.find")) return;
-    const m = SDChart.modal("Find a stock or index",
-      `<input id="fq" type="search" class="fq" placeholder="e.g. INFY or Reliance" autocomplete="off" aria-label="Find a stock or index"><div id="fres" class="gres fres"></div>`,
-      null, false, "find");
-    const q = m.querySelector("#fq"), res = m.querySelector("#fres");
-    let hits = [], on = 0;
-    const shut = () => m.querySelector("[data-x]").click();
+  /* symbol search like TradingView's (Viraj 21-Nov-2026): "/" anywhere, or just start typing a name while a chart page
+     is open (after clicking the chart). Big panel with filter chips, logo, symbol with the typed part highlighted,
+     company name, a STOCK / INDEX tag, price and the exchange; arrows + Enter or a click. A stock opens in the
+     "NSE Stocks" scanner on the same page (chart beside the list); an index opens its own page. */
+  function openFind(first = "") {
+    if (document.querySelector(".sx-bg")) return;
+    let kind = "all", hits = [], on = 0;
+    const bg = document.createElement("div");
+    bg.className = "sx-bg";
+    bg.innerHTML = `<div class="sx" role="dialog" aria-label="Symbol search"><div class="sx-h"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      <input id="sxq" type="search" autocomplete="off" spellcheck="false" placeholder="Symbol or company, e.g. RELIANCE" aria-label="Symbol or company"><button type="button" class="sx-clr" data-clr>Clear</button></div>
+      <div class="sx-chips" role="tablist">${[["all", "All"], ["stock", "Stocks"], ["index", "Indices"]].map(([k, l]) => `<button type="button" data-kind="${k}" class="${k === kind ? "on" : ""}">${l}</button>`).join("")}</div>
+      <div class="sx-list" id="sxl" role="listbox"></div><div class="sx-f"><span><kbd>↑</kbd><kbd>↓</kbd> move</span><span><kbd>Enter</kbd> open</span><span><kbd>Esc</kbd> close</span></div></div>`;
+    document.body.appendChild(bg);
+    requestAnimationFrame(() => bg.classList.add("open"));
+    const q = bg.querySelector("#sxq"), list = bg.querySelector("#sxl");
+    const onKey = (e) => {
+      if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); shut(); }
+      else if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); on = (on + (e.key === "ArrowDown" ? 1 : -1) + hits.length) % Math.max(hits.length, 1); draw(); }
+      else if (e.key === "Enter") { e.preventDefault(); go(hits[on]); }
+    };
+    const shut = () => { bg.classList.remove("open"); bg.classList.add("closing"); document.removeEventListener("keydown", onKey, true); setTimeout(() => bg.remove(), 150); };
+    const mark = (txt, t) => {
+      const s0 = String(txt || ""), i = t ? s0.toLowerCase().indexOf(t.toLowerCase()) : -1;
+      return i < 0 ? esc(s0) : `${esc(s0.slice(0, i))}<mark>${esc(s0.slice(i, i + t.length))}</mark>${esc(s0.slice(i + t.length))}`;
+    };
+    const find = (t) => {
+      t = t.trim().toLowerCase();
+      if (!t) return [];
+      const out = [];
+      for (const r of state.rows) {
+        if (kind !== "all" && (kind === "stock") !== (r.kind === "stock")) continue;
+        const sym = (r.kind === "stock" ? r.symbol || "" : r.id || "").toLowerCase(), name = (r.name || "").toLowerCase();
+        const rank = sym === t || name === t ? 0 : sym.startsWith(t) ? 1 : name.startsWith(t) ? 2 : sym.includes(t) || name.includes(t) ? 3 : -1;
+        if (rank >= 0) out.push([rank, -((r.close || 0) * (r.volume || 0)), r]);
+      }
+      return out.sort((a, b) => a[0] - b[0] || a[1] - b[1]).slice(0, 40).map((h) => h[2]);
+    };
     const draw = () => {
-      hits = gFind(q.value); on = Math.min(on, Math.max(hits.length - 1, 0));
-      res.innerHTML = !q.value.trim() ? "" : hits.length ? hits.map((r, i) => `<a role="option" href="#/i/${r.key.replace(":", "/")}" class="${i === on ? "on" : ""}">`
-        + `<b>${esc(r.kind === "stock" ? r.symbol : r.name)}</b><span class="num">${SD.fmtPrice(r.close)}<br>${pct(r.chg_1d)}</span>`
-        + `<small>${esc(r.kind === "stock" ? r.name : r.exchange + " index")}${r.sector ? " · " + esc(r.sector) : ""}</small></a>`).join("")
-        : `<div class="empty">No stock or index matches “${esc(q.value)}”.</div>`;
+      const t = q.value.trim();
+      hits = find(t); on = Math.min(on, Math.max(hits.length - 1, 0));
+      list.innerHTML = !t ? '<p class="sx-empty">Type a symbol or a company name.</p>' : hits.length ? hits.map((r, i) => {
+        const isS = r.kind === "stock", sr = isS && state.screenByKey ? state.screenByKey.get(r.key) : null;
+        return `<button type="button" role="option" class="sx-r${i === on ? " on" : ""}" data-i="${i}">${isS ? logo(sr || r) : '<i class="sx-ix">IX</i>'}
+          <span class="sx-t"><b>${mark(isS ? r.symbol : r.name, t)}</b><small>${mark(isS ? r.name : (r.exchange || "") + " index", t)} <em class="sx-tag">${isS ? "STOCK" : "INDEX"}</em></small></span>
+          <span class="sx-p">${SD.fmtPrice(r.close)}<br>${pct(r.chg_1d)}</span><span class="sx-x">${esc(r.exchange || "NSE")}</span></button>`;
+      }).join("") : `<p class="sx-empty">No stock or index matches “${esc(t)}”.</p>`;
+      const cur = list.querySelector(".sx-r.on"); if (cur) cur.scrollIntoView({ block: "nearest" });
     };
+    const go = (r) => {
+      if (!r) return;
+      shut();
+      if (r.kind === "stock" && state.screenByKey && state.screenByKey.has(r.key)) openInNse(r.key);
+      else location.hash = "#/i/" + r.key.replace(":", "/");
+    };
+    document.addEventListener("keydown", onKey, true);
     q.oninput = () => { on = 0; draw(); };
-    q.onkeydown = (e) => {
-      if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); on = (on + (e.key === "ArrowDown" ? 1 : -1) + hits.length) % Math.max(hits.length, 1); draw(); }
-      else if (e.key === "Enter" && hits[on]) { location.hash = "#/i/" + hits[on].key.replace(":", "/"); shut(); }
-    };
-    res.onclick = (e) => { if (e.target.closest("a")) shut(); };
-    setTimeout(() => q.focus(), 30);
+    bg.addEventListener("mousedown", (e) => { if (e.target === bg) shut(); });
+    bg.addEventListener("click", (e) => {
+      const r = e.target.closest(".sx-r"); if (r) return go(hits[Number(r.dataset.i)]);
+      const k = e.target.closest("[data-kind]");
+      if (k) { kind = k.dataset.kind; bg.querySelectorAll("[data-kind]").forEach((b) => b.classList.toggle("on", b === k)); on = 0; draw(); q.focus(); }
+      if (e.target.closest("[data-clr]")) { q.value = ""; draw(); q.focus(); }
+    });
+    q.value = first; draw();
+    setTimeout(() => { q.focus(); q.setSelectionRange(q.value.length, q.value.length); }, 0);
   }
   document.addEventListener("keydown", (e) => {
-    if (e.key === "/" && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) && !document.activeElement.isContentEditable
-        && !document.querySelector(".modal-bg")) { e.preventDefault(); openFind(); }
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) || document.activeElement.isContentEditable;
+    if (typing || e.ctrlKey || e.metaKey || e.altKey || document.querySelector(".modal-bg, .sx-bg, .ipd, .tf-pop")) return;
+    if (e.key === "/") { e.preventDefault(); openFind(); return; }
+    // type-to-search on the chart pages (like TradingView): a letter or digit opens the search with that character
+    const r0 = location.hash.replace(/^#\/?/, "").split("/")[0];
+    if (/^[a-z0-9]$/i.test(e.key) && ["scanners", "stocks", "i", "watchlist", "groups", "leaders"].includes(r0)) { e.preventDefault(); openFind(e.key.toUpperCase()); }
   });
   const showAbout = (e) => { if (e) e.preventDefault(); SDChart.modal("About this dashboard", `<div class="about">${$("#aboutTpl").innerHTML}</div>`); };
   $("#about").onclick = showAbout;

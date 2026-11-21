@@ -12,8 +12,8 @@
   {
    "id": "all-stocks",
    "folder": "My Scans",
-   "name": "All Stocks",
-   "description": "Every stock, no test. Start here and add your own conditions with Formula.",
+   "name": "NSE Stocks",
+   "description": "Every NSE stock, no test. Start here and add your own conditions with Formula.",
    "universe": "all",
    "rule": {
     "all": []

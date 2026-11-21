@@ -1,8 +1,8 @@
-"""The daily update (GitHub Actions, Mon-Fri 16:40 / 17:20 / 18:30 / 23:50 IST + 08:00 next morning; also by hand). Every step is safe to run again:
+"""The daily update (GitHub Actions started by cron-job.org: Mon-Fri 17:10 + 23:40 IST, backup 05:00 Tue-Sat, Sat 07:00; also by hand). Every step is safe to run again:
 
   1. stocks       NSE bhavcopy from the last saved day (missed days are caught up), re-reading the last N trading days
-     1b. delivery % from NSE's MTO file (out ~16:50 IST, so the 17:20 run brings the day), last N days re-read too
-  2. NSE indices  NSE daily all-indices file the same way (it appears ~23:20 IST, so the 23:50 run brings the day's indices),
+     1b. delivery % from NSE's MTO file (out ~16:50 IST, so the 17:10 run brings the day), last N days re-read too
+  2. NSE indices  NSE daily all-indices file the same way (it appears ~23:20 IST, so the 23:40 run brings the day's indices),
                   new indices get their history, gaps are filled
   3. corporate actions + adjusted prices (rebuilt for every stock; only changed files are written)
   4. sector/industry + share count for new stocks, entries older than 30 days, or after a split / bonus

@@ -1,14 +1,22 @@
-name: Fundamentals nightly
+name: Results season
 
-# Viraj, 05-Nov-2026: every night at 23:40 IST read the stocks whose fundamentals were never read (NSE XBRL results,
-# balance sheet, cash flow, shareholding; ~40 s per stock, ~450 stocks per night) until every stock is done. When nothing
-# is left the run ends in a minute and saves nothing. New results of stocks already read come with the daily update.
-# Shares the "data-write" lock with the daily update: the 23:50 IST daily run waits until this one ends (~05:15 IST).
-# Run by hand: Actions -> Fundamentals nightly -> Run workflow.
+# Quarterly results (Viraj, 21-Nov-2026): cron-job.org starts this every day at 13:00, 16:00 and 19:30 IST. It works only
+# in the results seasons (10 Jul - 14 Aug, 10 Oct - 14 Nov, 10 Jan - 14 Feb, 15 Apr - 30 May); on other days it ends in
+# about a minute. Our filings data: ~53 % of results are on NSE by 13:00, ~72 % by 16:00, ~95 % by 19:30; the rest come
+# with the next run (the daily runs at 17:10 / 23:40 read new results files too).
+#   1. new results / shareholding files NSE listed since the last read (scripts/fundamentals_results.py)
+#   2. stocks never read yet (new listings), at most 15 minutes
+# Shares the "data-write" lock with the daily update. Run by hand: Actions -> Results season -> Run workflow (mode full
+# also works outside a season).
+# cron-job.org calls POST .../actions/workflows/fundamentals-nightly.yml/dispatches with {"ref":"main","inputs":{"mode":"season"}}
 on:
-  schedule:
-    - cron: "10 18 * * *"           # 23:40 IST, every day (GitHub may start it up to ~1 h late)
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "season = only in a results season; full = always"
+        type: choice
+        options: [season, full]
+        default: full
 
 permissions:
   contents: write
@@ -18,9 +26,29 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  fundamentals:
+  gate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 345
+    timeout-minutes: 5
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          sparse-checkout: |
+            scripts/run_gate.py
+            swingdash/run_gate.py
+            swingdash/__init__.py
+          sparse-checkout-cone-mode: false
+      - name: Results season?
+        id: check
+        run: python3 scripts/run_gate.py --mode "${{ inputs.mode || 'full' }}"
+
+  fundamentals:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
     outputs:
       changed: ${{ steps.save.outputs.changed }}
     steps:
@@ -33,9 +61,11 @@ jobs:
           cache: pip
       - name: Install
         run: pip install -r requirements.txt
-      - name: Read stocks not read yet
+      - name: New quarterly results
+        run: python scripts/fundamentals_results.py --max-minutes 25
+      - name: Stocks not read yet
         run: |
-          python scripts/backfill.py --job fundamentals --new-only --max-minutes 300
+          python scripts/backfill.py --job fundamentals --new-only --max-minutes 15
           python scripts/fundamentals_report.py
       - name: Data check
         run: python scripts/validate_data.py
@@ -49,7 +79,7 @@ jobs:
             echo "Nothing new to save."
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
-            git commit -m "data: fundamentals nightly $(date -u +%F)"
+            git commit -m "data: results $(TZ=Asia/Kolkata date '+%F %H:%M')"
             git pull --rebase --autostash
             git push
             echo "changed=true" >> "$GITHUB_OUTPUT"

@@ -1,11 +1,10 @@
 name: Monthly integrity check
 
-# 1st of every month 11:00 IST (and by hand): deep check of all data - row counts, date gaps, duplicates, adjusted vs raw,
+# 1st of every month 11:00 IST from cron-job.org (Viraj, 21-Nov-2026; and by hand): POST
+# .../actions/workflows/monthly-integrity.yml/dispatches {"ref":"main"}. A deep check of all data - row counts, date gaps, duplicates, adjusted vs raw,
 # corporate-action consistency, a spot check of random past days against NSE. Changes nothing.
 # A problem opens a GitHub issue. The report is on the run's page.
 on:
-  schedule:
-    - cron: "30 5 1 * *"
   workflow_dispatch:
 
 permissions:

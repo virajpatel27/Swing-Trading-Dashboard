@@ -55,11 +55,24 @@ Angel One is used only by the Source probe (a check). The daily update does not 
             headers Accept `application/vnd.github+json`, Authorization `Bearer <token>`, X-GitHub-Api-Version
             `2022-11-28`, Content-Type `application/json`, body `{"ref":"main"}`; TEST RUN must answer 204.
             The GitHub schedules stay as backup. Afterwards: no backfill runs between 16:30 and 18:00 IST.
+- [ ] **2026-11-21 New schedule (Viraj): every run from cron-job.org.** All jobs: Asia/Kolkata time zone, method POST,
+      headers Accept `application/vnd.github+json`, Authorization `Bearer <token cron-job-daily>`, X-GitHub-Api-Version
+      `2022-11-28`, e-mail on failure on. URL = `https://api.github.com/repos/virajpatel27/Swing-Trading-Dashboard/actions/workflows/<file>/dispatches`.
+      | Job name | When | <file> | Request body |
+      |---|---|---|---|
+      | GitHub daily 17:10 (Run 1, existing job: change the body) | Mon-Fri 17:10 | daily.yml | `{"ref":"main","inputs":{"mode":"full"}}` |
+      | GitHub daily 23:40 (Run 2, the old 16:45 job renamed) | Mon-Fri 23:40 | daily.yml | `{"ref":"main","inputs":{"mode":"full"}}` |
+      | GitHub backup 05:00 | Tue-Sat 05:00 | daily.yml | `{"ref":"main","inputs":{"mode":"backup"}}` |
+      | GitHub weekly catch-up 07:00 | Sat 07:00 | daily.yml | `{"ref":"main","inputs":{"mode":"full"}}` |
+      | GitHub weekly backup 07:05 | Sat 07:05 | weekly-backup.yml | `{"ref":"main"}` |
+      | GitHub results 13:00 / 16:00 / 19:30 (3 jobs) | every day | fundamentals-nightly.yml | `{"ref":"main","inputs":{"mode":"season"}}` |
+      | GitHub integrity 11:00 | 1st of the month 11:00 | monthly-integrity.yml | `{"ref":"main"}` |
+      Every job: TEST RUN must answer 204. The workflows have no GitHub schedule any more: if cron-job.org stops, nothing runs.
 - [ ] **Before 02-Nov-2027:** the token `cron-job-daily` expires (GitHub said so in the test answer). GitHub -> Settings ->
-      Developer settings -> Fine-grained tokens -> cron-job-daily -> Regenerate; then paste `Bearer <new token>` into BOTH
-      cron-job.org jobs (Advanced -> Headers -> Authorization) and press TEST RUN (204).
+      Developer settings -> Fine-grained tokens -> cron-job-daily -> Regenerate; then paste `Bearer <new token>` into EVERY
+      cron-job.org job (Advanced -> Headers -> Authorization) and press TEST RUN (204).
 - [ ] **Before 10-Mar-2028:** GitHub retires API version `2022-11-28` (header in the answer: Sunset 10-Mar-2028). Ask Claude
-      for the current version and change X-GitHub-Api-Version in both cron-job.org jobs.
+      for the current version and change X-GitHub-Api-Version in every cron-job.org job.
 
 - [ ] **Once, after pushing the news code (07-Nov-2026):** Actions -> **Backfill history** -> Run workflow -> job
       **announcements** (fills the last 365 days of company filings, ~20-30 minutes; it can run again safely).

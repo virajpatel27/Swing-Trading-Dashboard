@@ -1,12 +1,12 @@
 name: Weekly backup
 
-# Every Saturday 10:00 IST (and by hand):
+# Every Saturday 07:05 IST from cron-job.org (Viraj, 21-Nov-2026; and by hand). cron-job.org starts the Daily update
+# (mode full) at 07:00 first: it catches up anything of the week, and this backup waits for it (same data-write lock),
+# so the zip has the whole week. cron-job.org: POST .../actions/workflows/weekly-backup.yml/dispatches {"ref":"main"}
 #   1. the whole data/ folder as a dated zip in a GitHub Release "data-YYYY-MM-DD" (+ its SHA-256); the last 12 are kept
 #   2. the "backup" branch is moved forward to the current main (a second copy of all history; never force-pushed)
 # Git history itself is the daily backup. Restore: see restore.md (or Actions -> Restore data).
 on:
-  schedule:
-    - cron: "30 4 * * 6"            # Saturday 10:00 IST
   workflow_dispatch:
 
 permissions:

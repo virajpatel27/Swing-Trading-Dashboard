@@ -1809,3 +1809,18 @@ Newest at the bottom. Each entry: what was done, why, what is next.
 - Symbol search like TradingView's: "/" anywhere, or just start typing a letter / digit on the scanner, stock, watchlist,
   groups and leaders pages (e.g. after clicking the chart): big panel, All / Stocks / Indices chips, logo, symbol and
   name with the typed part highlighted, STOCK / INDEX tag, price and change, exchange; arrows + Enter, Esc closes.
+
+### 2026-11-21: New run schedule, every run from cron-job.org (Viraj)
+- GitHub cost check: public repo = Actions minutes free + GitHub Pages free. Private on the Free plan = $12 of compute
+  (~2,000 Linux minutes) a month and NO Pages (the website would stop; Pro needed). Old schedule used ~3,100-3,300
+  minutes a month (7 daily runs x ~13 min + website builds, fundamentals nightly every night); the new one ~800.
+  Repo stays public.
+- Results timing from our 1,717 NSE result filings (Nov-2025 - Nov-2026): 38.8 % 09-13 h, 13.3 % 13-15:30, 19.7 % 15-17,
+  22.4 % 17-19, 3.7 % 19-21, ~1 % later.
+- Schedule (IST): Daily update 17:10 + 23:40 Mon-Fri (full), 05:00 Tue-Sat (backup: swingdash/run_gate.py decides; ends
+  in ~1 minute when prices of the previous weekday and NSE's official index file of the last day are saved), Sat 07:00
+  (full, week catch-up) + Weekly backup 07:05 (waits on the data-write lock); "Results season" (fundamentals-nightly.yml,
+  renamed) 13:00 / 16:00 / 19:30 every day but works only 10 Jul-14 Aug, 10 Oct-14 Nov, 10 Jan-14 Feb, 15 Apr-30 May
+  (scripts/fundamentals_results.py = fundamentals.daily, then never-read stocks for 15 min); Monthly integrity 1st 11:00.
+- All `schedule:` triggers removed from the workflows; each has a small "gate" job (sparse checkout, no pip) first.
+  Tests: tests/test_run_gate.py. cron-job.org jobs: docs/MANUAL_CHECKLIST.md (Viraj sets them up after the push).

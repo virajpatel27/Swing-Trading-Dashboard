@@ -21,7 +21,7 @@ from swingdash.http import PoliteSession  # noqa: E402
 
 
 def ist_today() -> date:
-    """The market's date (the runner's clock is UTC; 23:50 IST is still 'today' in India). IST has no daylight saving."""
+    """The market's date (the runner's clock is UTC; 23:40 IST is still 'today' in India). IST has no daylight saving."""
     return datetime.now(timezone(timedelta(hours=5, minutes=30))).date()
 
 

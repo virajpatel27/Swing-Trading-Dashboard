@@ -13,10 +13,13 @@ Viraj. **Not a programmer.** Answer in Gujarati-English mix (Latin letters), sho
 4. **Old project** `C:\Users\hello\OneDrive\Documents\GitHub\Stock-Live-Dashboard`: read it to learn (Angel One login, rate limits, NSE/BSE fetch),
    **never change anything in that folder**.
 5. **Same Angel One account** as the old project. Its jobs: weekdays 17:00 IST (can start 30-90 min late, run up to 2.5 h), 23:00 and 04:00 IST daily,
-   09:00 IST instrument master, Sunday 02:00 IST backup. Our daily job (Viraj 03-Nov: data by ~16:30): **16:40, 17:20, 18:30,
-   23:50 IST** Mon-Fri + **08:00 IST** next morning; on-time starts come from cron-job.org (Viraj's account, jobs 16:45 and
-   17:10 IST Mon-Fri -> workflow_dispatch; token `cron-job-daily` expires 02-Nov-2027, see docs/MANUAL_CHECKLIST.md). It uses NO Angel One, so running near 17:00 is fine; never add Angel calls
-   to the daily job. Stocks: bhavcopy ~16:33 IST; NSE indices same day from the allIndices API (after 15:30), replaced by the
+   09:00 IST instrument master, Sunday 02:00 IST backup. Our schedule (Viraj 21-Nov-2026), ALL started by cron-job.org
+   (workflow_dispatch; no GitHub `schedule:` any more; token `cron-job-daily` expires 02-Nov-2027, docs/MANUAL_CHECKLIST.md):
+   Daily update **17:10** + **23:40 IST** Mon-Fri (mode full), backup **05:00** Tue-Sat (mode backup: ends in ~1 min when the
+   last session is complete, swingdash/run_gate.py), Sat **07:00** (full, week catch-up) then Weekly backup **07:05**;
+   Results season (fundamentals-nightly.yml) **13:00 / 16:00 / 19:30** daily, works only 10 Jul-14 Aug, 10 Oct-14 Nov,
+   10 Jan-14 Feb, 15 Apr-30 May; Monthly integrity 1st **11:00**. It uses NO Angel One, so running near 17:00 is fine;
+   never add Angel calls to the daily job. Stocks: bhavcopy ~16:33 IST; NSE indices same day from the allIndices API (after 15:30), replaced by the
    official ind_close_all file (~23:20). Data workflows must check out `ref: main` (a queued run otherwise gets an old commit).
    BSE indices: weekly from the PC only (Viraj's choice 2026-11-01). When he says "BSE update karo": run
    `<python> scripts/backfill.py --job bse-update`, then `<python> scripts/fetch_bse_shareholding.py` (BSE shareholding of the

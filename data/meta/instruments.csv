@@ -1670,6 +1670,7 @@ stock,NSE,OIL,OIL,Oil Gas & Consumable Fuels,stocks/raw/OIL,2009-09-30,2026-11-2
 stock,NSE,OILCOUNTUB,OILCOUNTUB,,stocks/raw/OILCOUNTUB,2007-01-02,2026-11-23,4870,NSE bhavcopy
 stock,NSE,OLAELEC,OLAELEC,Automobile and Auto Components,stocks/raw/OLAELEC,2024-08-09,2026-11-23,568,NSE bhavcopy
 stock,NSE,OLECTRA,OLECTRA,Automobile and Auto Components,stocks/raw/OLECTRA,2007-01-02,2026-11-23,4922,NSE bhavcopy
+stock,NSE,OLIL,OLIL,,stocks/raw/OLIL,2026-11-17,2026-11-23,5,NSE bhavcopy
 stock,NSE,OMAXAUTO,OMAXAUTO,,stocks/raw/OMAXAUTO,2007-01-02,2026-11-23,4929,NSE bhavcopy
 stock,NSE,OMAXE,OMAXE,,stocks/raw/OMAXE,2007-08-09,2026-11-23,4779,NSE bhavcopy
 stock,NSE,OMFREIGHT,OMFREIGHT,,stocks/raw/OMFREIGHT,2025-10-08,2026-11-23,279,NSE bhavcopy
@@ -4324,6 +4325,7 @@ stock-adjusted,NSE,OIL,OIL,Oil Gas & Consumable Fuels,stocks/adjusted/OIL,2009-0
 stock-adjusted,NSE,OILCOUNTUB,OILCOUNTUB,,stocks/adjusted/OILCOUNTUB,2007-01-02,2026-11-23,4870,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,OLAELEC,OLAELEC,Automobile and Auto Components,stocks/adjusted/OLAELEC,2024-08-09,2026-11-23,568,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,OLECTRA,OLECTRA,Automobile and Auto Components,stocks/adjusted/OLECTRA,2007-01-02,2026-11-23,4922,NSE bhavcopy + NSE corporate actions
+stock-adjusted,NSE,OLIL,OLIL,,stocks/adjusted/OLIL,2026-11-17,2026-11-23,5,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,OMAXAUTO,OMAXAUTO,,stocks/adjusted/OMAXAUTO,2007-01-02,2026-11-23,4929,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,OMAXE,OMAXE,,stocks/adjusted/OMAXE,2007-08-09,2026-11-23,4779,NSE bhavcopy + NSE corporate actions
 stock-adjusted,NSE,OMFREIGHT,OMFREIGHT,,stocks/adjusted/OMFREIGHT,2025-10-08,2026-11-23,279,NSE bhavcopy + NSE corporate actions
@@ -6973,6 +6975,7 @@ delivery,NSE,OIL,OIL,Oil Gas & Consumable Fuels,stocks/delivery/OIL,2009-09-30,2
 delivery,NSE,OILCOUNTUB,OILCOUNTUB,,stocks/delivery/OILCOUNTUB,2007-01-02,2026-11-23,3752,NSE MTO delivery file
 delivery,NSE,OLAELEC,OLAELEC,Automobile and Auto Components,stocks/delivery/OLAELEC,2024-08-09,2026-11-23,511,NSE MTO delivery file
 delivery,NSE,OLECTRA,OLECTRA,Automobile and Auto Components,stocks/delivery/OLECTRA,2007-01-02,2026-11-23,4563,NSE MTO delivery file
+delivery,NSE,OLIL,OLIL,,stocks/delivery/OLIL,2026-11-17,2026-11-23,5,NSE MTO delivery file
 delivery,NSE,OMAXAUTO,OMAXAUTO,,stocks/delivery/OMAXAUTO,2007-01-02,2026-11-23,4352,NSE MTO delivery file
 delivery,NSE,OMAXE,OMAXE,,stocks/delivery/OMAXE,2007-08-09,2026-11-23,4722,NSE MTO delivery file
 delivery,NSE,OMFREIGHT,OMFREIGHT,,stocks/delivery/OMFREIGHT,2025-10-24,2026-11-02,189,NSE MTO delivery file

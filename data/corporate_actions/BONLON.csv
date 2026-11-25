@@ -1,2 +1,2 @@
 ex_date,type,ratio,factor,amount,method,status,subject,source
-2026-11-25,rights,1:1,,30,,future,Rights 1:1 @ Premium Rs 20/-,NSE
+2026-11-25,rights,1:1,0.8926701571,30,"TERP, issue price 30, close before 38.2",applied,Rights 1:1 @ Premium Rs 20/-,NSE

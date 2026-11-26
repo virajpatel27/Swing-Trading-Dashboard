@@ -67,7 +67,7 @@ NSE APARINDS,warn,missing dates,2009-05-18,"1 trading days without a row (first 
 NSE APCOTEXIND,warn,missing dates,2007-02-22,"59 trading days without a row (first 2007-02-22, last 2012-04-28)"
 NSE APLAPOLLO,warn,missing dates,2012-01-07,"5 trading days without a row (first 2012-01-07, last 2013-05-11)"
 NSE APOLSINHOT,warn,missing dates,2015-04-08,"151 trading days without a row (first 2015-04-08, last 2017-05-26)"
-NSE APOORVA,warn,missing dates,2026-08-21,"19 trading days without a row (first 2026-08-21, last 2026-11-20)"
+NSE APOORVA,warn,missing dates,2026-08-21,"20 trading days without a row (first 2026-08-21, last 2026-11-25)"
 NSE AQYLON,warn,missing dates,2024-05-03,"1 trading days without a row (first 2024-05-03, last 2024-05-03)"
 NSE ARCHIDPLY,warn,missing dates,2009-05-18,"61 trading days without a row (first 2009-05-18, last 2014-04-17)"
 NSE ARCHIES,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
@@ -565,8 +565,9 @@ NSE MORARJEE,warn,missing dates,2012-09-20,"253 trading days without a row (firs
 NSE MOREPENLAB,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE MOTILALOFS,warn,missing dates,2012-09-08,"1 trading days without a row (first 2012-09-08, last 2012-09-08)"
 NSE MOTOGENFIN,warn,missing dates,2009-05-18,"259 trading days without a row (first 2009-05-18, last 2019-09-06)"
-NSE MPDL,warn,missing dates,2026-09-16,"13 trading days without a row (first 2026-09-16, last 2026-11-17)"
+NSE MPDL,warn,missing dates,2026-09-16,"17 trading days without a row (first 2026-09-16, last 2026-11-25)"
 NSE MPSLTD,warn,missing dates,2007-04-12,"6 trading days without a row (first 2007-04-12, last 2012-05-22)"
+NSE MROTEK,warn,missing dates,2013-07-09,"225 trading days without a row (first 2013-07-09, last 2021-09-09)"
 NSE MSL,warn,missing dates,2026-09-24,"3 trading days without a row (first 2026-09-24, last 2026-10-19)"
 NSE MSPL,warn,missing dates,2009-05-18,"2 trading days without a row (first 2009-05-18, last 2015-11-18)"
 NSE MTEDUCARE,warn,missing dates,2024-09-02,"89 trading days without a row (first 2024-09-02, last 2025-02-28)"
@@ -594,7 +595,7 @@ NSE NCLIND,warn,missing dates,2009-05-18,"1 trading days without a row (first 20
 NSE NDGL,warn,missing dates,2016-12-22,"36 trading days without a row (first 2016-12-22, last 2020-10-06)"
 NSE NDLVENTURE,warn,missing dates,2009-05-18,"2 trading days without a row (first 2009-05-18, last 2012-09-08)"
 NSE NDRAUTO,warn,missing dates,2023-07-14,"5 trading days without a row (first 2023-07-14, last 2023-07-21)"
-NSE NEAGI,warn,missing dates,2026-04-23,"41 trading days without a row (first 2026-04-23, last 2026-11-18)"
+NSE NEAGI,warn,missing dates,2026-04-23,"42 trading days without a row (first 2026-04-23, last 2026-11-25)"
 NSE NECCLTD,warn,missing dates,2016-05-09,"2 trading days without a row (first 2016-05-09, last 2016-06-23)"
 NSE NELCAST,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE NELCO,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
@@ -937,7 +938,7 @@ NSE UNIVASTU,warn,missing dates,2017-08-30,"479 trading days without a row (firs
 NSE UNIVCABLES,warn,missing dates,2008-12-23,"102 trading days without a row (first 2008-12-23, last 2015-11-26)"
 NSE UNIVPHOTO,warn,missing dates,2026-11-08,"1 trading days without a row (first 2026-11-08, last 2026-11-08)"
 NSE UNOMINDA,warn,missing dates,2007-02-27,"41 trading days without a row (first 2007-02-27, last 2014-02-17)"
-NSE UPHOT,warn,missing dates,2026-08-19,"22 trading days without a row (first 2026-08-19, last 2026-11-18)"
+NSE UPHOT,warn,missing dates,2026-08-19,"24 trading days without a row (first 2026-08-19, last 2026-11-25)"
 NSE URAVIDEF,warn,missing dates,2018-04-10,"889 trading days without a row (first 2018-04-10, last 2024-11-14)"
 NSE UTTAMSUGAR,warn,missing dates,2009-05-18,"29 trading days without a row (first 2009-05-18, last 2014-01-10)"
 NSE V2RETAIL,warn,missing dates,2009-05-18,"15 trading days without a row (first 2009-05-18, last 2014-02-04)"
@@ -949,7 +950,7 @@ NSE VAKRANGEE,warn,missing dates,2009-05-18,"1 trading days without a row (first
 NSE VARDHACRLC,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE VARDMNPOLY,warn,missing dates,2008-07-14,"34 trading days without a row (first 2008-07-14, last 2023-07-21)"
 NSE VASCONEQ,warn,missing dates,2012-05-31,"5 trading days without a row (first 2012-05-31, last 2015-05-14)"
-NSE VASUPRADA,warn,missing dates,2026-08-19,"26 trading days without a row (first 2026-08-19, last 2026-11-20)"
+NSE VASUPRADA,warn,missing dates,2026-08-19,"27 trading days without a row (first 2026-08-19, last 2026-11-25)"
 NSE VASWANI,warn,missing dates,2013-07-10,"185 trading days without a row (first 2013-07-10, last 2020-04-22)"
 NSE VCL,warn,missing dates,2020-01-28,"308 trading days without a row (first 2020-01-28, last 2024-08-30)"
 NSE VEEDOL,warn,missing dates,2007-01-25,"13 trading days without a row (first 2007-01-25, last 2009-01-29)"
@@ -2297,6 +2298,8 @@ NSE MPHASIS (adjusted),warn,unexplained jump,2008-10-13,close moved 22.6% (to 16
 NSE MPHASIS (adjusted),warn,unexplained jump,2011-02-25,close moved 28.1% (to 449.3)
 NSE MPSLTD (adjusted),warn,unexplained jump,2008-11-05,close moved 20.8% (to 73.95)
 NSE MRF (adjusted),warn,unexplained jump,2007-10-29,close moved 20.0% (to 6745.6)
+NSE MROTEK (adjusted),warn,unexplained jump,2008-12-15,close moved 20.1% (to 27.75)
+NSE MROTEK (adjusted),warn,unexplained jump,2015-12-07,close moved 20.0% (to 34.2)
 NSE MRPL (adjusted),warn,unexplained jump,2007-10-30,close moved 26.6% (to 80.8)
 NSE MRPL (adjusted),warn,unexplained jump,2007-11-15,close moved 22.2% (to 128.05)
 NSE MRPL (adjusted),warn,unexplained jump,2008-01-21,close moved 27.5% (to 87.15)
@@ -3433,3 +3436,4 @@ NSE DVL,warn,corporate action not seen in prices,2021-08-05,bonus 1:2: no matchi
 NSE GULFPETRO,warn,corporate action not seen in prices,2013-07-09,bonus 23:19: no matching price change near the ex-date
 NSE ORIENTPPR,warn,corporate action without factor,2007-06-08,rights: rights without issue price
 NSE PRAXIS,warn,corporate action without factor,2026-11-18,rights: rights without issue price
+NSE FABTECH,warn,close differs from BSE,2026-11-26,"NSE 136.46, BSE 140.75 (+3.14 %)"

@@ -392,14 +392,14 @@ BLUESTARCO,Consumer Discretionary,Consumer Durables,Consumer Durables,Household 
 BLUESTONE,Consumer Discretionary,Consumer Durables,Consumer Durables,Gems Jewellery And Watches,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,152873603,48.93,1,16.21,2026-09-30,NSE,2026-11-04
 BLUSPRING,Services,Services,Commercial Services & Supplies,Diversified Commercial Services,,149502111,41.42,10,58.41,2026-09-30,NSE,2026-11-04
 BMWVENTLTD,Commodities,Metals & Mining,Metals & Minerals Trading,Trading - Metals,,86715000,27.39,10,73.62,2026-09-30,NSE,2026-11-04
-BNAGROCHEM,Services,Services,Commercial Services & Supplies,Trading & Distributors,,977729410,4.45,1,,,NSE,2026-11-25
+BNAGROCHEM,Services,Services,Commercial Services & Supplies,Trading & Distributors,,977729410,4.45,1,,,NSE,2026-11-26
 BNALTD,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Agricultural Food & other Products,Tea & Coffee,,3100000,38.5,10,,,NSE,2026-11-04
 BODALCHEM,Commodities,Chemicals,Chemicals & Petrochemicals,Dyes And Pigments,,125944065,42.92,2,57,2026-09-30,NSE,2026-11-04
 BOHRAIND,Commodities,Chemicals,Fertilizers & Agrochemicals,Fertilizers,,21172152,66.81,10,33.39,2026-09-30,NSE,2026-11-04
 BOMDYEING,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,206534900,45.53,2,53.57,2026-09-30,NSE,2026-11-04
 BONDADA,Telecommunication,Telecommunication,Telecom - Services,Telecom - Infrastructure,,111671485,38.47,2,,,NSE,2026-11-04
 BONFIG,Industrials,Capital Goods,Industrial Manufacturing,Industrial Products,NIFTY IPO,187995834,16.11,10,77,2026-10-22,NSE,2026-11-04
-BONLON,Commodities,Metals & Mining,Metals & Minerals Trading,Trading - Metals,,32766716,28.79,10,71.21,2026-09-30,NSE,2026-11-25
+BONLON,Commodities,Metals & Mining,Metals & Minerals Trading,Trading - Metals,,32766716,28.79,10,71.21,2026-09-30,NSE,2026-11-26
 BORANA,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,26645295,34.82,10,65.24,2026-09-30,NSE,2026-11-04
 BOROLTD,Consumer Discretionary,Consumer Durables,Consumer Durables,Houseware,,119587629,32.94,1,64.68,2026-09-30,NSE,2026-11-04
 BORORENEW,Industrials,Capital Goods,Industrial Products,Glass - Industrial,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,147183709,42.03,1,56.02,2026-09-30,NSE,2026-11-04
@@ -539,6 +539,7 @@ CRIZAC,Consumer Discretionary,Consumer Services,Retailing,Internet & Catalogue R
 CROMPTON,Consumer Discretionary,Consumer Durables,Consumer Durables,Household Appliances,NIFTY 500;NIFTY CONSUMER DURABLES;NIFTY CORE HOUSING;NIFTY HOUSING;NIFTY INDIA MANUFACTURING;NIFTY INDIA NEW AGE CONSUMPTION;NIFTY MIDSMALL INDIA CONSUMPTION;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY RURAL;NIFTY SMALLCAP 100;NIFTY SMALLCAP 250;NIFTY SMALLCAP 50;NIFTY SMALLCAP 500;NIFTY SMALLCAP250 MOMENTUM QUALITY 100;NIFTY SMALLCAP250 QUALITY 50;NIFTY TOTAL MARKET;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 FLEXICAP QUALITY 30;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25;NIFTY500 MULTICAP INDIA MANUFACTURING 50:30:20;NIFTY500 SHARIAH,643914875,99.65,2,0,2026-09-30,NSE,2026-11-04
 CROWN,Industrials,Capital Goods,Industrial Manufacturing,Industrial Products,,11590000,29.76,10,67.82,2026-09-30,NSE,2026-11-04
 CRSL,Information Technology,Information Technology,IT - Services,IT Enabled Services,,423144706,97.51,1,,,NSE,2026-11-04
+CRYSTALCP,Commodities,Chemicals,Fertilizers & Agrochemicals,Pesticides & Agrochemicals,,163177583,,10,,,NSE,2026-11-26
 CSBBANK,Financial Services,Financial Services,Banks,Private Sector Bank,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,173485827,57.34,10,40,2026-09-30,NSE,2026-11-04
 CSLFINANCE,Financial Services,Financial Services,Finance,Non Banking Financial Company (NBFC),,22782621,46.95,10,49.17,2026-09-30,NSE,2026-11-04
 CSM,Information Technology,Information Technology,IT - Software,Computers - Software & Consulting,NIFTY IPO,51603472,21.61,10,71.18,2026-09-30,NSE,2026-11-04
@@ -1529,6 +1530,7 @@ MPHASIS,Information Technology,Information Technology,IT - Software,Computers - 
 MPIMANIPAL,Financial Services,Financial Services,Financial Technology (Fintech),Financial Technology (Fintech),NIFTY IPO,231804528,22.98,2,53.92,2026-09-30,NSE,2026-11-04
 MPSLTD,Consumer Discretionary,Media Entertainment & Publication,Printing & Publication,Printing & Publication,NIFTY MEDIA,17105816,30.7,10,68.34,2026-09-30,NSE,2026-11-04
 MRF,Consumer Discretionary,Automobile and Auto Components,Auto Components,Tyres & Rubber Products,NIFTY 200;NIFTY 500;NIFTY INDIA MANUFACTURING;NIFTY LARGEMIDCAP 250;NIFTY MIDCAP 100;NIFTY MIDCAP 150;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY MOBILITY;NIFTY NEXT 100;NIFTY TOTAL MARKET;NIFTY TRANSPORTATION & LOGISTICS;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 LOW VOLATILITY 50;NIFTY500 MULTICAP 50:25:25;NIFTY500 SHARIAH,4241143,47.62,10,27.61,2026-09-30,NSE,2026-11-04
+MROTEK,Telecommunication,Telecommunication,Telecom - Equipment & Accessories,Telecom - Equipment & Accessories,,18684602,34.12,5,65.74,2026-09-30,NSE,2026-11-26
 MRPL,Energy,Oil Gas & Consumable Fuels,Petroleum Products,Refineries & Marketing,NIFTY 500;NIFTY INDIA RAILWAYS PSU;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY SMALLCAP 100;NIFTY SMALLCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25,1752598777,10.04,10,88.58,2026-09-30,NSE,2026-11-04
 MSL,Fast Moving Consumer Goods,Fast Moving Consumer Goods,Agricultural Food & other Products,Other Agricultural Products,,10980158,26.76,10,,,NSE,2026-11-04
 MSPL,Industrials,Capital Goods,Industrial Products,Iron & Steel Products,,566796645,54.67,10,45.12,2026-09-30,NSE,2026-11-04
@@ -1658,7 +1660,7 @@ OIL,Energy,Oil Gas & Consumable Fuels,Oil,Oil Exploration & Production,NIFTY MID
 OILCOUNTUB,Energy,Oil Gas & Consumable Fuels,Oil,Oil Equipment & Services,,51989530,100.0,10,47.23,2026-09-30,NSE,2026-11-04
 OLAELEC,Consumer Discretionary,Automobile and Auto Components,Automobiles,2/3 Wheelers,NIFTY 500;NIFTY EV & NEW AGE AUTOMOTIVE;NIFTY INDIA NEW AGE CONSUMPTION;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY SMALLCAP 100;NIFTY SMALLCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25,4628408313,100.0,10,32.97,2026-09-30,NSE,2026-11-04
 OLECTRA,Consumer Discretionary,Automobile and Auto Components,Automobiles,Passenger Cars & Utility Vehicles,NIFTY 500;NIFTY EV & NEW AGE AUTOMOTIVE;NIFTY MIDSMALLCAP 400;NIFTY MIDSMALLCAP400 50:50;NIFTY SMALLCAP 250;NIFTY SMALLCAP 500;NIFTY SMALLCAP250 MOMENTUM QUALITY 100;NIFTY TOTAL MARKET;NIFTY500 AHIMSA;NIFTY500 EQUAL WEIGHT;NIFTY500 GROWTH 50;NIFTY500 LARGEMIDSMALL EQUAL-CAP WEIGHTED;NIFTY500 MULTICAP 50:25:25;NIFTY500 SHARIAH,82080737,100.0,4,50.02,2026-09-30,NSE,2026-11-04
-OLIL,,,,,,,,,,,Nifty 500 list,2026-11-25
+OLIL,Services,Services,Transport Services,Logistics Solution Provider,,10267081,,10,20.08,2026-10-15,NSE,2026-11-26
 OMAXAUTO,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,,21371213,100.0,10,54.51,2026-09-30,NSE,2026-11-04
 OMAXE,Consumer Discretionary,Realty,Realty,Residential Commercial Projects,,182900540,100.0,10,74.14,2026-09-30,NSE,2026-11-04
 OMFREIGHT,Services,Services,Transport Services,Logistics Solution Provider,,33675442,100.0,10,74.86,2026-09-30,NSE,2026-11-04
@@ -1807,7 +1809,8 @@ PRAKASHSTL,Industrials,Capital Goods,Industrial Products,Iron & Steel Products,,
 PRANAV,Consumer Discretionary,Realty,Realty,Residential Commercial Projects,NIFTY IPO,112622782,19.02,10,49.03,2026-09-30,NSE,2026-11-04
 PRASOLCHEM,Commodities,Chemicals,Chemicals & Petrochemicals,Specialty Chemicals,NIFTY IPO,59183431,8.81,2,75.25,2026-09-30,NSE,2026-11-04
 PRAVEG,Consumer Discretionary,Consumer Services,Leisure Services,Hotels & Resorts,,26140695,53.76,10,,,NSE,2026-11-04
-PRAXIS,Consumer Discretionary,Consumer Services,Retailing,Speciality Retail,,289041215,91.11,5,7.23,2026-09-30,NSE,2026-11-25
+PRAXIS,Consumer Discretionary,Consumer Services,Retailing,Speciality Retail,,289041215,91.11,5,7.23,2026-09-30,NSE,2026-11-26
+PRAXIS-RE3,,,,,,,,,,,Nifty 500 list,2026-11-26
 PRECAM,Consumer Discretionary,Automobile and Auto Components,Auto Components,Auto Components & Equipments,,94985835,34.62,10,65.37,2026-09-30,NSE,2026-11-04
 PRECOT,Consumer Discretionary,Textiles,Textiles & Apparels,Other Textile Products,,12000000,36.0,10,61.51,2026-09-30,NSE,2026-11-04
 PRECWIRE,Industrials,Capital Goods,Industrial Products,Aluminium Copper & Zinc Products,NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET,182807975,41.18,1,56.62,2026-09-30,NSE,2026-11-04
@@ -2159,7 +2162,7 @@ SKYWAYS,Services,Services,Transport Services,Logistics Solution Provider,NIFTY I
 SMARTLINK,Information Technology,Information Technology,IT - Hardware,Computers Hardware & Equipments,,9975000,26.68,2,72.85,2026-09-30,NSE,2026-11-05
 SMARTWORKS,Services,Services,Commercial Services & Supplies,Diversified Commercial Services,,114381076,25.97,10,58.26,2026-09-30,NSE,2026-11-05
 SMCGLOBAL,Financial Services,Financial Services,Capital Markets,Stockbroking & Allied,,209400000,29.12,2,66.61,2026-09-30,NSE,2026-11-05
-SMLMAH,Industrials,Capital Goods,Agricultural Commercial & Construction Vehicles,Commercial Vehicles,NIFTY 1000;NIFTY INDIA CORPORATE GROUP INDEX - MAHINDRA GROUP;NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET;NIFTY1000 EQUAL WEIGHT,18606402,39.11,10,58.97,2026-09-30,NSE,2026-11-25
+SMLMAH,Industrials,Capital Goods,Agricultural Commercial & Construction Vehicles,Commercial Vehicles,NIFTY 1000;NIFTY INDIA CORPORATE GROUP INDEX - MAHINDRA GROUP;NIFTY MICROCAP 250;NIFTY SMALLCAP 500;NIFTY TOTAL MARKET;NIFTY1000 EQUAL WEIGHT,18606402,39.11,10,58.97,2026-09-30,NSE,2026-11-26
 SMLT,Industrials,Capital Goods,Industrial Products,Iron & Steel Products,,13689750,26.21,10,68.81,2026-09-30,NSE,2026-11-05
 SMSPHARMA,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,,93652030,31.24,1,68.07,2026-09-30,NSE,2026-11-05
 SMT,Healthcare,Healthcare,Healthcare Equipment & Supplies,Medical Equipment & Supplies,NIFTY IPO,101646778,13.01,1,36.2,2026-10-22,NSE,2026-11-05
@@ -2447,7 +2450,6 @@ ULTRACEMCO,Commodities,Construction Materials,Cement & Cement Products,Cement & 
 ULTRAMAR,Commodities,Chemicals,Chemicals & Petrochemicals,Dyes And Pigments,,29200000,58.85,2,,,NSE,2026-11-06
 UMAEXPORTS,Services,Services,Commercial Services & Supplies,Trading & Distributors,,33809830,29.1,10,70.9,2026-09-30,NSE,2026-11-06
 UMESLTD,Consumer Discretionary,Consumer Services,Other Consumer Services,E-Learning,,26415811,60.44,1,39.82,2026-09-30,NSE,2026-11-06
-UMIYA-MRO,Telecommunication,Telecommunication,Telecom - Equipment & Accessories,Telecom - Equipment & Accessories,,18684602,34.12,5,65.74,2026-09-30,NSE,2026-11-06
 UNICHEMLAB,Healthcare,Healthcare,Pharmaceuticals & Biotechnology,Pharmaceuticals,,70405750,28.74,2,70.22,2026-09-30,NSE,2026-11-06
 UNIDT,Industrials,Capital Goods,Industrial Manufacturing,Industrial Products,,20303126,22.74,10,74.65,2026-09-30,NSE,2026-11-06
 UNIECOM,Information Technology,Information Technology,IT - Services,IT Enabled Services,,112379173,46.27,1,36.02,2026-09-30,NSE,2026-11-06

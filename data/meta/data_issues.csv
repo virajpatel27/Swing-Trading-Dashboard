@@ -13,7 +13,7 @@ NSE ABAN,warn,missing dates,2026-03-12,"50 trading days without a row (first 202
 NSE ABCIND,warn,missing dates,2022-04-05,"258 trading days without a row (first 2022-04-05, last 2025-06-16)"
 NSE ABCOTS,warn,missing dates,2022-04-05,"263 trading days without a row (first 2022-04-05, last 2026-02-01)"
 NSE ABINFRA,warn,missing dates,2019-08-01,"720 trading days without a row (first 2019-08-01, last 2024-10-17)"
-NSE ABMINTLLTD,warn,missing dates,2022-07-22,"44 trading days without a row (first 2022-07-22, last 2026-10-19)"
+NSE ABMINTLLTD,warn,missing dates,2022-07-22,"45 trading days without a row (first 2022-07-22, last 2026-11-26)"
 NSE ACCELYA,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE ACCURACY,warn,missing dates,2018-07-20,"173 trading days without a row (first 2018-07-20, last 2020-11-18)"
 NSE ACEINTEG,warn,missing dates,2017-07-27,"1010 trading days without a row (first 2017-07-27, last 2023-06-23)"
@@ -561,6 +561,7 @@ NSE MODIRUBBER,warn,missing dates,2018-06-25,"135 trading days without a row (fi
 NSE MODTHREAD,warn,missing dates,2024-02-15,"14 trading days without a row (first 2024-02-15, last 2026-10-19)"
 NSE MOHITIND,warn,missing dates,2014-01-02,"119 trading days without a row (first 2014-01-02, last 2021-01-04)"
 NSE MOKSH,warn,missing dates,2018-03-13,"338 trading days without a row (first 2018-03-13, last 2021-05-05)"
+NSE MONTEIL,warn,missing dates,2023-09-25,"1 trading days without a row (first 2023-09-25, last 2023-09-25)"
 NSE MORARJEE,warn,missing dates,2012-09-20,"253 trading days without a row (first 2012-09-20, last 2026-10-09)"
 NSE MOREPENLAB,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE MOTILALOFS,warn,missing dates,2012-09-08,"1 trading days without a row (first 2012-09-08, last 2012-09-08)"
@@ -804,7 +805,7 @@ NSE SILINV,warn,missing dates,2008-04-03,"399 trading days without a row (first 
 NSE SILVERTUC,warn,missing dates,2018-02-16,"398 trading days without a row (first 2018-02-16, last 2022-04-13)"
 NSE SIMBHALS,warn,missing dates,2026-04-27,"19 trading days without a row (first 2026-04-27, last 2026-05-29)"
 NSE SIMPLEXINF,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
-NSE SIMPLXREA,warn,missing dates,2026-09-01,"15 trading days without a row (first 2026-09-01, last 2026-11-19)"
+NSE SIMPLXREA,warn,missing dates,2026-09-01,"16 trading days without a row (first 2026-09-01, last 2026-11-26)"
 NSE SINTERCOM,warn,missing dates,2018-07-02,"134 trading days without a row (first 2018-07-02, last 2024-05-18)"
 NSE SIRCA,warn,missing dates,2018-07-09,"18 trading days without a row (first 2018-07-09, last 2019-07-17)"
 NSE SITINET,warn,missing dates,2023-07-03,"69 trading days without a row (first 2023-07-03, last 2024-05-31)"
@@ -885,7 +886,7 @@ NSE TEMBO,warn,missing dates,2018-08-21,"410 trading days without a row (first 2
 NSE TERAI,warn,missing dates,2026-08-19,"7 trading days without a row (first 2026-08-19, last 2026-11-13)"
 NSE TFL,warn,missing dates,2008-12-01,"440 trading days without a row (first 2008-12-01, last 2021-05-12)"
 NSE TGBHOTELS,warn,missing dates,2009-05-18,"5 trading days without a row (first 2009-05-18, last 2020-05-27)"
-NSE THACKER,warn,missing dates,2026-05-06,"18 trading days without a row (first 2026-05-06, last 2026-11-11)"
+NSE THACKER,warn,missing dates,2026-05-06,"19 trading days without a row (first 2026-05-06, last 2026-11-26)"
 NSE THAKDEV,warn,missing dates,2026-05-12,"27 trading days without a row (first 2026-05-12, last 2026-11-20)"
 NSE THANGAMAYL,warn,missing dates,2015-05-04,"5 trading days without a row (first 2015-05-04, last 2016-05-02)"
 NSE THEJO,warn,missing dates,2013-01-17,"1151 trading days without a row (first 2013-01-17, last 2023-05-03)"
@@ -1000,7 +1001,7 @@ NSE WELINV,warn,missing dates,2012-01-07,"123 trading days without a row (first 
 NSE WELSPUNLIV,warn,missing dates,2009-05-18,"1 trading days without a row (first 2009-05-18, last 2009-05-18)"
 NSE WENDT,warn,missing dates,2007-01-04,"142 trading days without a row (first 2007-01-04, last 2014-03-22)"
 NSE WEWIN,warn,missing dates,2017-08-23,"780 trading days without a row (first 2017-08-23, last 2022-06-09)"
-NSE WHBRADY,warn,missing dates,2026-08-19,"16 trading days without a row (first 2026-08-19, last 2026-11-23)"
+NSE WHBRADY,warn,missing dates,2026-08-19,"17 trading days without a row (first 2026-08-19, last 2026-11-26)"
 NSE WHEELS,warn,missing dates,2007-03-12,"16 trading days without a row (first 2007-03-12, last 2012-01-07)"
 NSE WILLAMAGOR,warn,missing dates,2008-04-03,"110 trading days without a row (first 2008-04-03, last 2022-10-07)"
 NSE WINDMACHIN,warn,missing dates,2011-08-22,"45 trading days without a row (first 2011-08-22, last 2014-02-05)"
@@ -3148,7 +3149,8 @@ NSE VEDL (adjusted),warn,unexplained jump,2008-01-21,close moved 22.5% (to 46.43
 NSE VEDL (adjusted),warn,unexplained jump,2020-10-12,close moved 20.4% (to 36.28105610134436)
 NSE VEEDOL (adjusted),warn,unexplained jump,2007-09-13,close moved 20.0% (to 156.2175)
 NSE VEEDOL (adjusted),warn,unexplained jump,2010-08-05,close moved 20.0% (to 420.7850000000001)
-NSE VGL (adjusted),warn,unexplained jump,2008-08-04,close moved 20.1% (to 32.3)
+NSE VGL (adjusted),warn,unexplained jump,2008-08-04,close moved 20.1% (to 12.92)
+NSE VGL (adjusted),warn,unexplained jump,2020-12-14,close moved 20.0% (to 3.3000000000000003)
 NSE VIJIFIN (adjusted),warn,unexplained jump,2020-03-26,close moved 25.0% (to 0.18574846206425152)
 NSE VIJIFIN (adjusted),warn,unexplained jump,2020-04-03,close moved 25.0% (to 0.18574846206425152)
 NSE VIJIFIN (adjusted),warn,unexplained jump,2025-07-17,close moved 20.0% (to 3.18)
@@ -3436,4 +3438,4 @@ NSE DVL,warn,corporate action not seen in prices,2021-08-05,bonus 1:2: no matchi
 NSE GULFPETRO,warn,corporate action not seen in prices,2013-07-09,bonus 23:19: no matching price change near the ex-date
 NSE ORIENTPPR,warn,corporate action without factor,2007-06-08,rights: rights without issue price
 NSE PRAXIS,warn,corporate action without factor,2026-11-18,rights: rights without issue price
-NSE FABTECH,warn,close differs from BSE,2026-11-26,"NSE 136.46, BSE 140.75 (+3.14 %)"
+NSE RANEHOLDIN,warn,close differs from BSE,2026-11-27,"NSE 1505.5, BSE 1581.45 (+5.04 %)"

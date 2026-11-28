@@ -22,7 +22,7 @@ industry,cement-and-cement-products,Cement & Cement Products,Construction Materi
 industry,ceramics,Ceramics,Consumer Durables,9,False,2016-01-01,2026-11-27
 industry,cigarettes-and-tobacco-products,Cigarettes & Tobacco Products,Fast Moving Consumer Goods,3,True,,
 industry,civil-construction,Civil Construction,Construction,95,False,2007-02-15,2026-11-27
-industry,coal,Coal,"Oil, Gas & Consumable Fuels",4,True,2026-03-02,2026-11-27
+industry,coal,Coal,"Oil, Gas & Consumable Fuels",5,False,2026-03-02,2026-11-27
 industry,commercial-vehicles,Commercial Vehicles,Capital Goods,4,True,2014-09-02,2026-11-27
 industry,commodity-chemicals,Commodity Chemicals,Chemicals,32,False,2007-02-15,2026-11-27
 industry,compressors-pumps-and-diesel-engines,"Compressors, Pumps & Diesel Engines",Capital Goods,15,False,2007-12-06,2026-11-27
@@ -65,7 +65,7 @@ industry,financial-technology-fintech,Financial Technology (Fintech),Financial S
 industry,footwear,Footwear,Consumer Durables,8,False,2014-10-07,2026-11-27
 industry,forest-products,Forest Products,Forest Materials,1,True,,
 industry,furniture-home-furnishing,"Furniture, Home Furnishing",Consumer Durables,10,False,2017-02-27,2026-11-27
-industry,garments-and-apparels,Garments & Apparels,Textiles,34,False,2007-07-24,2026-11-27
+industry,garments-and-apparels,Garments & Apparels,Textiles,35,False,2007-07-24,2026-11-27
 industry,gas-transmission-marketing,Gas Transmission/Marketing,"Oil, Gas & Consumable Fuels",1,True,,
 industry,gems-jewellery-and-watches,"Gems, Jewellery And Watches",Consumer Durables,45,False,2007-02-15,2026-11-27
 industry,general-insurance,General Insurance,Financial Services,6,False,2017-12-26,2026-11-27
@@ -163,7 +163,7 @@ industry,seafood,Seafood,Fast Moving Consumer Goods,4,True,,
 industry,ship-building-and-allied-services,Ship Building & Allied Services,Capital Goods,4,True,2026-04-20,2026-11-27
 industry,shipping,Shipping,Services,6,False,2007-07-13,2026-11-27
 industry,software-products,Software Products,Information Technology,18,False,2007-02-21,2026-11-27
-industry,speciality-retail,Speciality Retail,Consumer Services,17,False,2015-08-07,2026-11-27
+industry,speciality-retail,Speciality Retail,Consumer Services,18,False,2015-08-07,2026-11-27
 industry,specialty-chemicals,Specialty Chemicals,Chemicals,77,False,2007-05-24,2026-11-27
 industry,sponge-iron,Sponge Iron,Metals & Mining,5,False,2023-12-21,2026-11-27
 industry,stationary,Stationary,Fast Moving Consumer Goods,5,False,2018-01-01,2026-11-27
@@ -198,7 +198,7 @@ sector,chemicals,Chemicals,,190,False,2007-02-15,2026-11-27
 sector,construction,Construction,,95,False,2007-02-15,2026-11-27
 sector,construction-materials,Construction Materials,,38,False,2007-02-15,2026-11-27
 sector,consumer-durables,Consumer Durables,,158,False,2007-02-15,2026-11-27
-sector,consumer-services,Consumer Services,,131,False,2007-02-15,2026-11-27
+sector,consumer-services,Consumer Services,,132,False,2007-02-15,2026-11-27
 sector,diversified,Diversified,,9,False,2007-05-29,2026-11-27
 sector,fast-moving-consumer-goods,Fast Moving Consumer Goods,,177,False,2007-02-15,2026-11-27
 sector,financial-services,Financial Services,,296,False,2007-02-15,2026-11-27
@@ -207,12 +207,12 @@ sector,healthcare,Healthcare,,183,False,2007-02-15,2026-11-27
 sector,information-technology,Information Technology,,145,False,2007-02-15,2026-11-27
 sector,media-entertainment-and-publication,"Media, Entertainment & Publication",,59,False,2007-02-15,2026-11-27
 sector,metals-and-mining,Metals & Mining,,62,False,2007-02-15,2026-11-27
-sector,oil-gas-and-consumable-fuels,"Oil, Gas & Consumable Fuels",,46,False,2007-02-15,2026-11-27
+sector,oil-gas-and-consumable-fuels,"Oil, Gas & Consumable Fuels",,47,False,2007-02-15,2026-11-27
 sector,power,Power,,36,False,2007-02-15,2026-11-27
 sector,realty,Realty,,96,False,2007-02-15,2026-11-27
 sector,services,Services,,151,False,2007-02-15,2026-11-27
 sector,telecommunication,Telecommunication,,30,False,2007-02-15,2026-11-27
-sector,textiles,Textiles,,146,False,2007-02-15,2026-11-27
+sector,textiles,Textiles,,147,False,2007-02-15,2026-11-27
 sector,utilities,Utilities,,13,False,2021-09-28,2026-11-27
 theme,ac-and-appliances,AC & Appliances,,31,False,2007-02-15,2026-11-27
 theme,ai-and-cloud,AI & Cloud,,84,False,2007-02-15,2026-11-27
